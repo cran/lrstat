@@ -9,52 +9,72 @@ Performs power and sample size calculation for non-proportional
 hazards model using the Fleming-Harrington family of weighted log-rank tests.
 }
 \details{
-For proportional hazards, the power is determined by the total
-number of events and the constant hazard ratio along with the informative
-rates and the spending functions. For non-proportional hazards, the hazard
-ratio varies over time and the calendar time plays a role in determining
-the mean of the log-rank test statistic. It requires an iterative algorithm
-to find the calendar time at which the targeted number of events will be
-reached for each interim analysis. The lrstat package uses the discrete
-state nonstationary Markov process method from Lakatos (1986)
-and further developed in Lu (2021) to find the
-mean and variance of the weighted log-rank score statistic at each interim
-analysis. In addition, the package approximates the variance and covariance
-matrix of the sequentially calculated log-rank test statistics under the
-alternative hypothesis with that under the null hypothesis in order to
-take advantage of the independent increments structure in Tsiatis (1982)
-applicable for the Fleming and
-Harrington family of weighted log-rank tests.
+For proportional hazards, the power is determined by the
+total number of events and the constant hazard ratio along with
+the information rates and the spending functions. For
+non-proportional hazards, the hazard ratio varies over time and
+the calendar time plays a key role in determining the mean and
+variance of the log-rank test score statistic. It requires an
+iterative algorithm to find the calendar time at which the
+targeted number of events will be reached for each interim
+analysis. The lrstat package uses the discrete state nonstationary
+Markov process method from Lakatos (1986) and further developed
+in Lu (2021) to find the mean and variance of the weighted
+log-rank test score statistic at each interim analysis. In
+addition, the package approximates the variance and covariance
+matrix of the sequentially calculated log-rank test statistics
+under the alternative hypothesis with that under the null hypothesis
+to take advantage of the independent increments structure in
+Tsiatis (1982) applicable for the Fleming-Harrington family
+of weighted log-rank tests.
 
-The most useful functions in the package are lrstat, lrpower, lrsamplesize,
-and lrsim, which calculate the mean and variance of log-rank score
-statistic at a sequence of given calendar time points, the power of the
-log-rank test, the sample size in terms of accrual duration and follow-up
-duration, and the log-rank test simulation, respectively. The accrual
-function calculates the number of patients accrued at given calendar time
-points. The caltime function finds the calendar time to reach the targeted
-number of events. The exitprob function calculates the stagewise exit
-probabilities for specified boundaries with a varying mean parameter over
-time based on an adaptation of the recursive integration algorithm described
-in Chapter 19 of Jennison and Turnbull (2000).
+The most useful functions in the package are \code{lrstat}, \code{lrpower},
+\code{lrsamplesize}, and \code{lrsim}, which calculate the mean and variance
+of log-rank test score statistic at a sequence of given calendar
+times, the power of the log-rank test, the sample size in terms
+of accrual duration and follow-up duration, and the log-rank
+test simulation, respectively. The \code{accrual} function calculates
+the number of patients accrued at given calendar times. The
+\code{caltime} function finds the calendar times to reach the targeted
+number of events. The \code{exitprob} function calculates the stagewise
+exit probabilities for specified boundaries with a varying mean
+parameter over time based on an adaptation of the recursive
+integration algorithm described in Chapter 19 of Jennison and
+Turnbull (2000).
 
-
-For critical values on the z-statistic scale, we recommend to use standard
-group sequential design packages such as rpact or gsDesign as the mean
-parameter is zero under the null hypothesis. However, the information
-is not proportional to the number of events for weighted log-rank tests,
-in which case, the caltime and lrstat functions can be used together to
-find the appropriate information fractions.
+For critical values on the z-statistic scale, we recommend using
+standard group sequential design packages such as rpact and gsDesign
+as the mean parameter is zero under the null hypothesis. However,
+the information is not proportional to the number of events for
+weighted log-rank tests, in which case, the \code{caltime} and \code{lrstat}
+functions can be used together to find the appropriate
+information fractions.
 
 With changing hazard ratio over time, the futility bounds derived
-from a beta-spending function for the standard group sequential design
-with a fixed parameter value cannot be used directly, in which case, the
-exitprob function can be used for this purpose.
+from a beta-spending function for the standard group sequential
+design with a fixed parameter value cannot be used directly,
+in which case, the \code{exitprob} function can be used to derive the
+futility bounds.
 
-The development of the lrstat package is heavily influenced by the rpact
-package. We find their function arguments to be self-explanatory due to
-their names. We have used the same names whenever appropriate so that
-users familiar with the rpact package can learn the lrstat package quickly.
+The development of the lrstat package is heavily influenced by
+the rpact package. We find their function arguments to be
+self-explanatory. We have used the same names whenever appropriate
+so that users familiar with the rpact package can learn the
+lrstat package quickly. However, there are notable differences:
+\itemize{
+  \item lrstat uses the Lakatos method, while rpact uses the Schoenfeld
+    method for log-rank test power and sample size calculation.
+  \item lrstat uses \code{accrualDuration} to explicitly set the end of
+    accrual period, while rpact incorporates the end of accrual period
+    in \code{accrualTime}.
+  \item lrstat considers the trial a failure at the last stage if
+    the log-rank test cannot reject the null hypothesis up to this
+    stage and cannot stop for futility at an earlier stage.
+  \item the \code{lrsim} function directly uses the variance of the log-rank
+    test score statistic as the information and uses the inverse normal
+    combination method of Cui, Hung, and Wang (1999) to construct the
+    test statistic at each stage.
+}
 }
 \examples{
 lrpower(kMax = 2, informationRates = c(0.8, 1),
@@ -68,11 +88,15 @@ lrpower(kMax = 2, informationRates = c(0.8, 1),
 \references{
 Anastasios A. Tsiatis. Repeated significance testing for a general class
 of statistics used in censored survival analysis. J Am Stat Assoc.
-1982;77:855-861. doi:10.1080/01621459.1982.10477898
+1982;77:855-861. \doi{10.1080/01621459.1982.10477898}
 
 Edward Lakatos. Sample size determination in clinical trials with
 time-dependent rates of losses and noncompliance. Control Clin Trials.
-1986;7:189-199. doi:10.1016/0197-2456(86)90047-4
+1986;7:189-199. \doi{10.1016/0197-2456(86)90047-4}
+
+Lu Cui, H. M. James Hung, Sue-Jane Wang. Modification of sample size
+in group sequential clinical trials. Biometrics. 1999;55:853-857.
+\doi{doi:10.1111/j.0006-341x.1999.00853.x}
 
 Christopher Jennison, Bruce W. Turnbull. Group Sequential Methods with
 Applications to Clinical Trials. Chapman & Hall/CRC: Boca Raton, 2000,
@@ -80,7 +104,7 @@ ISBN:0849303168
 
 Kaifeng Lu. Sample size calculation for logrank test and prediction of
 number of events over time. Pharm Stat. 2021;20:229-244.
-doi:10.1002/pst.2069
+\doi{doi:10.1002/pst.2069}
 }
 \seealso{
 rpact, gsDesign

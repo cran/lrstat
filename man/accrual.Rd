@@ -12,12 +12,12 @@ accrual(
 )
 }
 \arguments{
-\item{time}{Calendar times at which to calculate the number of enrolled
-subjects.}
+\item{time}{A vector of calendar times at which to calculate the number
+of enrolled subjects.}
 
 \item{accrualTime}{Accrual time intervals, must start with 0, e.g.,
-c(0, 3) breaks the time axis into 2 accrual intervals: [0, 3), [3, Inf).
-Defaults to 0 for uniform accrual.}
+\code{c(0, 3)} breaks the time axis into 2 accrual intervals:
+[0, 3) and [3, Inf).}
 
 \item{accrualIntensity}{A vector of accrual intensities, one for
 each accrual time interval.}
@@ -25,21 +25,21 @@ each accrual time interval.}
 \item{accrualDuration}{Duration of the enrollment period.}
 }
 \value{
-A vector of total numbers of subjects enrolled by the
+A vector of total number of subjects enrolled by the
 specified calendar times.
 }
 \description{
-Obtains the number of subjects enrolled by a given calendar
-time.
+Obtains the number of subjects enrolled by given calendar
+times.
 }
 \examples{
 # Example 1: Uniform enrollment with 20 patients per month for 12 months.
 accrual(time = 3, accrualTime = 0, accrualIntensity = 20,
         accrualDuration = 12)
 
-# Example 2: Piecewise accrual time and intensity, 10 patients per month
-# for the first 3 months, and 20 patients per month thereafter. Patient
-# recruitment ends at 12 months for the study.
+# Example 2: Piecewise accrual, 10 patients per month for the first
+# 3 months, and 20 patients per month thereafter. Patient recruitment
+# ends at 12 months for the study.
 accrual(time = c(2, 9), accrualTime = c(0, 3),
         accrualIntensity = c(10, 20), accrualDuration = 12)
 

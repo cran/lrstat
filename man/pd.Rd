@@ -19,25 +19,25 @@ pd(
 
 \item{piecewiseSurvivalTime}{A vector that specifies the time intervals for
 the piecewise exponential survival distribution, must start with 0, e.g.,
-c(0, 6) breaks the time axis into 2 event intervals: [0, 6) and [6, Inf).
+\code{c(0, 6)} breaks the time axis into 2 event intervals:
+[0, 6) and [6, Inf).
 Defaults to 0 for exponential distribution.}
 
 \item{lambda}{A vector of hazard rates for the event, one for
-each event time interval.}
+each analysis time interval.}
 
 \item{gamma}{The hazard rate for exponential dropout or a vector of hazard
 rates for piecewise exponential dropout. Defaults to 0 for no dropout.}
 }
 \value{
-A value for the integrated probability of having an event by
-an analysis time during an interval for a treatment group with specified
+A value for the integrated probability of having an event
+during an interval for a treatment group with specified
 piecewise exponential survival and dropout distributions.
 }
 \description{
 Obtains the integration of the probability of having an event
-by an analysis time during an interval. The specified analysis time
-interval can span more than one analysis time interval with constant
-hazard.
+during an interval. The specified analysis time interval can span more
+than one analysis time interval with constant hazard.
 }
 \examples{
 # Piecewise exponential survival with hazard 0.0533 in the first 6 months,

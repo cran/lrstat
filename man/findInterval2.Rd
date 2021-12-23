@@ -4,22 +4,24 @@
 \alias{findInterval2}
 \title{Find interval numbers of indices}
 \usage{
-findInterval2(x, breaks)
+findInterval2(x, v)
 }
 \arguments{
 \item{x}{The numeric vector of interest.}
 
-\item{breaks}{The vector of break points.}
+\item{v}{The vector of break points.}
 }
 \value{
-A vector of length(x) with values in 0:N where N <- length(breaks).
+A vector of \code{length(x)} with values in \code{0:N} where
+  \code{N = length(v)}.
 }
 \description{
-The implementation of findInterval() in R from Advanced R by
-Hadley Wickham. Given a vector of non-decreasing breakpoints in breaks,
+The implementation of \code{findInterval()} in R from Advanced
+R by Hadley Wickham. Given a vector of non-decreasing breakpoints in v,
 find the interval containing each element of x; i.e., if
-i <- findInterval2(x,v), for each index j in x, v[i[j]] ≤ x[j] < v[i[j] + 1]
-where v[0] := -Inf, v[N+1] := +Inf, and N <- length(v).
+\code{i <- findInterval2(x,v)}, for each index \code{j} in \code{x},
+v[i[j]] ≤ x[j] < v[i[j] + 1]
+where v[0] := -Inf, v[N+1] := +Inf, and \code{N = length(v)}.
 }
 \examples{
 x <- 2:18

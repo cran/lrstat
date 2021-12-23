@@ -3,7 +3,7 @@
 \name{ad}
 \alias{ad}
 \title{Number of patients enrolled during an interval and having an event
-by a calendar time}
+by specified calendar times}
 \usage{
 ad(
   time = NA_real_,
@@ -17,48 +17,49 @@ ad(
 )
 }
 \arguments{
-\item{time}{Calendar times at which to evaluate the number of patients
-having an event.}
+\item{time}{A vector of calendar times at which to calculate the number
+of patients having an event.}
 
 \item{u1}{Lower bound of the accrual time interval.}
 
 \item{u2}{Upper bound of the accrual time interval.}
 
 \item{accrualTime}{Accrual time intervals, must start with 0, e.g.,
-c(0, 3) breaks the time axis into 2 accrual intervals: [0, 3), [3, Inf).
-Defaults to 0 for uniform accrual.}
+\code{c(0, 3)} breaks the time axis into 2 accrual intervals:
+[0, 3) and [3, Inf).}
 
 \item{accrualIntensity}{A vector of accrual intensities, one for
 each accrual time interval.}
 
 \item{piecewiseSurvivalTime}{A vector that specifies the time intervals for
 the piecewise exponential survival distribution, must start with 0, e.g.,
-c(0, 6) breaks the time axis into 2 event intervals: [0, 6) and [6, Inf).
+\code{c(0, 6)} breaks the time axis into 2 event intervals:
+[0, 6) and [6, Inf).
 Defaults to 0 for exponential distribution.}
 
 \item{lambda}{A vector of hazard rates for the event, one for
-each event time interval.}
+each analysis time interval.}
 
 \item{gamma}{The hazard rate for exponential dropout or a vector of hazard
-rates for piecewise exponential dropout.
-Defaults to 0 for no dropout.}
+rates for piecewise exponential dropout. Defaults to 0 for no dropout.}
 }
 \value{
-A vector of numbers of patients who are enrolled during a
+A vector of number of patients who are enrolled during a
 specified enrollment time interval and have an event by the specified
 calendar times for a given treatment group had the enrollment being
-restricted to the treatment group. By definition, we must have time >= u2.
+restricted to the treatment group. By definition, we must have
+\code{time >= u2}.
 }
 \description{
 Obtains the number of patients who are enrolled during a
 specified enrollment time interval and have an event by the specified
-calendar time.
+calendar times.
 }
 \examples{
-# Piecewise accrual time and intensity, 10 patients per month for the first
-# 3 months, and 20 patients per month thereafter. Piecewise exponential
-# survival with hazard 0.0533 in the first 6 months, and hazard 0.0309
-# thereafter, and 5\% dropout by the end of 1 year.
+# Piecewise accrual, 10 patients per month for the first 3 months, and
+# 20 patients per month thereafter. Piecewise exponential survival with
+# hazard 0.0533 in the first 6 months, and hazard 0.0309 thereafter,
+# and 5\% dropout by the end of 1 year.
 ad(time = c(9, 15), u1 = 1, u2 = 8, accrualTime = c(0, 3),
    accrualIntensity = c(10, 20), piecewiseSurvivalTime=c(0, 6),
    lambda = c(0.0533, 0.0309), gamma = -log(1-0.05)/12)

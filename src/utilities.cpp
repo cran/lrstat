@@ -43,15 +43,17 @@ NumericVector stl_sort(NumericVector x) {
 }
 
 //' @title Find interval numbers of indices
-//' @description The implementation of findInterval() in R from Advanced R by
-//' Hadley Wickham. Given a vector of non-decreasing breakpoints in breaks,
+//' @description The implementation of \code{findInterval()} in R from Advanced
+//' R by Hadley Wickham. Given a vector of non-decreasing breakpoints in v,
 //' find the interval containing each element of x; i.e., if
-//' i <- findInterval2(x,v), for each index j in x, v[i[j]] ≤ x[j] < v[i[j] + 1]
-//' where v[0] := -Inf, v[N+1] := +Inf, and N <- length(v).
+//' \code{i <- findInterval2(x,v)}, for each index \code{j} in \code{x},
+//' v[i[j]] ≤ x[j] < v[i[j] + 1]
+//' where v[0] := -Inf, v[N+1] := +Inf, and \code{N = length(v)}.
 //'
 //' @param x The numeric vector of interest.
-//' @param breaks The vector of break points.
-//' @return A vector of length(x) with values in 0:N where N <- length(breaks).
+//' @param v The vector of break points.
+//' @return A vector of \code{length(x)} with values in \code{0:N} where
+//'   \code{N = length(v)}.
 //'
 //' @keywords internal
 //'
@@ -62,18 +64,18 @@ NumericVector stl_sort(NumericVector x) {
 //'
 //' @export
 // [[Rcpp::export]]
-IntegerVector findInterval2(NumericVector x, NumericVector breaks) {
+IntegerVector findInterval2(NumericVector x, NumericVector v) {
   IntegerVector out(x.size());
 
   NumericVector::iterator it, pos;
   IntegerVector::iterator out_it;
 
   NumericVector::iterator x_begin=x.begin(), x_end=x.end();
-  NumericVector::iterator breaks_begin=breaks.begin(), breaks_end=breaks.end();
+  NumericVector::iterator v_begin=v.begin(), v_end=v.end();
 
   for(it = x_begin, out_it = out.begin(); it != x_end; ++it, ++out_it) {
-    pos = std::upper_bound(breaks_begin, breaks_end, *it);
-    *out_it = std::distance(breaks_begin, pos);
+    pos = std::upper_bound(v_begin, v_end, *it);
+    *out_it = std::distance(v_begin, pos);
   }
 
   return out;

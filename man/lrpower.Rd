@@ -30,31 +30,32 @@ lrpower(
 \item{kMax}{The maximum number of stages.}
 
 \item{informationRates}{The information rates fixed prior to the trial.
-Defaults to (1:kMax)/kMax if left unspecified.}
+Defaults to \code{(1:kMax) / kMax} if left unspecified.}
 
 \item{criticalValues}{Upper boundaries on the z-test statistic scale
 for stopping for efficacy.}
 
 \item{futilityBounds}{Lower boundaries on the z-test statistic scale
 for stopping for futility at stages 1, ..., kMax-1. Defaults to
-rep(-Inf, kMax-1) if left unspecified.}
+\code{rep(-Inf, kMax-1)} if left unspecified.}
 
 \item{allocationRatioPlanned}{Allocation ratio for the active treatment
 versus control. Defaults to 1 for equal randomization.}
 
 \item{accrualTime}{Accrual time intervals, must start with 0, e.g.,
-c(0, 3) breaks the time axis into 2 accrual intervals: [0, 3), [3, Inf).
-Defaults to 0 for uniform accrual.}
+\code{c(0, 3)} breaks the time axis into 2 accrual intervals:
+[0, 3) and [3, Inf).}
 
 \item{accrualIntensity}{A vector of accrual intensities, one for
 each accrual time interval.}
 
 \item{piecewiseSurvivalTime}{A vector that specifies the time intervals for
 the piecewise exponential survival distribution, must start with 0, e.g.,
-c(0, 6) breaks the time axis into 2 event intervals: [0, 6) and [6, Inf).
+\code{c(0, 6)} breaks the time axis into 2 event intervals:
+[0, 6) and [6, Inf).
 Defaults to 0 for exponential distribution.}
 
-\item{stratumFraction}{A vector of stratum fractions.
+\item{stratumFraction}{A vector of stratum fractions that sum to 1.
 Defaults to 1 for no stratification.}
 
 \item{lambda1}{A vector of hazard rates for the event for the
@@ -85,7 +86,7 @@ log-rank test. Defaults to 0 for conventional log-rank test.}
 log-rank test. Defaults to 0 for conventional log-rank test.}
 
 \item{numSubintervals}{Number of sub-intervals to approximate the mean
-and variance of the weighted log-rank score statistic.
+and variance of the weighted log-rank test score statistic.
 Defaults to 300. Specify a larger number for better approximation.}
 }
 \value{
@@ -99,8 +100,8 @@ Estimates the power, stopping probabilities, and expected
 sample size in a two-group survival design.
 }
 \examples{
-# Piecewise accrual time and intensity, piecewise exponential survivals,
-# and 5\% dropout by the end of 1 year.
+# Piecewise accrual, piecewise exponential survivals, and 5\% dropout by
+# the end of 1 year.
 
 lrpower(kMax = 2, informationRates = c(0.8, 1),
         criticalValues = c(2.250, 2.025),

@@ -60,7 +60,7 @@ Therefore, the follow-up time for the last enrolled patient is 30.92 months. Nex
 getDesignGroupSequential(kMax = 3, alpha = 0.025, typeOfDesign = "asOF")
 ```
 
-Now we can evaluate the power using lrpower. 
+Now we can evaluate the power using the lrpower function. 
 ```{r}
 lrpower(kMax = 3, 
         informationRates = c(0.333, 0.667, 1), 

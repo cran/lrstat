@@ -20,29 +20,30 @@ nevent(
 )
 }
 \arguments{
-\item{time}{Analysis times at which to calculate the number of patients
-having an event.}
+\item{time}{A vector of analysis times at which to calculate the number
+of patients having an event.}
 
 \item{allocationRatioPlanned}{Allocation ratio for the active treatment
 versus control. Defaults to 1 for equal randomization.}
 
 \item{accrualTime}{Accrual time intervals, must start with 0, e.g.,
-c(0, 3) breaks the time axis into 2 accrual intervals: [0, 3), [3, Inf).
-Defaults to 0 for uniform accrual.}
+\code{c(0, 3)} breaks the time axis into 2 accrual intervals:
+[0, 3) and [3, Inf).}
 
 \item{accrualIntensity}{A vector of accrual intensities, one for
 each accrual time interval.}
 
 \item{piecewiseSurvivalTime}{A vector that specifies the time intervals for
 the piecewise exponential survival distribution, must start with 0, e.g.,
-c(0, 6) breaks the time axis into 2 event intervals: [0, 6) and [6, Inf).
+\code{c(0, 6)} breaks the time axis into 2 event intervals:
+[0, 6) and [6, Inf).
 Defaults to 0 for exponential distribution.}
 
 \item{lambda1}{A vector of hazard rates for the event for the
-active treatment group, one for each analysis time interval.}
+active treatment group, one for each analysis time interval, by stratum.}
 
 \item{lambda2}{A vector of hazard rates for the event for the
-control group, one for each analysis time interval.}
+control group, one for each analysis time interval, by stratum.}
 
 \item{gamma1}{The hazard rate for exponential dropout or a vector of hazard
 rates for piecewise exponential dropout for the active treatment group.
@@ -57,20 +58,21 @@ Defaults to 0 for no dropout.}
 \item{minFollowupTime}{Follow-up time for the last enrolled subject.}
 
 \item{maxFollowupTime}{Follow-up time for the first enrolled subject.
-For fixed followup, maxFollowupTime = minFollowupTime.
-For variable followup, maxFollowupTime = accrualDuration + minFollowupTime.}
+For fixed followup, \code{maxFollowupTime = minFollowupTime}.
+For variable followup,
+\code{maxFollowupTime = accrualDuration + minFollowupTime}.}
 }
 \value{
 A matrix of the number of patients having an event at the specified
 analysis times for each treatment group.
 }
 \description{
-Obtains the number of subjects having an event by a given
-analysis time for each treatment group.
+Obtains the number of subjects having an event by given
+analysis times for each treatment group.
 }
 \examples{
-# Piecewise accrual time and intensity, piecewise exponential survivals,
-# and 5\% dropout by the end of 1 year.
+# Piecewise accrual, piecewise exponential survivals, and 5\% dropout by
+# the end of 1 year.
 nevent(time = c(9, 24), allocationRatioPlanned = 1, accrualTime = c(0, 3),
        accrualIntensity = c(10, 20), piecewiseSurvivalTime = c(0, 6),
        lambda1 = c(0.0533, 0.0309), lambda2 = c(0.0533, 0.0533),

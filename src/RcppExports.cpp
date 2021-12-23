@@ -10,9 +10,9 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
-// qtpwexp1
-double qtpwexp1(const double probability, const NumericVector& piecewiseSurvivalTime, const NumericVector& lambda, const double lowerBound);
-RcppExport SEXP _lrstat_qtpwexp1(SEXP probabilitySEXP, SEXP piecewiseSurvivalTimeSEXP, SEXP lambdaSEXP, SEXP lowerBoundSEXP) {
+// qtpwexp
+double qtpwexp(const double probability, const NumericVector& piecewiseSurvivalTime, const NumericVector& lambda, const double lowerBound);
+RcppExport SEXP _lrstat_qtpwexp(SEXP probabilitySEXP, SEXP piecewiseSurvivalTimeSEXP, SEXP lambdaSEXP, SEXP lowerBoundSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -20,20 +20,6 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const NumericVector& >::type piecewiseSurvivalTime(piecewiseSurvivalTimeSEXP);
     Rcpp::traits::input_parameter< const NumericVector& >::type lambda(lambdaSEXP);
     Rcpp::traits::input_parameter< const double >::type lowerBound(lowerBoundSEXP);
-    rcpp_result_gen = Rcpp::wrap(qtpwexp1(probability, piecewiseSurvivalTime, lambda, lowerBound));
-    return rcpp_result_gen;
-END_RCPP
-}
-// qtpwexp
-NumericVector qtpwexp(const NumericVector& probability, const NumericVector& piecewiseSurvivalTime, const NumericVector& lambda, double lowerBound);
-RcppExport SEXP _lrstat_qtpwexp(SEXP probabilitySEXP, SEXP piecewiseSurvivalTimeSEXP, SEXP lambdaSEXP, SEXP lowerBoundSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const NumericVector& >::type probability(probabilitySEXP);
-    Rcpp::traits::input_parameter< const NumericVector& >::type piecewiseSurvivalTime(piecewiseSurvivalTimeSEXP);
-    Rcpp::traits::input_parameter< const NumericVector& >::type lambda(lambdaSEXP);
-    Rcpp::traits::input_parameter< double >::type lowerBound(lowerBoundSEXP);
     rcpp_result_gen = Rcpp::wrap(qtpwexp(probability, piecewiseSurvivalTime, lambda, lowerBound));
     return rcpp_result_gen;
 END_RCPP
@@ -229,8 +215,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // lrstat
-DataFrame lrstat(const NumericVector& time, const double allocationRatioPlanned, const NumericVector& accrualTime, const NumericVector& accrualIntensity, const NumericVector& piecewiseSurvivalTime, const NumericVector& stratumFraction, const NumericVector& lambda1, const NumericVector& lambda2, const NumericVector& gamma1, const NumericVector& gamma2, const double accrualDuration, const double followupTime, const bool fixedFollowup, const bool predictEventOnly, const double rho1, const double rho2, const int numSubintervals);
-RcppExport SEXP _lrstat_lrstat(SEXP timeSEXP, SEXP allocationRatioPlannedSEXP, SEXP accrualTimeSEXP, SEXP accrualIntensitySEXP, SEXP piecewiseSurvivalTimeSEXP, SEXP stratumFractionSEXP, SEXP lambda1SEXP, SEXP lambda2SEXP, SEXP gamma1SEXP, SEXP gamma2SEXP, SEXP accrualDurationSEXP, SEXP followupTimeSEXP, SEXP fixedFollowupSEXP, SEXP predictEventOnlySEXP, SEXP rho1SEXP, SEXP rho2SEXP, SEXP numSubintervalsSEXP) {
+DataFrame lrstat(const NumericVector& time, const double allocationRatioPlanned, const NumericVector& accrualTime, const NumericVector& accrualIntensity, const NumericVector& piecewiseSurvivalTime, const NumericVector& stratumFraction, const NumericVector& lambda1, const NumericVector& lambda2, const NumericVector& gamma1, const NumericVector& gamma2, const double accrualDuration, const double followupTime, const bool fixedFollowup, const double rho1, const double rho2, const int numSubintervals, const bool predictEventOnly);
+RcppExport SEXP _lrstat_lrstat(SEXP timeSEXP, SEXP allocationRatioPlannedSEXP, SEXP accrualTimeSEXP, SEXP accrualIntensitySEXP, SEXP piecewiseSurvivalTimeSEXP, SEXP stratumFractionSEXP, SEXP lambda1SEXP, SEXP lambda2SEXP, SEXP gamma1SEXP, SEXP gamma2SEXP, SEXP accrualDurationSEXP, SEXP followupTimeSEXP, SEXP fixedFollowupSEXP, SEXP rho1SEXP, SEXP rho2SEXP, SEXP numSubintervalsSEXP, SEXP predictEventOnlySEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -247,11 +233,11 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const double >::type accrualDuration(accrualDurationSEXP);
     Rcpp::traits::input_parameter< const double >::type followupTime(followupTimeSEXP);
     Rcpp::traits::input_parameter< const bool >::type fixedFollowup(fixedFollowupSEXP);
-    Rcpp::traits::input_parameter< const bool >::type predictEventOnly(predictEventOnlySEXP);
     Rcpp::traits::input_parameter< const double >::type rho1(rho1SEXP);
     Rcpp::traits::input_parameter< const double >::type rho2(rho2SEXP);
     Rcpp::traits::input_parameter< const int >::type numSubintervals(numSubintervalsSEXP);
-    rcpp_result_gen = Rcpp::wrap(lrstat(time, allocationRatioPlanned, accrualTime, accrualIntensity, piecewiseSurvivalTime, stratumFraction, lambda1, lambda2, gamma1, gamma2, accrualDuration, followupTime, fixedFollowup, predictEventOnly, rho1, rho2, numSubintervals));
+    Rcpp::traits::input_parameter< const bool >::type predictEventOnly(predictEventOnlySEXP);
+    rcpp_result_gen = Rcpp::wrap(lrstat(time, allocationRatioPlanned, accrualTime, accrualIntensity, piecewiseSurvivalTime, stratumFraction, lambda1, lambda2, gamma1, gamma2, accrualDuration, followupTime, fixedFollowup, rho1, rho2, numSubintervals, predictEventOnly));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -375,20 +361,19 @@ BEGIN_RCPP
 END_RCPP
 }
 // findInterval2
-IntegerVector findInterval2(NumericVector x, NumericVector breaks);
-RcppExport SEXP _lrstat_findInterval2(SEXP xSEXP, SEXP breaksSEXP) {
+IntegerVector findInterval2(NumericVector x, NumericVector v);
+RcppExport SEXP _lrstat_findInterval2(SEXP xSEXP, SEXP vSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type breaks(breaksSEXP);
-    rcpp_result_gen = Rcpp::wrap(findInterval2(x, breaks));
+    Rcpp::traits::input_parameter< NumericVector >::type v(vSEXP);
+    rcpp_result_gen = Rcpp::wrap(findInterval2(x, v));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_lrstat_qtpwexp1", (DL_FUNC) &_lrstat_qtpwexp1, 4},
     {"_lrstat_qtpwexp", (DL_FUNC) &_lrstat_qtpwexp, 4},
     {"_lrstat_lrsim", (DL_FUNC) &_lrstat_lrsim, 23},
     {"_lrstat_accrual", (DL_FUNC) &_lrstat_accrual, 4},

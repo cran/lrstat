@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{caltime}
 \alias{caltime}
-\title{Calendar time for targeted number of events}
+\title{Calendar times for target number of events}
 \usage{
 caltime(
   nevents = NA_real_,
@@ -21,24 +21,25 @@ caltime(
 )
 }
 \arguments{
-\item{nevents}{A vector of targeted numbers of events.}
+\item{nevents}{A vector of target number of events.}
 
 \item{allocationRatioPlanned}{Allocation ratio for the active treatment
 versus control. Defaults to 1 for equal randomization.}
 
 \item{accrualTime}{Accrual time intervals, must start with 0, e.g.,
-c(0, 3) breaks the time axis into 2 accrual intervals: [0, 3), [3, Inf).
-Defaults to 0 for uniform accrual.}
+\code{c(0, 3)} breaks the time axis into 2 accrual intervals:
+[0, 3) and [3, Inf).}
 
 \item{accrualIntensity}{A vector of accrual intensities, one for
 each accrual time interval.}
 
 \item{piecewiseSurvivalTime}{A vector that specifies the time intervals for
 the piecewise exponential survival distribution, must start with 0, e.g.,
-c(0, 6) breaks the time axis into 2 event intervals: [0, 6) and [6, Inf).
+\code{c(0, 6)} breaks the time axis into 2 event intervals:
+[0, 6) and [6, Inf).
 Defaults to 0 for exponential distribution.}
 
-\item{stratumFraction}{A vector of stratum fractions.
+\item{stratumFraction}{A vector of stratum fractions that sum to 1.
 Defaults to 1 for no stratification.}
 
 \item{lambda1}{A vector of hazard rates for the event for the
@@ -63,18 +64,18 @@ Defaults to 0 for no dropout.}
 Defaults to 0 for variable follow-up.}
 }
 \value{
-A vector of calendar times expected to yield the targeted
-numbers of events.
+A vector of calendar times expected to yield the target
+number of events.
 }
 \description{
-Obtains the calendar time to reach the targeted number of
+Obtains the calendar times to reach the target number of
 subjects having an event.
 }
 \examples{
-# Piecewise accrual time and intensity, piecewise exponential survivals,
-# and 5\% dropout by the end of 1 year.
+# Piecewise accrual, piecewise exponential survivals, and 5\% dropout by
+# the end of 1 year.
 caltime(nevents = c(24, 80), allocationRatioPlanned = 1,
-        accrualTime = seq(0,9),
+        accrualTime = seq(0, 9),
         accrualIntensity = c(26/9*seq(1, 9), 26),
         piecewiseSurvivalTime = c(0, 6),
         stratumFraction = c(0.2, 0.8),

@@ -196,7 +196,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ##   Cumulative alpha spending                    : 0.0001035, 0.0060484, 0.0250000 
 ##   Critical values                              : 3.710, 2.511, 1.993 
 ##   Stage levels (one-sided)                     : 0.0001035, 0.0060122, 0.0231281</code></pre>
-<p>Now we can evaluate the power using lrpower.</p>
+<p>Now we can evaluate the power using the lrpower function.</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">lrpower</span>(<span class="at">kMax =</span> <span class="dv">3</span>, </span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>        <span class="at">informationRates =</span> <span class="fu">c</span>(<span class="fl">0.333</span>, <span class="fl">0.667</span>, <span class="dv">1</span>), </span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>        <span class="at">criticalValues =</span> <span class="fu">c</span>(<span class="fl">3.710</span>, <span class="fl">2.511</span>, <span class="fl">1.993</span>), </span>

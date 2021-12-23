@@ -34,14 +34,14 @@ lrsim(
 \item{kMax}{The maximum number of stages.}
 
 \item{informationRates}{The information rates fixed prior to the trial.
-Defaults to (1:kMax)/kMax if left unspecified.}
+Defaults to \code{(1:kMax) / kMax} if left unspecified.}
 
-\item{criticalValues}{Upper boundaries on the z-test statistic scale for
-stopping for efficacy.}
+\item{criticalValues}{Upper boundaries on the z-test statistic scale
+for stopping for efficacy.}
 
 \item{futilityBounds}{Lower boundaries on the z-test statistic scale
 for stopping for futility at stages 1, ..., kMax-1. Defaults to
-rep(-Inf, kMax-1) if left unspecified.}
+\code{rep(-Inf, kMax-1)} if left unspecified.}
 
 \item{allocation1}{Number of subjects in the active treatment group in
 a randomization block. Defaults to 1 for equal randomization.}
@@ -50,18 +50,19 @@ a randomization block. Defaults to 1 for equal randomization.}
 a randomization block. Defaults to 1 for equal randomization.}
 
 \item{accrualTime}{Accrual time intervals, must start with 0, e.g.,
-c(0, 3) breaks the time axis into 2 accrual intervals: [0, 3], (3, Inf).
-Defaults to 0 for uniform accrual.}
+\code{c(0, 3)} breaks the time axis into 2 accrual intervals:
+[0, 3) and [3, Inf).}
 
-\item{accrualIntensity}{A vector of accrual intensities, one for each
-accrual time interval.}
+\item{accrualIntensity}{A vector of accrual intensities, one for
+each accrual time interval.}
 
 \item{piecewiseSurvivalTime}{A vector that specifies the time intervals for
 the piecewise exponential survival distribution, must start with 0, e.g.,
-c(0, 6) breaks the time axis into 2 event intervals: [0, 6] and (6, Inf).
+\code{c(0, 6)} breaks the time axis into 2 event intervals:
+[0, 6) and [6, Inf).
 Defaults to 0 for exponential distribution.}
 
-\item{stratumFraction}{A vector of stratum fractions.
+\item{stratumFraction}{A vector of stratum fractions that sum to 1.
 Defaults to 1 for no stratification.}
 
 \item{lambda1}{A vector of hazard rates for the event for the
@@ -119,7 +120,7 @@ sim = lrsim(kMax = 2, informationRates = c(0.5, 1),
             accrualIntensity = 11,
             lambda1 = 0.018, lambda2 = 0.030,
             accrualDuration = 12,
-            plannedEvents = c(75, 150),
+            plannedEvents = c(60, 120),
             maxNumberOfIterations = 1000,
             maxNumberOfRawDatasetsPerStage = 1,
             seed = 314159)

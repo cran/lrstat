@@ -145,7 +145,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 
 
-<p>This R Markdown document illustrates the sample size calculation for a fixed follow-up design, in which the treatment allocation is 3:1 and the hazard ratio is 0.3. This is a case for which neither the Schoenfeld method nor the Lakatos method provides an accurate sample size estimate, and simulation tools are needed to obtain a more accurate result. First we load the packages:</p>
+<p>This R Markdown document illustrates the sample size calculation for a fixed follow-up design, in which the treatment allocation is 3:1 and the hazard ratio is 0.3. This is a case for which neither the Schoenfeld method nor the Lakatos method provides an accurate sample size estimate, and simulation tools are needed to obtain a more accurate result. First we load the lrstat package:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lrstat)</span></code></pre></div>
 <p>Consider a fixed design with the hazard rate of the control group being 0.95 per year, a hazard ratio of the experimental group to the control group being 0.3, a randomization ratio of 3:1, an enrollment rate of 5 patients per month, a 2-year drop-out rate of 10%, and a planned fixed follow-up of 26 weeks for each patient. The target power is 90%, and we are interested in the number of patients to enroll to achieve the target 90% power.</p>
 <p>Using the Schoenfeld formula, <span class="math display">\[

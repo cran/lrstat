@@ -6,11 +6,10 @@
 #' given that it exceeds a specified lower bound.
 #'
 #' @param probability The scalar probability corresponding to the quantile.
-#' @param piecewiseSurvivalTime A vector of starting times defining the time
-#' pieces, must start with 0. Defaults to 0 for exponential distribution.
-#' @param lambda A vector of hazard rates, one for each time interval.
+#' @inheritParams param_piecewiseSurvivalTime
+#' @inheritParams param_lambda
 #' @param lowerBound The left truncation time point for the survival time.
-#' Defaults to zero for no truncation.
+#' Defaults to 0 for no truncation.
 #'
 #' @return The quantile x such that
 #' P(X > x | X > lowerBound) = 1 - probability.
@@ -18,30 +17,7 @@
 #' @keywords internal
 #'
 #' @examples
-#' qtpwexp1(probability = 0.3, piecewiseSurvivalTime = c(0, 6, 9, 15),
-#'          lambda = c(0.025, 0.04, 0.015, 0.007))
-#'
-#' @export
-qtpwexp1 <- function(probability = NA_real_, piecewiseSurvivalTime = 0L, lambda = NA_real_, lowerBound = 0) {
-    .Call(`_lrstat_qtpwexp1`, probability, piecewiseSurvivalTime, lambda, lowerBound)
-}
-
-#' @title Quantile function of truncated piecewise exponential distribution
-#' @description Obtains the quantile of a piecewise expoenential distribution
-#' given that it exceeds a specified lower bound.
-#'
-#' @param probability The probabilities corresponding to the quantiles.
-#' @param piecewiseSurvivalTime A vector of starting times defining the time
-#' pieces, must start with 0. Defaults to 0 for exponential distribution.
-#' @param lambda A vector of hazard rates, one for each time interval.
-#' @param lowerBound The left truncation time point for the survival time.
-#' Defaults to 0 for no truncation.
-#'
-#' @return A vector of quantiles x such that
-#' P(X > x | X > lowerBound) = 1 - probability.
-#'
-#' @examples
-#' qtpwexp(probability = c(0.3, 0.5), piecewiseSurvivalTime = c(0, 6, 9, 15),
+#' qtpwexp(probability = 0.3, piecewiseSurvivalTime = c(0, 6, 9, 15),
 #'         lambda = c(0.025, 0.04, 0.015, 0.007))
 #'
 #' @export
@@ -53,47 +29,27 @@ qtpwexp <- function(probability = NA_real_, piecewiseSurvivalTime = 0L, lambda =
 #' @description Performs simulation for two-arm group sequential superiority
 #' trials based on log-rank test.
 #'
-#' @param informationRates The information rates fixed prior to the trial.
-#' Defaults to (1:kMax)/kMax if left unspecified.
-#' @param kMax The maximum number of stages.
-#' @param criticalValues Upper boundaries on the z-test statistic scale for
-#' stopping for efficacy.
-#' @param futilityBounds Lower boundaries on the z-test statistic scale
-#' for stopping for futility at stages 1, ..., kMax-1. Defaults to
-#' rep(-Inf, kMax-1) if left unspecified.
+#' @inheritParams param_kMax
+#' @inheritParams param_informationRates
+#' @inheritParams param_criticalValues
+#' @inheritParams param_futilityBounds
 #' @param allocation1 Number of subjects in the active treatment group in
 #' a randomization block. Defaults to 1 for equal randomization.
 #' @param allocation2 Number of subjects in the control group in
 #' a randomization block. Defaults to 1 for equal randomization.
-#' @param accrualTime Accrual time intervals, must start with 0, e.g.,
-#' c(0, 3) breaks the time axis into 2 accrual intervals: [0, 3], (3, Inf).
-#' Defaults to 0 for uniform accrual.
-#' @param accrualIntensity A vector of accrual intensities, one for each
-#' accrual time interval.
-#' @param piecewiseSurvivalTime A vector that specifies the time intervals for
-#' the piecewise exponential survival distribution, must start with 0, e.g.,
-#' c(0, 6) breaks the time axis into 2 event intervals: [0, 6] and (6, Inf).
-#' Defaults to 0 for exponential distribution.
-#' @param stratumFraction A vector of stratum fractions.
-#' Defaults to 1 for no stratification.
-#' @param lambda1 A vector of hazard rates for the event for the
-#' active treatment group, one for each analysis time interval, by stratum.
-#' @param lambda2 A vector of hazard rates for the event for the
-#' control group, one for each analysis time interval, by stratum.
-#' @param gamma1 The hazard rate for exponential dropout or a vector of hazard
-#' rates for piecewise exponential dropout for the active treatment group.
-#' Defaults to 0 for no dropout.
-#' @param gamma2 The hazard rate for exponential dropout or a vector of hazard
-#' rates for piecewise exponential dropout for the control group.
-#' Defaults to 0 for no dropout.
-#' @param accrualDuration Duration of the enrollment period.
-#' @param followupTime Follow-up time for the last enrolled subject.
-#' @param fixedFollowup Whether a fixed follow-up design is used.
-#' Defaults to 0 for variable follow-up.
-#' @param rho1 First parameter of the Fleming-Harrington family of weighted
-#' log-rank test. Defaults to 0 for conventional log-rank test.
-#' @param rho2 Second parameter of the Fleming-Harrington family of weighted
-#' log-rank test. Defaults to 0 for conventional log-rank test.
+#' @inheritParams param_accrualTime
+#' @inheritParams param_accrualIntensity
+#' @inheritParams param_piecewiseSurvivalTime
+#' @inheritParams param_stratumFraction
+#' @inheritParams param_lambda1_stratified
+#' @inheritParams param_lambda2_stratified
+#' @inheritParams param_gamma1
+#' @inheritParams param_gamma2
+#' @inheritParams param_accrualDuration
+#' @inheritParams param_followupTime
+#' @inheritParams param_fixedFollowup
+#' @inheritParams param_rho1
+#' @inheritParams param_rho2
 #' @param plannedEvents The planned cumulative total number of events at each
 #' stage.
 #' @param maxNumberOfIterations The number of simulation iterations.
@@ -114,7 +70,7 @@ qtpwexp <- function(probability = NA_real_, piecewiseSurvivalTime = 0L, lambda =
 #'             accrualIntensity = 11,
 #'             lambda1 = 0.018, lambda2 = 0.030,
 #'             accrualDuration = 12,
-#'             plannedEvents = c(75, 150),
+#'             plannedEvents = c(60, 120),
 #'             maxNumberOfIterations = 1000,
 #'             maxNumberOfRawDatasetsPerStage = 1,
 #'             seed = 314159)
@@ -134,19 +90,16 @@ lrsim <- function(kMax = NA_integer_, informationRates = NA_real_, criticalValue
 }
 
 #' @title Number of enrolled subjects
-#' @description Obtains the number of subjects enrolled by a given calendar
-#' time.
+#' @description Obtains the number of subjects enrolled by given calendar
+#' times.
 #'
-#' @param time Calendar times at which to calculate the number of enrolled
-#' subjects.
-#' @param accrualTime Accrual time intervals, must start with 0, e.g.,
-#' c(0, 3) breaks the time axis into 2 accrual intervals: [0, 3), [3, Inf).
-#' Defaults to 0 for uniform accrual.
-#' @param accrualIntensity A vector of accrual intensities, one for
-#' each accrual time interval.
-#' @param accrualDuration Duration of the enrollment period.
+#' @param time A vector of calendar times at which to calculate the number
+#' of enrolled subjects.
+#' @inheritParams param_accrualTime
+#' @inheritParams param_accrualIntensity
+#' @inheritParams param_accrualDuration
 #'
-#' @return A vector of total numbers of subjects enrolled by the
+#' @return A vector of total number of subjects enrolled by the
 #' specified calendar times.
 #'
 #' @examples
@@ -154,9 +107,9 @@ lrsim <- function(kMax = NA_integer_, informationRates = NA_real_, criticalValue
 #' accrual(time = 3, accrualTime = 0, accrualIntensity = 20,
 #'         accrualDuration = 12)
 #'
-#' # Example 2: Piecewise accrual time and intensity, 10 patients per month
-#' # for the first 3 months, and 20 patients per month thereafter. Patient
-#' # recruitment ends at 12 months for the study.
+#' # Example 2: Piecewise accrual, 10 patients per month for the first
+#' # 3 months, and 20 patients per month thereafter. Patient recruitment
+#' # ends at 12 months for the study.
 #' accrual(time = c(2, 9), accrualTime = c(0, 3),
 #'         accrualIntensity = c(10, 20), accrualDuration = 12)
 #'
@@ -166,19 +119,14 @@ accrual <- function(time = NA_real_, accrualTime = 0L, accrualIntensity = NA_rea
 }
 
 #' @title Probability of being at risk
-#' @description Obtains the probability of being at risk at a given analysis
-#' time.
+#' @description Obtains the probability of being at risk at given analysis
+#' times.
 #'
-#' @param time Analysis times at which to calculate the probability of being
-#' at risk.
-#' @param piecewiseSurvivalTime A vector that specifies the time intervals for
-#' the piecewise exponential survival distribution, must start with 0, e.g.,
-#' c(0, 6) breaks the time axis into 2 event intervals: [0, 6) and [6, Inf).
-#' Defaults to 0 for exponential distribution.
-#' @param lambda A vector of hazard rates for the event, one for
-#' each event time interval.
-#' @param gamma The hazard rate for exponential dropout or a vector of hazard
-#' rates for piecewise exponential dropout. Defaults to 0 for no dropout.
+#' @param time A vector of analysis times at which to calculate the
+#' probability of being at risk.
+#' @inheritParams param_piecewiseSurvivalTime
+#' @inheritParams param_lambda
+#' @inheritParams param_gamma
 #'
 #' @return A vector of probabilities of being at risk at the specified
 #' analysis times after enrollment for a patient in a treatment group with
@@ -198,19 +146,14 @@ patrisk <- function(time = NA_real_, piecewiseSurvivalTime = 0L, lambda = NA_rea
 }
 
 #' @title Probability of having an event
-#' @description Obtains the probability of having an event at a given analysis
-#' time.
+#' @description Obtains the probability of having an event at given analysis
+#' times.
 #'
-#' @param time Analysis times at which to calculate the probability of having
-#' an event.
-#' @param piecewiseSurvivalTime A vector that specifies the time intervals for
-#' the piecewise exponential survival distribution, must start with 0, e.g.,
-#' c(0, 6) breaks the time axis into 2 event intervals: [0, 6) and [6, Inf).
-#' Defaults to 0 for exponential distribution.
-#' @param lambda A vector of hazard rates for the event, one for
-#' each event time interval.
-#' @param gamma The hazard rate for exponential dropout or a vector of hazard
-#' rates for piecewise exponential dropout. Defaults to 0 for no dropout.
+#' @param time A vector of analysis times at which to calculate the
+#' probability of having an event.
+#' @inheritParams param_piecewiseSurvivalTime
+#' @inheritParams param_lambda
+#' @inheritParams param_gamma
 #'
 #' @return A vector of probabilities of having an event at the specified
 #' analysis times after enrollment for a patient in a treatment group with
@@ -230,23 +173,18 @@ pevent <- function(time = NA_real_, piecewiseSurvivalTime = 0L, lambda = NA_real
 }
 
 #' @title Integrated event probability over an interval with constant hazard
-#' @description Obtains the integration of the probability of having an event
-#' by an analysis time during an interval with constant hazard.
+#' @description Obtains the integration probability of having an event
+#' during an interval with constant hazard.
 #'
 #' @param j The analysis time interval with constant hazard.
 #' @param t1 Lower bound of the analysis time interval.
 #' @param t2 Upper bound of the analysis time interval.
-#' @param piecewiseSurvivalTime A vector that specifies the time intervals for
-#' the piecewise exponential survival distribution, must start with 0, e.g.,
-#' c(0, 6) breaks the time axis into 2 event intervals: [0, 6) and [6, Inf).
-#' Defaults to 0 for exponential distribution.
-#' @param lambda A vector of hazard rates for the event, one for
-#' each event time interval.
-#' @param gamma The hazard rate for exponential dropout or a vector of hazard
-#' rates for piecewise exponential dropout. Defaults to 0 for no dropout.
+#' @inheritParams param_piecewiseSurvivalTime
+#' @inheritParams param_lambda
+#' @inheritParams param_gamma
 #'
-#' @return A value for the integrated probability of having an event by
-#' an analysis time during an interval with constant hazard for a treatment
+#' @return A value for the integrated probability of having an event
+#' during an interval with constant hazard for a treatment
 #' group with specified piecewise exponential survival and dropout
 #' distributions.
 #'
@@ -265,23 +203,17 @@ hd <- function(j = NA_integer_, t1 = NA_real_, t2 = NA_real_, piecewiseSurvivalT
 
 #' @title Integrated event probability over an interval
 #' @description Obtains the integration of the probability of having an event
-#' by an analysis time during an interval. The specified analysis time
-#' interval can span more than one analysis time interval with constant
-#' hazard.
+#' during an interval. The specified analysis time interval can span more
+#' than one analysis time interval with constant hazard.
 #'
 #' @param t1 Lower bound of the analysis time interval.
 #' @param t2 Upper bound of the analysis time interval.
-#' @param piecewiseSurvivalTime A vector that specifies the time intervals for
-#' the piecewise exponential survival distribution, must start with 0, e.g.,
-#' c(0, 6) breaks the time axis into 2 event intervals: [0, 6) and [6, Inf).
-#' Defaults to 0 for exponential distribution.
-#' @param lambda A vector of hazard rates for the event, one for
-#' each event time interval.
-#' @param gamma The hazard rate for exponential dropout or a vector of hazard
-#' rates for piecewise exponential dropout. Defaults to 0 for no dropout.
+#' @inheritParams param_piecewiseSurvivalTime
+#' @inheritParams param_lambda
+#' @inheritParams param_gamma
 #'
-#' @return A value for the integrated probability of having an event by
-#' an analysis time during an interval for a treatment group with specified
+#' @return A value for the integrated probability of having an event
+#' during an interval for a treatment group with specified
 #' piecewise exponential survival and dropout distributions.
 #'
 #' @keywords internal
@@ -298,42 +230,34 @@ pd <- function(t1 = NA_real_, t2 = NA_real_, piecewiseSurvivalTime = 0L, lambda 
 }
 
 #' @title Number of patients enrolled during an interval and having an event
-#' by a calendar time
+#' by specified calendar times
 #' @description Obtains the number of patients who are enrolled during a
 #' specified enrollment time interval and have an event by the specified
-#' calendar time.
+#' calendar times.
 #'
-#' @param time Calendar times at which to evaluate the number of patients
-#' having an event.
+#' @param time A vector of calendar times at which to calculate the number
+#' of patients having an event.
 #' @param u1 Lower bound of the accrual time interval.
 #' @param u2 Upper bound of the accrual time interval.
-#' @param accrualTime Accrual time intervals, must start with 0, e.g.,
-#' c(0, 3) breaks the time axis into 2 accrual intervals: [0, 3), [3, Inf).
-#' Defaults to 0 for uniform accrual.
-#' @param accrualIntensity A vector of accrual intensities, one for
-#' each accrual time interval.
-#' @param piecewiseSurvivalTime A vector that specifies the time intervals for
-#' the piecewise exponential survival distribution, must start with 0, e.g.,
-#' c(0, 6) breaks the time axis into 2 event intervals: [0, 6) and [6, Inf).
-#' Defaults to 0 for exponential distribution.
-#' @param lambda A vector of hazard rates for the event, one for
-#' each event time interval.
-#' @param gamma The hazard rate for exponential dropout or a vector of hazard
-#' rates for piecewise exponential dropout.
-#' Defaults to 0 for no dropout.
+#' @inheritParams param_accrualTime
+#' @inheritParams param_accrualIntensity
+#' @inheritParams param_piecewiseSurvivalTime
+#' @inheritParams param_lambda
+#' @inheritParams param_gamma
 #'
-#' @return A vector of numbers of patients who are enrolled during a
+#' @return A vector of number of patients who are enrolled during a
 #' specified enrollment time interval and have an event by the specified
 #' calendar times for a given treatment group had the enrollment being
-#' restricted to the treatment group. By definition, we must have time >= u2.
+#' restricted to the treatment group. By definition, we must have
+#' \code{time >= u2}.
 #'
 #' @keywords internal
 #'
 #' @examples
-#' # Piecewise accrual time and intensity, 10 patients per month for the first
-#' # 3 months, and 20 patients per month thereafter. Piecewise exponential
-#' # survival with hazard 0.0533 in the first 6 months, and hazard 0.0309
-#' # thereafter, and 5% dropout by the end of 1 year.
+#' # Piecewise accrual, 10 patients per month for the first 3 months, and
+#' # 20 patients per month thereafter. Piecewise exponential survival with
+#' # hazard 0.0533 in the first 6 months, and hazard 0.0309 thereafter,
+#' # and 5% dropout by the end of 1 year.
 #' ad(time = c(9, 15), u1 = 1, u2 = 8, accrualTime = c(0, 3),
 #'    accrualIntensity = c(10, 20), piecewiseSurvivalTime=c(0, 6),
 #'    lambda = c(0.0533, 0.0309), gamma = -log(1-0.05)/12)
@@ -344,37 +268,22 @@ ad <- function(time = NA_real_, u1 = NA_real_, u2 = NA_real_, accrualTime = 0L, 
 }
 
 #' @title Number of subjects at risk
-#' @description Obtains the number of subjects at risk at a given analysis
-#' time across two treatment groups.
+#' @description Obtains the number of subjects at risk at given analysis
+#' times for each treatment group.
 #'
-#' @param time Analysis times at which to calculate the number of patients at
-#' risk.
-#' @param allocationRatioPlanned Allocation ratio for the active treatment
-#' versus control. Defaults to 1 for equal randomization.
-#' @param accrualTime Accrual time intervals, must start with 0, e.g.,
-#' c(0, 3) breaks the time axis into 2 accrual intervals: [0, 3), [3, Inf).
-#' Defaults to 0 for uniform accrual.
-#' @param accrualIntensity A vector of accrual intensities, one for
-#' each accrual time interval.
-#' @param piecewiseSurvivalTime A vector that specifies the time intervals for
-#' the piecewise exponential survival distribution, must start with 0, e.g.,
-#' c(0, 6) breaks the time axis into 2 event intervals: [0, 6) and [6, Inf).
-#' Defaults to 0 for exponential distribution.
-#' @param lambda1 A vector of hazard rates for the event for the
-#' active treatment group, one for each analysis time interval.
-#' @param lambda2 A vector of hazard rates for the event for the
-#' control group, one for each analysis time interval.
-#' @param gamma1 The hazard rate for exponential dropout or a vector of hazard
-#' rates for piecewise exponential dropout for the active treatment group.
-#' Defaults to 0 for no dropout.
-#' @param gamma2 The hazard rate for exponential dropout or a vector of hazard
-#' rates for piecewise exponential dropout for the control group.
-#' Defaults to 0 for no dropout.
-#' @param accrualDuration Duration of the enrollment period.
-#' @param minFollowupTime Follow-up time for the last enrolled subject.
-#' @param maxFollowupTime Follow-up time for the first enrolled subject.
-#' For fixed followup, maxFollowupTime = minFollowupTime.
-#' For variable followup, maxFollowupTime = accrualDuration + minFollowupTime.
+#' @param time A vector of analysis times at which to calculate the number
+#' of patients at risk.
+#' @inheritParams param_allocationRatioPlanned
+#' @inheritParams param_accrualTime
+#' @inheritParams param_accrualIntensity
+#' @inheritParams param_piecewiseSurvivalTime
+#' @inheritParams param_lambda1
+#' @inheritParams param_lambda2
+#' @inheritParams param_gamma1
+#' @inheritParams param_gamma2
+#' @inheritParams param_accrualDuration
+#' @inheritParams param_minFollowupTime
+#' @inheritParams param_maxFollowupTime
 #'
 #' @return A matrix of the number of patients at risk at the specified
 #' analysis times for each treatment group.
@@ -382,8 +291,8 @@ ad <- function(time = NA_real_, u1 = NA_real_, u2 = NA_real_, accrualTime = 0L, 
 #' @keywords internal
 #'
 #' @examples
-#' # Piecewise accrual time and intensity, piecewise exponential survivals,
-#' # and 5% dropout by the end of 1 year.
+#' # Piecewise accrual, piecewise exponential survivals, and 5% dropout by
+#' # the end of 1 year.
 #' natrisk(time = c(9, 24), allocationRatioPlanned = 1, accrualTime = c(0, 3),
 #'         accrualIntensity = c(10, 20), piecewiseSurvivalTime = c(0, 6),
 #'         lambda1 = c(0.0533, 0.0309), lambda2 = c(0.0533, 0.0533),
@@ -396,37 +305,22 @@ natrisk <- function(time = NA_real_, allocationRatioPlanned = 1, accrualTime = 0
 }
 
 #' @title Number of subjects having an event
-#' @description Obtains the number of subjects having an event by a given
-#' analysis time for each treatment group.
+#' @description Obtains the number of subjects having an event by given
+#' analysis times for each treatment group.
 #'
-#' @param time Analysis times at which to calculate the number of patients
-#' having an event.
-#' @param allocationRatioPlanned Allocation ratio for the active treatment
-#' versus control. Defaults to 1 for equal randomization.
-#' @param accrualTime Accrual time intervals, must start with 0, e.g.,
-#' c(0, 3) breaks the time axis into 2 accrual intervals: [0, 3), [3, Inf).
-#' Defaults to 0 for uniform accrual.
-#' @param accrualIntensity A vector of accrual intensities, one for
-#' each accrual time interval.
-#' @param piecewiseSurvivalTime A vector that specifies the time intervals for
-#' the piecewise exponential survival distribution, must start with 0, e.g.,
-#' c(0, 6) breaks the time axis into 2 event intervals: [0, 6) and [6, Inf).
-#' Defaults to 0 for exponential distribution.
-#' @param lambda1 A vector of hazard rates for the event for the
-#' active treatment group, one for each analysis time interval.
-#' @param lambda2 A vector of hazard rates for the event for the
-#' control group, one for each analysis time interval.
-#' @param gamma1 The hazard rate for exponential dropout or a vector of hazard
-#' rates for piecewise exponential dropout for the active treatment group.
-#' Defaults to 0 for no dropout.
-#' @param gamma2 The hazard rate for exponential dropout or a vector of hazard
-#' rates for piecewise exponential dropout for the control group.
-#' Defaults to 0 for no dropout.
-#' @param accrualDuration Duration of the enrollment period.
-#' @param minFollowupTime Follow-up time for the last enrolled subject.
-#' @param maxFollowupTime Follow-up time for the first enrolled subject.
-#' For fixed followup, maxFollowupTime = minFollowupTime.
-#' For variable followup, maxFollowupTime = accrualDuration + minFollowupTime.
+#' @param time A vector of analysis times at which to calculate the number
+#' of patients having an event.
+#' @inheritParams param_allocationRatioPlanned
+#' @inheritParams param_accrualTime
+#' @inheritParams param_accrualIntensity
+#' @inheritParams param_piecewiseSurvivalTime
+#' @inheritParams param_lambda1
+#' @inheritParams param_lambda2
+#' @inheritParams param_gamma1
+#' @inheritParams param_gamma2
+#' @inheritParams param_accrualDuration
+#' @inheritParams param_minFollowupTime
+#' @inheritParams param_maxFollowupTime
 #'
 #' @return A matrix of the number of patients having an event at the specified
 #' analysis times for each treatment group.
@@ -434,8 +328,8 @@ natrisk <- function(time = NA_real_, allocationRatioPlanned = 1, accrualTime = 0
 #' @keywords internal
 #'
 #' @examples
-#' # Piecewise accrual time and intensity, piecewise exponential survivals,
-#' # and 5% dropout by the end of 1 year.
+#' # Piecewise accrual, piecewise exponential survivals, and 5% dropout by
+#' # the end of 1 year.
 #' nevent(time = c(9, 24), allocationRatioPlanned = 1, accrualTime = c(0, 3),
 #'        accrualIntensity = c(10, 20), piecewiseSurvivalTime = c(0, 6),
 #'        lambda1 = c(0.0533, 0.0309), lambda2 = c(0.0533, 0.0533),
@@ -448,37 +342,22 @@ nevent <- function(time = NA_real_, allocationRatioPlanned = 1, accrualTime = 0L
 }
 
 #' @title Number of subjects having an event by calendar time
-#' @description Obtains the number of subjects having an event by a given
-#' calendar time for each treatment group.
+#' @description Obtains the number of subjects having an event by given
+#' calendar times for each treatment group.
 #'
-#' @param time Calendar times at which to calculate the number of patients
-#' having an event.
-#' @param allocationRatioPlanned Allocation ratio for the active treatment
-#' versus control. Defaults to 1 for equal randomization.
-#' @param accrualTime Accrual time intervals, must start with 0, e.g.,
-#' c(0, 3) breaks the time axis into 2 accrual intervals: [0, 3), [3, Inf).
-#' Defaults to 0 for uniform accrual.
-#' @param accrualIntensity A vector of accrual intensities, one for
-#' each accrual time interval.
-#' @param piecewiseSurvivalTime A vector that specifies the time intervals for
-#' the piecewise exponential survival distribution, must start with 0, e.g.,
-#' c(0, 6) breaks the time axis into 2 event intervals: [0, 6) and [6, Inf).
-#' Defaults to 0 for exponential distribution.
-#' @param lambda1 A vector of hazard rates for the event for the
-#' active treatment group, one for each analysis time interval.
-#' @param lambda2 A vector of hazard rates for the event for the
-#' control group, one for each analysis time interval.
-#' @param gamma1 The hazard rate for exponential dropout or a vector of hazard
-#' rates for piecewise exponential dropout for the active treatment group.
-#' Defaults to 0 for no dropout.
-#' @param gamma2 The hazard rate for exponential dropout or a vector of hazard
-#' rates for piecewise exponential dropout for the control group.
-#' Defaults to 0 for no dropout.
-#' @param accrualDuration Duration of the enrollment period.
-#' @param minFollowupTime Follow-up time for the last enrolled subject.
-#' @param maxFollowupTime Follow-up time for the first enrolled subject.
-#' For fixed followup, maxFollowupTime = minFollowupTime.
-#' For variable followup, maxFollowupTime = accrualDuration + minFollowupTime.
+#' @param time A vector of calendar times at which to calculate the number
+#' of patients having an event.
+#' @inheritParams param_allocationRatioPlanned
+#' @inheritParams param_accrualTime
+#' @inheritParams param_accrualIntensity
+#' @inheritParams param_piecewiseSurvivalTime
+#' @inheritParams param_lambda1
+#' @inheritParams param_lambda2
+#' @inheritParams param_gamma1
+#' @inheritParams param_gamma2
+#' @inheritParams param_accrualDuration
+#' @inheritParams param_minFollowupTime
+#' @inheritParams param_maxFollowupTime
 #'
 #' @return A matrix of the number of patients having an event at the specified
 #' calendar times for each treatment group.
@@ -486,8 +365,8 @@ nevent <- function(time = NA_real_, allocationRatioPlanned = 1, accrualTime = 0L
 #' @keywords internal
 #'
 #' @examples
-#' # Piecewise accrual time and intensity, piecewise exponential survivals,
-#' # and 5% dropout by the end of 1 year.
+#' # Piecewise accrual, piecewise exponential survivals, and 5% dropout by
+#' # the end of 1 year.
 #' nevent2(time = c(9, 24), allocationRatioPlanned = 1, accrualTime = c(0, 3),
 #'         accrualIntensity = c(10, 20), piecewiseSurvivalTime = c(0, 6),
 #'         lambda1 = c(0.0533, 0.0309), lambda2 = c(0.0533, 0.0533),
@@ -501,55 +380,38 @@ nevent2 <- function(time = NA_real_, allocationRatioPlanned = 1, accrualTime = 0
 
 #' @title Number of subjects having an event and log-rank statistics
 #' @description Obtains the number of subjects having an event in each
-#' treatment group, the mean and variance of the weighted log-rank score
+#' treatment group, the mean and variance of weighted log-rank test score
 #' statistic at given calendar times.
 #'
-#' @param time A numeric vector of calendar times.
-#' @param allocationRatioPlanned Allocation ratio for the active treatment
-#' versus control. Defaults to 1 for equal randomization.
-#' @param accrualTime Accrual time intervals, must start with 0, e.g.,
-#' c(0, 3) breaks the time axis into 2 accrual intervals: [0, 3), [3, Inf).
-#' Defaults to 0 for uniform accrual.
-#' @param accrualIntensity A vector of accrual intensities, one for
-#' each accrual time interval.
-#' @param piecewiseSurvivalTime A vector that specifies the time intervals for
-#' the piecewise exponential survival distribution, must start with 0, e.g.,
-#' c(0, 6) breaks the time axis into 2 event intervals: [0, 6) and [6, Inf).
-#' Defaults to 0 for exponential distribution.
-#' @param stratumFraction A vector of stratum fractions.
-#' Defaults to 1 for no stratification.
-#' @param lambda1 A vector of hazard rates for the event for the
-#' active treatment group, one for each analysis time interval, by stratum.
-#' @param lambda2 A vector of hazard rates for the event for the
-#' control group, one for each analysis time interval, by stratum.
-#' @param gamma1 The hazard rate for exponential dropout or a vector of hazard
-#' rates for piecewise exponential dropout for the active treatment group.
-#' Defaults to 0 for no dropout. Defaults to 0 for no dropout.
-#' @param gamma2 The hazard rate for exponential dropout or a vector of hazard
-#' rates for piecewise exponential dropout for the control group.
-#' Defaults to 0 for no dropout.
-#' @param accrualDuration Duration of the enrollment period.
-#' @param followupTime Follow-up time for the last enrolled subject.
-#' @param fixedFollowup Whether a fixed follow-up design is used.
-#' Defaults to 0 for variable follow-up.
+#' @param time A vector of calendar times at which to calculate the number
+#'   of events and the mean and variance of log-rank test score statistic.
+#' @inheritParams param_allocationRatioPlanned
+#' @inheritParams param_accrualTime
+#' @inheritParams param_accrualIntensity
+#' @inheritParams param_piecewiseSurvivalTime
+#' @inheritParams param_stratumFraction
+#' @inheritParams param_lambda1_stratified
+#' @inheritParams param_lambda2_stratified
+#' @inheritParams param_gamma1
+#' @inheritParams param_gamma2
+#' @inheritParams param_accrualDuration
+#' @inheritParams param_followupTime
+#' @inheritParams param_fixedFollowup
+#' @inheritParams param_rho1
+#' @inheritParams param_rho2
+#' @inheritParams param_numSubintervals
 #' @param predictEventOnly Whether to predict the number of events only.
-#' Defaults to 0 for obtaining log-rank test statistic mean and variance.
-#' @param rho1 First parameter of the Fleming-Harrington family of weighted
-#' log-rank test. Defaults to 0 for conventional log-rank test.
-#' @param rho2 Second parameter of the Fleming-Harrington family of weighted
-#' log-rank test. Defaults to 0 for conventional log-rank test.
-#' @param numSubintervals Number of sub-intervals to approximate the mean
-#' and variance of the weighted log-rank score statistic.
-#' Defaults to 300. Specify a larger number for better approximation.
+#'   Defaults to 0 for obtaining log-rank test score statistic mean
+#'   and variance.
 #'
 #' @return A data frame of the number of patients enrolled, the number of
 #' patients having an event overall and in each treatment group, the mean and
-#' variance of the weighted log-rank score statistic at the specified calendar
-#' times in each stratum.
+#' variance of weighted log-rank test score statistic at the specified
+#' calendar times by stratum.
 #'
 #' @examples
-#' # Piecewise accrual time and intensity, piecewise exponential survivals,
-#' # and 5% dropout by the end of 1 year.
+#' # Piecewise accrual, piecewise exponential survivals, and 5% dropout by
+#' # the end of 1 year.
 #' lrstat(time = c(22, 40), allocationRatioPlanned = 1,
 #'        accrualTime = seq(0, 9),
 #'        accrualIntensity = c(26/9*seq(1, 9), 26),
@@ -563,51 +425,36 @@ nevent2 <- function(time = NA_real_, allocationRatioPlanned = 1, accrualTime = 0
 #'        followupTime = 18, fixedFollowup = FALSE)
 #'
 #' @export
-lrstat <- function(time = NA_real_, allocationRatioPlanned = 1, accrualTime = 0L, accrualIntensity = NA_real_, piecewiseSurvivalTime = 0L, stratumFraction = 1L, lambda1 = NA_real_, lambda2 = NA_real_, gamma1 = 0L, gamma2 = 0L, accrualDuration = NA_real_, followupTime = NA_real_, fixedFollowup = 0L, predictEventOnly = 0L, rho1 = 0, rho2 = 0, numSubintervals = 300L) {
-    .Call(`_lrstat_lrstat`, time, allocationRatioPlanned, accrualTime, accrualIntensity, piecewiseSurvivalTime, stratumFraction, lambda1, lambda2, gamma1, gamma2, accrualDuration, followupTime, fixedFollowup, predictEventOnly, rho1, rho2, numSubintervals)
+lrstat <- function(time = NA_real_, allocationRatioPlanned = 1, accrualTime = 0L, accrualIntensity = NA_real_, piecewiseSurvivalTime = 0L, stratumFraction = 1L, lambda1 = NA_real_, lambda2 = NA_real_, gamma1 = 0L, gamma2 = 0L, accrualDuration = NA_real_, followupTime = NA_real_, fixedFollowup = 0L, rho1 = 0, rho2 = 0, numSubintervals = 300L, predictEventOnly = 0L) {
+    .Call(`_lrstat_lrstat`, time, allocationRatioPlanned, accrualTime, accrualIntensity, piecewiseSurvivalTime, stratumFraction, lambda1, lambda2, gamma1, gamma2, accrualDuration, followupTime, fixedFollowup, rho1, rho2, numSubintervals, predictEventOnly)
 }
 
-#' @title Calendar time for targeted number of events
-#' @description Obtains the calendar time to reach the targeted number of
+#' @title Calendar times for target number of events
+#' @description Obtains the calendar times to reach the target number of
 #' subjects having an event.
 #'
-#' @param nevents A vector of targeted numbers of events.
-#' @param allocationRatioPlanned Allocation ratio for the active treatment
-#' versus control. Defaults to 1 for equal randomization.
-#' @param accrualTime Accrual time intervals, must start with 0, e.g.,
-#' c(0, 3) breaks the time axis into 2 accrual intervals: [0, 3), [3, Inf).
-#' Defaults to 0 for uniform accrual.
-#' @param accrualIntensity A vector of accrual intensities, one for
-#' each accrual time interval.
-#' @param piecewiseSurvivalTime A vector that specifies the time intervals for
-#' the piecewise exponential survival distribution, must start with 0, e.g.,
-#' c(0, 6) breaks the time axis into 2 event intervals: [0, 6) and [6, Inf).
-#' Defaults to 0 for exponential distribution.
-#' @param stratumFraction A vector of stratum fractions.
-#' Defaults to 1 for no stratification.
-#' @param lambda1 A vector of hazard rates for the event for the
-#' active treatment group, one for each analysis time interval, by stratum.
-#' @param lambda2 A vector of hazard rates for the event for the
-#' control group, one for each analysis time interval, by stratum.
-#' @param gamma1 The hazard rate for exponential dropout or a vector of hazard
-#' rates for piecewise exponential dropout for the active treatment group.
-#' Defaults to 0 for no dropout.
-#' @param gamma2 The hazard rate for exponential dropout or a vector of hazard
-#' rates for piecewise exponential dropout for the control group.
-#' Defaults to 0 for no dropout.
-#' @param accrualDuration Duration of the enrollment period.
-#' @param followupTime Follow-up time for the last enrolled subject.
-#' @param fixedFollowup Whether a fixed follow-up design is used.
-#' Defaults to 0 for variable follow-up.
+#' @param nevents A vector of target number of events.
+#' @inheritParams param_allocationRatioPlanned
+#' @inheritParams param_accrualTime
+#' @inheritParams param_accrualIntensity
+#' @inheritParams param_piecewiseSurvivalTime
+#' @inheritParams param_stratumFraction
+#' @inheritParams param_lambda1_stratified
+#' @inheritParams param_lambda2_stratified
+#' @inheritParams param_gamma1
+#' @inheritParams param_gamma2
+#' @inheritParams param_accrualDuration
+#' @inheritParams param_followupTime
+#' @inheritParams param_fixedFollowup
 #'
-#' @return A vector of calendar times expected to yield the targeted
-#' numbers of events.
+#' @return A vector of calendar times expected to yield the target
+#' number of events.
 #'
 #' @examples
-#' # Piecewise accrual time and intensity, piecewise exponential survivals,
-#' # and 5% dropout by the end of 1 year.
+#' # Piecewise accrual, piecewise exponential survivals, and 5% dropout by
+#' # the end of 1 year.
 #' caltime(nevents = c(24, 80), allocationRatioPlanned = 1,
-#'         accrualTime = seq(0,9),
+#'         accrualTime = seq(0, 9),
 #'         accrualIntensity = c(26/9*seq(1, 9), 26),
 #'         piecewiseSurvivalTime = c(0, 6),
 #'         stratumFraction = c(0.2, 0.8),
@@ -629,22 +476,26 @@ caltime <- function(nevents = NA_real_, allocationRatioPlanned = 1, accrualTime 
 #'
 #' @param b Upper boundaries on the z-test statistic scale.
 #' @param a Lower boundaries on the z-test statistic scale. Defaults to
-#' c(rep(-Inf, kMax-1), b[kMax]) if left unspecified, where kMax = length(b).
-#' @param theta Stagewise parameter of interest, e.g., -U/V for weighted
-#' log-rank test, where U is the mean and V is the variance of the weighted
-#' log-rank test statistic at each stage. For proportional hazards and
-#' conventional log-rank test, can use the scalar input, theta = -log(HR).
-#' @param I Stagewise cumulative information, e.g., V for weighted
-#' log-rank test, where V is the variance of the weighted log-rank test
-#' statistic at each stage. For conventional log-rank test, information can
-#' be approximated by phi*(1-phi)*d, where phi is the
-#' allocation ratio, and d is the number of events at each stage.
+#' \code{c(rep(-Inf, kMax-1), b[kMax])} if left unspecified, where
+#' \code{kMax = length(b)}.
+#' @param theta Stagewise parameter of interest, e.g., \code{-U/V} for
+#' weighted log-rank test, where \code{U} is the mean and \code{V} is
+#' the variance of the weighted log-rank test score statistic at each stage.
+#' For proportional hazards and conventional log-rank test, use the
+#' scalar input, \code{theta = -log(HR)}.
+#' @param I Stagewise cumulative information, e.g., \code{V}, the variance
+#' of the weighted log-rank test score statistic at each stage. For
+#' conventional log-rank test, information can be approximated by
+#' \code{phi*(1-phi)*D}, where \code{phi} is the probability of being
+#' allocated to the active arm, and \code{D} is the total number of events at
+#' each stage.
 #' @param r Integer value controlling grid for numerical integration as in
 #' Jennison and Turnbull (2000). Defaults to 18. Specify a larger number
 #' for greater accuracy.
 #'
 #' @return A list of stagewise exit probabilities: one vector for efficacy
-#' stopping probabilities, and one vector for futility stopping probabilities.
+#' stopping probabilities, and the other vector for futility stopping
+#' probabilities.
 #'
 #' @examples
 #' exitprob(b = c(3.471, 2.454, 2.004), theta = -log(0.6),
@@ -659,48 +510,25 @@ exitprob <- function(b = NA_real_, a = NA_real_, theta = NA_real_, I = NA_real_,
 #' @description Estimates the power, stopping probabilities, and expected
 #' sample size in a two-group survival design.
 #'
-#' @param kMax The maximum number of stages.
-#' @param informationRates The information rates fixed prior to the trial.
-#' Defaults to (1:kMax)/kMax if left unspecified.
-#' @param criticalValues Upper boundaries on the z-test statistic scale
-#' for stopping for efficacy.
-#' @param futilityBounds Lower boundaries on the z-test statistic scale
-#' for stopping for futility at stages 1, ..., kMax-1. Defaults to
-#' rep(-Inf, kMax-1) if left unspecified.
-#' @param allocationRatioPlanned Allocation ratio for the active treatment
-#' versus control. Defaults to 1 for equal randomization.
-#' @param accrualTime Accrual time intervals, must start with 0, e.g.,
-#' c(0, 3) breaks the time axis into 2 accrual intervals: [0, 3), [3, Inf).
-#' Defaults to 0 for uniform accrual.
-#' @param accrualIntensity A vector of accrual intensities, one for
-#' each accrual time interval.
-#' @param piecewiseSurvivalTime A vector that specifies the time intervals for
-#' the piecewise exponential survival distribution, must start with 0, e.g.,
-#' c(0, 6) breaks the time axis into 2 event intervals: [0, 6) and [6, Inf).
-#' Defaults to 0 for exponential distribution.
-#' @param stratumFraction A vector of stratum fractions.
-#' Defaults to 1 for no stratification.
-#' @param lambda1 A vector of hazard rates for the event for the
-#' active treatment group, one for each analysis time interval, by stratum.
-#' @param lambda2 A vector of hazard rates for the event for the
-#' control group, one for each analysis time interval, by stratum.
-#' @param gamma1 The hazard rate for exponential dropout or a vector of hazard
-#' rates for piecewise exponential dropout for the active treatment group.
-#' Defaults to 0 for no dropout.
-#' @param gamma2 The hazard rate for exponential dropout or a vector of hazard
-#' rates for piecewise exponential dropout for the control group.
-#' Defaults to 0 for no dropout.
-#' @param accrualDuration Duration of the enrollment period.
-#' @param followupTime Follow-up time for the last enrolled subject.
-#' @param fixedFollowup Whether a fixed follow-up design is used.
-#' Defaults to 0 for variable follow-up.
-#' @param rho1 First parameter of the Fleming-Harrington family of weighted
-#' log-rank test. Defaults to 0 for conventional log-rank test.
-#' @param rho2 Second parameter of the Fleming-Harrington family of weighted
-#' log-rank test. Defaults to 0 for conventional log-rank test.
-#' @param numSubintervals Number of sub-intervals to approximate the mean
-#' and variance of the weighted log-rank score statistic.
-#' Defaults to 300. Specify a larger number for better approximation.
+#' @inheritParams param_kMax
+#' @inheritParams param_informationRates
+#' @inheritParams param_criticalValues
+#' @inheritParams param_futilityBounds
+#' @inheritParams param_allocationRatioPlanned
+#' @inheritParams param_accrualTime
+#' @inheritParams param_accrualIntensity
+#' @inheritParams param_piecewiseSurvivalTime
+#' @inheritParams param_stratumFraction
+#' @inheritParams param_lambda1_stratified
+#' @inheritParams param_lambda2_stratified
+#' @inheritParams param_gamma1
+#' @inheritParams param_gamma2
+#' @inheritParams param_accrualDuration
+#' @inheritParams param_followupTime
+#' @inheritParams param_fixedFollowup
+#' @inheritParams param_rho1
+#' @inheritParams param_rho2
+#' @inheritParams param_numSubintervals
 #'
 #' @return A list of the overall and stagewise rejection probabilities, the
 #' futility stoppig probabilities, the overall and stagewise expected number
@@ -708,8 +536,8 @@ exitprob <- function(b = NA_real_, a = NA_real_, theta = NA_real_, I = NA_real_,
 #' follow-up durations, and whether a fixed follow-up is used.
 #'
 #' @examples
-#' # Piecewise accrual time and intensity, piecewise exponential survivals,
-#' # and 5% dropout by the end of 1 year.
+#' # Piecewise accrual, piecewise exponential survivals, and 5% dropout by
+#' # the end of 1 year.
 #'
 #' lrpower(kMax = 2, informationRates = c(0.8, 1),
 #'         criticalValues = c(2.250, 2.025),
@@ -734,50 +562,27 @@ lrpower <- function(kMax = NA_integer_, informationRates = NA_real_, criticalVal
 #' accrual duration in a two-group survival design.
 #'
 #' @param beta Type II error. Defaults to 0.2.
-#' @param kMax The maximum number of stages.
-#' @param informationRates The information rates fixed prior to the trial.
-#' Defaults to (1:kMax)/kMax if left unspecified.
-#' @param criticalValues Upper boundaries on the z-test statistic scale
-#' for stopping for efficacy.
-#' @param futilityBounds Lower boundaries on the z-test statistic scale
-#' for stopping for futility at stages 1, ..., kMax-1. Defaults to
-#' rep(-Inf, kMax-1) if left unspecified.
-#' @param allocationRatioPlanned Allocation ratio for the active treatment
-#' versus control. Defaults to 1 for equal randomization.
-#' @param accrualTime Accrual time intervals, must start with 0, e.g.,
-#' c(0, 3) breaks the time axis into 2 accrual intervals: [0, 3), [3, Inf).
-#' Defaults to 0 for uniform accrual.
-#' @param accrualIntensity A vector of accrual intensities, one for
-#' each accrual time interval.
-#' @param piecewiseSurvivalTime A vector that specifies the time intervals for
-#' the piecewise exponential survival distribution, must start with 0, e.g.,
-#' c(0, 6) breaks the time axis into 2 event intervals: [0, 6) and [6, Inf).
-#' Defaults to 0 for exponential distribution.
-#' @param stratumFraction A vector of stratum fractions.
-#' Defaults to 1 for no stratification.
-#' @param lambda1 A vector of hazard rates for the event for the
-#' active treatment group, one for each analysis time interval, by stratum.
-#' @param lambda2 A vector of hazard rates for the event for the
-#' control group, one for each analysis time interval, by stratum.
-#' @param gamma1 The hazard rate for exponential dropout or a vector of hazard
-#' rates for piecewise exponential dropout for the active treatment group.
-#' Defaults to 0 for no dropout.
-#' @param gamma2 The hazard rate for exponential dropout or a vector of hazard
-#' rates for piecewise exponential dropout for the control group.
-#' Defaults to 0 for no dropout.
-#' @param accrualDuration Duration of the enrollment period.
-#' @param followupTime Follow-up time for the last enrolled subject.
-#' @param fixedFollowup Whether a fixed follow-up design is used.
-#' Defaults to 0 for variable follow-up.
-#' @param rho1 First parameter of the Fleming-Harrington family of weighted
-#' log-rank test. Defaults to 0 for conventional log-rank test.
-#' @param rho2 Second parameter of the Fleming-Harrington family of weighted
-#' log-rank test. Defaults to 0 for conventional log-rank test.
-#' @param numSubintervals Number of sub-intervals to approximate the mean
-#' and variance of the weighted log-rank score statistic.
-#' Defaults to 300. Specify a larger number for better approximation.
+#' @inheritParams param_kMax
+#' @inheritParams param_informationRates
+#' @inheritParams param_criticalValues
+#' @inheritParams param_futilityBounds
+#' @inheritParams param_allocationRatioPlanned
+#' @inheritParams param_accrualTime
+#' @inheritParams param_accrualIntensity
+#' @inheritParams param_piecewiseSurvivalTime
+#' @inheritParams param_stratumFraction
+#' @inheritParams param_lambda1_stratified
+#' @inheritParams param_lambda2_stratified
+#' @inheritParams param_gamma1
+#' @inheritParams param_gamma2
+#' @inheritParams param_accrualDuration
+#' @inheritParams param_followupTime
+#' @inheritParams param_fixedFollowup
+#' @inheritParams param_rho1
+#' @inheritParams param_rho2
+#' @inheritParams param_numSubintervals
 #' @param interval The interval to search for the solution of
-#' accrualDuration or followupDuration. Defaults to c(0.001, 240).
+#' accrualDuration or followupDuration. Defaults to \code{c(0.001, 240)}.
 #' Adjustment may be needed for non-monotone relationship with study power.
 #'
 #' @return A list of the overall and stagewise rejection probabilities,  the
@@ -786,10 +591,10 @@ lrpower <- function(kMax = NA_integer_, informationRates = NA_real_, criticalVal
 #' accrual and follow-up durations, and whether a fixed follow-up is used.
 #'
 #' @examples
-#' # Piecewise accrual time and intensity, piecewise exponential survivals,
-#' # and 5% dropout by the end of 1 year.
+#' # Piecewise accrual, piecewise exponential survivals, and 5% dropout by
+#' # the end of 1 year.
 #'
-#' # Example 1: Obtain accrual duration given power and follow-up duration
+#' # Example 1: Obtains accrual duration given power and follow-up duration
 #' lrsamplesize(beta = 0.2, kMax = 2,
 #'              informationRates = c(0.8, 1),
 #'              criticalValues = c(2.250, 2.025),
@@ -804,7 +609,7 @@ lrpower <- function(kMax = NA_integer_, informationRates = NA_real_, criticalVal
 #'              accrualDuration = NA,
 #'              followupTime = 18, fixedFollowup = FALSE)
 #'
-#' # Example 2: Obtain follow-up duration given power and accrual duration
+#' # Example 2: Obtains follow-up duration given power and accrual duration
 #' lrsamplesize(beta = 0.2, kMax = 2,
 #'              informationRates = c(0.8, 1),
 #'              criticalValues = c(2.250, 2.025),
@@ -857,15 +662,17 @@ stl_sort <- function(x) {
 }
 
 #' @title Find interval numbers of indices
-#' @description The implementation of findInterval() in R from Advanced R by
-#' Hadley Wickham. Given a vector of non-decreasing breakpoints in breaks,
+#' @description The implementation of \code{findInterval()} in R from Advanced
+#' R by Hadley Wickham. Given a vector of non-decreasing breakpoints in v,
 #' find the interval containing each element of x; i.e., if
-#' i <- findInterval2(x,v), for each index j in x, v[i[j]] ≤ x[j] < v[i[j] + 1]
-#' where v[0] := -Inf, v[N+1] := +Inf, and N <- length(v).
+#' \code{i <- findInterval2(x,v)}, for each index \code{j} in \code{x},
+#' v[i[j]] ≤ x[j] < v[i[j] + 1]
+#' where v[0] := -Inf, v[N+1] := +Inf, and \code{N = length(v)}.
 #'
 #' @param x The numeric vector of interest.
-#' @param breaks The vector of break points.
-#' @return A vector of length(x) with values in 0:N where N <- length(breaks).
+#' @param v The vector of break points.
+#' @return A vector of \code{length(x)} with values in \code{0:N} where
+#'   \code{N = length(v)}.
 #'
 #' @keywords internal
 #'
@@ -875,7 +682,7 @@ stl_sort <- function(x) {
 #' cbind(x, findInterval2(x, v))
 #'
 #' @export
-findInterval2 <- function(x, breaks) {
-    .Call(`_lrstat_findInterval2`, x, breaks)
+findInterval2 <- function(x, v) {
+    .Call(`_lrstat_findInterval2`, x, v)
 }
 

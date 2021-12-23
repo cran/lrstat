@@ -18,31 +18,33 @@ lrstat(
   accrualDuration = NA_real_,
   followupTime = NA_real_,
   fixedFollowup = 0L,
-  predictEventOnly = 0L,
   rho1 = 0,
   rho2 = 0,
-  numSubintervals = 300L
+  numSubintervals = 300L,
+  predictEventOnly = 0L
 )
 }
 \arguments{
-\item{time}{A numeric vector of calendar times.}
+\item{time}{A vector of calendar times at which to calculate the number
+of events and the mean and variance of log-rank test score statistic.}
 
 \item{allocationRatioPlanned}{Allocation ratio for the active treatment
 versus control. Defaults to 1 for equal randomization.}
 
 \item{accrualTime}{Accrual time intervals, must start with 0, e.g.,
-c(0, 3) breaks the time axis into 2 accrual intervals: [0, 3), [3, Inf).
-Defaults to 0 for uniform accrual.}
+\code{c(0, 3)} breaks the time axis into 2 accrual intervals:
+[0, 3) and [3, Inf).}
 
 \item{accrualIntensity}{A vector of accrual intensities, one for
 each accrual time interval.}
 
 \item{piecewiseSurvivalTime}{A vector that specifies the time intervals for
 the piecewise exponential survival distribution, must start with 0, e.g.,
-c(0, 6) breaks the time axis into 2 event intervals: [0, 6) and [6, Inf).
+\code{c(0, 6)} breaks the time axis into 2 event intervals:
+[0, 6) and [6, Inf).
 Defaults to 0 for exponential distribution.}
 
-\item{stratumFraction}{A vector of stratum fractions.
+\item{stratumFraction}{A vector of stratum fractions that sum to 1.
 Defaults to 1 for no stratification.}
 
 \item{lambda1}{A vector of hazard rates for the event for the
@@ -53,7 +55,7 @@ control group, one for each analysis time interval, by stratum.}
 
 \item{gamma1}{The hazard rate for exponential dropout or a vector of hazard
 rates for piecewise exponential dropout for the active treatment group.
-Defaults to 0 for no dropout. Defaults to 0 for no dropout.}
+Defaults to 0 for no dropout.}
 
 \item{gamma2}{The hazard rate for exponential dropout or a vector of hazard
 rates for piecewise exponential dropout for the control group.
@@ -66,9 +68,6 @@ Defaults to 0 for no dropout.}
 \item{fixedFollowup}{Whether a fixed follow-up design is used.
 Defaults to 0 for variable follow-up.}
 
-\item{predictEventOnly}{Whether to predict the number of events only.
-Defaults to 0 for obtaining log-rank test statistic mean and variance.}
-
 \item{rho1}{First parameter of the Fleming-Harrington family of weighted
 log-rank test. Defaults to 0 for conventional log-rank test.}
 
@@ -76,23 +75,27 @@ log-rank test. Defaults to 0 for conventional log-rank test.}
 log-rank test. Defaults to 0 for conventional log-rank test.}
 
 \item{numSubintervals}{Number of sub-intervals to approximate the mean
-and variance of the weighted log-rank score statistic.
+and variance of the weighted log-rank test score statistic.
 Defaults to 300. Specify a larger number for better approximation.}
+
+\item{predictEventOnly}{Whether to predict the number of events only.
+Defaults to 0 for obtaining log-rank test score statistic mean
+and variance.}
 }
 \value{
 A data frame of the number of patients enrolled, the number of
 patients having an event overall and in each treatment group, the mean and
-variance of the weighted log-rank score statistic at the specified calendar
-times in each stratum.
+variance of weighted log-rank test score statistic at the specified
+calendar times by stratum.
 }
 \description{
 Obtains the number of subjects having an event in each
-treatment group, the mean and variance of the weighted log-rank score
+treatment group, the mean and variance of weighted log-rank test score
 statistic at given calendar times.
 }
 \examples{
-# Piecewise accrual time and intensity, piecewise exponential survivals,
-# and 5\% dropout by the end of 1 year.
+# Piecewise accrual, piecewise exponential survivals, and 5\% dropout by
+# the end of 1 year.
 lrstat(time = c(22, 40), allocationRatioPlanned = 1,
        accrualTime = seq(0, 9),
        accrualIntensity = c(26/9*seq(1, 9), 26),

@@ -13,7 +13,7 @@ vignette: >
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-This R Markdown document illustrates the sample size calculation for a fixed follow-up design, in which the treatment allocation is 3:1 and the hazard ratio is 0.3. This is a case for which neither the Schoenfeld method nor the Lakatos method provides an accurate sample size estimate, and simulation tools are needed to obtain a more accurate result. First we load the packages:  
+This R Markdown document illustrates the sample size calculation for a fixed follow-up design, in which the treatment allocation is 3:1 and the hazard ratio is 0.3. This is a case for which neither the Schoenfeld method nor the Lakatos method provides an accurate sample size estimate, and simulation tools are needed to obtain a more accurate result. First we load the lrstat package:  
 ```{r}
 library(lrstat)
 ```
