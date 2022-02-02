@@ -7,19 +7,27 @@
 lrpower(
   kMax = NA_integer_,
   informationRates = NA_real_,
+  efficacyStopping = NA_integer_,
+  futilityStopping = NA_integer_,
   criticalValues = NA_real_,
+  alpha = 0.025,
+  typeAlphaSpending = "sfOF",
+  parameterAlphaSpending = NA_real_,
+  userAlphaSpending = NA_real_,
   futilityBounds = NA_real_,
+  typeBetaSpending = "none",
+  parameterBetaSpending = NA_real_,
   allocationRatioPlanned = 1,
   accrualTime = 0L,
-  accrualIntensity = NA_real_,
+  accrualIntensity = 20L,
   piecewiseSurvivalTime = 0L,
   stratumFraction = 1L,
-  lambda1 = NA_real_,
-  lambda2 = NA_real_,
+  lambda1 = 0.0309,
+  lambda2 = 0.0533,
   gamma1 = 0L,
   gamma2 = 0L,
-  accrualDuration = NA_real_,
-  followupTime = NA_real_,
+  accrualDuration = 11.6,
+  followupTime = 18,
   fixedFollowup = 0L,
   rho1 = 0,
   rho2 = 0,
@@ -29,15 +37,47 @@ lrpower(
 \arguments{
 \item{kMax}{The maximum number of stages.}
 
-\item{informationRates}{The information rates fixed prior to the trial.
-Defaults to \code{(1:kMax) / kMax} if left unspecified.}
+\item{informationRates}{The information rates in terms of number of events.
+Fixed prior to the trial. Defaults to \code{(1:kMax) / kMax} if left
+unspecified.}
+
+\item{efficacyStopping}{Indicators of whether efficacy stopping is allowed
+at each stage. Defaults to true if left unspecified.}
+
+\item{futilityStopping}{Indicators of whether futility stopping is allowed
+at each stage. Defaults to true if left unspecified.}
 
 \item{criticalValues}{Upper boundaries on the z-test statistic scale
 for stopping for efficacy.}
 
+\item{alpha}{The significance level. Defaults to 0.025.}
+
+\item{typeAlphaSpending}{The type of alpha spending. One of the following:
+"OF" for O'Brien-Fleming boundaries, "P" for Pocock boundaries,
+"WT" for Wang & Tsiatis boundaries, "sfOF" for O'Brien-Fleming type
+spending function, "sfP" for Pocock type spending function,
+"sfKD" for Kim & DeMets spending function, "sfHSD" for Hwang,
+Shi & DeCani spending function, "user" for user defined spending,
+and "none" for no early efficacy stopping. Defaults to "sfOF".}
+
+\item{parameterAlphaSpending}{The parameter value for the alpha spending.
+Corresponds to Delta for "WT", rho for "sfKD", and gamma for "sfHSD".}
+
+\item{userAlphaSpending}{The user defined alpha spending. Cumulative alpha
+spent up to each stage.}
+
 \item{futilityBounds}{Lower boundaries on the z-test statistic scale
 for stopping for futility at stages 1, ..., kMax-1. Defaults to
 \code{rep(-Inf, kMax-1)} if left unspecified.}
+
+\item{typeBetaSpending}{The type of beta spending. One of the following:
+"sfOF" for O'Brien-Fleming type spending function, "sfP" for Pocock type
+spending function, "sfKD" for Kim & DeMets spending function,
+"sfHSD" for Hwang, Shi & DeCani spending function, and "none" for no
+early futility stopping. Defaults to "none".}
+
+\item{parameterBetaSpending}{The parameter value for the beta spending.
+Corresponds to rho for "sfKD", and gamma for "sfHSD".}
 
 \item{allocationRatioPlanned}{Allocation ratio for the active treatment
 versus control. Defaults to 1 for equal randomization.}
@@ -91,7 +131,7 @@ Defaults to 300. Specify a larger number for better approximation.}
 }
 \value{
 A list of the overall and stagewise rejection probabilities, the
-futility stoppig probabilities, the overall and stagewise expected number
+futility stopping probabilities, the overall and stagewise expected number
 of events, number of patients, and analysis time, the input accrual and
 follow-up durations, and whether a fixed follow-up is used.
 }
@@ -104,15 +144,15 @@ sample size in a two-group survival design.
 # the end of 1 year.
 
 lrpower(kMax = 2, informationRates = c(0.8, 1),
-        criticalValues = c(2.250, 2.025),
-        allocationRatioPlanned = 1, accrualTime = seq(0, 9),
-        accrualIntensity = c(26/9*seq(1, 9), 26),
-        piecewiseSurvivalTime = c(0, 6),
-        stratumFraction = c(0.2, 0.8),
-        lambda1 = c(0.0533, 0.0309, 1.5*0.0533, 1.5*0.0309),
-        lambda2 = c(0.0533, 0.0533, 1.5*0.0533, 1.5*0.0533),
-        gamma1 = -log(1-0.05)/12,
-        gamma2 = -log(1-0.05)/12, accrualDuration = 22,
-        followupTime = 18, fixedFollowup = FALSE)
+    alpha = 0.025, typeAlphaSpending = "sfOF",
+    allocationRatioPlanned = 1, accrualTime = seq(0, 9),
+    accrualIntensity = c(26/9*seq(1, 9), 26),
+    piecewiseSurvivalTime = c(0, 6),
+    stratumFraction = c(0.2, 0.8),
+    lambda1 = c(0.0533, 0.0309, 1.5*0.0533, 1.5*0.0309),
+    lambda2 = c(0.0533, 0.0533, 1.5*0.0533, 1.5*0.0533),
+    gamma1 = -log(1-0.05)/12,
+    gamma2 = -log(1-0.05)/12, accrualDuration = 22,
+    followupTime = 18, fixedFollowup = FALSE)
 
 }

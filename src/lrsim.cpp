@@ -75,7 +75,11 @@ double qtpwexp(const double probability = NA_REAL,
 //' trials based on log-rank test.
 //'
 //' @inheritParams param_kMax
-//' @inheritParams param_informationRates
+//' @param informationTime Information time in terms of variance of
+//'   weighted log-rank test score statistic. Same as informationRates
+//'   in terms of number of events for unweighted log-rank test.
+//'   Fixed prior to the trial. Defaults to \code{(1:kMax) / kMax} if
+//'   left unspecified.
 //' @inheritParams param_criticalValues
 //' @inheritParams param_futilityBounds
 //' @param allocation1 Number of subjects in the active treatment group in
@@ -104,13 +108,13 @@ double qtpwexp(const double probability = NA_REAL,
 //' @param seed The seed to reproduce the simulation results.
 //' The computer clock will be used if left unspecified,
 //'
-//' @return A list of S3 class lrsim with 3 components: sumstat is a list of
+//' @return A list of S3 class lrsim with 3 components: overview is a list of
 //' the operating characteristics of the design, sumdata is a data frame for
 //' the summary data for each iteration, and rawdata is a data frame for
 //' selected raw data if maxNumberOfRawDatasetsPerStage is a positive integer.
 //'
 //' @examples
-//' sim = lrsim(kMax = 2, informationRates = c(0.5, 1),
+//' sim = lrsim(kMax = 2, informationTime = c(0.5, 1),
 //'             criticalValues = c(2.797, 1.977),
 //'             accrualIntensity = 11,
 //'             lambda1 = 0.018, lambda2 = 0.030,
@@ -132,7 +136,7 @@ double qtpwexp(const double probability = NA_REAL,
 //' @export
 // [[Rcpp::export]]
 List lrsim(const int kMax = NA_INTEGER,
-           NumericVector informationRates = NA_REAL,
+           NumericVector informationTime = NA_REAL,
            const NumericVector& criticalValues = NA_REAL,
            NumericVector futilityBounds = NA_REAL,
            const int allocation1 = 1,
@@ -157,26 +161,158 @@ List lrsim(const int kMax = NA_INTEGER,
 
   int i, iter, j, j1, j2, k, h, nsub;
   int nstrata = stratumFraction.size() ;
+  int nintervals = piecewiseSurvivalTime.size();
   double u, enrollt;
 
   // b1 and b2 are the available slots for the two treatments in a block
   IntegerVector b1(nstrata);
   IntegerVector b2(nstrata);
 
-  // set default parameter values
-  if (any(is_na(informationRates))) {
-    IntegerVector tem = seq_len(kMax);
-    informationRates = as<NumericVector>(tem)/(kMax+0.0);
+  if (R_isnancpp(kMax)) {
+    stop("kMax must be provided");
+  } else if (kMax <= 0) {
+    stop("kMax must be a positive integer");
   }
 
+  // set default parameter values
+  if (is_false(any(is_na(informationTime)))) {
+    if (informationTime.size() != kMax) {
+      stop("Invalid length for informationTime");
+    } else if (informationTime[0] <= 0) {
+      stop("Elements of informationTime must be positive");
+    } else if (kMax > 1 && is_true(any(diff(informationTime) <= 0))) {
+      stop("Elements of informationTime must be increasing");
+    } else if (informationTime[kMax-1] != 1) {
+      stop("informationTime must end with 1");
+    }
+  } else {
+    IntegerVector tem = seq_len(kMax);
+    informationTime = as<NumericVector>(tem)/(kMax+0.0);
+  }
+
+
+  if (is_true(any(is_na(criticalValues)))) {
+    stop("criticalValues must be provided");
+  } else if (criticalValues.size() != kMax) {
+    stop("Invalid length for criticalValues");
+  }
+
+
   if (kMax > 1) {
-    if (any(is_na(futilityBounds))) {
+    if (is_true(any(is_na(futilityBounds)))) {
       futilityBounds = rep(R_NegInf, kMax-1);
     }
   }
 
+  if (is_false(any(is_na(criticalValues))) &&
+      is_false(any(is_na(futilityBounds)))) {
+    for (int i=0; i<kMax-1; i++) {
+      if (futilityBounds[i] > criticalValues[i]) {
+        stop("futilityBounds must lie below criticalValues");
+      }
+    }
+  }
 
-  NumericVector t = informationRates;
+  if (allocation1 <= 0) {
+    stop("allocation1 must be positive");
+  }
+
+  if (allocation2 <= 0) {
+    stop("allocation2 must be positive");
+  }
+
+  if (accrualTime[0] != 0) {
+    stop("accrualTime must start with 0");
+  } else if (kMax > 1 && is_true(any(diff(accrualTime) <= 0))) {
+    stop("accrualTime should be increasing");
+  }
+
+  if (accrualTime.size() != accrualIntensity.size()) {
+    stop("accrualTime must have the same length as accrualIntensity");
+  }
+
+  if (is_true(any(accrualIntensity < 0))) {
+    stop("accrualIntensity must be non-negative");
+  }
+
+  if (piecewiseSurvivalTime[0] != 0) {
+    stop("piecewiseSurvivalTime must start with 0");
+  } else if (kMax > 1 && is_true(any(diff(piecewiseSurvivalTime) <= 0))) {
+    stop("piecewiseSurvivalTime should be increasing");
+  }
+
+  if (is_true(any(stratumFraction <= 0))) {
+    stop("stratumFraction must be positive");
+  } else if (sum(stratumFraction) != 1) {
+    stop("stratumFraction must sum to 1");
+  }
+
+
+  if (nintervals*nstrata != lambda1.size()) {
+    stop("piecewiseSurvivalTime must have the same length as lambda1");
+  }
+
+  if (nintervals*nstrata != lambda2.size()) {
+    stop("piecewiseSurvivalTime must have the same length as lambda2");
+  }
+
+  if (gamma1.size() != 1 && gamma1.size() != nintervals) {
+    stop("gamma1 must be a scalar or have the same length as lambda1");
+  }
+
+  if (gamma2.size() != 1 && gamma2.size() != nintervals) {
+    stop("gamma2 must be a scalar or have the same length as lambda2");
+  }
+
+  if (is_true(any(lambda1 < 0))) {
+    stop("lambda1 must be non-negative");
+  }
+
+  if (is_true(any(lambda2 < 0))) {
+    stop("lambda2 must be non-negative");
+  }
+
+
+  if (is_true(any(gamma1 < 0))) {
+    stop("gamma1 must be non-negative");
+  }
+
+  if (is_true(any(gamma2 < 0))) {
+    stop("gamma2 must be non-negative");
+  }
+
+  if (R_isnancpp(accrualDuration)) {
+    stop("accrualDuration must be provided");
+  } else if (accrualDuration <= 0) {
+    stop("accrualDuration must be positive");
+  }
+
+  if (fixedFollowup) {
+    if (R_isnancpp(followupTime)) {
+      stop("followupTime must be provided for fixed follow-up");
+    } else if (followupTime <= 0) {
+      stop("followupTime must be positive for fixed follow-up");
+    }
+  }
+
+
+  if (plannedEvents[0] <= 0) {
+    stop("Elements of plannedEvents must be positive");
+  } else if (plannedEvents.size() > 1 &&
+    is_true(any(diff(plannedEvents) <= 0))) {
+    stop("Elements of plannedEvents must be increasing");
+  }
+
+  if (maxNumberOfIterations <= 0) {
+    stop("maxNumberOfIterations must be positive");
+  }
+
+  if (maxNumberOfRawDatasetsPerStage  < 0) {
+    stop("maxNumberOfRawDatasetsPerStage must be non-negative");
+  }
+
+
+  NumericVector t = informationTime;
 
   NumericVector w(kMax);
   for (k=0; k<kMax; k++) {
@@ -210,7 +346,6 @@ List lrsim(const int kMax = NA_INTEGER,
 
   NumericVector cumStratumFraction = cumsum(stratumFraction);
 
-  int nintervals = piecewiseSurvivalTime.size();
   NumericVector lam1(nintervals), lam2(nintervals);
 
   int nevents, nstages;
@@ -275,8 +410,6 @@ List lrsim(const int kMax = NA_INTEGER,
   LogicalVector futilityPerStagey = LogicalVector(nrow2, NA_LOGICAL);
 
 
-  DataFrame rawdata, sumdata;
-  List sumstat, result;
 
   int index1=0, index2=0;
   double time;
@@ -682,6 +815,8 @@ List lrsim(const int kMax = NA_INTEGER,
     }
   }
 
+  NumericVector cpu = cumsum(pRejectPerStage);
+  NumericVector cpl = cumsum(pFutilityPerStage);
 
   double pOverallReject = sum(pRejectPerStage);
 
@@ -710,38 +845,42 @@ List lrsim(const int kMax = NA_INTEGER,
   expectedNumberOfSubjects /= maxNumberOfIterations;
   expectedStudyDuration /= maxNumberOfIterations;
 
-  sumstat = List::create(_["overallReject"]=pOverallReject,
-                         _["rejectPerStage"]=pRejectPerStage,
-                         _["futilityPerStage"]=pFutilityPerStage,
-                         _["eventsPerStage"]=nEventsPerStage,
-                         _["numberOfSubjects"]=nSubjectsPerStage,
-                         _["analysisTime"]=analysisTimePerStage,
-                         _["expectedNumberOfEvents"]=expectedNumberOfEvents,
-                         _["expectedNumberOfSubjects"]=expectedNumberOfSubjects,
-                         _["expectedStudyDuration"]=expectedStudyDuration);
+  List overview = List::create(
+    _["rejectPerStage"]=pRejectPerStage,
+    _["futilityPerStage"]=pFutilityPerStage,
+    _["cumulativeRejection"]=cpu,
+    _["cumulativeFutility"]=cpl,
+    _["numberOfEvents"]=nEventsPerStage,
+    _["numberOfSubjects"]=nSubjectsPerStage,
+    _["analysisTime"]=analysisTimePerStage,
+    _["overallReject"]=pOverallReject,
+    _["expectedNumberOfEvents"]=expectedNumberOfEvents,
+    _["expectedNumberOfSubjects"]=expectedNumberOfSubjects,
+    _["expectedStudyDuration"]=expectedStudyDuration);
 
 
 
   // simulation datasets
+  DataFrame sumdata = DataFrame::create(
+    _["iterationNumber"]=iterationNumbery,
+    _["stageNumber"]=stageNumbery,
+    _["analysisTime"]=analysisTimey,
+    _["accruals1"]=accruals1y,
+    _["accruals2"]=accruals2y,
+    _["totalAccruals"]=totalAccrualsy,
+    _["events1"]=events1y,
+    _["events2"]=events2y,
+    _["totalEvents"]=totalEventsy,
+    _["uscore"]=uscorey,
+    _["vscore"]=vscorey,
+    _["logRankStatistic"]=logRankStatisticy,
+    _["hazardRatioEstimateLR"]=hazardRatioEstimateLRy,
+    _["zStatisticCHW"]=zStatisticCHWy,
+    _["rejectPerStage"]=rejectPerStagey,
+    _["futilityPerStage"]=futilityPerStagey);
 
-  sumdata = DataFrame::create(_["iterationNumber"]=iterationNumbery,
-                              _["stageNumber"]=stageNumbery,
-                              _["analysisTime"]=analysisTimey,
-                              _["accruals1"]=accruals1y,
-                              _["accruals2"]=accruals2y,
-                              _["totalAccruals"]=totalAccrualsy,
-                              _["events1"]=events1y,
-                              _["events2"]=events2y,
-                              _["totalEvents"]=totalEventsy,
-                              _["uscore"]=uscorey,
-                              _["vscore"]=vscorey,
-                              _["logRankStatistic"]=logRankStatisticy,
-                              _["hazardRatioEstimateLR"]=hazardRatioEstimateLRy,
-                              _["zStatisticCHW"]=zStatisticCHWy,
-                              _["rejectPerStage"]=rejectPerStagey,
-                              _["futilityPerStage"]=futilityPerStagey);
 
-
+  List result;
 
   if (maxNumberOfRawDatasetsPerStage > 0) {
     LogicalVector sub1 = !is_na(iterationNumberx);
@@ -758,24 +897,25 @@ List lrsim(const int kMax = NA_INTEGER,
     eventx = eventx[sub1];
     dropoutEventx = dropoutEventx[sub1];
 
-    rawdata = DataFrame::create(_["iterationNumber"]=iterationNumberx,
-                                _["stopStage"]=stopStagex,
-                                _["subjectId"]=subjectIdx,
-                                _["arrivalTime"]=arrivalTimex,
-                                _["stratum"]=stratumx,
-                                _["treatmentGroup"]=treatmentGroupx,
-                                _["survivalTime"]=survivalTimex,
-                                _["dropoutTime"]=dropoutTimex,
-                                _["observationTime"]=observationTimex,
-                                _["timeUnderObservation"]=timeUnderObservationx,
-                                _["event"]=eventx,
-                                _["dropoutEvent"]=dropoutEventx);
+    DataFrame rawdata = DataFrame::create(
+      _["iterationNumber"]=iterationNumberx,
+      _["stopStage"]=stopStagex,
+      _["subjectId"]=subjectIdx,
+      _["arrivalTime"]=arrivalTimex,
+      _["stratum"]=stratumx,
+      _["treatmentGroup"]=treatmentGroupx,
+      _["survivalTime"]=survivalTimex,
+      _["dropoutTime"]=dropoutTimex,
+      _["observationTime"]=observationTimex,
+      _["timeUnderObservation"]=timeUnderObservationx,
+      _["event"]=eventx,
+      _["dropoutEvent"]=dropoutEventx);
 
-    result = List::create(_["sumstat"]=sumstat,
+    result = List::create(_["overview"]=overview,
                           _["sumdata"]=sumdata,
                           _["rawdata"]=rawdata);
   } else {
-    result = List::create(_["sumstat"]=sumstat,
+    result = List::create(_["overview"]=overview,
                           _["sumdata"]=sumdata);
   }
 

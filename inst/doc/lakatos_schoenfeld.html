@@ -158,26 +158,22 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">lrpower</span>(<span class="at">kMax =</span> <span class="dv">1</span>, <span class="at">criticalValues =</span> <span class="fl">1.96</span>, <span class="at">accrualDuration =</span> <span class="dv">12</span>, </span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>        <span class="at">accrualIntensity =</span> <span class="dv">200</span><span class="sc">/</span><span class="dv">12</span>, <span class="at">lambda1 =</span> <span class="sc">-</span><span class="fu">log</span>(<span class="dv">1</span><span class="fl">-0.2</span>)<span class="sc">/</span><span class="dv">12</span>, </span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>        <span class="at">lambda2 =</span> <span class="sc">-</span><span class="fu">log</span>(<span class="dv">1</span><span class="fl">-0.4</span>)<span class="sc">/</span><span class="dv">12</span>,  <span class="at">followupTime =</span> <span class="fl">1.63</span>)</span></code></pre></div>
-<pre><code>## $overallReject
-## [1] 0.7132092
-## 
-## $numberOfEvents
-## [1] 39.99201
-## 
-## $numberOfSubjects
-## [1] 200
-## 
-## $analysisTime
-## [1] 13.63
-## 
-## $accrualDuration
-## [1] 12
-## 
-## $followupTime
-## [1] 1.63
-## 
-## $fixedFollowup
-## [1] FALSE</code></pre>
+<pre><code>##                         
+## overallReject      0.713
+## alpha              0.025
+## numberOfEvents    39.992
+## numberOfSubjects 200.000
+## studyDuration     13.630
+## accrualDuration   12.000
+## followupTime       1.630
+## fixedFollowup      0.000
+## rho1               0.000
+## rho2               0.000
+## efficacyBounds     1.960
+## efficacyHR         0.537
+## efficacyP          0.025
+## information        9.959
+## logRankHR          0.450</code></pre>
 <p>Therefore, the power is estimated to be 71.3%. In comparison, the getPowerSurvival function from rpact reports a power of 74.5%.</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">getPowerSurvival</span>(<span class="at">alpha =</span> <span class="fl">0.025</span>, <span class="at">directionUpper =</span> <span class="cn">FALSE</span>, <span class="at">pi1 =</span> <span class="fl">0.2</span>, </span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>                 <span class="at">pi2 =</span> <span class="fl">0.4</span>, <span class="at">eventTime =</span> <span class="dv">12</span>, <span class="at">accrualTime =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">12</span>),</span>
@@ -240,7 +236,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ##   Maximum number of iterations                 : 10000 
 ##   Seed                                         : 12345 
 ##   Direction upper                              : FALSE 
-##   Planned cumulative overall events            : 40 
+##   Planned cumulative events                    : 40 
 ##   Assumed treatment rate                       : 0.200 
 ##   Assumed control rate                         : 0.400 
 ##   Maximum number of subjects                   : 200 

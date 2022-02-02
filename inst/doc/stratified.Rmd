@@ -43,28 +43,22 @@ lambda2 = 0.009211*exp(log(theta1) %x% log(theta2) %x% log(theta3))
 
 The hazard ratio of the active treatment group versus the control group is 0.4466. 
 
-In addition, we assume an enrollment period of 24 months with a constant enrollment rate of 12 patients per month to enroll 688 patients, and the target number of events of 66. 
+In addition, we assume an enrollment period of 24 months with a constant enrollment rate of 12 patients per month to enroll 288 patients, and the target number of events of 66. 
 
 First we obtain the calendar time at which 66 events will occur. 
 ```{r}
 library(lrstat)
-library(rpact)
 caltime(nevents = 66, accrualDuration = 24, accrualIntensity = 12,
         stratumFraction = stratumFraction, 
         lambda1 = 0.4466*lambda2, lambda2 = lambda2, 
         followupTime = 100)
 ```
 
-Therefore, the follow-up time for the last enrolled patient is 30.92 months. Next we obtain the critical values for the three stage O'Brien-Fleming group sequential design. 
-```{r}
-getDesignGroupSequential(kMax = 3, alpha = 0.025, typeOfDesign = "asOF")
-```
-
-Now we can evaluate the power using the lrpower function. 
+Therefore, the follow-up time for the last enrolled patient is 30.92 months. Now we can evaluate the power using the lrpower function. 
 ```{r}
 lrpower(kMax = 3, 
         informationRates = c(0.333, 0.667, 1), 
-        criticalValues = c(3.710, 2.511, 1.993), 
+        alpha = 0.025, typeAlphaSpending = "sfOF", 
         accrualIntensity = 12,
         stratumFraction = stratumFraction,
         lambda1 = 0.4466*lambda2, 
@@ -76,7 +70,7 @@ lrpower(kMax = 3,
 Therefore, the overall power is about 88% for the stratified analysis. This is confirmed by the simulation below. 
 ```{r}
 lrsim(kMax = 3, 
-      informationRates = c(0.333, 0.667, 1), 
+      informationTime = c(0.333, 0.667, 1), 
       criticalValues = c(3.710, 2.511, 1.993), 
       accrualIntensity = 12,
       stratumFraction = stratumFraction,

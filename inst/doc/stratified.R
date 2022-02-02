@@ -17,19 +17,15 @@ lambda2 = 0.009211*exp(log(theta1) %x% log(theta2) %x% log(theta3))
 
 ## -----------------------------------------------------------------------------
 library(lrstat)
-library(rpact)
 caltime(nevents = 66, accrualDuration = 24, accrualIntensity = 12,
         stratumFraction = stratumFraction, 
         lambda1 = 0.4466*lambda2, lambda2 = lambda2, 
         followupTime = 100)
 
 ## -----------------------------------------------------------------------------
-getDesignGroupSequential(kMax = 3, alpha = 0.025, typeOfDesign = "asOF")
-
-## -----------------------------------------------------------------------------
 lrpower(kMax = 3, 
         informationRates = c(0.333, 0.667, 1), 
-        criticalValues = c(3.710, 2.511, 1.993), 
+        alpha = 0.025, typeAlphaSpending = "sfOF", 
         accrualIntensity = 12,
         stratumFraction = stratumFraction,
         lambda1 = 0.4466*lambda2, 
@@ -39,7 +35,7 @@ lrpower(kMax = 3,
 
 ## -----------------------------------------------------------------------------
 lrsim(kMax = 3, 
-      informationRates = c(0.333, 0.667, 1), 
+      informationTime = c(0.333, 0.667, 1), 
       criticalValues = c(3.710, 2.511, 1.993), 
       accrualIntensity = 12,
       stratumFraction = stratumFraction,

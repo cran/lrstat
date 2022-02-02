@@ -41,6 +41,6 @@ futility stopping.
 }
 \examples{
 exitprob(b = c(3.471, 2.454, 2.004), theta = -log(0.6),
-         I = c(50, 100, 150)/4)
+    I = c(50, 100, 150)/4)
 
 }

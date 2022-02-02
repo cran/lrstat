@@ -27,7 +27,7 @@ lrsim(kMax = 1, criticalValues = 1.96,
       accrualIntensity = 5, 
       lambda2 = 0.95/12, lambda1 = 0.3*0.95/12, 
       gamma1 = -log(1-0.1)/24, gamma2 = -log(1-0.1)/24,
-      accrualDuration = 39.2, followupTime = 25.2, 
+      accrualDuration = 25.2, followupTime = 6.5, 
       fixedFollowup = TRUE,  
       plannedEvents = 26, 
       maxNumberOfIterations = 1000, seed = 12345)

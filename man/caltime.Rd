@@ -17,7 +17,8 @@ caltime(
   gamma2 = 0L,
   accrualDuration = NA_real_,
   followupTime = NA_real_,
-  fixedFollowup = 0L
+  fixedFollowup = 0L,
+  numSubintervals = 300L
 )
 }
 \arguments{
@@ -62,6 +63,10 @@ Defaults to 0 for no dropout.}
 
 \item{fixedFollowup}{Whether a fixed follow-up design is used.
 Defaults to 0 for variable follow-up.}
+
+\item{numSubintervals}{Number of sub-intervals to approximate the mean
+and variance of the weighted log-rank test score statistic.
+Defaults to 300. Specify a larger number for better approximation.}
 }
 \value{
 A vector of calendar times expected to yield the target
@@ -75,15 +80,15 @@ subjects having an event.
 # Piecewise accrual, piecewise exponential survivals, and 5\% dropout by
 # the end of 1 year.
 caltime(nevents = c(24, 80), allocationRatioPlanned = 1,
-        accrualTime = seq(0, 9),
-        accrualIntensity = c(26/9*seq(1, 9), 26),
-        piecewiseSurvivalTime = c(0, 6),
-        stratumFraction = c(0.2, 0.8),
-        lambda1 = c(0.0533, 0.0309, 1.5*0.0533, 1.5*0.0309),
-        lambda2 = c(0.0533, 0.0533, 1.5*0.0533, 1.5*0.0533),
-        gamma1 = -log(1-0.05)/12,
-        gamma2 = -log(1-0.05)/12,
-        accrualDuration = 22,
-        followupTime = 18, fixedFollowup = FALSE)
+    accrualTime = seq(0, 9),
+    accrualIntensity = c(26/9*seq(1, 9), 26),
+    piecewiseSurvivalTime = c(0, 6),
+    stratumFraction = c(0.2, 0.8),
+    lambda1 = c(0.0533, 0.0309, 1.5*0.0533, 1.5*0.0309),
+    lambda2 = c(0.0533, 0.0533, 1.5*0.0533, 1.5*0.0533),
+    gamma1 = -log(1-0.05)/12,
+    gamma2 = -log(1-0.05)/12,
+    accrualDuration = 22,
+    followupTime = 18, fixedFollowup = FALSE)
 
 }

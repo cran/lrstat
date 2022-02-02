@@ -43,7 +43,7 @@ than one analysis time interval with constant hazard.
 # Piecewise exponential survival with hazard 0.0533 in the first 6 months,
 # and hazard 0.0309 thereafter, and 5\% dropout by the end of 1 year.
 pd(t1 = 1, t2 = 8, piecewiseSurvivalTime = c(0, 6),
-   lambda = c(0.0533, 0.0309), gamma = -log(1-0.05)/12)
+ lambda = c(0.0533, 0.0309), gamma = -log(1-0.05)/12)
 
 }
 \keyword{internal}

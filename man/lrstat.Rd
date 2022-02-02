@@ -97,15 +97,15 @@ statistic at given calendar times.
 # Piecewise accrual, piecewise exponential survivals, and 5\% dropout by
 # the end of 1 year.
 lrstat(time = c(22, 40), allocationRatioPlanned = 1,
-       accrualTime = seq(0, 9),
-       accrualIntensity = c(26/9*seq(1, 9), 26),
-       piecewiseSurvivalTime = c(0, 6),
-       stratumFraction = c(0.2, 0.8),
-       lambda1 = c(0.0533, 0.0309, 1.5*0.0533, 1.5*0.0309),
-       lambda2 = c(0.0533, 0.0533, 1.5*0.0533, 1.5*0.0533),
-       gamma1 = -log(1-0.05)/12,
-       gamma2 = -log(1-0.05)/12,
-       accrualDuration = 22,
-       followupTime = 18, fixedFollowup = FALSE)
+   accrualTime = seq(0, 9),
+   accrualIntensity = c(26/9*seq(1, 9), 26),
+   piecewiseSurvivalTime = c(0, 6),
+   stratumFraction = c(0.2, 0.8),
+   lambda1 = c(0.0533, 0.0309, 1.5*0.0533, 1.5*0.0309),
+   lambda2 = c(0.0533, 0.0533, 1.5*0.0533, 1.5*0.0533),
+   gamma1 = -log(1-0.05)/12,
+   gamma2 = -log(1-0.05)/12,
+   accrualDuration = 22,
+   followupTime = 18, fixedFollowup = FALSE)
 
 }

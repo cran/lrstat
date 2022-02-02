@@ -29,7 +29,7 @@ lrstat(time=c(20,25,30,35,38.5), allocationRatioPlanned = 3,
 
 Suppose we run the trial for a target maximum number of 32 events. The trial will stop once 32 events have been observed or the trial is stopped early for futility or efficacy. Due to the fixed follow-up design, there might be situations where a total of 160 patients with each followed-up for 6.5 month do not yield 32 events, in which case, the trial will stop and we can use the Cui, Huang and Wang (CHW) method to account for the maximum information being less than the planned. The simulation below demonstrates that the study has the target power of 90% under the alternative hypothesis.  
 ```{r}
-lrsim(kMax = 3, informationRates = c(0.5, 0.75, 1), 
+lrsim(kMax = 3, informationTime = c(0.5, 0.75, 1), 
       criticalValues = c(Inf, 2.34, 2.012), 
       futilityBounds = c(0.282, -Inf), 
       allocation1 = 3, allocation2 = 1,
@@ -49,7 +49,7 @@ lrsim(kMax = 3, informationRates = c(0.5, 0.75, 1),
 
 The simulation below shows that the probability of futility stopping under the null hypothesis is 62%. 
 ```{r}
-lrsim(kMax = 3, informationRates = c(0.5, 0.75, 1), 
+lrsim(kMax = 3, informationTime = c(0.5, 0.75, 1), 
       criticalValues = c(100, 2.34, 2.012), 
       futilityBounds = c(0.282, -100), 
       allocation1 = 3, allocation2 = 1,

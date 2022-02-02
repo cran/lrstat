@@ -74,10 +74,10 @@ analysis times for each treatment group.
 # Piecewise accrual, piecewise exponential survivals, and 5\% dropout by
 # the end of 1 year.
 nevent(time = c(9, 24), allocationRatioPlanned = 1, accrualTime = c(0, 3),
-       accrualIntensity = c(10, 20), piecewiseSurvivalTime = c(0, 6),
-       lambda1 = c(0.0533, 0.0309), lambda2 = c(0.0533, 0.0533),
-       gamma1 = -log(1-0.05)/12, gamma2 = -log(1-0.05)/12,
-       accrualDuration = 12, minFollowupTime = 18, maxFollowupTime = 30)
+   accrualIntensity = c(10, 20), piecewiseSurvivalTime = c(0, 6),
+   lambda1 = c(0.0533, 0.0309), lambda2 = c(0.0533, 0.0533),
+   gamma1 = -log(1-0.05)/12, gamma2 = -log(1-0.05)/12,
+   accrualDuration = 12, minFollowupTime = 18, maxFollowupTime = 30)
 
 }
 \keyword{internal}

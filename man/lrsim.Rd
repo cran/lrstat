@@ -6,7 +6,7 @@
 \usage{
 lrsim(
   kMax = NA_integer_,
-  informationRates = NA_real_,
+  informationTime = NA_real_,
   criticalValues = NA_real_,
   futilityBounds = NA_real_,
   allocation1 = 1L,
@@ -33,8 +33,11 @@ lrsim(
 \arguments{
 \item{kMax}{The maximum number of stages.}
 
-\item{informationRates}{The information rates fixed prior to the trial.
-Defaults to \code{(1:kMax) / kMax} if left unspecified.}
+\item{informationTime}{Information time in terms of variance of
+weighted log-rank test score statistic. Same as informationRates
+in terms of number of events for unweighted log-rank test.
+Fixed prior to the trial. Defaults to \code{(1:kMax) / kMax} if
+left unspecified.}
 
 \item{criticalValues}{Upper boundaries on the z-test statistic scale
 for stopping for efficacy.}
@@ -105,7 +108,7 @@ to extract. Defaults to 1.}
 The computer clock will be used if left unspecified,}
 }
 \value{
-A list of S3 class lrsim with 3 components: sumstat is a list of
+A list of S3 class lrsim with 3 components: overview is a list of
 the operating characteristics of the design, sumdata is a data frame for
 the summary data for each iteration, and rawdata is a data frame for
 selected raw data if maxNumberOfRawDatasetsPerStage is a positive integer.
@@ -115,7 +118,7 @@ Performs simulation for two-arm group sequential superiority
 trials based on log-rank test.
 }
 \examples{
-sim = lrsim(kMax = 2, informationRates = c(0.5, 1),
+sim = lrsim(kMax = 2, informationTime = c(0.5, 1),
             criticalValues = c(2.797, 1.977),
             accrualIntensity = 11,
             lambda1 = 0.018, lambda2 = 0.030,

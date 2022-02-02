@@ -30,7 +30,11 @@ qtpwexp <- function(probability = NA_real_, piecewiseSurvivalTime = 0L, lambda =
 #' trials based on log-rank test.
 #'
 #' @inheritParams param_kMax
-#' @inheritParams param_informationRates
+#' @param informationTime Information time in terms of variance of
+#'   weighted log-rank test score statistic. Same as informationRates
+#'   in terms of number of events for unweighted log-rank test.
+#'   Fixed prior to the trial. Defaults to \code{(1:kMax) / kMax} if
+#'   left unspecified.
 #' @inheritParams param_criticalValues
 #' @inheritParams param_futilityBounds
 #' @param allocation1 Number of subjects in the active treatment group in
@@ -59,13 +63,13 @@ qtpwexp <- function(probability = NA_real_, piecewiseSurvivalTime = 0L, lambda =
 #' @param seed The seed to reproduce the simulation results.
 #' The computer clock will be used if left unspecified,
 #'
-#' @return A list of S3 class lrsim with 3 components: sumstat is a list of
+#' @return A list of S3 class lrsim with 3 components: overview is a list of
 #' the operating characteristics of the design, sumdata is a data frame for
 #' the summary data for each iteration, and rawdata is a data frame for
 #' selected raw data if maxNumberOfRawDatasetsPerStage is a positive integer.
 #'
 #' @examples
-#' sim = lrsim(kMax = 2, informationRates = c(0.5, 1),
+#' sim = lrsim(kMax = 2, informationTime = c(0.5, 1),
 #'             criticalValues = c(2.797, 1.977),
 #'             accrualIntensity = 11,
 #'             lambda1 = 0.018, lambda2 = 0.030,
@@ -85,8 +89,8 @@ qtpwexp <- function(probability = NA_real_, piecewiseSurvivalTime = 0L, lambda =
 #' head(sim$rawdata)
 #'
 #' @export
-lrsim <- function(kMax = NA_integer_, informationRates = NA_real_, criticalValues = NA_real_, futilityBounds = NA_real_, allocation1 = 1L, allocation2 = 1L, accrualTime = 0L, accrualIntensity = NA_real_, piecewiseSurvivalTime = 0L, stratumFraction = 1L, lambda1 = NA_real_, lambda2 = NA_real_, gamma1 = 0L, gamma2 = 0L, accrualDuration = NA_real_, followupTime = NA_real_, fixedFollowup = 0L, rho1 = 0, rho2 = 0, plannedEvents = NA_integer_, maxNumberOfIterations = 1000L, maxNumberOfRawDatasetsPerStage = 0L, seed = NA_integer_) {
-    .Call(`_lrstat_lrsim`, kMax, informationRates, criticalValues, futilityBounds, allocation1, allocation2, accrualTime, accrualIntensity, piecewiseSurvivalTime, stratumFraction, lambda1, lambda2, gamma1, gamma2, accrualDuration, followupTime, fixedFollowup, rho1, rho2, plannedEvents, maxNumberOfIterations, maxNumberOfRawDatasetsPerStage, seed)
+lrsim <- function(kMax = NA_integer_, informationTime = NA_real_, criticalValues = NA_real_, futilityBounds = NA_real_, allocation1 = 1L, allocation2 = 1L, accrualTime = 0L, accrualIntensity = NA_real_, piecewiseSurvivalTime = 0L, stratumFraction = 1L, lambda1 = NA_real_, lambda2 = NA_real_, gamma1 = 0L, gamma2 = 0L, accrualDuration = NA_real_, followupTime = NA_real_, fixedFollowup = 0L, rho1 = 0, rho2 = 0, plannedEvents = NA_integer_, maxNumberOfIterations = 1000L, maxNumberOfRawDatasetsPerStage = 0L, seed = NA_integer_) {
+    .Call(`_lrstat_lrsim`, kMax, informationTime, criticalValues, futilityBounds, allocation1, allocation2, accrualTime, accrualIntensity, piecewiseSurvivalTime, stratumFraction, lambda1, lambda2, gamma1, gamma2, accrualDuration, followupTime, fixedFollowup, rho1, rho2, plannedEvents, maxNumberOfIterations, maxNumberOfRawDatasetsPerStage, seed)
 }
 
 #' @title Number of enrolled subjects
@@ -105,13 +109,13 @@ lrsim <- function(kMax = NA_integer_, informationRates = NA_real_, criticalValue
 #' @examples
 #' # Example 1: Uniform enrollment with 20 patients per month for 12 months.
 #' accrual(time = 3, accrualTime = 0, accrualIntensity = 20,
-#'         accrualDuration = 12)
+#'     accrualDuration = 12)
 #'
 #' # Example 2: Piecewise accrual, 10 patients per month for the first
 #' # 3 months, and 20 patients per month thereafter. Patient recruitment
 #' # ends at 12 months for the study.
 #' accrual(time = c(2, 9), accrualTime = c(0, 3),
-#'         accrualIntensity = c(10, 20), accrualDuration = 12)
+#'     accrualIntensity = c(10, 20), accrualDuration = 12)
 #'
 #' @export
 accrual <- function(time = NA_real_, accrualTime = 0L, accrualIntensity = NA_real_, accrualDuration = NA_real_) {
@@ -138,7 +142,7 @@ accrual <- function(time = NA_real_, accrualTime = 0L, accrualIntensity = NA_rea
 #' # Piecewise exponential survival with hazard 0.0533 in the first 6 months,
 #' # and hazard 0.0309 thereafter, and 5% dropout by the end of 1 year.
 #' patrisk(time = c(3, 9), piecewiseSurvivalTime = c(0, 6),
-#'         lambda = c(0.0533, 0.0309), gamma = -log(1-0.05)/12)
+#'     lambda = c(0.0533, 0.0309), gamma = -log(1-0.05)/12)
 #'
 #' @export
 patrisk <- function(time = NA_real_, piecewiseSurvivalTime = 0L, lambda = NA_real_, gamma = 0L) {
@@ -165,7 +169,7 @@ patrisk <- function(time = NA_real_, piecewiseSurvivalTime = 0L, lambda = NA_rea
 #' # Piecewise exponential survival with hazard 0.0533 in the first 6 months,
 #' # and hazard 0.0309 thereafter, and 5% dropout by the end of 1 year.
 #' pevent(time = c(3, 9), piecewiseSurvivalTime = c(0, 6),
-#'        lambda = c(0.0533, 0.0309), gamma = -log(1-0.05)/12)
+#'    lambda = c(0.0533, 0.0309), gamma = -log(1-0.05)/12)
 #'
 #' @export
 pevent <- function(time = NA_real_, piecewiseSurvivalTime = 0L, lambda = NA_real_, gamma = 0L) {
@@ -194,7 +198,7 @@ pevent <- function(time = NA_real_, piecewiseSurvivalTime = 0L, lambda = NA_real
 #' # Piecewise exponential survival with hazard 0.0533 in the first 6 months,
 #' # and hazard 0.0309 thereafter, and 5% dropout by the end of 1 year.
 #' hd(j = 1, t1 = 1, t2 = 3, piecewiseSurvivalTime = c(0, 6),
-#'    lambda = c(0.0533, 0.0309), gamma = -log(1-0.05)/12)
+#'  lambda = c(0.0533, 0.0309), gamma = -log(1-0.05)/12)
 #'
 #' @export
 hd <- function(j = NA_integer_, t1 = NA_real_, t2 = NA_real_, piecewiseSurvivalTime = 0L, lambda = NA_real_, gamma = 0L) {
@@ -222,7 +226,7 @@ hd <- function(j = NA_integer_, t1 = NA_real_, t2 = NA_real_, piecewiseSurvivalT
 #' # Piecewise exponential survival with hazard 0.0533 in the first 6 months,
 #' # and hazard 0.0309 thereafter, and 5% dropout by the end of 1 year.
 #' pd(t1 = 1, t2 = 8, piecewiseSurvivalTime = c(0, 6),
-#'    lambda = c(0.0533, 0.0309), gamma = -log(1-0.05)/12)
+#'  lambda = c(0.0533, 0.0309), gamma = -log(1-0.05)/12)
 #'
 #' @export
 pd <- function(t1 = NA_real_, t2 = NA_real_, piecewiseSurvivalTime = 0L, lambda = NA_real_, gamma = 0L) {
@@ -259,8 +263,8 @@ pd <- function(t1 = NA_real_, t2 = NA_real_, piecewiseSurvivalTime = 0L, lambda 
 #' # hazard 0.0533 in the first 6 months, and hazard 0.0309 thereafter,
 #' # and 5% dropout by the end of 1 year.
 #' ad(time = c(9, 15), u1 = 1, u2 = 8, accrualTime = c(0, 3),
-#'    accrualIntensity = c(10, 20), piecewiseSurvivalTime=c(0, 6),
-#'    lambda = c(0.0533, 0.0309), gamma = -log(1-0.05)/12)
+#'  accrualIntensity = c(10, 20), piecewiseSurvivalTime=c(0, 6),
+#'  lambda = c(0.0533, 0.0309), gamma = -log(1-0.05)/12)
 #'
 #' @export
 ad <- function(time = NA_real_, u1 = NA_real_, u2 = NA_real_, accrualTime = 0L, accrualIntensity = NA_real_, piecewiseSurvivalTime = 0L, lambda = NA_real_, gamma = 0L) {
@@ -294,10 +298,10 @@ ad <- function(time = NA_real_, u1 = NA_real_, u2 = NA_real_, accrualTime = 0L, 
 #' # Piecewise accrual, piecewise exponential survivals, and 5% dropout by
 #' # the end of 1 year.
 #' natrisk(time = c(9, 24), allocationRatioPlanned = 1, accrualTime = c(0, 3),
-#'         accrualIntensity = c(10, 20), piecewiseSurvivalTime = c(0, 6),
-#'         lambda1 = c(0.0533, 0.0309), lambda2 = c(0.0533, 0.0533),
-#'         gamma1 = -log(1-0.05)/12, gamma2 = -log(1-0.05)/12,
-#'         accrualDuration = 12, minFollowupTime = 18, maxFollowupTime = 30)
+#'     accrualIntensity = c(10, 20), piecewiseSurvivalTime = c(0, 6),
+#'     lambda1 = c(0.0533, 0.0309), lambda2 = c(0.0533, 0.0533),
+#'     gamma1 = -log(1-0.05)/12, gamma2 = -log(1-0.05)/12,
+#'     accrualDuration = 12, minFollowupTime = 18, maxFollowupTime = 30)
 #'
 #' @export
 natrisk <- function(time = NA_real_, allocationRatioPlanned = 1, accrualTime = 0L, accrualIntensity = NA_real_, piecewiseSurvivalTime = 0L, lambda1 = NA_real_, lambda2 = NA_real_, gamma1 = 0L, gamma2 = 0L, accrualDuration = NA_real_, minFollowupTime = NA_real_, maxFollowupTime = NA_real_) {
@@ -331,10 +335,10 @@ natrisk <- function(time = NA_real_, allocationRatioPlanned = 1, accrualTime = 0
 #' # Piecewise accrual, piecewise exponential survivals, and 5% dropout by
 #' # the end of 1 year.
 #' nevent(time = c(9, 24), allocationRatioPlanned = 1, accrualTime = c(0, 3),
-#'        accrualIntensity = c(10, 20), piecewiseSurvivalTime = c(0, 6),
-#'        lambda1 = c(0.0533, 0.0309), lambda2 = c(0.0533, 0.0533),
-#'        gamma1 = -log(1-0.05)/12, gamma2 = -log(1-0.05)/12,
-#'        accrualDuration = 12, minFollowupTime = 18, maxFollowupTime = 30)
+#'    accrualIntensity = c(10, 20), piecewiseSurvivalTime = c(0, 6),
+#'    lambda1 = c(0.0533, 0.0309), lambda2 = c(0.0533, 0.0533),
+#'    gamma1 = -log(1-0.05)/12, gamma2 = -log(1-0.05)/12,
+#'    accrualDuration = 12, minFollowupTime = 18, maxFollowupTime = 30)
 #'
 #' @export
 nevent <- function(time = NA_real_, allocationRatioPlanned = 1, accrualTime = 0L, accrualIntensity = NA_real_, piecewiseSurvivalTime = 0L, lambda1 = NA_real_, lambda2 = NA_real_, gamma1 = 0L, gamma2 = 0L, accrualDuration = NA_real_, minFollowupTime = NA_real_, maxFollowupTime = NA_real_) {
@@ -368,10 +372,10 @@ nevent <- function(time = NA_real_, allocationRatioPlanned = 1, accrualTime = 0L
 #' # Piecewise accrual, piecewise exponential survivals, and 5% dropout by
 #' # the end of 1 year.
 #' nevent2(time = c(9, 24), allocationRatioPlanned = 1, accrualTime = c(0, 3),
-#'         accrualIntensity = c(10, 20), piecewiseSurvivalTime = c(0, 6),
-#'         lambda1 = c(0.0533, 0.0309), lambda2 = c(0.0533, 0.0533),
-#'         gamma1 = -log(1-0.05)/12, gamma2 = -log(1-0.05)/12,
-#'         accrualDuration = 12, minFollowupTime = 18, maxFollowupTime = 30)
+#'     accrualIntensity = c(10, 20), piecewiseSurvivalTime = c(0, 6),
+#'     lambda1 = c(0.0533, 0.0309), lambda2 = c(0.0533, 0.0533),
+#'     gamma1 = -log(1-0.05)/12, gamma2 = -log(1-0.05)/12,
+#'     accrualDuration = 12, minFollowupTime = 18, maxFollowupTime = 30)
 #'
 #' @export
 nevent2 <- function(time = NA_real_, allocationRatioPlanned = 1, accrualTime = 0L, accrualIntensity = NA_real_, piecewiseSurvivalTime = 0L, lambda1 = NA_real_, lambda2 = NA_real_, gamma1 = 0L, gamma2 = 0L, accrualDuration = NA_real_, minFollowupTime = NA_real_, maxFollowupTime = NA_real_) {
@@ -384,7 +388,7 @@ nevent2 <- function(time = NA_real_, allocationRatioPlanned = 1, accrualTime = 0
 #' statistic at given calendar times.
 #'
 #' @param time A vector of calendar times at which to calculate the number
-#'   of events and the mean and variance of log-rank test score statistic.
+#'  of events and the mean and variance of log-rank test score statistic.
 #' @inheritParams param_allocationRatioPlanned
 #' @inheritParams param_accrualTime
 #' @inheritParams param_accrualIntensity
@@ -401,8 +405,8 @@ nevent2 <- function(time = NA_real_, allocationRatioPlanned = 1, accrualTime = 0
 #' @inheritParams param_rho2
 #' @inheritParams param_numSubintervals
 #' @param predictEventOnly Whether to predict the number of events only.
-#'   Defaults to 0 for obtaining log-rank test score statistic mean
-#'   and variance.
+#'  Defaults to 0 for obtaining log-rank test score statistic mean
+#'  and variance.
 #'
 #' @return A data frame of the number of patients enrolled, the number of
 #' patients having an event overall and in each treatment group, the mean and
@@ -413,16 +417,16 @@ nevent2 <- function(time = NA_real_, allocationRatioPlanned = 1, accrualTime = 0
 #' # Piecewise accrual, piecewise exponential survivals, and 5% dropout by
 #' # the end of 1 year.
 #' lrstat(time = c(22, 40), allocationRatioPlanned = 1,
-#'        accrualTime = seq(0, 9),
-#'        accrualIntensity = c(26/9*seq(1, 9), 26),
-#'        piecewiseSurvivalTime = c(0, 6),
-#'        stratumFraction = c(0.2, 0.8),
-#'        lambda1 = c(0.0533, 0.0309, 1.5*0.0533, 1.5*0.0309),
-#'        lambda2 = c(0.0533, 0.0533, 1.5*0.0533, 1.5*0.0533),
-#'        gamma1 = -log(1-0.05)/12,
-#'        gamma2 = -log(1-0.05)/12,
-#'        accrualDuration = 22,
-#'        followupTime = 18, fixedFollowup = FALSE)
+#'    accrualTime = seq(0, 9),
+#'    accrualIntensity = c(26/9*seq(1, 9), 26),
+#'    piecewiseSurvivalTime = c(0, 6),
+#'    stratumFraction = c(0.2, 0.8),
+#'    lambda1 = c(0.0533, 0.0309, 1.5*0.0533, 1.5*0.0309),
+#'    lambda2 = c(0.0533, 0.0533, 1.5*0.0533, 1.5*0.0533),
+#'    gamma1 = -log(1-0.05)/12,
+#'    gamma2 = -log(1-0.05)/12,
+#'    accrualDuration = 22,
+#'    followupTime = 18, fixedFollowup = FALSE)
 #'
 #' @export
 lrstat <- function(time = NA_real_, allocationRatioPlanned = 1, accrualTime = 0L, accrualIntensity = NA_real_, piecewiseSurvivalTime = 0L, stratumFraction = 1L, lambda1 = NA_real_, lambda2 = NA_real_, gamma1 = 0L, gamma2 = 0L, accrualDuration = NA_real_, followupTime = NA_real_, fixedFollowup = 0L, rho1 = 0, rho2 = 0, numSubintervals = 300L, predictEventOnly = 0L) {
@@ -446,6 +450,7 @@ lrstat <- function(time = NA_real_, allocationRatioPlanned = 1, accrualTime = 0L
 #' @inheritParams param_accrualDuration
 #' @inheritParams param_followupTime
 #' @inheritParams param_fixedFollowup
+#' @inheritParams param_numSubintervals
 #'
 #' @return A vector of calendar times expected to yield the target
 #' number of events.
@@ -454,20 +459,20 @@ lrstat <- function(time = NA_real_, allocationRatioPlanned = 1, accrualTime = 0L
 #' # Piecewise accrual, piecewise exponential survivals, and 5% dropout by
 #' # the end of 1 year.
 #' caltime(nevents = c(24, 80), allocationRatioPlanned = 1,
-#'         accrualTime = seq(0, 9),
-#'         accrualIntensity = c(26/9*seq(1, 9), 26),
-#'         piecewiseSurvivalTime = c(0, 6),
-#'         stratumFraction = c(0.2, 0.8),
-#'         lambda1 = c(0.0533, 0.0309, 1.5*0.0533, 1.5*0.0309),
-#'         lambda2 = c(0.0533, 0.0533, 1.5*0.0533, 1.5*0.0533),
-#'         gamma1 = -log(1-0.05)/12,
-#'         gamma2 = -log(1-0.05)/12,
-#'         accrualDuration = 22,
-#'         followupTime = 18, fixedFollowup = FALSE)
+#'     accrualTime = seq(0, 9),
+#'     accrualIntensity = c(26/9*seq(1, 9), 26),
+#'     piecewiseSurvivalTime = c(0, 6),
+#'     stratumFraction = c(0.2, 0.8),
+#'     lambda1 = c(0.0533, 0.0309, 1.5*0.0533, 1.5*0.0309),
+#'     lambda2 = c(0.0533, 0.0533, 1.5*0.0533, 1.5*0.0533),
+#'     gamma1 = -log(1-0.05)/12,
+#'     gamma2 = -log(1-0.05)/12,
+#'     accrualDuration = 22,
+#'     followupTime = 18, fixedFollowup = FALSE)
 #'
 #' @export
-caltime <- function(nevents = NA_real_, allocationRatioPlanned = 1, accrualTime = 0L, accrualIntensity = NA_real_, piecewiseSurvivalTime = 0L, stratumFraction = 1L, lambda1 = NA_real_, lambda2 = NA_real_, gamma1 = 0L, gamma2 = 0L, accrualDuration = NA_real_, followupTime = NA_real_, fixedFollowup = 0L) {
-    .Call(`_lrstat_caltime`, nevents, allocationRatioPlanned, accrualTime, accrualIntensity, piecewiseSurvivalTime, stratumFraction, lambda1, lambda2, gamma1, gamma2, accrualDuration, followupTime, fixedFollowup)
+caltime <- function(nevents = NA_real_, allocationRatioPlanned = 1, accrualTime = 0L, accrualIntensity = NA_real_, piecewiseSurvivalTime = 0L, stratumFraction = 1L, lambda1 = NA_real_, lambda2 = NA_real_, gamma1 = 0L, gamma2 = 0L, accrualDuration = NA_real_, followupTime = NA_real_, fixedFollowup = 0L, numSubintervals = 300L) {
+    .Call(`_lrstat_caltime`, nevents, allocationRatioPlanned, accrualTime, accrualIntensity, piecewiseSurvivalTime, stratumFraction, lambda1, lambda2, gamma1, gamma2, accrualDuration, followupTime, fixedFollowup, numSubintervals)
 }
 
 #' @title Stagewise exit probabilities
@@ -499,11 +504,45 @@ caltime <- function(nevents = NA_real_, allocationRatioPlanned = 1, accrualTime 
 #'
 #' @examples
 #' exitprob(b = c(3.471, 2.454, 2.004), theta = -log(0.6),
-#'          I = c(50, 100, 150)/4)
+#'     I = c(50, 100, 150)/4)
 #'
 #' @export
 exitprob <- function(b = NA_real_, a = NA_real_, theta = NA_real_, I = NA_real_, r = 18L) {
     .Call(`_lrstat_exitprob`, b, a, theta, I, r)
+}
+
+#' @title Error spending functions
+#' @description Obtains the error spent at the given information fraction
+#' for the specified error spending function.
+#'
+#' @param t Information fraction for the interim look.
+#' @param error Total error to spend.
+#' @param sf Spending function. One of the following: "sfOF" for
+#'  O'Brien-Fleming type spending function, "sfP" for Pocock type spending
+#'  function, "sfKD" for Kim & DeMets spending function, and "sfHSD" for
+#'  Hwang, Shi & DeCani spending function. Defaults to "sfOF".
+#' @param sfpar Parameter for the spending function. Corresponds to rho for
+#'  "sfKD" and gamma for "sfHSD"
+#'
+#' @return A number for the error spent up to the interim look.
+#'
+#' @keywords internal
+#'
+#' @examples
+#' errorSpent(t = 0.5, error = 0.025, sf = "sfOF")
+#' errorSpent(t = 0.5, error = 0.025, sf = "sfHSD", sfpar = -4)
+#'
+#' @export
+errorSpent <- function(t, error, sf = "sfOF", sfpar = NA_real_) {
+    .Call(`_lrstat_errorSpent`, t, error, sf, sfpar)
+}
+
+getCriticalValues <- function(kMax = NA_integer_, informationRates = NA_real_, efficacyStopping = NA_integer_, alpha = 0.025, typeAlphaSpending = "sfOF", parameterAlphaSpending = NA_real_, userAlphaSpending = NA_real_, allocationRatioPlanned = 1, accrualTime = 0L, accrualIntensity = 20L, piecewiseSurvivalTime = 0L, stratumFraction = 1L, lambda2 = 0.0533, gamma1 = 0L, gamma2 = 0L, accrualDuration = 11.6, followupTime = 18, fixedFollowup = 0L, rho1 = 0, rho2 = 0, numSubintervals = 300L) {
+    .Call(`_lrstat_getCriticalValues`, kMax, informationRates, efficacyStopping, alpha, typeAlphaSpending, parameterAlphaSpending, userAlphaSpending, allocationRatioPlanned, accrualTime, accrualIntensity, piecewiseSurvivalTime, stratumFraction, lambda2, gamma1, gamma2, accrualDuration, followupTime, fixedFollowup, rho1, rho2, numSubintervals)
+}
+
+getCumAlphaSpent <- function(kMax = NA_integer_, informationRates = NA_real_, criticalValues = NA_real_, allocationRatioPlanned = 1, accrualTime = 0L, accrualIntensity = 20L, piecewiseSurvivalTime = 0L, stratumFraction = 1L, lambda2 = 0.0533, gamma1 = 0L, gamma2 = 0L, accrualDuration = 11.6, followupTime = 18, fixedFollowup = 0L, rho1 = 0, rho2 = 0, numSubintervals = 300L) {
+    .Call(`_lrstat_getCumAlphaSpent`, kMax, informationRates, criticalValues, allocationRatioPlanned, accrualTime, accrualIntensity, piecewiseSurvivalTime, stratumFraction, lambda2, gamma1, gamma2, accrualDuration, followupTime, fixedFollowup, rho1, rho2, numSubintervals)
 }
 
 #' @title Log-rank test power
@@ -512,8 +551,20 @@ exitprob <- function(b = NA_real_, a = NA_real_, theta = NA_real_, I = NA_real_,
 #'
 #' @inheritParams param_kMax
 #' @inheritParams param_informationRates
+#' @inheritParams param_efficacyStopping
+#' @inheritParams param_futilityStopping
 #' @inheritParams param_criticalValues
+#' @inheritParams param_alpha
+#' @inheritParams param_typeAlphaSpending
+#' @inheritParams param_parameterAlphaSpending
+#' @inheritParams param_userAlphaSpending
 #' @inheritParams param_futilityBounds
+#' @param typeBetaSpending The type of beta spending. One of the following:
+#'  "sfOF" for O'Brien-Fleming type spending function, "sfP" for Pocock type
+#'  spending function, "sfKD" for Kim & DeMets spending function,
+#'  "sfHSD" for Hwang, Shi & DeCani spending function, and "none" for no
+#'  early futility stopping. Defaults to "none".
+#' @inheritParams param_parameterBetaSpending
 #' @inheritParams param_allocationRatioPlanned
 #' @inheritParams param_accrualTime
 #' @inheritParams param_accrualIntensity
@@ -531,7 +582,7 @@ exitprob <- function(b = NA_real_, a = NA_real_, theta = NA_real_, I = NA_real_,
 #' @inheritParams param_numSubintervals
 #'
 #' @return A list of the overall and stagewise rejection probabilities, the
-#' futility stoppig probabilities, the overall and stagewise expected number
+#' futility stopping probabilities, the overall and stagewise expected number
 #' of events, number of patients, and analysis time, the input accrual and
 #' follow-up durations, and whether a fixed follow-up is used.
 #'
@@ -540,20 +591,20 @@ exitprob <- function(b = NA_real_, a = NA_real_, theta = NA_real_, I = NA_real_,
 #' # the end of 1 year.
 #'
 #' lrpower(kMax = 2, informationRates = c(0.8, 1),
-#'         criticalValues = c(2.250, 2.025),
-#'         allocationRatioPlanned = 1, accrualTime = seq(0, 9),
-#'         accrualIntensity = c(26/9*seq(1, 9), 26),
-#'         piecewiseSurvivalTime = c(0, 6),
-#'         stratumFraction = c(0.2, 0.8),
-#'         lambda1 = c(0.0533, 0.0309, 1.5*0.0533, 1.5*0.0309),
-#'         lambda2 = c(0.0533, 0.0533, 1.5*0.0533, 1.5*0.0533),
-#'         gamma1 = -log(1-0.05)/12,
-#'         gamma2 = -log(1-0.05)/12, accrualDuration = 22,
-#'         followupTime = 18, fixedFollowup = FALSE)
+#'     alpha = 0.025, typeAlphaSpending = "sfOF",
+#'     allocationRatioPlanned = 1, accrualTime = seq(0, 9),
+#'     accrualIntensity = c(26/9*seq(1, 9), 26),
+#'     piecewiseSurvivalTime = c(0, 6),
+#'     stratumFraction = c(0.2, 0.8),
+#'     lambda1 = c(0.0533, 0.0309, 1.5*0.0533, 1.5*0.0309),
+#'     lambda2 = c(0.0533, 0.0533, 1.5*0.0533, 1.5*0.0533),
+#'     gamma1 = -log(1-0.05)/12,
+#'     gamma2 = -log(1-0.05)/12, accrualDuration = 22,
+#'     followupTime = 18, fixedFollowup = FALSE)
 #'
 #' @export
-lrpower <- function(kMax = NA_integer_, informationRates = NA_real_, criticalValues = NA_real_, futilityBounds = NA_real_, allocationRatioPlanned = 1, accrualTime = 0L, accrualIntensity = NA_real_, piecewiseSurvivalTime = 0L, stratumFraction = 1L, lambda1 = NA_real_, lambda2 = NA_real_, gamma1 = 0L, gamma2 = 0L, accrualDuration = NA_real_, followupTime = NA_real_, fixedFollowup = 0L, rho1 = 0, rho2 = 0, numSubintervals = 300L) {
-    .Call(`_lrstat_lrpower`, kMax, informationRates, criticalValues, futilityBounds, allocationRatioPlanned, accrualTime, accrualIntensity, piecewiseSurvivalTime, stratumFraction, lambda1, lambda2, gamma1, gamma2, accrualDuration, followupTime, fixedFollowup, rho1, rho2, numSubintervals)
+lrpower <- function(kMax = NA_integer_, informationRates = NA_real_, efficacyStopping = NA_integer_, futilityStopping = NA_integer_, criticalValues = NA_real_, alpha = 0.025, typeAlphaSpending = "sfOF", parameterAlphaSpending = NA_real_, userAlphaSpending = NA_real_, futilityBounds = NA_real_, typeBetaSpending = "none", parameterBetaSpending = NA_real_, allocationRatioPlanned = 1, accrualTime = 0L, accrualIntensity = 20L, piecewiseSurvivalTime = 0L, stratumFraction = 1L, lambda1 = 0.0309, lambda2 = 0.0533, gamma1 = 0L, gamma2 = 0L, accrualDuration = 11.6, followupTime = 18, fixedFollowup = 0L, rho1 = 0, rho2 = 0, numSubintervals = 300L) {
+    .Call(`_lrstat_lrpower`, kMax, informationRates, efficacyStopping, futilityStopping, criticalValues, alpha, typeAlphaSpending, parameterAlphaSpending, userAlphaSpending, futilityBounds, typeBetaSpending, parameterBetaSpending, allocationRatioPlanned, accrualTime, accrualIntensity, piecewiseSurvivalTime, stratumFraction, lambda1, lambda2, gamma1, gamma2, accrualDuration, followupTime, fixedFollowup, rho1, rho2, numSubintervals)
 }
 
 #' @title Log-rank test sample size
@@ -564,8 +615,17 @@ lrpower <- function(kMax = NA_integer_, informationRates = NA_real_, criticalVal
 #' @param beta Type II error. Defaults to 0.2.
 #' @inheritParams param_kMax
 #' @inheritParams param_informationRates
+#' @inheritParams param_efficacyStopping
+#' @inheritParams param_futilityStopping
 #' @inheritParams param_criticalValues
+#' @inheritParams param_alpha
+#' @inheritParams param_typeAlphaSpending
+#' @inheritParams param_parameterAlphaSpending
+#' @inheritParams param_userAlphaSpending
 #' @inheritParams param_futilityBounds
+#' @inheritParams param_typeBetaSpending
+#' @inheritParams param_parameterBetaSpending
+#' @inheritParams param_userBetaSpending
 #' @inheritParams param_allocationRatioPlanned
 #' @inheritParams param_accrualTime
 #' @inheritParams param_accrualIntensity
@@ -585,8 +645,8 @@ lrpower <- function(kMax = NA_integer_, informationRates = NA_real_, criticalVal
 #' accrualDuration or followupDuration. Defaults to \code{c(0.001, 240)}.
 #' Adjustment may be needed for non-monotone relationship with study power.
 #'
-#' @return A list of the overall and stagewise rejection probabilities,  the
-#' futility stoppig probabilities, the overall and stagewise expected number
+#' @return A list of the overall and stagewise rejection probabilities, the
+#' futility stopping probabilities, the overall and stagewise expected number
 #' of events, number of patients, and analysis time, the input or calculated
 #' accrual and follow-up durations, and whether a fixed follow-up is used.
 #'
@@ -596,37 +656,37 @@ lrpower <- function(kMax = NA_integer_, informationRates = NA_real_, criticalVal
 #'
 #' # Example 1: Obtains accrual duration given power and follow-up duration
 #' lrsamplesize(beta = 0.2, kMax = 2,
-#'              informationRates = c(0.8, 1),
-#'              criticalValues = c(2.250, 2.025),
-#'              accrualTime = seq(0, 9),
-#'              accrualIntensity = c(26/9*seq(1, 9), 26),
-#'              piecewiseSurvivalTime = c(0, 6),
-#'              stratumFraction = c(0.2, 0.8),
-#'              lambda1 = c(0.0533, 0.0309, 1.5*0.0533, 1.5*0.0309),
-#'              lambda2 = c(0.0533, 0.0533, 1.5*0.0533, 1.5*0.0533),
-#'              gamma1 = -log(1-0.05)/12,
-#'              gamma2 = -log(1-0.05)/12,
-#'              accrualDuration = NA,
-#'              followupTime = 18, fixedFollowup = FALSE)
+#'       informationRates = c(0.8, 1),
+#'       alpha = 0.025, typeAlphaSpending = "sfOF",
+#'       accrualTime = seq(0, 9),
+#'       accrualIntensity = c(26/9*seq(1, 9), 26),
+#'       piecewiseSurvivalTime = c(0, 6),
+#'       stratumFraction = c(0.2, 0.8),
+#'       lambda1 = c(0.0533, 0.0309, 1.5*0.0533, 1.5*0.0309),
+#'       lambda2 = c(0.0533, 0.0533, 1.5*0.0533, 1.5*0.0533),
+#'       gamma1 = -log(1-0.05)/12,
+#'       gamma2 = -log(1-0.05)/12,
+#'       accrualDuration = NA,
+#'       followupTime = 18, fixedFollowup = FALSE)
 #'
 #' # Example 2: Obtains follow-up duration given power and accrual duration
 #' lrsamplesize(beta = 0.2, kMax = 2,
-#'              informationRates = c(0.8, 1),
-#'              criticalValues = c(2.250, 2.025),
-#'              accrualTime = seq(0, 9),
-#'              accrualIntensity = c(26/9*seq(1, 9), 26),
-#'              piecewiseSurvivalTime = c(0, 6),
-#'              stratumFraction = c(0.2, 0.8),
-#'              lambda1 = c(0.0533, 0.0309, 1.5*0.0533, 1.5*0.0309),
-#'              lambda2 = c(0.0533, 0.0533, 1.5*0.0533, 1.5*0.0533),
-#'              gamma1 = -log(1-0.05)/12,
-#'              gamma2 = -log(1-0.05)/12,
-#'              accrualDuration = 22,
-#'              followupTime = NA, fixedFollowup = FALSE)
+#'       informationRates = c(0.8, 1),
+#'       alpha = 0.025, typeAlphaSpending = "sfOF",
+#'       accrualTime = seq(0, 9),
+#'       accrualIntensity = c(26/9*seq(1, 9), 26),
+#'       piecewiseSurvivalTime = c(0, 6),
+#'       stratumFraction = c(0.2, 0.8),
+#'       lambda1 = c(0.0533, 0.0309, 1.5*0.0533, 1.5*0.0309),
+#'       lambda2 = c(0.0533, 0.0533, 1.5*0.0533, 1.5*0.0533),
+#'       gamma1 = -log(1-0.05)/12,
+#'       gamma2 = -log(1-0.05)/12,
+#'       accrualDuration = 22,
+#'       followupTime = NA, fixedFollowup = FALSE)
 #'
 #' @export
-lrsamplesize <- function(beta = 0.2, kMax = NA_integer_, informationRates = NA_real_, criticalValues = NA_real_, futilityBounds = NA_real_, allocationRatioPlanned = 1, accrualTime = 0L, accrualIntensity = NA_real_, piecewiseSurvivalTime = 0L, stratumFraction = 1L, lambda1 = NA_real_, lambda2 = NA_real_, gamma1 = 0L, gamma2 = 0L, accrualDuration = NA_real_, followupTime = NA_real_, fixedFollowup = 0L, rho1 = 0, rho2 = 0, numSubintervals = 300L, interval = as.numeric( c(0.001, 240))) {
-    .Call(`_lrstat_lrsamplesize`, beta, kMax, informationRates, criticalValues, futilityBounds, allocationRatioPlanned, accrualTime, accrualIntensity, piecewiseSurvivalTime, stratumFraction, lambda1, lambda2, gamma1, gamma2, accrualDuration, followupTime, fixedFollowup, rho1, rho2, numSubintervals, interval)
+lrsamplesize <- function(beta = 0.2, kMax = NA_integer_, informationRates = NA_real_, efficacyStopping = NA_integer_, futilityStopping = NA_integer_, criticalValues = NA_real_, alpha = 0.025, typeAlphaSpending = "sfOF", parameterAlphaSpending = NA_real_, userAlphaSpending = NA_real_, futilityBounds = NA_real_, typeBetaSpending = "none", parameterBetaSpending = NA_real_, userBetaSpending = NA_real_, allocationRatioPlanned = 1, accrualTime = 0L, accrualIntensity = 20L, piecewiseSurvivalTime = 0L, stratumFraction = 1L, lambda1 = 0.0309, lambda2 = 0.0533, gamma1 = 0L, gamma2 = 0L, accrualDuration = NA_real_, followupTime = 18, fixedFollowup = 0L, rho1 = 0, rho2 = 0, numSubintervals = 300L, interval = as.numeric( c(0.001, 240))) {
+    .Call(`_lrstat_lrsamplesize`, beta, kMax, informationRates, efficacyStopping, futilityStopping, criticalValues, alpha, typeAlphaSpending, parameterAlphaSpending, userAlphaSpending, futilityBounds, typeBetaSpending, parameterBetaSpending, userBetaSpending, allocationRatioPlanned, accrualTime, accrualIntensity, piecewiseSurvivalTime, stratumFraction, lambda1, lambda2, gamma1, gamma2, accrualDuration, followupTime, fixedFollowup, rho1, rho2, numSubintervals, interval)
 }
 
 #' @title Set seed

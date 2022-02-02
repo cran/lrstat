@@ -35,12 +35,12 @@ times.
 \examples{
 # Example 1: Uniform enrollment with 20 patients per month for 12 months.
 accrual(time = 3, accrualTime = 0, accrualIntensity = 20,
-        accrualDuration = 12)
+    accrualDuration = 12)
 
 # Example 2: Piecewise accrual, 10 patients per month for the first
 # 3 months, and 20 patients per month thereafter. Patient recruitment
 # ends at 12 months for the study.
 accrual(time = c(2, 9), accrualTime = c(0, 3),
-        accrualIntensity = c(10, 20), accrualDuration = 12)
+    accrualIntensity = c(10, 20), accrualDuration = 12)
 
 }

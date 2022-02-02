@@ -10,28 +10,28 @@
 #'
 #' @export
 print.lrsim <- function(x, ...) {
-  s = x$sumstat
-  k = length(s$eventsPerStage)
+  s = x$overview
+  k = length(s$numberOfEvents)
   if (k>1) {
-    df = t(data.frame(s$eventsPerStage,
-                      s$expectedNumberOfEvents,
-                      s$analysisTime,
-                      s$expectedStudyDuration,
+    df = t(data.frame(s$cumulativeRejection,
+                      s$cumulativeFutility,
+                      s$numberOfEvents,
                       s$numberOfSubjects,
+                      s$analysisTime,
+                      s$overallReject,
+                      s$expectedNumberOfEvents,
                       s$expectedNumberOfSubjects,
-                      s$futilityPerStage,
-                      s$rejectPerStage,
-                      s$overallReject))
-    df[c(2,4,6,9), -1] <- NA # only show overall
+                      s$expectedStudyDuration))
+    df[c(6,7,8,9), -1] <- NA # only show overall
     colnames(df) <- paste("stage", seq_len(ncol(df)), sep=" ")
   } else {
-    df = t(data.frame(s$expectedNumberOfEvents,
-                      s$expectedStudyDuration,
+    df = t(data.frame(s$overallReject,
+                      s$expectedNumberOfEvents,
                       s$expectedNumberOfSubjects,
-                      s$overallReject))
+                      s$expectedStudyDuration))
     colnames(df) <- NA
   }
   rownames(df) <- sub("^[[:alpha:]][[:alnum:]]*.", "", rownames(df))
-  print( df, ..., na.print = "" , quote = FALSE )
+  print( round(df,3), ..., na.print = "" , quote = FALSE )
   invisible(x)
 }

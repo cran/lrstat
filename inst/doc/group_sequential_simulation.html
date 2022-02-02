@@ -158,9 +158,15 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ## 2       1 25.0      125 22.49924 11.55918 10.940058 -5.951438 3.875556
 ## 3       1 30.0      150 27.62603 14.20442 13.421612 -7.304005 4.754316
 ## 4       1 35.0      160 31.95277 16.45992 15.492843 -8.438436 5.487095
-## 5       1 38.5      160 32.81148 16.92953 15.881948 -8.656427 5.624064</code></pre>
+## 5       1 38.5      160 32.81148 16.92953 15.881948 -8.656427 5.624064
+##    logRankZ logRankHR
+## 1 -2.656579 0.2155427
+## 2 -3.023117 0.2153190
+## 3 -3.349786 0.2151781
+## 4 -3.602390 0.2148383
+## 5 -3.650174 0.2145577</code></pre>
 <p>Suppose we run the trial for a target maximum number of 32 events. The trial will stop once 32 events have been observed or the trial is stopped early for futility or efficacy. Due to the fixed follow-up design, there might be situations where a total of 160 patients with each followed-up for 6.5 month do not yield 32 events, in which case, the trial will stop and we can use the Cui, Huang and Wang (CHW) method to account for the maximum information being less than the planned. The simulation below demonstrates that the study has the target power of 90% under the alternative hypothesis.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">lrsim</span>(<span class="at">kMax =</span> <span class="dv">3</span>, <span class="at">informationRates =</span> <span class="fu">c</span>(<span class="fl">0.5</span>, <span class="fl">0.75</span>, <span class="dv">1</span>), </span>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">lrsim</span>(<span class="at">kMax =</span> <span class="dv">3</span>, <span class="at">informationTime =</span> <span class="fu">c</span>(<span class="fl">0.5</span>, <span class="fl">0.75</span>, <span class="dv">1</span>), </span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>      <span class="at">criticalValues =</span> <span class="fu">c</span>(<span class="cn">Inf</span>, <span class="fl">2.34</span>, <span class="fl">2.012</span>), </span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>      <span class="at">futilityBounds =</span> <span class="fu">c</span>(<span class="fl">0.282</span>, <span class="sc">-</span><span class="cn">Inf</span>), </span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>      <span class="at">allocation1 =</span> <span class="dv">3</span>, <span class="at">allocation2 =</span> <span class="dv">1</span>,</span>
@@ -176,18 +182,18 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>      <span class="at">maxNumberOfIterations =</span> <span class="dv">1000</span>, </span>
 <span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>      <span class="at">maxNumberOfRawDatasetsPerStage =</span> <span class="dv">0</span>, </span>
 <span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>      <span class="at">seed =</span> <span class="dv">12345</span>)</span></code></pre></div>
-<pre><code>##                            stage 1   stage 2   stage 3
-## eventsPerStage            16.00000  23.98347  31.41304
-## expectedNumberOfEvents    25.43300                    
-## analysisTime              18.64051  26.58035  33.08031
-## expectedStudyDuration     27.96457                    
-## numberOfSubjects          93.18000 132.36570 159.46522
-## expectedNumberOfSubjects 138.14100                    
-## futilityPerStage           0.03200   0.00300   0.06400
-## rejectPerStage             0.00000   0.73500   0.16600
-## overallReject              0.90100</code></pre>
+<pre><code>##                          stage 1 stage 2 stage 3
+## cumulativeRejection        0.000   0.735   0.901
+## cumulativeFutility         0.032   0.035   0.099
+## numberOfEvents            16.000  23.983  31.413
+## numberOfSubjects          93.180 132.366 159.465
+## analysisTime              18.641  26.580  33.080
+## overallReject              0.901                
+## expectedNumberOfEvents    25.433                
+## expectedNumberOfSubjects 138.141                
+## expectedStudyDuration     27.965</code></pre>
 <p>The simulation below shows that the probability of futility stopping under the null hypothesis is 62%.</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">lrsim</span>(<span class="at">kMax =</span> <span class="dv">3</span>, <span class="at">informationRates =</span> <span class="fu">c</span>(<span class="fl">0.5</span>, <span class="fl">0.75</span>, <span class="dv">1</span>), </span>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">lrsim</span>(<span class="at">kMax =</span> <span class="dv">3</span>, <span class="at">informationTime =</span> <span class="fu">c</span>(<span class="fl">0.5</span>, <span class="fl">0.75</span>, <span class="dv">1</span>), </span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>      <span class="at">criticalValues =</span> <span class="fu">c</span>(<span class="dv">100</span>, <span class="fl">2.34</span>, <span class="fl">2.012</span>), </span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>      <span class="at">futilityBounds =</span> <span class="fu">c</span>(<span class="fl">0.282</span>, <span class="sc">-</span><span class="dv">100</span>), </span>
 <span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>      <span class="at">allocation1 =</span> <span class="dv">3</span>, <span class="at">allocation2 =</span> <span class="dv">1</span>,</span>
@@ -203,16 +209,16 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>      <span class="at">maxNumberOfIterations =</span> <span class="dv">1000</span>, </span>
 <span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>      <span class="at">maxNumberOfRawDatasetsPerStage =</span> <span class="dv">0</span>, </span>
 <span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>      <span class="at">seed =</span> <span class="dv">12345</span>)</span></code></pre></div>
-<pre><code>##                           stage 1  stage 2  stage 3
-## eventsPerStage           16.00000 24.00000 32.00000
-## expectedNumberOfEvents   21.99200                  
-## analysisTime             11.01171 14.93791 18.91921
-## expectedStudyDuration    14.01504                  
-## numberOfSubjects         55.45300 75.56168 95.32880
-## expectedNumberOfSubjects 70.39200                  
-## futilityPerStage          0.61900  0.00000  0.35000
-## rejectPerStage            0.00000  0.01300  0.01800
-## overallReject             0.03100</code></pre>
+<pre><code>##                          stage 1 stage 2 stage 3
+## cumulativeRejection        0.000   0.013   0.031
+## cumulativeFutility         0.619   0.619   0.969
+## numberOfEvents            16.000  24.000  32.000
+## numberOfSubjects          55.453  75.562  95.329
+## analysisTime              11.012  14.938  18.919
+## overallReject              0.031                
+## expectedNumberOfEvents    21.992                
+## expectedNumberOfSubjects  70.392                
+## expectedStudyDuration     14.015</code></pre>
 
 
 

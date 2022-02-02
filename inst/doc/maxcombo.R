@@ -42,7 +42,7 @@ f <- function(u2, u1, sigma, alpha) {
 1 - pmvnorm(upper=c(u1, u2, u2), corr=sigma, mean=mu)
 
 ## -----------------------------------------------------------------------------
-sim1 = lrsim(kMax = 2, informationRates = c(0.5, 1),
+sim1 = lrsim(kMax = 2, informationTime = c(0.5, 1),
              criticalValues = c(Inf, Inf),
              accrualIntensity = 25, accrualDuration = 4,
              piecewiseSurvivalTime = c(0, 1.5),
@@ -52,7 +52,7 @@ sim1 = lrsim(kMax = 2, informationRates = c(0.5, 1),
              maxNumberOfIterations = 1000,
              seed = 314159)
 
-sim2 = lrsim(kMax = 2, informationRates = c(0.5, 1),
+sim2 = lrsim(kMax = 2, informationTime = c(0.5, 1),
              criticalValues = c(Inf, Inf),
              accrualIntensity = 25,
              piecewiseSurvivalTime = c(0, 1.5),

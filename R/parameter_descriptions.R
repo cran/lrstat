@@ -158,11 +158,27 @@ NULL
 NULL
 
 #' Parameter Description: informationRates
-#' @param informationRates The information rates fixed prior to the trial.
-#'   Defaults to \code{(1:kMax) / kMax} if left unspecified.
+#' @param informationRates The information rates in terms of number of events.
+#'   Fixed prior to the trial. Defaults to \code{(1:kMax) / kMax} if left
+#'   unspecified.
 #' @name param_informationRates
 #' @keywords internal
 NULL
+
+#' Parameter Description: efficacyStopping
+#' @param efficacyStopping Indicators of whether efficacy stopping is allowed
+#'   at each stage. Defaults to true if left unspecified.
+#' @name param_efficacyStopping
+#' @keywords internal
+NULL
+
+#' Parameter Description: futilityStopping
+#' @param futilityStopping Indicators of whether futility stopping is allowed
+#'   at each stage. Defaults to true if left unspecified.
+#' @name param_futilityStopping
+#' @keywords internal
+NULL
+
 
 #' Parameter Description: criticalValues
 #' @param criticalValues Upper boundaries on the z-test statistic scale
@@ -171,6 +187,40 @@ NULL
 #' @keywords internal
 NULL
 
+#' Parameter Description: alpha
+#' @param alpha The significance level. Defaults to 0.025.
+#' @name param_alpha
+#' @keywords internal
+NULL
+
+
+#' Parameter Description: typeAlphaSpending
+#' @param typeAlphaSpending The type of alpha spending. One of the following:
+#'   "OF" for O'Brien-Fleming boundaries, "P" for Pocock boundaries,
+#'   "WT" for Wang & Tsiatis boundaries, "sfOF" for O'Brien-Fleming type
+#'   spending function, "sfP" for Pocock type spending function,
+#'   "sfKD" for Kim & DeMets spending function, "sfHSD" for Hwang,
+#'   Shi & DeCani spending function, "user" for user defined spending,
+#'   and "none" for no early efficacy stopping. Defaults to "sfOF".
+#' @name param_typeAlphaSpending
+#' @keywords internal
+NULL
+
+#' Parameter Description: parameterAlphaSpending
+#' @param parameterAlphaSpending The parameter value for the alpha spending.
+#'   Corresponds to Delta for "WT", rho for "sfKD", and gamma for "sfHSD".
+#' @name param_parameterAlphaSpending
+#' @keywords internal
+NULL
+
+#' Parameter Description: userAlphaSpending
+#' @param userAlphaSpending The user defined alpha spending. Cumulative alpha
+#'   spent up to each stage.
+#' @name param_userAlphaSpending
+#' @keywords internal
+NULL
+
+
 #' Parameter Description: futilityBounds
 #' @param futilityBounds Lower boundaries on the z-test statistic scale
 #'   for stopping for futility at stages 1, ..., kMax-1. Defaults to
@@ -178,3 +228,30 @@ NULL
 #' @name param_futilityBounds
 #' @keywords internal
 NULL
+
+#' Parameter Description: typeBetaSpending
+#' @param typeBetaSpending The type of beta spending. One of the following:
+#'   "sfOF" for O'Brien-Fleming type spending function, "sfP" for Pocock type
+#'   spending function, "sfKD" for Kim & DeMets spending function,
+#'   "sfHSD" for Hwang, Shi & DeCani spending function, "user" for
+#'   user defined spending, and "none" for no early futility stopping.
+#'   Defaults to "none".
+#' @name param_typeBetaSpending
+#' @keywords internal
+NULL
+
+#' Parameter Description: parameterBetaSpending
+#' @param parameterBetaSpending The parameter value for the beta spending.
+#'   Corresponds to rho for "sfKD", and gamma for "sfHSD".
+#' @name param_parameterBetaSpending
+#' @keywords internal
+NULL
+
+#' Parameter Description: userBetaSpending
+#' @param userBetaSpending The user defined beta spending. Cumulative beta
+#'   spent up to each stage.
+#' @name param_userBetaSpending
+#' @keywords internal
+NULL
+
+

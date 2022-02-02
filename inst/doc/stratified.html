@@ -163,107 +163,76 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>If the hazard rate of the reference stratum is 0.009211, then the hazard rate for the control group is</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>lambda2 <span class="ot">=</span> <span class="fl">0.009211</span><span class="sc">*</span><span class="fu">exp</span>(<span class="fu">log</span>(theta1) <span class="sc">%x%</span> <span class="fu">log</span>(theta2) <span class="sc">%x%</span> <span class="fu">log</span>(theta3))</span></code></pre></div>
 <p>The hazard ratio of the active treatment group versus the control group is 0.4466.</p>
-<p>In addition, we assume an enrollment period of 24 months with a constant enrollment rate of 12 patients per month to enroll 688 patients, and the target number of events of 66.</p>
+<p>In addition, we assume an enrollment period of 24 months with a constant enrollment rate of 12 patients per month to enroll 288 patients, and the target number of events of 66.</p>
 <p>First we obtain the calendar time at which 66 events will occur.</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lrstat)</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rpact)</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="fu">caltime</span>(<span class="at">nevents =</span> <span class="dv">66</span>, <span class="at">accrualDuration =</span> <span class="dv">24</span>, <span class="at">accrualIntensity =</span> <span class="dv">12</span>,</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>        <span class="at">stratumFraction =</span> stratumFraction, </span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>        <span class="at">lambda1 =</span> <span class="fl">0.4466</span><span class="sc">*</span>lambda2, <span class="at">lambda2 =</span> lambda2, </span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>        <span class="at">followupTime =</span> <span class="dv">100</span>)</span></code></pre></div>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">caltime</span>(<span class="at">nevents =</span> <span class="dv">66</span>, <span class="at">accrualDuration =</span> <span class="dv">24</span>, <span class="at">accrualIntensity =</span> <span class="dv">12</span>,</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>        <span class="at">stratumFraction =</span> stratumFraction, </span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>        <span class="at">lambda1 =</span> <span class="fl">0.4466</span><span class="sc">*</span>lambda2, <span class="at">lambda2 =</span> lambda2, </span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>        <span class="at">followupTime =</span> <span class="dv">100</span>)</span></code></pre></div>
 <pre><code>## [1] 54.92197</code></pre>
-<p>Therefore, the follow-up time for the last enrolled patient is 30.92 months. Next we obtain the critical values for the three stage O’Brien-Fleming group sequential design.</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">getDesignGroupSequential</span>(<span class="at">kMax =</span> <span class="dv">3</span>, <span class="at">alpha =</span> <span class="fl">0.025</span>, <span class="at">typeOfDesign =</span> <span class="st">&quot;asOF&quot;</span>)</span></code></pre></div>
-<pre><code>## Design parameters and output of group sequential design:
-## 
-## User defined parameters:
-##   Type of design                               : O&#39;Brien &amp; Fleming type alpha spending 
-## 
-## Derived from user defined parameters: not available
-## 
-## Default parameters:
-##   Maximum number of stages                     : 3 
-##   Stages                                       : 1, 2, 3 
-##   Information rates                            : 0.333, 0.667, 1.000 
-##   Significance level                           : 0.0250 
-##   Type II error rate                           : 0.2000 
-##   Two-sided power                              : FALSE 
-##   Test                                         : one-sided 
-##   Tolerance                                    : 1e-08 
-##   Type of beta spending                        : none 
-## 
-## Output:
-##   Cumulative alpha spending                    : 0.0001035, 0.0060484, 0.0250000 
-##   Critical values                              : 3.710, 2.511, 1.993 
-##   Stage levels (one-sided)                     : 0.0001035, 0.0060122, 0.0231281</code></pre>
-<p>Now we can evaluate the power using the lrpower function.</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">lrpower</span>(<span class="at">kMax =</span> <span class="dv">3</span>, </span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>        <span class="at">informationRates =</span> <span class="fu">c</span>(<span class="fl">0.333</span>, <span class="fl">0.667</span>, <span class="dv">1</span>), </span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>        <span class="at">criticalValues =</span> <span class="fu">c</span>(<span class="fl">3.710</span>, <span class="fl">2.511</span>, <span class="fl">1.993</span>), </span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>        <span class="at">accrualIntensity =</span> <span class="dv">12</span>,</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>        <span class="at">stratumFraction =</span> stratumFraction,</span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>        <span class="at">lambda1 =</span> <span class="fl">0.4466</span><span class="sc">*</span>lambda2, </span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>        <span class="at">lambda2 =</span> lambda2, </span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>        <span class="at">accrualDuration =</span> <span class="dv">24</span>, </span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>        <span class="at">followupTime =</span> <span class="fl">30.92</span>)</span></code></pre></div>
-<pre><code>## $overallReject
-## [1] 0.8820359
-## 
-## $rejectPerStage
-## [1] 0.02854146 0.49559309 0.35790136
-## 
-## $futilityPerStage
-## [1] 0.0000000 0.0000000 0.1179643
-## 
-## $eventsPerStage
-## [1] 21.97716 44.02030 65.99745
-## 
-## $numberOfSubjects
-## [1] 288 288 288
-## 
-## $analysisTime
-## [1] 24.87300 39.03982 54.92000
-## 
-## $expectedNumberOfEvents
-## [1] 53.84934
-## 
-## $expectedNumberOfSubjects
-## [1] 288.0001
-## 
-## $expectedStudyDuration
-## [1] 46.19232
-## 
-## $accrualDuration
-## [1] 24
-## 
-## $followupTime
-## [1] 30.92
-## 
-## $fixedFollowup
-## [1] FALSE</code></pre>
+<p>Therefore, the follow-up time for the last enrolled patient is 30.92 months. Now we can evaluate the power using the lrpower function.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">lrpower</span>(<span class="at">kMax =</span> <span class="dv">3</span>, </span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>        <span class="at">informationRates =</span> <span class="fu">c</span>(<span class="fl">0.333</span>, <span class="fl">0.667</span>, <span class="dv">1</span>), </span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>        <span class="at">alpha =</span> <span class="fl">0.025</span>, <span class="at">typeAlphaSpending =</span> <span class="st">&quot;sfOF&quot;</span>, </span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>        <span class="at">accrualIntensity =</span> <span class="dv">12</span>,</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>        <span class="at">stratumFraction =</span> stratumFraction,</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>        <span class="at">lambda1 =</span> <span class="fl">0.4466</span><span class="sc">*</span>lambda2, </span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>        <span class="at">lambda2 =</span> lambda2, </span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>        <span class="at">accrualDuration =</span> <span class="dv">24</span>, </span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>        <span class="at">followupTime =</span> <span class="fl">30.92</span>)</span></code></pre></div>
+<pre><code>##                          stage 1 stage 2 stage 3
+## informationRates           0.333   0.667   1.000
+## efficacyBounds             3.712   2.511   1.993
+## futilityBounds              -Inf    -Inf   1.993
+## cumulativeRejection        0.028   0.524   0.882
+## cumulativeFutility         0.000   0.000   0.118
+## cumulativeAlphaSpent       0.000   0.006   0.025
+## numberOfEvents            21.977  44.020  65.997
+## numberOfSubjects         288.000 288.000 288.000
+## analysisTime              24.873  39.040  54.920
+## efficacyHR                 0.205   0.469   0.611
+## futilityHR                   Inf     Inf   0.611
+## efficacyP                  0.000   0.006   0.023
+## futilityP                  1.000   1.000   0.023
+## information                5.489  10.980  16.419
+## logRankHR                  0.462   0.460   0.458
+## overallReject              0.882                
+## alpha                      0.025                
+## numberOfEvents            65.997                
+## expectedNumberOfEvents    53.850                
+## numberOfSubjects         288.000                
+## expectedNumberOfSubjects 288.000                
+## studyDuration             54.920                
+## expectedStudyDuration     46.192                
+## accrualDuration           24.000                
+## followupTime              30.920                
+## fixedFollowup              0.000                
+## rho1                       0.000                
+## rho2                       0.000</code></pre>
 <p>Therefore, the overall power is about 88% for the stratified analysis. This is confirmed by the simulation below.</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">lrsim</span>(<span class="at">kMax =</span> <span class="dv">3</span>, </span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>      <span class="at">informationRates =</span> <span class="fu">c</span>(<span class="fl">0.333</span>, <span class="fl">0.667</span>, <span class="dv">1</span>), </span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>      <span class="at">criticalValues =</span> <span class="fu">c</span>(<span class="fl">3.710</span>, <span class="fl">2.511</span>, <span class="fl">1.993</span>), </span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>      <span class="at">accrualIntensity =</span> <span class="dv">12</span>,</span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>      <span class="at">stratumFraction =</span> stratumFraction,</span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>      <span class="at">lambda1 =</span> <span class="fl">0.4466</span><span class="sc">*</span>lambda2, </span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>      <span class="at">lambda2 =</span> lambda2, </span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>      <span class="at">accrualDuration =</span> <span class="dv">24</span>, </span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>      <span class="at">followupTime =</span> <span class="fl">30.92</span>,</span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>      <span class="at">plannedEvents =</span> <span class="fu">c</span>(<span class="dv">22</span>, <span class="dv">44</span>, <span class="dv">66</span>),</span>
-<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>      <span class="at">maxNumberOfIterations =</span> <span class="dv">1000</span>, </span>
-<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>      <span class="at">seed =</span> <span class="dv">314159</span>)</span></code></pre></div>
-<pre><code>##                            stage 1   stage 2 stage 3
-## eventsPerStage            22.00000  44.00000  66.000
-## expectedNumberOfEvents    55.04400                  
-## analysisTime              24.97951  39.16561  54.663
-## expectedStudyDuration     47.01474                  
-## numberOfSubjects         279.32000 288.00000 288.000
-## expectedNumberOfSubjects 287.99000                  
-## futilityPerStage           0.00000   0.00600   0.109
-## rejectPerStage             0.00600   0.48000   0.399
-## overallReject              0.88500</code></pre>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">lrsim</span>(<span class="at">kMax =</span> <span class="dv">3</span>, </span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>      <span class="at">informationTime =</span> <span class="fu">c</span>(<span class="fl">0.333</span>, <span class="fl">0.667</span>, <span class="dv">1</span>), </span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>      <span class="at">criticalValues =</span> <span class="fu">c</span>(<span class="fl">3.710</span>, <span class="fl">2.511</span>, <span class="fl">1.993</span>), </span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>      <span class="at">accrualIntensity =</span> <span class="dv">12</span>,</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>      <span class="at">stratumFraction =</span> stratumFraction,</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>      <span class="at">lambda1 =</span> <span class="fl">0.4466</span><span class="sc">*</span>lambda2, </span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>      <span class="at">lambda2 =</span> lambda2, </span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>      <span class="at">accrualDuration =</span> <span class="dv">24</span>, </span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>      <span class="at">followupTime =</span> <span class="fl">30.92</span>,</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>      <span class="at">plannedEvents =</span> <span class="fu">c</span>(<span class="dv">22</span>, <span class="dv">44</span>, <span class="dv">66</span>),</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>      <span class="at">maxNumberOfIterations =</span> <span class="dv">1000</span>, </span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>      <span class="at">seed =</span> <span class="dv">314159</span>)</span></code></pre></div>
+<pre><code>##                          stage 1 stage 2 stage 3
+## cumulativeRejection        0.006   0.486   0.885
+## cumulativeFutility         0.000   0.006   0.115
+## numberOfEvents            22.000  44.000  66.000
+## numberOfSubjects         279.320 288.000 288.000
+## analysisTime              24.980  39.166  54.663
+## overallReject              0.885                
+## expectedNumberOfEvents    55.044                
+## expectedNumberOfSubjects 287.990                
+## expectedStudyDuration     47.015</code></pre>
 
 
 
