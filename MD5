@@ -1,11 +1,11 @@
-b4ee7c5b62ef9a817d2b25fae2816c35 *DESCRIPTION
+62df1d4ddeed0041056a8c9bccf00d0f *DESCRIPTION
 bee8ce1680e2b817eb2e08248e2a443e *NAMESPACE
 1d15b5e35886a8289a417da0b9348c07 *R/RcppExports.R
 a7a8f94fe1bd449525debf9d4a3e12d6 *R/lrstat-package.R
 71786d24197d765715c30bd7eab6d725 *R/parameter_descriptions.R
 608e596be508631e0f806c085accc5a3 *R/print_lrpower.R
 15c0f9ca4e4a2d7234465e3478c1511a *R/print_lrsim.R
-02be6a235b3c243e4a0d927d7b5accdd *build/partial.rdb
+6f4b2ba473e0d282cd0ed3993cf271a2 *build/partial.rdb
 a388a4e00f813c4b5a2e0bd8073e7f6a *build/vignette.rds
 d8b7b260fe72da0fd5f59f527de93771 *inst/doc/fixed_follow-up.R
 aae84c2cec36e2dff88a4caec1b29640 *inst/doc/fixed_follow-up.Rmd
@@ -19,9 +19,9 @@ deecc417c65aa6cf9f8c47f6ad5e67d0 *inst/doc/lakatos_schoenfeld.R
 84d6493a7df75dd27f6fe21cae2215b4 *inst/doc/maxcombo.R
 4deed9061b7fd53f909f80ae61c249f7 *inst/doc/maxcombo.Rmd
 a5cfd794299b739f5ea3785272fcd93d *inst/doc/maxcombo.html
-4c67fa7b6f8bba914aa2f8e50ead7211 *inst/doc/non-proportional_hazards.R
-7b6a5f23b0f475cdd9e4c99099002de0 *inst/doc/non-proportional_hazards.Rmd
-76428bd773bc497bbdfdcf79aedce969 *inst/doc/non-proportional_hazards.html
+07c7d3c1eb556bfb60001e656c46e6c5 *inst/doc/non-proportional_hazards.R
+b93d55e2df23576b8a918c340a8e4be0 *inst/doc/non-proportional_hazards.Rmd
+236ec6f10e6e16f8c54b3286a94e3f21 *inst/doc/non-proportional_hazards.html
 1152906491e50006ab9cda1e628d50ce *inst/doc/stratified.R
 4539ec366a85b6a5d0f1ebcea1b770f4 *inst/doc/stratified.Rmd
 ae40ca0933777b0431eed0d183dbbd9f *inst/doc/stratified.html
@@ -84,7 +84,7 @@ f0248eda8135f869011c5ab993014950 *man/qtpwexp.Rd
 5ce70c31d20afb607ce9103f37b660d1 *man/stl_sort.Rd
 6cedfe41665d98f764afe037a4aea101 *src/RcppExports.cpp
 ce736b5d57c40dfc2dfa8374bc6c3d7b *src/lrsim.cpp
-f3628244ffd037cdd130229359fdd694 *src/lrstat.cpp
+43cfd20b918987063e6c117fae15f428 *src/lrstat.cpp
 195d0e47d5fc2c24196fda29e0ebc67c *src/utilities.cpp
 daf5bcaca1ae9606d0b4f19e4a645f6d *src/utilities.h
 306a5411fa2b238241be1509903e82cb *tests/testthat.R
@@ -94,6 +94,6 @@ aae84c2cec36e2dff88a4caec1b29640 *vignettes/fixed_follow-up.Rmd
 9c61e1e3f1226b2aace0dfae0ea1ce11 *vignettes/group_sequential_simulation.Rmd
 353bf71198a792d93e1e59112295ed4b *vignettes/lakatos_schoenfeld.Rmd
 4deed9061b7fd53f909f80ae61c249f7 *vignettes/maxcombo.Rmd
-7b6a5f23b0f475cdd9e4c99099002de0 *vignettes/non-proportional_hazards.Rmd
+b93d55e2df23576b8a918c340a8e4be0 *vignettes/non-proportional_hazards.Rmd
 2f07d148a007cdfc15d43814897ba883 *vignettes/references.bib
 4539ec366a85b6a5d0f1ebcea1b770f4 *vignettes/stratified.Rmd

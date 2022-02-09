@@ -2077,7 +2077,9 @@ List lrpower(const int kMax = NA_INTEGER,
     _["efficacyP"] = efficacyP,
     _["futilityP"] = futilityP,
     _["information"] = vscore,
-    _["logRankHR"] = lrHR
+    _["logRankHR"] = lrHR,
+    _["efficacyStopping"] = efficacyStopping,
+    _["futilityStopping"] = futilityStopping
     );
 
   DataFrame overallResults = DataFrame::create(
@@ -2093,11 +2095,32 @@ List lrpower(const int kMax = NA_INTEGER,
     _["followupTime"] = followupTime,
     _["fixedFollowup"] = fixedFollowup,
     _["rho1"] = rho1,
-    _["rho2"] = rho2);
+    _["rho2"] = rho2,
+    _["allocationRatioPlanned"] = allocationRatioPlanned,
+    _["kMax"] = kMax
+    );
+
+  List settings = List::create(
+    _["typeAlphaSpending"] = typeAlphaSpending,
+    _["parameterAlphaSpending"] = parameterAlphaSpending,
+    _["userAlphaSpending"] = userAlphaSpending,
+    _["typeBetaSpending"] = typeBetaSpending,
+    _["parameterBetaSpending"] = parameterBetaSpending,
+    _["accrualTime"] = accrualTime,
+    _["accrualIntensity"] = accrualIntensity,
+    _["piecewiseSurvivalTime"] = piecewiseSurvivalTime,
+    _["stratumFraction"] = stratumFraction,
+    _["lambda1"] = lambda1,
+    _["lambda2"] = lambda2,
+    _["gamma1"] = gamma1,
+    _["gamma2"] = gamma2
+    );
 
   List result = List::create(
     _["byStageResults"] = byStageResults,
-    _["overallResults"] = overallResults);
+    _["overallResults"] = overallResults,
+    _["settings"] = settings
+    );
 
   result.attr("class") = "lrpower";
 
