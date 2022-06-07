@@ -9,8 +9,13 @@ void set_seed(int seed);
 NumericVector stl_sort(NumericVector x);
 
 IntegerVector findInterval2(NumericVector x, NumericVector breaks);
- 
+
 double brent(const std::function<double(double)>& f,
              double x1, double x2, double tol);
+
+double qtpwexp(const double probability,
+               const NumericVector& piecewiseSurvivalTime,
+               const NumericVector& lambda,
+               const double lowerBound);
 
 #endif // __UTILITIES__

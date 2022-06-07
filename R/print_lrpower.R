@@ -28,7 +28,7 @@ print.lrpower <- function(x, ...) {
                       s$efficacyP,
                       s$futilityP,
                       s$information,
-                      s$logRankHR,
+                      s$HR,
                       t$overallReject,
                       t$alpha,
                       t$numberOfEvents,
@@ -59,7 +59,7 @@ print.lrpower <- function(x, ...) {
                       s$efficacyHR,
                       s$efficacyP,
                       s$information,
-                      s$logRankHR
+                      s$HR
     ))
     colnames(df) <- NA
   }

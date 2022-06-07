@@ -4,12 +4,7 @@
 \alias{qtpwexp}
 \title{Quantile function of truncated piecewise exponential distribution}
 \usage{
-qtpwexp(
-  probability = NA_real_,
-  piecewiseSurvivalTime = 0L,
-  lambda = NA_real_,
-  lowerBound = 0
-)
+qtpwexp(probability, piecewiseSurvivalTime, lambda, lowerBound)
 }
 \arguments{
 \item{probability}{The scalar probability corresponding to the quantile.}
@@ -36,7 +31,7 @@ given that it exceeds a specified lower bound.
 }
 \examples{
 qtpwexp(probability = 0.3, piecewiseSurvivalTime = c(0, 6, 9, 15),
-        lambda = c(0.025, 0.04, 0.015, 0.007))
+        lambda = c(0.025, 0.04, 0.015, 0.007), lowerBound = 0)
 
 }
 \keyword{internal}

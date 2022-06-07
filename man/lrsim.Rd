@@ -35,7 +35,8 @@ lrsim(
 
 \item{informationTime}{Information time in terms of variance of
 weighted log-rank test score statistic. Same as informationRates
-in terms of number of events for unweighted log-rank test.
+in terms of number of events for unweighted log-rank test. Use caltime
+and lrstat to find the information time for weighted log-rank tests.
 Fixed prior to the trial. Defaults to \code{(1:kMax) / kMax} if
 left unspecified.}
 

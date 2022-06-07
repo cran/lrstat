@@ -3,71 +3,6 @@
 
 using namespace Rcpp;
 
-//' @title Quantile function of truncated piecewise exponential distribution
-//' @description Obtains the quantile of a piecewise expoenential distribution
-//' given that it exceeds a specified lower bound.
-//'
-//' @param probability The scalar probability corresponding to the quantile.
-//' @inheritParams param_piecewiseSurvivalTime
-//' @inheritParams param_lambda
-//' @param lowerBound The left truncation time point for the survival time.
-//' Defaults to 0 for no truncation.
-//'
-//' @return The quantile x such that
-//' P(X > x | X > lowerBound) = 1 - probability.
-//'
-//' @keywords internal
-//'
-//' @examples
-//' qtpwexp(probability = 0.3, piecewiseSurvivalTime = c(0, 6, 9, 15),
-//'         lambda = c(0.025, 0.04, 0.015, 0.007))
-//'
-//' @export
-// [[Rcpp::export]]
-double qtpwexp(const double probability = NA_REAL,
-               const NumericVector& piecewiseSurvivalTime = 0,
-               const NumericVector& lambda = NA_REAL,
-               const double lowerBound = 0) {
-
-  int j, j1, m;
-  double q, v, v1;
-
-  // cumulative hazard from lowerBound until the quantile
-  v1 = -log(1 - probability);
-
-  // identify the time interval containing the lowerBound
-  m = piecewiseSurvivalTime.size();
-  for (j=0; j<m; j++) {
-    if (piecewiseSurvivalTime[j] > lowerBound) break;
-  }
-  j1 = (j==0 ? 0 : j-1); // to handle floating point precision
-
-  if (j1 == m-1) { // in the last interval
-    q = (lambda[j1]==0.0 ? R_PosInf : v1/lambda[j1] + lowerBound);
-  } else {
-    // accumulate the pieces on the cumulative hazard scale
-    v = 0;
-    for (j=j1; j<m-1; j++) {
-      if (j==j1) {
-        v += lambda[j]*(piecewiseSurvivalTime[j+1] - lowerBound);
-      } else {
-        v += lambda[j]*(piecewiseSurvivalTime[j+1] - piecewiseSurvivalTime[j]);
-      }
-      if (v >= v1) break;
-    }
-
-    if (j == m-1) { // in the last interval
-      q = (lambda[j]==0.0 ? R_PosInf :
-             (v1 - v)/lambda[j] + piecewiseSurvivalTime[j]);
-    } else {
-      q = (lambda[j]==0.0 ? R_PosInf :
-             piecewiseSurvivalTime[j+1] - (v - v1)/lambda[j]);
-    }
-  }
-
-  return q;
-}
-
 
 
 //' @title Log-rank test simulation
@@ -77,7 +12,8 @@ double qtpwexp(const double probability = NA_REAL,
 //' @inheritParams param_kMax
 //' @param informationTime Information time in terms of variance of
 //'   weighted log-rank test score statistic. Same as informationRates
-//'   in terms of number of events for unweighted log-rank test.
+//'   in terms of number of events for unweighted log-rank test. Use caltime
+//'   and lrstat to find the information time for weighted log-rank tests.
 //'   Fixed prior to the trial. Defaults to \code{(1:kMax) / kMax} if
 //'   left unspecified.
 //' @inheritParams param_criticalValues
@@ -361,7 +297,7 @@ List lrsim(const int kMax = NA_INTEGER,
   double uscore1, vscore1;
   NumericVector km1(nstrata), w1(nstrata);
 
-  NumericVector uscore(kMax), vscore(kMax), lrstat(kMax), theta(kMax),
+  NumericVector uscore(kMax), vscore(kMax), lrstat(kMax),
   zstat1(kMax), zstat(kMax);
 
   LogicalVector rejectPerStage(kMax), futilityPerStage(kMax);
@@ -404,7 +340,6 @@ List lrsim(const int kMax = NA_INTEGER,
   NumericVector uscorey = NumericVector(nrow2, NA_REAL);
   NumericVector vscorey = NumericVector(nrow2, NA_REAL);
   NumericVector logRankStatisticy = NumericVector(nrow2, NA_REAL);
-  NumericVector hazardRatioEstimateLRy = NumericVector(nrow2, NA_REAL);
   NumericVector zStatisticCHWy = NumericVector(nrow2, NA_REAL);
   LogicalVector rejectPerStagey = LogicalVector(nrow2, NA_LOGICAL);
   LogicalVector futilityPerStagey = LogicalVector(nrow2, NA_LOGICAL);
@@ -471,24 +406,24 @@ List lrsim(const int kMax = NA_INTEGER,
 
       u = R::runif(0,1);
       if (treatmentGroup[i]==1) {
-        survivalTime[i] = qtpwexp(u, piecewiseSurvivalTime, lam1);
+        survivalTime[i] = qtpwexp(u, piecewiseSurvivalTime, lam1, 0);
       } else {
-        survivalTime[i] = qtpwexp(u, piecewiseSurvivalTime, lam2);
+        survivalTime[i] = qtpwexp(u, piecewiseSurvivalTime, lam2, 0);
       }
 
       // generate dropout time
       u = R::runif(0,1);
       if (gamma1.size() == nintervals) {
         if (treatmentGroup[i]==1) {
-          dropoutTime[i] = qtpwexp(u, piecewiseSurvivalTime, gamma1);
+          dropoutTime[i] = qtpwexp(u, piecewiseSurvivalTime, gamma1, 0);
         } else {
-          dropoutTime[i] = qtpwexp(u, piecewiseSurvivalTime, gamma2);
+          dropoutTime[i] = qtpwexp(u, piecewiseSurvivalTime, gamma2, 0);
         }
       } else {
         if (treatmentGroup[i]==1) {
-          dropoutTime[i] = qtpwexp(u, 0, gamma1);
+          dropoutTime[i] = qtpwexp(u, 0, gamma1, 0);
         } else {
-          dropoutTime[i] = qtpwexp(u, 0, gamma2);
+          dropoutTime[i] = qtpwexp(u, 0, gamma2, 0);
         }
       }
 
@@ -675,9 +610,8 @@ List lrsim(const int kMax = NA_INTEGER,
       uscore[k] = uscore1;
       vscore[k] = vscore1;
 
-      // log-rank z statistic and associated hazard ratio estimate
+      // log-rank z statistic
       lrstat[k] = uscore[k]/sqrt(vscore[k]);
-      theta[k] = exp(uscore[k]/vscore[k]);
 
       // stage-specific z statistic assuming lower hazard ratio is better
       if (k==0) {
@@ -749,7 +683,6 @@ List lrsim(const int kMax = NA_INTEGER,
       uscorey[index2] = uscore[k];
       vscorey[index2] = vscore[k];
       logRankStatisticy[index2] = lrstat[k];
-      hazardRatioEstimateLRy[index2] = theta[k];
       zStatisticCHWy[index2] = zstat[k];
       rejectPerStagey[index2] = rejectPerStage[k];
       futilityPerStagey[index2] = futilityPerStage[k];
@@ -773,7 +706,6 @@ List lrsim(const int kMax = NA_INTEGER,
   uscorey = uscorey[sub2];
   vscorey = vscorey[sub2];
   logRankStatisticy = logRankStatisticy[sub2];
-  hazardRatioEstimateLRy = hazardRatioEstimateLRy[sub2];
   zStatisticCHWy = zStatisticCHWy[sub2];
   rejectPerStagey = rejectPerStagey[sub2];
   futilityPerStagey = futilityPerStagey[sub2];
@@ -874,7 +806,6 @@ List lrsim(const int kMax = NA_INTEGER,
     _["uscore"]=uscorey,
     _["vscore"]=vscorey,
     _["logRankStatistic"]=logRankStatisticy,
-    _["hazardRatioEstimateLR"]=hazardRatioEstimateLRy,
     _["zStatisticCHW"]=zStatisticCHWy,
     _["rejectPerStage"]=rejectPerStagey,
     _["futilityPerStage"]=futilityPerStagey);

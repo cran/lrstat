@@ -178,3 +178,71 @@ double brent(const std::function<double(double)>& f,
   stop("Maximum number of iterations exceeded in brent");
   return 0.0; // Never get here
 }
+
+
+
+//' @title Quantile function of truncated piecewise exponential distribution
+//' @description Obtains the quantile of a piecewise expoenential distribution
+//' given that it exceeds a specified lower bound.
+//'
+//' @param probability The scalar probability corresponding to the quantile.
+//' @inheritParams param_piecewiseSurvivalTime
+//' @inheritParams param_lambda
+//' @param lowerBound The left truncation time point for the survival time.
+//' Defaults to 0 for no truncation.
+//'
+//' @return The quantile x such that
+//' P(X > x | X > lowerBound) = 1 - probability.
+//'
+//' @keywords internal
+//'
+//' @examples
+//' qtpwexp(probability = 0.3, piecewiseSurvivalTime = c(0, 6, 9, 15),
+//'         lambda = c(0.025, 0.04, 0.015, 0.007), lowerBound = 0)
+//'
+//' @export
+// [[Rcpp::export]]
+double qtpwexp(const double probability,
+               const NumericVector& piecewiseSurvivalTime,
+               const NumericVector& lambda,
+               const double lowerBound) {
+
+  int j, j1, m;
+  double q, v, v1;
+
+  // cumulative hazard from lowerBound until the quantile
+  v1 = -log(1 - probability);
+
+  // identify the time interval containing the lowerBound
+  m = piecewiseSurvivalTime.size();
+  for (j=0; j<m; j++) {
+    if (piecewiseSurvivalTime[j] > lowerBound) break;
+  }
+  j1 = (j==0 ? 0 : j-1); // to handle floating point precision
+
+  if (j1 == m-1) { // in the last interval
+    q = (lambda[j1]==0.0 ? R_PosInf : v1/lambda[j1] + lowerBound);
+  } else {
+    // accumulate the pieces on the cumulative hazard scale
+    v = 0;
+    for (j=j1; j<m-1; j++) {
+      if (j==j1) {
+        v += lambda[j]*(piecewiseSurvivalTime[j+1] - lowerBound);
+      } else {
+        v += lambda[j]*(piecewiseSurvivalTime[j+1] - piecewiseSurvivalTime[j]);
+      }
+      if (v >= v1) break;
+    }
+
+    if (j == m-1) { // in the last interval
+      q = (lambda[j]==0.0 ? R_PosInf :
+             (v1 - v)/lambda[j] + piecewiseSurvivalTime[j]);
+    } else {
+      q = (lambda[j]==0.0 ? R_PosInf :
+             piecewiseSurvivalTime[j+1] - (v - v1)/lambda[j]);
+    }
+  }
+
+  return q;
+}
+

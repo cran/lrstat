@@ -34,12 +34,12 @@ sigma = matrix(c(1, 0.748, 0.370, 0.748, 1, 0.860, 0.370, 0.860, 1), 3, 3)
 u1 = 2.968
 alpha = 0.025
 f <- function(u2, u1, sigma, alpha) {
-  1 - pmvnorm(upper=c(u1, u2, u2), corr=sigma) - alpha
+  1 - pmvnorm(upper=c(u1, u2, u2), corr=sigma, algorithm="Miwa") - alpha
 }
 (u2 = uniroot(f, c(1,3), u1, sigma, alpha)$root)
 
 ## -----------------------------------------------------------------------------
-1 - pmvnorm(upper=c(u1, u2, u2), corr=sigma, mean=mu)
+1 - pmvnorm(upper=c(u1, u2, u2), corr=sigma, mean=mu, algorithm="Miwa")
 
 ## -----------------------------------------------------------------------------
 sim1 = lrsim(kMax = 2, informationTime = c(0.5, 1),
