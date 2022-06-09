@@ -2192,13 +2192,7 @@ List lrpower(const int kMax = NA_INTEGER,
     probs = exitprob(criticalValues, futilityBounds, theta, vscore);
   }
 
-  // update boundaries to respect efficacy and futility stopping flags
-  for (int i=0; i<kMax; i++) {
-    if (criticalValues[i] == 6) criticalValues[i] = R_PosInf;
-    if (futilityBounds[i] == -6) futilityBounds[i] = R_NegInf;
-  }
 
-  probs = exitprob(criticalValues, futilityBounds, theta, vscore);
 
   NumericVector efficacyP(kMax);
   NumericVector futilityP(kMax);

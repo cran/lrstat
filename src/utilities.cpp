@@ -221,7 +221,7 @@ double qtpwexp(const double probability,
   j1 = (j==0 ? 0 : j-1); // to handle floating point precision
 
   if (j1 == m-1) { // in the last interval
-    q = (lambda[j1]==0.0 ? R_PosInf : v1/lambda[j1] + lowerBound);
+    q = (lambda[j1]==0.0 ? 1.0e+8 : v1/lambda[j1] + lowerBound);
   } else {
     // accumulate the pieces on the cumulative hazard scale
     v = 0;
@@ -235,10 +235,10 @@ double qtpwexp(const double probability,
     }
 
     if (j == m-1) { // in the last interval
-      q = (lambda[j]==0.0 ? R_PosInf :
+      q = (lambda[j]==0.0 ? 1.0e+8 :
              (v1 - v)/lambda[j] + piecewiseSurvivalTime[j]);
     } else {
-      q = (lambda[j]==0.0 ? R_PosInf :
+      q = (lambda[j]==0.0 ? 1.0e+8 :
              piecewiseSurvivalTime[j+1] - (v - v1)/lambda[j]);
     }
   }

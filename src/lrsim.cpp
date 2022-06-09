@@ -136,7 +136,7 @@ List lrsim(const int kMax = NA_INTEGER,
 
   if (kMax > 1) {
     if (is_true(any(is_na(futilityBounds)))) {
-      futilityBounds = rep(R_NegInf, kMax-1);
+      futilityBounds = rep(-6, kMax-1);
     }
   }
 
