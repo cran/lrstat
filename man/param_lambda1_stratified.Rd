@@ -2,12 +2,12 @@
 % Please edit documentation in R/parameter_descriptions.R
 \name{param_lambda1_stratified}
 \alias{param_lambda1_stratified}
-\title{Parameter Description: lambda1 stratified}
+\title{Parameter Description: lambda1_stratified}
 \arguments{
-\item{lambda1}{A vector of hazard rates for the event for the
-active treatment group, one for each analysis time interval, by stratum.}
+\item{lambda1}{A vector of hazard rates for the event in each analysis
+time interval by stratum for the active treatment group.}
 }
 \description{
-Parameter Description: lambda1 stratified
+Parameter Description: lambda1_stratified
 }
 \keyword{internal}

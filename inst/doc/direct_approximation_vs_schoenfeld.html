@@ -14,7 +14,7 @@
 
 <meta name="date" content="2021-12-15" />
 
-<title>Comparing Lakatos and Schoenfeld Methods</title>
+<title>Comparing Direct Approximation and Schoenfeld Methods</title>
 
 <script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
 // be compatible with the behavior of Pandoc < 2.8).
@@ -38,6 +38,7 @@ document.addEventListener('DOMContentLoaded', function(e) {
   div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
   ul.task-list{list-style: none;}
     </style>
+
 
 
 <style type="text/css">
@@ -331,19 +332,18 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 
 
-<h1 class="title toc-ignore">Comparing Lakatos and Schoenfeld
-Methods</h1>
+<h1 class="title toc-ignore">Comparing Direct Approximation and
+Schoenfeld Methods</h1>
 <h4 class="author">Kaifeng Lu</h4>
 <h4 class="date">12/15/2021</h4>
 
 
 
-<p>This R Markdown document compares the Lakatos method for sample size
-calculation of survival trials as implemented in the lrstat package with
-the Schoenfeld method for sample size calculation of survival trials as
-implemented in the rpact package. First we load the two packages.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lrstat)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rpact)</span></code></pre></div>
+<p>This R Markdown document compares the direct approximation method for
+sample size calculation of survival trials as implemented in the lrstat
+package with the Schoenfeld method for sample size calculation of
+survival trials. First we load the lrstat package.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lrstat)</span></code></pre></div>
 <p>Consider a fixed design with <span class="math inline">\(\pi_1=0.2\)</span> for the active treatment group
 and <span class="math inline">\(\pi_2=0.4\)</span> for the control group
 at month 12, an enrollment period lasting 12 months to enroll 200
@@ -365,6 +365,7 @@ power.</p>
 ## overallReject      0.713
 ## alpha              0.025
 ## numberOfEvents    39.992
+## numberOfDropouts   0.000
 ## numberOfSubjects 200.000
 ## studyDuration     13.630
 ## accrualDuration   12.000
@@ -378,113 +379,31 @@ power.</p>
 ## information        9.959
 ## HR                 0.437</code></pre>
 <p>Therefore, the power is estimated to be 71.3%. In comparison, the
-getPowerSurvival function from rpact reports a power of 74.5%.</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">getPowerSurvival</span>(<span class="at">alpha =</span> <span class="fl">0.025</span>, <span class="at">directionUpper =</span> <span class="cn">FALSE</span>, <span class="at">pi1 =</span> <span class="fl">0.2</span>, </span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>                 <span class="at">pi2 =</span> <span class="fl">0.4</span>, <span class="at">eventTime =</span> <span class="dv">12</span>, <span class="at">accrualTime =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">12</span>),</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>                 <span class="at">maxNumberOfSubjects =</span> <span class="dv">200</span>, <span class="at">maxNumberOfEvents =</span> <span class="dv">40</span>)</span></code></pre></div>
-<pre><code>## Design plan parameters and output for survival data:
-## 
-## Design parameters:
-##   Critical values                              : 1.96 
-##   Significance level                           : 0.0250 
-##   Test                                         : one-sided 
-## 
-## User defined parameters:
-##   Direction upper                              : FALSE 
-##   Assumed treatment rate                       : 0.200 
-##   Assumed control rate                         : 0.400 
-##   Maximum number of subjects                   : 200 
-##   Number of events                             : 40 
-## 
-## Default parameters:
-##   Theta H0                                     : 1 
-##   Type of computation                          : Schoenfeld 
-##   Planned allocation ratio                     : 1 
-##   Event time                                   : 12 
-##   Accrual time                                 : 12.00 
-##   kappa                                        : 1 
-##   Drop-out rate (1)                            : 0.000 
-##   Drop-out rate (2)                            : 0.000 
-##   Drop-out time                                : 12 
-## 
-## Sample size and output:
-##   median(1)                                    : 37.3 
-##   median(2)                                    : 16.3 
-##   lambda(1)                                    : 0.0186 
-##   lambda(2)                                    : 0.0426 
-##   Hazard ratio                                 : 0.437 
-##   Accrual intensity                            : 16.7 
-##   Follow up time                               : 1.63 
-##   Expected number of events                    : 40.0 
-##   Overall reject                               : 0.7451 
-##   Analysis times                               : 13.63 
-##   Study duration                               : 13.63 
-##   Expected number of subjects                  : 200.0 
-##   Critical values (treatment effect scale)     : 0.538 
-## 
-## Legend:
-##   (i): values of treatment arm i</code></pre>
-<p>To see which method yields a more accurate power estimate, we run the
-getSimulationSurvival function of rpact, which reports a power of 71%
-with 10000 replications.</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">getSimulationSurvival</span>(<span class="at">directionUpper =</span> <span class="cn">FALSE</span>, <span class="at">pi1 =</span> <span class="fl">0.2</span>, <span class="at">pi2 =</span> <span class="fl">0.4</span>, </span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>                      <span class="at">eventTime =</span> <span class="dv">12</span>, <span class="at">accrualTime =</span> <span class="dv">12</span>, <span class="at">plannedEvents =</span> <span class="dv">40</span>,</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>                      <span class="at">maxNumberOfSubjects =</span> <span class="dv">200</span>, </span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>                      <span class="at">maxNumberOfIterations =</span> <span class="dv">10000</span>, <span class="at">seed =</span> <span class="dv">12345</span>)</span></code></pre></div>
-<pre><code>## Simulation of survival data (fixed sample size design):
-## 
-## Design parameters:
-##   Critical values                              : 1.96 
-##   Significance level                           : 0.0250 
-##   Test                                         : one-sided 
-## 
-## User defined parameters:
-##   Maximum number of iterations                 : 10000 
-##   Seed                                         : 12345 
-##   Direction upper                              : FALSE 
-##   Planned cumulative events                    : 40 
-##   Assumed treatment rate                       : 0.200 
-##   Assumed control rate                         : 0.400 
-##   Maximum number of subjects                   : 200 
-## 
-## Default parameters:
-##   Planned allocation ratio                     : 1 
-##   Conditional power                            : NA 
-##   Accrual time                                 : 12.00 
-##   Drop-out rate (1)                            : 0.000 
-##   Drop-out rate (2)                            : 0.000 
-##   Drop-out time                                : 12 
-##   Event time                                   : 12 
-##   Theta H0                                     : 1 
-##   Allocation 1                                 : 1 
-##   Allocation 2                                 : 1 
-##   kappa                                        : 1 
-## 
-## Results:
-##   median(1)                                    : 37.3 
-##   median(2)                                    : 16.3 
-##   Accrual intensity                            : 16.7 
-##   lambda(1)                                    : 0.0186 
-##   lambda(2)                                    : 0.0426 
-##   Hazard ratio                                 : 0.437 
-##   Analysis times                               : 13.64 
-##   Expected study duration                      : 13.64 
-##   Events not achieved                          : 0.000 
-##   Iterations                                   : 10000 
-##   Overall reject                               : 0.7129 
-##   Reject per stage                             : 0.7129 
-##   Early stop                                   : 0.0000 
-##   Expected number of subjects                  : 199.5 
-##   Expected number of events                    : 40.0 
-## 
-## Legend:
-##   (i): values of treatment arm i</code></pre>
-<p>Therefore, the Lakatos method yields a more accurate power estimate
-than the Schoenfeld method in this case. The reason for this discrepancy
-is due to the hazard ratio being 0.437, which is rather far away from
-the null hazard ratio of 1. It is well-known that the Schoenfeld method
-yields an optimistic power estimate with equal randomization in this
-case.</p>
+Schoenfeld formula yields a power of 74.5%.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>hazardRatio <span class="ot">=</span> <span class="fu">log</span>(<span class="dv">1</span><span class="fl">-0.2</span>)<span class="sc">/</span><span class="fu">log</span>(<span class="dv">1</span><span class="fl">-0.4</span>)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">pnorm</span>(<span class="fu">abs</span>(<span class="fu">log</span>(hazardRatio))<span class="sc">*</span><span class="fu">sqrt</span>(<span class="dv">40</span><span class="sc">/</span><span class="dv">4</span>) <span class="sc">-</span> <span class="fu">qnorm</span>(<span class="fl">0.975</span>))</span></code></pre></div>
+<pre><code>## [1] 0.7450763</code></pre>
+<p>To see which method yields a more accurate power estimate, we run a
+lrsim function, which reports a power of 71.2% with 10000
+replications.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">lrsim</span>(<span class="at">kMax =</span> <span class="dv">1</span>, <span class="at">criticalValues =</span> <span class="fl">1.96</span>, </span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>      <span class="at">accrualIntensity =</span> <span class="dv">200</span><span class="sc">/</span><span class="dv">12</span>, </span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>      <span class="at">lambda1 =</span> <span class="sc">-</span><span class="fu">log</span>(<span class="dv">1</span><span class="fl">-0.2</span>)<span class="sc">/</span><span class="dv">12</span>, <span class="at">lambda2 =</span> <span class="sc">-</span><span class="fu">log</span>(<span class="dv">1</span><span class="fl">-0.4</span>)<span class="sc">/</span><span class="dv">12</span>,</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>      <span class="at">accrualDuration =</span> <span class="dv">12</span>, </span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>      <span class="at">plannedEvents =</span> <span class="dv">40</span>, </span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>      <span class="at">maxNumberOfIterations =</span> <span class="dv">10000</span>, <span class="at">seed =</span> <span class="dv">314159</span>)</span></code></pre></div>
+<pre><code>##                                 
+## overallReject              0.722
+## expectedNumberOfEvents    40.000
+## expectedNumberOfDropouts   0.000
+## expectedNumberOfSubjects 199.231
+## expectedStudyDuration     13.627</code></pre>
+<p>Therefore, the direct approximation method yields a more accurate
+power estimate than the Schoenfeld method in this case. The reason for
+this discrepancy is due to the hazard ratio being 0.437, which is rather
+far away from the null hazard ratio of 1. It is well-known that the
+Schoenfeld method yields an optimistic power estimate with equal
+randomization in this case.</p>
 
 
 

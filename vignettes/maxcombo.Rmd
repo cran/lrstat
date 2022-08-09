@@ -38,16 +38,16 @@ First, we derive the critical values at the interim and final analyses.
 For the interim analysis, only one log-rank test will be used, hence the
 critical value is $u_1 = \Phi^{-1}(1-0.0015) = 2.968$. For the final
 analysis, the critical value $u_2$ satisfies $$
-  P_0(W_{1,1} < u_1, \max(W_{2,1}, W_{2,2}) < u_2) = 1 - 0.025
+  P_0(Z_{1,1} < u_1, \max(Z_{1,2}, Z_{2,2}) < u_2) = 1 - 0.025
 $$ which is the same as $$
-  P_0(W_{1,1} < u_1, W_{2,1} < u_2, W_{2,2} < u_2) = 0.975 \; 
+  P_0(Z_{1,1} < u_1, Z_{1,2} < u_2, Z_{2,2} < u_2) = 0.975 \; 
     (Eq. 1)
-$$ Let $U_{i, FH(p,q)}$ denote the numerator of the FH(p,q) weighted
-log-rank test statistic at analysis $i$, and $V_{i,FH(p,q)}$ its
-variance. Then $W_{i, FH(p,q)} = U_{i, FH(p,q))}/{V_{i,FH(p,q)}^{1/2}}$.
+$$ Let $U_{FH(p,q),i}$ denote the numerator of the FH(p,q) weighted
+log-rank test statistic at analysis $i$, and $V_{FH(p,q),i}$ its
+variance. Then $W_{FH(p,q),i} = U_{FH(p,q),i}/{V_{FH(p,q),i}^{1/2}}$.
 In addition, similar to @karrison2016, we can show that $$
-  Cov(U_{1,FH(p_1,q_1)}, U_{2,FH(p_2,q_2)}) = 
-  V_{1,FH\left(\frac{p_1+p_2}{2},\frac{q_1+q_2}{2}\right)}
+  Cov(U_{FH(p_1,q_1),1}, U_{FH(p_2,q_2),2}) = 
+  V_{FH\left(\frac{p_1+p_2}{2},\frac{q_1+q_2}{2}\right),1}
 $$
 
 First, we find the time when 50 and 99.9 events are expected to have
@@ -84,11 +84,11 @@ statistics at the interim and final analyses for relevant FH weights.
                rho1=0, rho2=0.5, numSubintervals=10000))
 ```
 
-It follows that the mean of $\mathbf{W}=(W_{1,1}, W_{2,1}, W_{2,2})$ is
+It follows that the mean of $\mathbf{Z}=(Z_{1,1}, Z_{1,2}, Z_{2,2})$ is
 $$
   \left(\frac{3.179}{\sqrt{12.464}}, \frac{10.540}{\sqrt{22.271}}, 
   \frac{6.604}{\sqrt{6.158}} \right) = (0.900, 2.233, 2.661)
-$$ and the covariance matrix of $\mathbf{W}$ is $$
+$$ and the covariance matrix of $\mathbf{Z}$ is $$
   \left(\begin{array}{ccc} 1 & \sqrt{\frac{12.464}{22.271}} & \frac{3.241}{\sqrt{12.464\times 6.158}} \\
   \sqrt{\frac{12.464}{22.271}} & 1 & \frac{10.077}{\sqrt{22.271\times 6.158}} \\ 
   \frac{3.241}{\sqrt{12.464\times 6.158}}  & \frac{10.077}{\sqrt{22.271\times 6.158}} & 1 \end{array} \right) = \left(\begin{array}{ccc} 1 & 0.748 &  0.370 \\ 
@@ -114,7 +114,7 @@ hypothesis.
 1 - pmvnorm(upper=c(u1, u2, u2), corr=sigma, mean=mu, algorithm="Miwa")
 ```
 
-For the simulation study, we use infinite critical values for the
+For the simulation study, we use very large critical values for the
 FH(0,0) and FH(0,1) log-rank statistics at the interim and final
 analyses for each iteration, and then construct the maximum combo test
 statistic at the final analysis. Finally, we tally the rejections across
@@ -123,17 +123,18 @@ produce identical simulated data.
 
 ```{r}
 sim1 = lrsim(kMax = 2, informationTime = c(0.5, 1),
-             criticalValues = c(Inf, Inf),
-             accrualIntensity = 25, accrualDuration = 4,
+             criticalValues = c(6, 6),
+             accrualIntensity = 25, 
              piecewiseSurvivalTime = c(0, 1.5),
              lambda1 = c(0.25, 0.125), lambda2 = c(0.25, 0.25),
+             accrualDuration = 4,
              rho1 = 0, rho2 = 0,
              plannedEvents = c(50, 100), 
              maxNumberOfIterations = 1000,
              seed = 314159)
 
 sim2 = lrsim(kMax = 2, informationTime = c(0.5, 1),
-             criticalValues = c(Inf, Inf),
+             criticalValues = c(6, 6),
              accrualIntensity = 25,
              piecewiseSurvivalTime = c(0, 1.5),
              lambda1 = c(0.25, 0.125), lambda2 = c(0.25, 0.25),

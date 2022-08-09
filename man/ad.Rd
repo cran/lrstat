@@ -60,9 +60,10 @@ calendar times.
 # 20 patients per month thereafter. Piecewise exponential survival with
 # hazard 0.0533 in the first 6 months, and hazard 0.0309 thereafter,
 # and 5\% dropout by the end of 1 year.
+
 ad(time = c(9, 15), u1 = 1, u2 = 8, accrualTime = c(0, 3),
- accrualIntensity = c(10, 20), piecewiseSurvivalTime=c(0, 6),
- lambda = c(0.0533, 0.0309), gamma = -log(1-0.05)/12)
+   accrualIntensity = c(10, 20), piecewiseSurvivalTime=c(0, 6),
+   lambda = c(0.0533, 0.0309), gamma = -log(1-0.05)/12)
 
 }
 \keyword{internal}

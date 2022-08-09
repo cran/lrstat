@@ -6,7 +6,7 @@
 \arguments{
 \item{futilityBounds}{Lower boundaries on the z-test statistic scale
 for stopping for futility at stages 1, ..., kMax-1. Defaults to
-\code{rep(-Inf, kMax-1)} if left unspecified.}
+\code{rep(-6, kMax-1)} if left unspecified.}
 }
 \description{
 Parameter Description: futilityBounds

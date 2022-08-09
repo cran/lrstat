@@ -40,10 +40,10 @@ the piecewise exponential survival distribution, must start with 0, e.g.,
 Defaults to 0 for exponential distribution.}
 
 \item{lambda1}{A vector of hazard rates for the event for the
-active treatment group, one for each analysis time interval, by stratum.}
+active treatment group, one for each analysis time interval.}
 
 \item{lambda2}{A vector of hazard rates for the event for the
-control group, one for each analysis time interval, by stratum.}
+control group, one for each analysis time interval.}
 
 \item{gamma1}{The hazard rate for exponential dropout or a vector of hazard
 rates for piecewise exponential dropout for the active treatment group.
@@ -73,11 +73,14 @@ times for each treatment group.
 \examples{
 # Piecewise accrual, piecewise exponential survivals, and 5\% dropout by
 # the end of 1 year.
-natrisk(time = c(9, 24), allocationRatioPlanned = 1, accrualTime = c(0, 3),
-    accrualIntensity = c(10, 20), piecewiseSurvivalTime = c(0, 6),
-    lambda1 = c(0.0533, 0.0309), lambda2 = c(0.0533, 0.0533),
-    gamma1 = -log(1-0.05)/12, gamma2 = -log(1-0.05)/12,
-    accrualDuration = 12, minFollowupTime = 18, maxFollowupTime = 30)
+
+natrisk(time = c(9, 24), allocationRatioPlanned = 1,
+        accrualTime = c(0, 3), accrualIntensity = c(10, 20),
+        piecewiseSurvivalTime = c(0, 6),
+        lambda1 = c(0.0533, 0.0309), lambda2 = c(0.0533, 0.0533),
+        gamma1 = -log(1-0.05)/12, gamma2 = -log(1-0.05)/12,
+        accrualDuration = 12, minFollowupTime = 18,
+        maxFollowupTime = 30)
 
 }
 \keyword{internal}

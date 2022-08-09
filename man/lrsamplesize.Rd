@@ -19,6 +19,7 @@ lrsamplesize(
   typeBetaSpending = "none",
   parameterBetaSpending = NA_real_,
   userBetaSpending = NA_real_,
+  hazardRatioH0 = 1,
   allocationRatioPlanned = 1,
   accrualTime = 0L,
   accrualIntensity = 20L,
@@ -34,6 +35,8 @@ lrsamplesize(
   rho1 = 0,
   rho2 = 0,
   numSubintervals = 300L,
+  estimateHazardRatio = 1L,
+  typeOfComputation = "direct",
   interval = as.numeric(c(0.001, 240))
 )
 }
@@ -73,7 +76,7 @@ spent up to each stage.}
 
 \item{futilityBounds}{Lower boundaries on the z-test statistic scale
 for stopping for futility at stages 1, ..., kMax-1. Defaults to
-\code{rep(-Inf, kMax-1)} if left unspecified.}
+\code{rep(-6, kMax-1)} if left unspecified.}
 
 \item{typeBetaSpending}{The type of beta spending. One of the following:
 "sfOF" for O'Brien-Fleming type spending function, "sfP" for Pocock type
@@ -87,6 +90,9 @@ Corresponds to rho for "sfKD", and gamma for "sfHSD".}
 
 \item{userBetaSpending}{The user defined beta spending. Cumulative beta
 spent up to each stage.}
+
+\item{hazardRatioH0}{Hazard ratio under the null hypothesis for the active
+treatment versus control. Defaults to 1 for superiority test.}
 
 \item{allocationRatioPlanned}{Allocation ratio for the active treatment
 versus control. Defaults to 1 for equal randomization.}
@@ -107,19 +113,21 @@ Defaults to 0 for exponential distribution.}
 \item{stratumFraction}{A vector of stratum fractions that sum to 1.
 Defaults to 1 for no stratification.}
 
-\item{lambda1}{A vector of hazard rates for the event for the
-active treatment group, one for each analysis time interval, by stratum.}
+\item{lambda1}{A vector of hazard rates for the event in each analysis
+time interval by stratum for the active treatment group.}
 
-\item{lambda2}{A vector of hazard rates for the event for the
-control group, one for each analysis time interval, by stratum.}
+\item{lambda2}{A vector of hazard rates for the event in each analysis
+time interval by stratum for the control group.}
 
-\item{gamma1}{The hazard rate for exponential dropout or a vector of hazard
-rates for piecewise exponential dropout for the active treatment group.
-Defaults to 0 for no dropout.}
+\item{gamma1}{The hazard rate for exponential dropout, a vector of hazard
+rates for piecewise exponential dropout applicable for all strata, or a
+vector of hazard rates for dropout in each analysis time interval
+by stratum for the active treatment group.}
 
-\item{gamma2}{The hazard rate for exponential dropout or a vector of hazard
-rates for piecewise exponential dropout for the control group.
-Defaults to 0 for no dropout.}
+\item{gamma2}{The hazard rate for exponential dropout, a vector of hazard
+rates for piecewise exponential dropout applicable for all strata, or a
+vector of hazard rates for dropout in each analysis time interval
+by stratum for the control group.}
 
 \item{accrualDuration}{Duration of the enrollment period.}
 
@@ -138,69 +146,102 @@ log-rank test. Defaults to 0 for conventional log-rank test.}
 and variance of the weighted log-rank test score statistic.
 Defaults to 300. Specify a larger number for better approximation.}
 
+\item{estimateHazardRatio}{Whether to estimate the hazard ratio from 
+weighted Cox regression model and report the stopping boundaries on 
+the hazard ratio scale.}
+
+\item{typeOfComputation}{Whether to use the direct approximation method 
+or the Schoenfeld method. Defaults to "direct". Can use "Schoenfeld" 
+under proportional hazards and conventional log-rank test.}
+
 \item{interval}{The interval to search for the solution of
 accrualDuration or followupDuration. Defaults to \code{c(0.001, 240)}.
 Adjustment may be needed for non-monotone relationship with study power.}
 }
 \value{
-A list of the overall and stagewise rejection probabilities, the
-futility stopping probabilities, the overall and stagewise expected number
-of events, number of patients, and analysis time, the input or calculated
-accrual and follow-up durations, and whether a fixed follow-up is used.
+A list of S3 class \code{lrpower}.
 }
 \description{
 Obtains the needed accrual duration given power and
-follow-up time, or the needed follow-up time given power and
-accrual duration in a two-group survival design.
+follow-up time, the needed follow-up time given power and
+accrual duration, or the needed absolute accrual rates given
+power, accrual duration, follow-up duration, and relative accrual
+rates in a two-group survival design.
 }
 \examples{
 # Piecewise accrual, piecewise exponential survivals, and 5\% dropout by
 # the end of 1 year.
 
 # Example 1: Obtains accrual duration given power and follow-up duration
+
 lrsamplesize(beta = 0.2, kMax = 2,
-      informationRates = c(0.8, 1),
-      alpha = 0.025, typeAlphaSpending = "sfOF",
-      accrualTime = seq(0, 9),
-      accrualIntensity = c(26/9*seq(1, 9), 26),
-      piecewiseSurvivalTime = c(0, 6),
-      stratumFraction = c(0.2, 0.8),
-      lambda1 = c(0.0533, 0.0309, 1.5*0.0533, 1.5*0.0309),
-      lambda2 = c(0.0533, 0.0533, 1.5*0.0533, 1.5*0.0533),
-      gamma1 = -log(1-0.05)/12,
-      gamma2 = -log(1-0.05)/12,
-      accrualDuration = NA,
-      followupTime = 18, fixedFollowup = FALSE)
+             informationRates = c(0.8, 1),
+             alpha = 0.025, typeAlphaSpending = "sfOF",
+             accrualTime = seq(0, 9),
+             accrualIntensity = c(26/9*seq(1, 9), 26),
+             piecewiseSurvivalTime = c(0, 6),
+             stratumFraction = c(0.2, 0.8),
+             lambda1 = c(0.0533, 0.0309, 1.5*0.0533, 1.5*0.0309),
+             lambda2 = c(0.0533, 0.0533, 1.5*0.0533, 1.5*0.0533),
+             gamma1 = -log(1-0.05)/12,
+             gamma2 = -log(1-0.05)/12,
+             accrualDuration = NA,
+             followupTime = 18, fixedFollowup = FALSE)
+
 
 # Example 2: Obtains follow-up duration given power and accrual duration
-lrsamplesize(beta = 0.2, kMax = 2,
-      informationRates = c(0.8, 1),
-      alpha = 0.025, typeAlphaSpending = "sfOF",
-      accrualTime = seq(0, 9),
-      accrualIntensity = c(26/9*seq(1, 9), 26),
-      piecewiseSurvivalTime = c(0, 6),
-      stratumFraction = c(0.2, 0.8),
-      lambda1 = c(0.0533, 0.0309, 1.5*0.0533, 1.5*0.0309),
-      lambda2 = c(0.0533, 0.0533, 1.5*0.0533, 1.5*0.0533),
-      gamma1 = -log(1-0.05)/12,
-      gamma2 = -log(1-0.05)/12,
-      accrualDuration = 22,
-      followupTime = NA, fixedFollowup = FALSE)
 
-# Example 3: Obtains absolute accrual intensity power, accrual duration,
-# follow-up duration, and relative accrual intensity
 lrsamplesize(beta = 0.2, kMax = 2,
-      informationRates = c(0.8, 1),
-      alpha = 0.025, typeAlphaSpending = "sfOF",
-      accrualTime = seq(0, 9),
-      accrualIntensity = c(26/9*seq(1, 9), 26),
-      piecewiseSurvivalTime = c(0, 6),
-      stratumFraction = c(0.2, 0.8),
-      lambda1 = c(0.0533, 0.0309, 1.5*0.0533, 1.5*0.0309),
-      lambda2 = c(0.0533, 0.0533, 1.5*0.0533, 1.5*0.0533),
-      gamma1 = -log(1-0.05)/12,
-      gamma2 = -log(1-0.05)/12,
-      accrualDuration = 22,
-      followupTime = 18, fixedFollowup = FALSE)
+             informationRates = c(0.8, 1),
+             alpha = 0.025, typeAlphaSpending = "sfOF",
+             accrualTime = seq(0, 9),
+             accrualIntensity = c(26/9*seq(1, 9), 26),
+             piecewiseSurvivalTime = c(0, 6),
+             stratumFraction = c(0.2, 0.8),
+             lambda1 = c(0.0533, 0.0309, 1.5*0.0533, 1.5*0.0309),
+             lambda2 = c(0.0533, 0.0533, 1.5*0.0533, 1.5*0.0533),
+             gamma1 = -log(1-0.05)/12,
+             gamma2 = -log(1-0.05)/12,
+             accrualDuration = 22,
+             followupTime = NA, fixedFollowup = FALSE)
+
+
+# Example 3: Obtains absolute accrual intensity given power,
+# accrual duration, follow-up duration, and relative accrual intensity
+
+lrsamplesize(beta = 0.2, kMax = 2,
+             informationRates = c(0.8, 1),
+             alpha = 0.025, typeAlphaSpending = "sfOF",
+             accrualTime = seq(0, 9),
+             accrualIntensity = c(26/9*seq(1, 9), 26),
+             piecewiseSurvivalTime = c(0, 6),
+             stratumFraction = c(0.2, 0.8),
+             lambda1 = c(0.0533, 0.0309, 1.5*0.0533, 1.5*0.0309),
+             lambda2 = c(0.0533, 0.0533, 1.5*0.0533, 1.5*0.0533),
+             gamma1 = -log(1-0.05)/12,
+             gamma2 = -log(1-0.05)/12,
+             accrualDuration = 22,
+             followupTime = 18, fixedFollowup = FALSE)
+             
+
+# Example 4: Non-inferiority trial with fixed follow-up and 
+# superiority alternative
+
+lr <- lrsamplesize(beta = 0.1, 
+                   kMax = 3, 
+                   alpha = 0.025,
+                   typeAlphaSpending = "sfOF",
+                   hazardRatioH0 = 1.1,
+                   accrualTime = c(0, 6),
+                   accrualIntensity = c(1000, 1500),
+                   lambda1 = log(2)/48*0.95,
+                   lambda2 = log(2)/48,
+                   gamma1 = -log(1-0.08)/12,
+                   gamma2 = -log(1-0.08)/12,
+                   accrualDuration = NA,
+                   followupTime = 18,
+                   fixedFollowup = 1)
+                   
+lr
 
 }

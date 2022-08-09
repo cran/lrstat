@@ -4,8 +4,8 @@
 \alias{param_lambda2_stratified}
 \title{Parameter Description: lambda2_stratified}
 \arguments{
-\item{lambda2}{A vector of hazard rates for the event for the
-control group, one for each analysis time interval, by stratum.}
+\item{lambda2}{A vector of hazard rates for the event in each analysis
+time interval by stratum for the control group.}
 }
 \description{
 Parameter Description: lambda2_stratified

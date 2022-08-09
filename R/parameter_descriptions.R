@@ -36,6 +36,14 @@ NULL
 #' @keywords internal
 NULL
 
+#' Parameter Description: hazardRatioH0
+#' @param hazardRatioH0 Hazard ratio under the null hypothesis for the active
+#'   treatment versus control. Defaults to 1 for superiority test.
+#' @name param_hazardRatioH0
+#' @keywords internal
+NULL
+
+
 #' Parameter Description: stratumFraction
 #' @param stratumFraction A vector of stratum fractions that sum to 1.
 #'   Defaults to 1 for no stratification.
@@ -52,28 +60,28 @@ NULL
 
 #' Parameter Description: lambda1
 #' @param lambda1 A vector of hazard rates for the event for the
-#'   active treatment group, one for each analysis time interval, by stratum.
+#'   active treatment group, one for each analysis time interval.
 #' @name param_lambda1
 #' @keywords internal
 NULL
 
 #' Parameter Description: lambda2
 #' @param lambda2 A vector of hazard rates for the event for the
-#'   control group, one for each analysis time interval, by stratum.
+#'   control group, one for each analysis time interval.
 #' @name param_lambda2
 #' @keywords internal
 NULL
 
-#' Parameter Description: lambda1 stratified
-#' @param lambda1 A vector of hazard rates for the event for the
-#'   active treatment group, one for each analysis time interval, by stratum.
+#' Parameter Description: lambda1_stratified
+#' @param lambda1 A vector of hazard rates for the event in each analysis
+#'   time interval by stratum for the active treatment group.
 #' @name param_lambda1_stratified
 #' @keywords internal
 NULL
 
 #' Parameter Description: lambda2_stratified
-#' @param lambda2 A vector of hazard rates for the event for the
-#'   control group, one for each analysis time interval, by stratum.
+#' @param lambda2 A vector of hazard rates for the event in each analysis
+#'   time interval by stratum for the control group.
 #' @name param_lambda2_stratified
 #' @keywords internal
 NULL
@@ -100,6 +108,27 @@ NULL
 #' @name param_gamma2
 #' @keywords internal
 NULL
+
+#' Parameter Description: gamma1_stratified
+#' @param gamma1 The hazard rate for exponential dropout, a vector of hazard
+#'   rates for piecewise exponential dropout applicable for all strata, or a
+#'   vector of hazard rates for dropout in each analysis time interval
+#'   by stratum for the active treatment group.
+#'
+#' @name param_gamma1_stratified
+#' @keywords internal
+NULL
+
+#' Parameter Description: gamma2_stratified
+#' @param gamma2 The hazard rate for exponential dropout, a vector of hazard
+#'   rates for piecewise exponential dropout applicable for all strata, or a
+#'   vector of hazard rates for dropout in each analysis time interval
+#'   by stratum for the control group.
+#'
+#' @name param_gamma2_stratified
+#' @keywords internal
+NULL
+
 
 #' Parameter Description: followupTime
 #' @param followupTime Follow-up time for the last enrolled subject.
@@ -224,7 +253,7 @@ NULL
 #' Parameter Description: futilityBounds
 #' @param futilityBounds Lower boundaries on the z-test statistic scale
 #'   for stopping for futility at stages 1, ..., kMax-1. Defaults to
-#'   \code{rep(-Inf, kMax-1)} if left unspecified.
+#'   \code{rep(-6, kMax-1)} if left unspecified.
 #' @name param_futilityBounds
 #' @keywords internal
 NULL
@@ -254,4 +283,19 @@ NULL
 #' @keywords internal
 NULL
 
+#' Parameter Description: estimateHazardRatio
+#' @param estimateHazardRatio Whether to estimate the hazard ratio from 
+#'   weighted Cox regression model and report the stopping boundaries on 
+#'   the hazard ratio scale.
+#' @name param_estimateHazardRatio
+#' @keywords internal
+NULL
+
+#' Parameter Description: typeOfComputation
+#' @param typeOfComputation Whether to use the direct approximation method 
+#'   or the Schoenfeld method. Defaults to "direct". Can use "Schoenfeld" 
+#'   under proportional hazards and conventional log-rank test. 
+#' @name param_typeOfComputation
+#' @keywords internal
+NULL
 

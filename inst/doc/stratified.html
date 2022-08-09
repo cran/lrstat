@@ -40,6 +40,7 @@ document.addEventListener('DOMContentLoaded', function(e) {
     </style>
 
 
+
 <style type="text/css">
   code {
     white-space: pre;
@@ -394,6 +395,7 @@ months. Now we can evaluate the power using the lrpower function.</p>
 ## cumulativeFutility         0.000   0.000   0.118
 ## cumulativeAlphaSpent       0.000   0.006   0.025
 ## numberOfEvents            21.977  44.020  65.997
+## numberOfDropouts           0.000   0.000   0.000
 ## numberOfSubjects         288.000 288.000 288.000
 ## analysisTime              24.873  39.040  54.920
 ## efficacyHR                 0.183   0.446   0.594
@@ -406,6 +408,8 @@ months. Now we can evaluate the power using the lrpower function.</p>
 ## alpha                      0.025                
 ## numberOfEvents            65.997                
 ## expectedNumberOfEvents    53.850                
+## numberOfDropouts           0.000                
+## expectedNumberOfDropouts   0.000                
 ## numberOfSubjects         288.000                
 ## expectedNumberOfSubjects 288.000                
 ## studyDuration             54.920                
@@ -430,15 +434,17 @@ analysis. This is confirmed by the simulation below.</p>
 <span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>      <span class="at">maxNumberOfIterations =</span> <span class="dv">1000</span>, </span>
 <span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>      <span class="at">seed =</span> <span class="dv">314159</span>)</span></code></pre></div>
 <pre><code>##                          stage 1 stage 2 stage 3
-## cumulativeRejection        0.006   0.486   0.885
-## cumulativeFutility         0.000   0.006   0.115
+## cumulativeRejection        0.013   0.504   0.882
+## cumulativeFutility         0.000   0.000   0.118
 ## numberOfEvents            22.000  44.000  66.000
-## numberOfSubjects         279.320 288.000 288.000
-## analysisTime              24.980  39.166  54.663
-## overallReject              0.885                
-## expectedNumberOfEvents    55.044                
-## expectedNumberOfSubjects 287.990                
-## expectedStudyDuration     47.015</code></pre>
+## numberOfDropouts           0.000   0.000   0.000
+## numberOfSubjects         279.327 288.000 288.000
+## analysisTime              24.820  39.011  55.032
+## overallReject              0.882                
+## expectedNumberOfEvents    54.626                
+## expectedNumberOfDropouts   0.000                
+## expectedNumberOfSubjects 287.845                
+## expectedStudyDuration     46.609</code></pre>
 
 
 

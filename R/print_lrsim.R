@@ -16,17 +16,20 @@ print.lrsim <- function(x, ...) {
     df = t(data.frame(s$cumulativeRejection,
                       s$cumulativeFutility,
                       s$numberOfEvents,
+                      s$numberOfDropouts,
                       s$numberOfSubjects,
                       s$analysisTime,
                       s$overallReject,
                       s$expectedNumberOfEvents,
+                      s$expectedNumberOfDropouts,
                       s$expectedNumberOfSubjects,
                       s$expectedStudyDuration))
-    df[c(6,7,8,9), -1] <- NA # only show overall
+    df[c(7,8,9,10,11), -1] <- NA # only show overall
     colnames(df) <- paste("stage", seq_len(ncol(df)), sep=" ")
   } else {
     df = t(data.frame(s$overallReject,
                       s$expectedNumberOfEvents,
+                      s$expectedNumberOfDropouts,
                       s$expectedNumberOfSubjects,
                       s$expectedStudyDuration))
     colnames(df) <- NA

@@ -6,6 +6,7 @@
 \usage{
 lrstat(
   time = NA_real_,
+  hazardRatioH0 = 1,
   allocationRatioPlanned = 1,
   accrualTime = 0L,
   accrualIntensity = NA_real_,
@@ -28,6 +29,9 @@ lrstat(
 \item{time}{A vector of calendar times at which to calculate the number
 of events and the mean and variance of log-rank test score statistic.}
 
+\item{hazardRatioH0}{Hazard ratio under the null hypothesis for the active
+treatment versus control. Defaults to 1 for superiority test.}
+
 \item{allocationRatioPlanned}{Allocation ratio for the active treatment
 versus control. Defaults to 1 for equal randomization.}
 
@@ -47,19 +51,21 @@ Defaults to 0 for exponential distribution.}
 \item{stratumFraction}{A vector of stratum fractions that sum to 1.
 Defaults to 1 for no stratification.}
 
-\item{lambda1}{A vector of hazard rates for the event for the
-active treatment group, one for each analysis time interval, by stratum.}
+\item{lambda1}{A vector of hazard rates for the event in each analysis
+time interval by stratum for the active treatment group.}
 
-\item{lambda2}{A vector of hazard rates for the event for the
-control group, one for each analysis time interval, by stratum.}
+\item{lambda2}{A vector of hazard rates for the event in each analysis
+time interval by stratum for the control group.}
 
-\item{gamma1}{The hazard rate for exponential dropout or a vector of hazard
-rates for piecewise exponential dropout for the active treatment group.
-Defaults to 0 for no dropout.}
+\item{gamma1}{The hazard rate for exponential dropout, a vector of hazard
+rates for piecewise exponential dropout applicable for all strata, or a
+vector of hazard rates for dropout in each analysis time interval
+by stratum for the active treatment group.}
 
-\item{gamma2}{The hazard rate for exponential dropout or a vector of hazard
-rates for piecewise exponential dropout for the control group.
-Defaults to 0 for no dropout.}
+\item{gamma2}{The hazard rate for exponential dropout, a vector of hazard
+rates for piecewise exponential dropout applicable for all strata, or a
+vector of hazard rates for dropout in each analysis time interval
+by stratum for the control group.}
 
 \item{accrualDuration}{Duration of the enrollment period.}
 
@@ -79,38 +85,40 @@ and variance of the weighted log-rank test score statistic.
 Defaults to 300. Specify a larger number for better approximation.}
 
 \item{predictEventOnly}{Whether to predict the number of events only.
-Defaults to 0 for obtaining log-rank test score statistic mean
-and variance. Set predictEventOnly = 1 for predicting the number of
-events only. Set predictEventOnly = 2 for predicting the number of events,
-calculating the mean and variance of log-rank test score statistic, and
+Defaults to 0 for obtaining log-rank score statistic mean and variance.
+Set \code{predictEventOnly = 1} for predicting the number of events only.
+Set \code{predictEventOnly = 2} for predicting the number of events,
+calculating the mean and variance of log-rank score statistic, and
 calculating the estimated hazard ratio and variance of log hazard ratio.}
 }
 \value{
-A data frame of the number of patients enrolled, the number of
-patients having an event overall and in each treatment group, the mean and
-variance of weighted log-rank test score statistic at the specified
-calendar times, and the estimated HR from weighted Cox regression and
-variance of log hazard ratio estimate at the specified calendar times.
+A data frame of the number of subjects enrolled, the number of
+subjects having an event overall and in each group, the number of subjects
+who drop out overall and in each group, the mean and variance of weighted
+log-rank score statistic, the estimated hazard ratio from weighted Cox
+regression, and variance of the log hazard ratio estimate at the
+specified calendar times.
 }
 \description{
-Obtains the number of subjects having an event in each
-treatment group, the mean and variance of weighted log-rank test score
-statistic at given calendar times, the estimated hazard ratio from
-weighted Cox regression and variance of log hazard ratio estimate.
+Obtains the number of subjects accrued, number of events and
+number of dropouts in each group, mean and variance of weighted log-rank
+score statistic, estimated hazard ratio from weighted Cox regression
+and variance of log hazard ratio estimate at given calendar times.
 }
 \examples{
 # Piecewise accrual, piecewise exponential survivals, and 5\% dropout by
 # the end of 1 year.
+
 lrstat(time = c(22, 40), allocationRatioPlanned = 1,
-   accrualTime = seq(0, 9),
-   accrualIntensity = c(26/9*seq(1, 9), 26),
-   piecewiseSurvivalTime = c(0, 6),
-   stratumFraction = c(0.2, 0.8),
-   lambda1 = c(0.0533, 0.0309, 1.5*0.0533, 1.5*0.0309),
-   lambda2 = c(0.0533, 0.0533, 1.5*0.0533, 1.5*0.0533),
-   gamma1 = -log(1-0.05)/12,
-   gamma2 = -log(1-0.05)/12,
-   accrualDuration = 22,
-   followupTime = 18, fixedFollowup = FALSE)
+       accrualTime = seq(0, 9),
+       accrualIntensity = c(26/9*seq(1, 9), 26),
+       piecewiseSurvivalTime = c(0, 6),
+       stratumFraction = c(0.2, 0.8),
+       lambda1 = c(0.0533, 0.0309, 1.5*0.0533, 1.5*0.0309),
+       lambda2 = c(0.0533, 0.0533, 1.5*0.0533, 1.5*0.0533),
+       gamma1 = -log(1-0.05)/12,
+       gamma2 = -log(1-0.05)/12,
+       accrualDuration = 22,
+       followupTime = 18, fixedFollowup = FALSE)
 
 }

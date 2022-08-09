@@ -3,11 +3,11 @@
 \name{lrstat1}
 \alias{lrstat1}
 \title{Number of subjects having an event and log-rank statistic
-for a hypothesized log hazard ratio at a given calendar time}
+for a hypothesized hazard ratio at a given calendar time}
 \usage{
 lrstat1(
-  beta = NA_real_,
   time = NA_real_,
+  hazardRatioH0 = 1,
   allocationRatioPlanned = 1,
   accrualTime = 0L,
   accrualIntensity = NA_real_,
@@ -27,10 +27,11 @@ lrstat1(
 )
 }
 \arguments{
-\item{beta}{The hypothesized log hazard ratio.}
-
 \item{time}{The calendar time at which to calculate the number
 of events and the mean and variance of log-rank test score statistic.}
+
+\item{hazardRatioH0}{Hazard ratio under the null hypothesis for the active
+treatment versus control. Defaults to 1 for superiority test.}
 
 \item{allocationRatioPlanned}{Allocation ratio for the active treatment
 versus control. Defaults to 1 for equal randomization.}
@@ -51,19 +52,21 @@ Defaults to 0 for exponential distribution.}
 \item{stratumFraction}{A vector of stratum fractions that sum to 1.
 Defaults to 1 for no stratification.}
 
-\item{lambda1}{A vector of hazard rates for the event for the
-active treatment group, one for each analysis time interval, by stratum.}
+\item{lambda1}{A vector of hazard rates for the event in each analysis
+time interval by stratum for the active treatment group.}
 
-\item{lambda2}{A vector of hazard rates for the event for the
-control group, one for each analysis time interval, by stratum.}
+\item{lambda2}{A vector of hazard rates for the event in each analysis
+time interval by stratum for the control group.}
 
-\item{gamma1}{The hazard rate for exponential dropout or a vector of hazard
-rates for piecewise exponential dropout for the active treatment group.
-Defaults to 0 for no dropout.}
+\item{gamma1}{The hazard rate for exponential dropout, a vector of hazard
+rates for piecewise exponential dropout applicable for all strata, or a
+vector of hazard rates for dropout in each analysis time interval
+by stratum for the active treatment group.}
 
-\item{gamma2}{The hazard rate for exponential dropout or a vector of hazard
-rates for piecewise exponential dropout for the control group.
-Defaults to 0 for no dropout.}
+\item{gamma2}{The hazard rate for exponential dropout, a vector of hazard
+rates for piecewise exponential dropout applicable for all strata, or a
+vector of hazard rates for dropout in each analysis time interval
+by stratum for the control group.}
 
 \item{accrualDuration}{Duration of the enrollment period.}
 
@@ -87,31 +90,33 @@ Defaults to 0 for obtaining log-rank test score statistic mean
 and variance.}
 }
 \value{
-A data frame of the number of patients enrolled, the number of
-patients having an event overall and in each treatment group, the mean and
-variance of weighted log-rank test score statistic at the specified
+A data frame of the number of subjects enrolled, the number of
+subjects having an event overall and in each group, the number of
+subjects who drop out overall and in each group, the mean and
+variance of weighted log-rank score statistic at the specified
 calendar time by stratum.
 }
 \description{
 Obtains the number of subjects having an event in each
-treatment group, the mean and variance of weighted log-rank test score
-statistic for a hypothesized log hazard ratio at a given calendar time.
+treatment group by stratum, the mean and variance of weighted log-rank
+score statistic for a hypothesized hazard ratio at a given calendar time.
 }
 \examples{
 # Piecewise accrual, piecewise exponential survivals, and 5\% dropout by
 # the end of 1 year.
-lrstat1(beta = 0, time = 22,
-   allocationRatioPlanned = 1,
-   accrualTime = seq(0, 9),
-   accrualIntensity = c(26/9*seq(1, 9), 26),
-   piecewiseSurvivalTime = c(0, 6),
-   stratumFraction = c(0.2, 0.8),
-   lambda1 = c(0.0533, 0.0309, 1.5*0.0533, 1.5*0.0309),
-   lambda2 = c(0.0533, 0.0533, 1.5*0.0533, 1.5*0.0533),
-   gamma1 = -log(1-0.05)/12,
-   gamma2 = -log(1-0.05)/12,
-   accrualDuration = 22,
-   followupTime = 18, fixedFollowup = FALSE)
+
+lrstat1(time = 22, hazardRatioH0 = 1,
+        allocationRatioPlanned = 1,
+        accrualTime = seq(0, 9),
+        accrualIntensity = c(26/9*seq(1, 9), 26),
+        piecewiseSurvivalTime = c(0, 6),
+        stratumFraction = c(0.2, 0.8),
+        lambda1 = c(0.0533, 0.0309, 1.5*0.0533, 1.5*0.0309),
+        lambda2 = c(0.0533, 0.0533, 1.5*0.0533, 1.5*0.0533),
+        gamma1 = -log(1-0.05)/12,
+        gamma2 = -log(1-0.05)/12,
+        accrualDuration = 22,
+        followupTime = 18, fixedFollowup = FALSE)
 
 }
 \keyword{internal}

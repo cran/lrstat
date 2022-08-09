@@ -9,6 +9,7 @@ lrsim(
   informationTime = NA_real_,
   criticalValues = NA_real_,
   futilityBounds = NA_real_,
+  hazardRatioH0 = 1,
   allocation1 = 1L,
   allocation2 = 1L,
   accrualTime = 0L,
@@ -25,6 +26,7 @@ lrsim(
   rho1 = 0,
   rho2 = 0,
   plannedEvents = NA_integer_,
+  plannedTime = NA_real_,
   maxNumberOfIterations = 1000L,
   maxNumberOfRawDatasetsPerStage = 0L,
   seed = NA_integer_
@@ -34,18 +36,22 @@ lrsim(
 \item{kMax}{The maximum number of stages.}
 
 \item{informationTime}{Information time in terms of variance of
-weighted log-rank test score statistic. Same as informationRates
-in terms of number of events for unweighted log-rank test. Use caltime
-and lrstat to find the information time for weighted log-rank tests.
-Fixed prior to the trial. Defaults to \code{(1:kMax) / kMax} if
-left unspecified.}
+weighted log-rank test score statistic under the null hypothesis.
+Same as informationRates in terms of number of events for
+the conventional log-rank test. Use \code{caltime} and \code{lrstat}
+to derive the information time for weighted log-rank tests.
+Fixed prior to the trial. Defaults to
+\code{plannedEvents / sum(plannedEvents)} if left unspecified.}
 
 \item{criticalValues}{Upper boundaries on the z-test statistic scale
 for stopping for efficacy.}
 
 \item{futilityBounds}{Lower boundaries on the z-test statistic scale
 for stopping for futility at stages 1, ..., kMax-1. Defaults to
-\code{rep(-Inf, kMax-1)} if left unspecified.}
+\code{rep(-6, kMax-1)} if left unspecified.}
+
+\item{hazardRatioH0}{Hazard ratio under the null hypothesis for the active
+treatment versus control. Defaults to 1 for superiority test.}
 
 \item{allocation1}{Number of subjects in the active treatment group in
 a randomization block. Defaults to 1 for equal randomization.}
@@ -69,19 +75,21 @@ Defaults to 0 for exponential distribution.}
 \item{stratumFraction}{A vector of stratum fractions that sum to 1.
 Defaults to 1 for no stratification.}
 
-\item{lambda1}{A vector of hazard rates for the event for the
-active treatment group, one for each analysis time interval, by stratum.}
+\item{lambda1}{A vector of hazard rates for the event in each analysis
+time interval by stratum for the active treatment group.}
 
-\item{lambda2}{A vector of hazard rates for the event for the
-control group, one for each analysis time interval, by stratum.}
+\item{lambda2}{A vector of hazard rates for the event in each analysis
+time interval by stratum for the control group.}
 
-\item{gamma1}{The hazard rate for exponential dropout or a vector of hazard
-rates for piecewise exponential dropout for the active treatment group.
-Defaults to 0 for no dropout.}
+\item{gamma1}{The hazard rate for exponential dropout, a vector of hazard
+rates for piecewise exponential dropout applicable for all strata, or a
+vector of hazard rates for dropout in each analysis time interval
+by stratum for the active treatment group.}
 
-\item{gamma2}{The hazard rate for exponential dropout or a vector of hazard
-rates for piecewise exponential dropout for the control group.
-Defaults to 0 for no dropout.}
+\item{gamma2}{The hazard rate for exponential dropout, a vector of hazard
+rates for piecewise exponential dropout applicable for all strata, or a
+vector of hazard rates for dropout in each analysis time interval
+by stratum for the control group.}
 
 \item{accrualDuration}{Duration of the enrollment period.}
 
@@ -99,6 +107,10 @@ log-rank test. Defaults to 0 for conventional log-rank test.}
 \item{plannedEvents}{The planned cumulative total number of events at each
 stage.}
 
+\item{plannedTime}{The planned analysis time for each stage needed for
+analyses planned at calendar times, in which case, plannedEvents should 
+be missing.}
+
 \item{maxNumberOfIterations}{The number of simulation iterations.
 Defaults to 1000.}
 
@@ -109,33 +121,76 @@ to extract. Defaults to 1.}
 The computer clock will be used if left unspecified,}
 }
 \value{
-A list of S3 class lrsim with 3 components: overview is a list of
-the operating characteristics of the design, sumdata is a data frame for
-the summary data for each iteration, and rawdata is a data frame for
-selected raw data if maxNumberOfRawDatasetsPerStage is a positive integer.
+A list of S3 class \code{lrsim} with 3 components:
+
+* \code{overview} is a list of containing incremental and cumulative
+efficacy and futility stopping probabilities by stage, expected number
+of events, number of dropouts, number of subjects, and analysis time
+by stage, overall rejection probability, overall expected number of
+events, number of dropouts, number of subjects, and study duration,
+the hazard ratio under H0, and whether the analyses are planned 
+based on the number of events or calendar time.
+
+* \code{sumdata} is a data frame of summary data by stage for each
+iteration, containing at which stage the trial stops, whether the target
+number of events is achieved, the analysis time, number of accrued
+subjects overall and by treatment group, number of events overall and by
+treatment group, number of dropouts overall and by treatment group,
+numerator and variance of weighted log-rank score statistic, log-rank
+test Z-statistic, and whether the trial stops for efficacy or futility
+at the stage.
+
+
+* \code{rawdata} (exists if \code{maxNumberOfRawDatasetsPerStage} is a
+positive integer) is a data frame for subject-level data for selected
+replications, containing the subject number, arrival time, stratum,
+treatment group, survival time, dropout time, observation time when
+the trial stops, time under observation, and event and dropout
+indicators.
 }
 \description{
-Performs simulation for two-arm group sequential superiority
-trials based on log-rank test.
+Performs simulation for two-arm group sequential
+trials based on weighted log-rank test.
 }
 \examples{
-sim = lrsim(kMax = 2, informationTime = c(0.5, 1),
-            criticalValues = c(2.797, 1.977),
-            accrualIntensity = 11,
-            lambda1 = 0.018, lambda2 = 0.030,
-            accrualDuration = 12,
-            plannedEvents = c(60, 120),
-            maxNumberOfIterations = 1000,
-            maxNumberOfRawDatasetsPerStage = 1,
-            seed = 314159)
+# Example 1: analyses based on number of events
+
+sim1 = lrsim(kMax = 2, informationTime = c(0.5, 1),
+             criticalValues = c(2.797, 1.977),
+             accrualIntensity = 11,
+             lambda1 = 0.018, lambda2 = 0.030,
+             accrualDuration = 12,
+             plannedEvents = c(60, 120),
+             maxNumberOfIterations = 1000,
+             maxNumberOfRawDatasetsPerStage = 1,
+             seed = 314159)
 
 # summary statistics
-sim
+sim1
 
 # summary for each simulated data set
-head(sim$sumdata)
+head(sim1$sumdata)
 
 # raw data for selected replication
-head(sim$rawdata)
+head(sim1$rawdata)
+
+
+# Example 2: analyses based on calendar time have similar power
+
+sim2 = lrsim(kMax = 2, informationTime = c(0.5, 1),
+             criticalValues = c(2.797, 1.977),
+             accrualIntensity = 11,
+             lambda1 = 0.018, lambda2 = 0.030,
+             accrualDuration = 12,
+             plannedTime = c(31.9, 113.2),
+             maxNumberOfIterations = 1000,
+             maxNumberOfRawDatasetsPerStage = 1,
+             seed = 314159)
+
+# summary statistics
+sim2
+
+# summary for each simulated data set
+head(sim2$sumdata)
 
 }

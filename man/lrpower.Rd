@@ -17,6 +17,7 @@ lrpower(
   futilityBounds = NA_real_,
   typeBetaSpending = "none",
   parameterBetaSpending = NA_real_,
+  hazardRatioH0 = 1,
   allocationRatioPlanned = 1,
   accrualTime = 0L,
   accrualIntensity = 20L,
@@ -31,7 +32,9 @@ lrpower(
   fixedFollowup = 0L,
   rho1 = 0,
   rho2 = 0,
-  numSubintervals = 300L
+  numSubintervals = 300L,
+  estimateHazardRatio = 1L,
+  typeOfComputation = "direct"
 )
 }
 \arguments{
@@ -68,7 +71,7 @@ spent up to each stage.}
 
 \item{futilityBounds}{Lower boundaries on the z-test statistic scale
 for stopping for futility at stages 1, ..., kMax-1. Defaults to
-\code{rep(-Inf, kMax-1)} if left unspecified.}
+\code{rep(-6, kMax-1)} if left unspecified.}
 
 \item{typeBetaSpending}{The type of beta spending. One of the following:
 "sfOF" for O'Brien-Fleming type spending function, "sfP" for Pocock type
@@ -78,6 +81,9 @@ early futility stopping. Defaults to "none".}
 
 \item{parameterBetaSpending}{The parameter value for the beta spending.
 Corresponds to rho for "sfKD", and gamma for "sfHSD".}
+
+\item{hazardRatioH0}{Hazard ratio under the null hypothesis for the active
+treatment versus control. Defaults to 1 for superiority test.}
 
 \item{allocationRatioPlanned}{Allocation ratio for the active treatment
 versus control. Defaults to 1 for equal randomization.}
@@ -98,19 +104,21 @@ Defaults to 0 for exponential distribution.}
 \item{stratumFraction}{A vector of stratum fractions that sum to 1.
 Defaults to 1 for no stratification.}
 
-\item{lambda1}{A vector of hazard rates for the event for the
-active treatment group, one for each analysis time interval, by stratum.}
+\item{lambda1}{A vector of hazard rates for the event in each analysis
+time interval by stratum for the active treatment group.}
 
-\item{lambda2}{A vector of hazard rates for the event for the
-control group, one for each analysis time interval, by stratum.}
+\item{lambda2}{A vector of hazard rates for the event in each analysis
+time interval by stratum for the control group.}
 
-\item{gamma1}{The hazard rate for exponential dropout or a vector of hazard
-rates for piecewise exponential dropout for the active treatment group.
-Defaults to 0 for no dropout.}
+\item{gamma1}{The hazard rate for exponential dropout, a vector of hazard
+rates for piecewise exponential dropout applicable for all strata, or a
+vector of hazard rates for dropout in each analysis time interval
+by stratum for the active treatment group.}
 
-\item{gamma2}{The hazard rate for exponential dropout or a vector of hazard
-rates for piecewise exponential dropout for the control group.
-Defaults to 0 for no dropout.}
+\item{gamma2}{The hazard rate for exponential dropout, a vector of hazard
+rates for piecewise exponential dropout applicable for all strata, or a
+vector of hazard rates for dropout in each analysis time interval
+by stratum for the control group.}
 
 \item{accrualDuration}{Duration of the enrollment period.}
 
@@ -128,12 +136,40 @@ log-rank test. Defaults to 0 for conventional log-rank test.}
 \item{numSubintervals}{Number of sub-intervals to approximate the mean
 and variance of the weighted log-rank test score statistic.
 Defaults to 300. Specify a larger number for better approximation.}
+
+\item{estimateHazardRatio}{Whether to estimate the hazard ratio from 
+weighted Cox regression model and report the stopping boundaries on 
+the hazard ratio scale.}
+
+\item{typeOfComputation}{Whether to use the direct approximation method 
+or the Schoenfeld method. Defaults to "direct". Can use "Schoenfeld" 
+under proportional hazards and conventional log-rank test.}
 }
 \value{
-A list of the overall and stagewise rejection probabilities, the
-futility stopping probabilities, the overall and stagewise expected number
-of events, number of patients, and analysis time, the input accrual and
-follow-up durations, and whether a fixed follow-up is used.
+A list of S3 class \code{lrpower} with 3 components:
+
+* \code{overallResults} containing the overall rejection probability,
+overall significance level, maximum and expected number of events,
+maximum and expected number of dropouts, total and expected number
+of subjects, maximum and expected study duration, along with
+input parameters including accrual duration, followup duration,
+whether a fixed follow-up is used, parameters for the FH weights,
+allocation ratio, number of stages, and hazard ratio under H0.
+
+* \code{byStageResults} containing information rates, efficacy
+and futility boundaries on the Z-scale, probability for efficacy
+and futility stopping at the stage, cumulative probability for
+efficacy and futility stopping by the stage, cumulative alpha spent,
+expected number of events, number of dropouts, number of subjects,
+and expected study time, efficacy and futility boundaries on
+the HR scale and on the p-value scale, information for weighted
+log-rank test, hazard ratio from weighted Cox regression, and
+where efficacy and futility stopping are allowed by stage.
+
+* \code{settings} containing input parameters such as
+alpha and beta spending function and parameter values,
+accrual time, accrual intensity, piecewise survival time, stratum
+fraction, and hazard rates for survival and dropout by group.
 }
 \description{
 Estimates the power, stopping probabilities, and expected
@@ -144,15 +180,15 @@ sample size in a two-group survival design.
 # the end of 1 year.
 
 lrpower(kMax = 2, informationRates = c(0.8, 1),
-    alpha = 0.025, typeAlphaSpending = "sfOF",
-    allocationRatioPlanned = 1, accrualTime = seq(0, 9),
-    accrualIntensity = c(26/9*seq(1, 9), 26),
-    piecewiseSurvivalTime = c(0, 6),
-    stratumFraction = c(0.2, 0.8),
-    lambda1 = c(0.0533, 0.0309, 1.5*0.0533, 1.5*0.0309),
-    lambda2 = c(0.0533, 0.0533, 1.5*0.0533, 1.5*0.0533),
-    gamma1 = -log(1-0.05)/12,
-    gamma2 = -log(1-0.05)/12, accrualDuration = 22,
-    followupTime = 18, fixedFollowup = FALSE)
+        alpha = 0.025, typeAlphaSpending = "sfOF",
+        allocationRatioPlanned = 1, accrualTime = seq(0, 9),
+        accrualIntensity = c(26/9*seq(1, 9), 26),
+        piecewiseSurvivalTime = c(0, 6),
+        stratumFraction = c(0.2, 0.8),
+        lambda1 = c(0.0533, 0.0309, 1.5*0.0533, 1.5*0.0309),
+        lambda2 = c(0.0533, 0.0533, 1.5*0.0533, 1.5*0.0533),
+        gamma1 = -log(1-0.05)/12,
+        gamma2 = -log(1-0.05)/12, accrualDuration = 22,
+        followupTime = 18, fixedFollowup = FALSE)
 
 }

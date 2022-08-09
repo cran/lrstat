@@ -48,7 +48,7 @@ test_that("power with alpha-spending, weighted", {
               rho1 = 0, rho2 = 1,
               numSubintervals = 300)
   expect_equal(round(l$overallResults$overallReject, 4), 0.9323)
-
+  
 })
 
 

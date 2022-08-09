@@ -4,13 +4,13 @@
 \alias{exitprob}
 \title{Stagewise exit probabilities}
 \usage{
-exitprob(b = NA_real_, a = NA_real_, theta = NA_real_, I = NA_real_, r = 18L)
+exitprob(b, a, theta, I)
 }
 \arguments{
 \item{b}{Upper boundaries on the z-test statistic scale.}
 
 \item{a}{Lower boundaries on the z-test statistic scale. Defaults to
-\code{c(rep(-Inf, kMax-1), b[kMax])} if left unspecified, where
+\code{c(rep(-6.0, kMax-1), b[kMax])} if left unspecified, where
 \code{kMax = length(b)}.}
 
 \item{theta}{Stagewise parameter of interest, e.g., \code{-U/V} for
@@ -25,10 +25,6 @@ conventional log-rank test, information can be approximated by
 \code{phi*(1-phi)*D}, where \code{phi} is the probability of being
 allocated to the active arm, and \code{D} is the total number of events at
 each stage.}
-
-\item{r}{Integer value controlling grid for numerical integration as in
-Jennison and Turnbull (2000). Defaults to 18. Specify a larger number
-for greater accuracy.}
 }
 \value{
 A list of stagewise exit probabilities: one vector for efficacy
@@ -40,7 +36,7 @@ Obtains the stagewise exit probabilities for both efficacy and
 futility stopping.
 }
 \examples{
-exitprob(b = c(3.471, 2.454, 2.004), theta = -log(0.6),
-    I = c(50, 100, 150)/4)
+exitprob(b = c(3.471, 2.454, 2.004), a = rep(-6, 3),
+         theta = -log(0.6), I = c(50, 100, 150)/4)
 
 }

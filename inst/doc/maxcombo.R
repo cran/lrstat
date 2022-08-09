@@ -43,17 +43,18 @@ f <- function(u2, u1, sigma, alpha) {
 
 ## -----------------------------------------------------------------------------
 sim1 = lrsim(kMax = 2, informationTime = c(0.5, 1),
-             criticalValues = c(Inf, Inf),
-             accrualIntensity = 25, accrualDuration = 4,
+             criticalValues = c(6, 6),
+             accrualIntensity = 25, 
              piecewiseSurvivalTime = c(0, 1.5),
              lambda1 = c(0.25, 0.125), lambda2 = c(0.25, 0.25),
+             accrualDuration = 4,
              rho1 = 0, rho2 = 0,
              plannedEvents = c(50, 100), 
              maxNumberOfIterations = 1000,
              seed = 314159)
 
 sim2 = lrsim(kMax = 2, informationTime = c(0.5, 1),
-             criticalValues = c(Inf, Inf),
+             criticalValues = c(6, 6),
              accrualIntensity = 25,
              piecewiseSurvivalTime = c(0, 1.5),
              lambda1 = c(0.25, 0.125), lambda2 = c(0.25, 0.25),

@@ -40,6 +40,7 @@ document.addEventListener('DOMContentLoaded', function(e) {
     </style>
 
 
+
 <style type="text/css">
   code {
     white-space: pre;
@@ -371,6 +372,7 @@ design 2.</p>
 ## overallReject      0.900
 ## alpha              0.025
 ## numberOfEvents    25.876
+## numberOfDropouts   3.162
 ## numberOfSubjects 126.182
 ## studyDuration     31.736
 ## accrualDuration   25.236
@@ -395,10 +397,11 @@ the lrsim function.</p>
 <span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>      <span class="at">plannedEvents =</span> <span class="dv">39</span>, </span>
 <span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>      <span class="at">maxNumberOfIterations =</span> <span class="dv">1000</span>, <span class="at">seed =</span> <span class="dv">12345</span>)</span></code></pre></div>
 <pre><code>##                                 
-## overallReject              0.943
-## expectedNumberOfEvents    37.359
-## expectedNumberOfSubjects 189.506
-## expectedStudyDuration     39.721</code></pre>
+## overallReject              0.947
+## expectedNumberOfEvents    37.495
+## expectedNumberOfDropouts   4.579
+## expectedNumberOfSubjects 189.192
+## expectedStudyDuration     39.678</code></pre>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">lrsim</span>(<span class="at">kMax =</span> <span class="dv">1</span>, <span class="at">criticalValues =</span> <span class="fl">1.96</span>,  </span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>      <span class="at">allocation1 =</span> <span class="dv">3</span>, <span class="at">allocation2 =</span> <span class="dv">1</span>,</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>      <span class="at">accrualIntensity =</span> <span class="dv">5</span>, </span>
@@ -409,10 +412,11 @@ the lrsim function.</p>
 <span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>      <span class="at">plannedEvents =</span> <span class="dv">26</span>, </span>
 <span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>      <span class="at">maxNumberOfIterations =</span> <span class="dv">1000</span>, <span class="at">seed =</span> <span class="dv">12345</span>)</span></code></pre></div>
 <pre><code>##                                 
-## overallReject              0.835
-## expectedNumberOfEvents    24.164
-## expectedNumberOfSubjects 123.449
-## expectedStudyDuration     26.983</code></pre>
+## overallReject              0.845
+## expectedNumberOfEvents    24.272
+## expectedNumberOfDropouts   2.962
+## expectedNumberOfSubjects 123.246
+## expectedStudyDuration     26.996</code></pre>
 <p>The simulated power is about 94% for design 1, and 84% for design 2.
 Neither is close to the target 90% power.</p>
 <p>We use the following formula to adjust the sample size to attain the
@@ -440,10 +444,11 @@ estimate.</p>
 <span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>      <span class="at">plannedEvents =</span> <span class="dv">32</span>, </span>
 <span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>      <span class="at">maxNumberOfIterations =</span> <span class="dv">1000</span>, <span class="at">seed =</span> <span class="dv">12345</span>)</span></code></pre></div>
 <pre><code>##                                 
-## overallReject              0.898
-## expectedNumberOfEvents    30.096
-## expectedNumberOfSubjects 152.509
-## expectedStudyDuration     32.728</code></pre>
+## overallReject              0.904
+## expectedNumberOfEvents    30.221
+## expectedNumberOfDropouts   3.679
+## expectedNumberOfSubjects 152.485
+## expectedStudyDuration     32.747</code></pre>
 
 
 
