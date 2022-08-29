@@ -829,6 +829,41 @@ lrsamplesize <- function(beta = 0.2, kMax = NA_integer_, informationRates = NA_r
     .Call(`_lrstat_lrsamplesize`, beta, kMax, informationRates, efficacyStopping, futilityStopping, criticalValues, alpha, typeAlphaSpending, parameterAlphaSpending, userAlphaSpending, futilityBounds, typeBetaSpending, parameterBetaSpending, userBetaSpending, hazardRatioH0, allocationRatioPlanned, accrualTime, accrualIntensity, piecewiseSurvivalTime, stratumFraction, lambda1, lambda2, gamma1, gamma2, accrualDuration, followupTime, fixedFollowup, rho1, rho2, numSubintervals, estimateHazardRatio, typeOfComputation, interval)
 }
 
+#' @title Get group sequential design
+#' @description Obtains the drift parameter and stopping boundaries for a
+#' generic group sequential design assuming a constant treatment effect.
+#'
+#' @param beta Type II error. Defaults to 0.2.
+#' @inheritParams param_kMax
+#' @inheritParams param_informationRates
+#' @inheritParams param_efficacyStopping
+#' @inheritParams param_futilityStopping
+#' @inheritParams param_criticalValues
+#' @inheritParams param_alpha
+#' @inheritParams param_typeAlphaSpending
+#' @inheritParams param_parameterAlphaSpending
+#' @inheritParams param_userAlphaSpending
+#' @inheritParams param_futilityBounds
+#' @inheritParams param_typeBetaSpending
+#' @inheritParams param_parameterBetaSpending
+#' @inheritParams param_userBetaSpending
+#'
+#' @return A list of S3 class \code{design}.
+#'
+#' @examples
+#'
+#' getDesign(beta = 0.2,
+#'           kMax = 2,
+#'           informationRates = c(0.5,1),
+#'           alpha = 0.025,
+#'           typeAlphaSpending = "sfOF",
+#'           typeBetaSpending = "sfP")
+#'
+#' @export
+getDesign <- function(beta = 0.2, kMax = NA_integer_, informationRates = NA_real_, efficacyStopping = NA_integer_, futilityStopping = NA_integer_, criticalValues = NA_real_, alpha = 0.025, typeAlphaSpending = "sfOF", parameterAlphaSpending = NA_real_, userAlphaSpending = NA_real_, futilityBounds = NA_real_, typeBetaSpending = "none", parameterBetaSpending = NA_real_, userBetaSpending = NA_real_) {
+    .Call(`_lrstat_getDesign`, beta, kMax, informationRates, efficacyStopping, futilityStopping, criticalValues, alpha, typeAlphaSpending, parameterAlphaSpending, userAlphaSpending, futilityBounds, typeBetaSpending, parameterBetaSpending, userBetaSpending)
+}
+
 #' @title Set seed
 #' @description Sets the R seed in the cpp program based on set.seed() in R.
 #'
@@ -866,7 +901,7 @@ stl_sort <- function(x) {
 #' R by Hadley Wickham. Given a vector of non-decreasing breakpoints in v,
 #' find the interval containing each element of x; i.e., if
 #' \code{i <- findInterval2(x,v)}, for each index \code{j} in \code{x},
-#' v[i[j]] ≤ x[j] < v[i[j] + 1]
+#' v[i[j]] <= x[j] < v[i[j] + 1]
 #' where v[0] := -Inf, v[N+1] := +Inf, and \code{N = length(v)}.
 #'
 #' @param x The numeric vector of interest.
@@ -911,7 +946,7 @@ findInterval2 <- function(x, v) {
 #' probabilities.
 #'
 #' @examples
-#' exitprob(b = c(3.471, 2.454, 2.004), a = rep(-6, 3),
+#' exitprob(b = c(3.471, 2.454, 2.004), a = NA,
 #'          theta = -log(0.6), I = c(50, 100, 150)/4)
 #'
 #' @export

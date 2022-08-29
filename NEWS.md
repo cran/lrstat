@@ -1,3 +1,6 @@
+# lrstat 0.1.7
+- Add getDesign for creating a generic group sequential design with constant treatment effect over time
+
 # lrstat 0.1.6
 
 - Add capability for performing noninferiority tests in lrpower, lrsamplesize, and lrsim.

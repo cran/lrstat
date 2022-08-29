@@ -439,6 +439,30 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// getDesign
+List getDesign(const double beta, const int kMax, const NumericVector& informationRates, const LogicalVector& efficacyStopping, const LogicalVector& futilityStopping, const NumericVector& criticalValues, const double alpha, const String typeAlphaSpending, const double parameterAlphaSpending, const NumericVector& userAlphaSpending, const NumericVector& futilityBounds, const String typeBetaSpending, const double parameterBetaSpending, const NumericVector& userBetaSpending);
+RcppExport SEXP _lrstat_getDesign(SEXP betaSEXP, SEXP kMaxSEXP, SEXP informationRatesSEXP, SEXP efficacyStoppingSEXP, SEXP futilityStoppingSEXP, SEXP criticalValuesSEXP, SEXP alphaSEXP, SEXP typeAlphaSpendingSEXP, SEXP parameterAlphaSpendingSEXP, SEXP userAlphaSpendingSEXP, SEXP futilityBoundsSEXP, SEXP typeBetaSpendingSEXP, SEXP parameterBetaSpendingSEXP, SEXP userBetaSpendingSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const double >::type beta(betaSEXP);
+    Rcpp::traits::input_parameter< const int >::type kMax(kMaxSEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type informationRates(informationRatesSEXP);
+    Rcpp::traits::input_parameter< const LogicalVector& >::type efficacyStopping(efficacyStoppingSEXP);
+    Rcpp::traits::input_parameter< const LogicalVector& >::type futilityStopping(futilityStoppingSEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type criticalValues(criticalValuesSEXP);
+    Rcpp::traits::input_parameter< const double >::type alpha(alphaSEXP);
+    Rcpp::traits::input_parameter< const String >::type typeAlphaSpending(typeAlphaSpendingSEXP);
+    Rcpp::traits::input_parameter< const double >::type parameterAlphaSpending(parameterAlphaSpendingSEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type userAlphaSpending(userAlphaSpendingSEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type futilityBounds(futilityBoundsSEXP);
+    Rcpp::traits::input_parameter< const String >::type typeBetaSpending(typeBetaSpendingSEXP);
+    Rcpp::traits::input_parameter< const double >::type parameterBetaSpending(parameterBetaSpendingSEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type userBetaSpending(userBetaSpendingSEXP);
+    rcpp_result_gen = Rcpp::wrap(getDesign(beta, kMax, informationRates, efficacyStopping, futilityStopping, criticalValues, alpha, typeAlphaSpending, parameterAlphaSpending, userAlphaSpending, futilityBounds, typeBetaSpending, parameterBetaSpending, userBetaSpending));
+    return rcpp_result_gen;
+END_RCPP
+}
 // set_seed
 void set_seed(int seed);
 RcppExport SEXP _lrstat_set_seed(SEXP seedSEXP) {
@@ -520,6 +544,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_lrstat_getCumAlphaSpent", (DL_FUNC) &_lrstat_getCumAlphaSpent, 18},
     {"_lrstat_lrpower", (DL_FUNC) &_lrstat_lrpower, 30},
     {"_lrstat_lrsamplesize", (DL_FUNC) &_lrstat_lrsamplesize, 33},
+    {"_lrstat_getDesign", (DL_FUNC) &_lrstat_getDesign, 14},
     {"_lrstat_set_seed", (DL_FUNC) &_lrstat_set_seed, 1},
     {"_lrstat_stl_sort", (DL_FUNC) &_lrstat_stl_sort, 1},
     {"_lrstat_findInterval2", (DL_FUNC) &_lrstat_findInterval2, 2},

@@ -36,7 +36,7 @@ Obtains the stagewise exit probabilities for both efficacy and
 futility stopping.
 }
 \examples{
-exitprob(b = c(3.471, 2.454, 2.004), a = rep(-6, 3),
+exitprob(b = c(3.471, 2.454, 2.004), a = NA,
          theta = -log(0.6), I = c(50, 100, 150)/4)
 
 }
