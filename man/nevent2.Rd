@@ -64,7 +64,7 @@ For variable followup,
 }
 \value{
 A matrix of the number of patients having an event at the specified
-calendar times for each treatment group.
+calendar times (row) for each treatment group (column).
 }
 \description{
 Obtains the number of subjects having an event by given

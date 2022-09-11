@@ -34,7 +34,8 @@ lrpower(
   rho2 = 0,
   numSubintervals = 300L,
   estimateHazardRatio = 1L,
-  typeOfComputation = "direct"
+  typeOfComputation = "direct",
+  spendingTime = NA_real_
 )
 }
 \arguments{
@@ -70,7 +71,7 @@ Corresponds to Delta for "WT", rho for "sfKD", and gamma for "sfHSD".}
 spent up to each stage.}
 
 \item{futilityBounds}{Lower boundaries on the z-test statistic scale
-for stopping for futility at stages 1, ..., kMax-1. Defaults to
+for stopping for futility at stages 1, ..., \code{kMax-1}. Defaults to
 \code{rep(-6, kMax-1)} if left unspecified.}
 
 \item{typeBetaSpending}{The type of beta spending. One of the following:
@@ -144,6 +145,10 @@ the hazard ratio scale.}
 \item{typeOfComputation}{Whether to use the direct approximation method 
 or the Schoenfeld method. Defaults to "direct". Can use "Schoenfeld" 
 under proportional hazards and conventional log-rank test.}
+
+\item{spendingTime}{A vector of length \code{kMax} for the error spending 
+time at each analysis. Defaults to missing, in which case, it is the 
+same as \code{informationRates}.}
 }
 \value{
 A list of S3 class \code{lrpower} with 3 components:

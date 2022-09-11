@@ -18,7 +18,8 @@ getDesign(
   futilityBounds = NA_real_,
   typeBetaSpending = "none",
   parameterBetaSpending = NA_real_,
-  userBetaSpending = NA_real_
+  userBetaSpending = NA_real_,
+  spendingTime = NA_real_
 )
 }
 \arguments{
@@ -56,7 +57,7 @@ Corresponds to Delta for "WT", rho for "sfKD", and gamma for "sfHSD".}
 spent up to each stage.}
 
 \item{futilityBounds}{Lower boundaries on the z-test statistic scale
-for stopping for futility at stages 1, ..., kMax-1. Defaults to
+for stopping for futility at stages 1, ..., \code{kMax-1}. Defaults to
 \code{rep(-6, kMax-1)} if left unspecified.}
 
 \item{typeBetaSpending}{The type of beta spending. One of the following:
@@ -71,6 +72,10 @@ Corresponds to rho for "sfKD", and gamma for "sfHSD".}
 
 \item{userBetaSpending}{The user defined beta spending. Cumulative beta
 spent up to each stage.}
+
+\item{spendingTime}{A vector of length \code{kMax} for the error spending 
+time at each analysis. Defaults to missing, in which case, it is the 
+same as \code{informationRates}.}
 }
 \value{
 A list of S3 class \code{design}.

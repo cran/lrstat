@@ -37,7 +37,8 @@ lrsamplesize(
   numSubintervals = 300L,
   estimateHazardRatio = 1L,
   typeOfComputation = "direct",
-  interval = as.numeric(c(0.001, 240))
+  interval = as.numeric(c(0.001, 240)),
+  spendingTime = NA_real_
 )
 }
 \arguments{
@@ -75,7 +76,7 @@ Corresponds to Delta for "WT", rho for "sfKD", and gamma for "sfHSD".}
 spent up to each stage.}
 
 \item{futilityBounds}{Lower boundaries on the z-test statistic scale
-for stopping for futility at stages 1, ..., kMax-1. Defaults to
+for stopping for futility at stages 1, ..., \code{kMax-1}. Defaults to
 \code{rep(-6, kMax-1)} if left unspecified.}
 
 \item{typeBetaSpending}{The type of beta spending. One of the following:
@@ -157,6 +158,10 @@ under proportional hazards and conventional log-rank test.}
 \item{interval}{The interval to search for the solution of
 accrualDuration or followupDuration. Defaults to \code{c(0.001, 240)}.
 Adjustment may be needed for non-monotone relationship with study power.}
+
+\item{spendingTime}{A vector of length \code{kMax} for the error spending 
+time at each analysis. Defaults to missing, in which case, it is the 
+same as \code{informationRates}.}
 }
 \value{
 A list of S3 class \code{lrpower}.
@@ -227,21 +232,22 @@ lrsamplesize(beta = 0.2, kMax = 2,
 # Example 4: Non-inferiority trial with fixed follow-up and 
 # superiority alternative
 
-lr <- lrsamplesize(beta = 0.1, 
-                   kMax = 3, 
-                   alpha = 0.025,
-                   typeAlphaSpending = "sfOF",
-                   hazardRatioH0 = 1.1,
-                   accrualTime = c(0, 6),
-                   accrualIntensity = c(1000, 1500),
-                   lambda1 = log(2)/48*0.95,
-                   lambda2 = log(2)/48,
-                   gamma1 = -log(1-0.08)/12,
-                   gamma2 = -log(1-0.08)/12,
-                   accrualDuration = NA,
-                   followupTime = 18,
-                   fixedFollowup = 1)
+lrsamplesize(beta = 0.1, 
+             kMax = 3, 
+             alpha = 0.025,
+             typeAlphaSpending = "sfOF",
+             hazardRatioH0 = 1.1,
+             accrualTime = c(0, 6),
+             accrualIntensity = c(1000, 1500),
+             lambda1 = log(2)/48*0.95,
+             lambda2 = log(2)/48,
+             gamma1 = -log(1-0.08)/12,
+             gamma2 = -log(1-0.08)/12,
+             accrualDuration = NA,
+             followupTime = 18,
+             fixedFollowup = 1, 
+             typeOfComputation = "Schoenfeld")
                    
-lr
+
 
 }

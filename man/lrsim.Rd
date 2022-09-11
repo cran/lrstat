@@ -40,14 +40,15 @@ weighted log-rank test score statistic under the null hypothesis.
 Same as informationRates in terms of number of events for
 the conventional log-rank test. Use \code{caltime} and \code{lrstat}
 to derive the information time for weighted log-rank tests.
-Fixed prior to the trial. Defaults to
-\code{plannedEvents / sum(plannedEvents)} if left unspecified.}
+Fixed prior to the trial. If left unspecified, it defaults to
+\code{plannedEvents / plannedEvents[kMax]} when \code{plannedEvents} 
+is provided and to \code{plannedTime / plannedTime[kMax]} otherwise.}
 
 \item{criticalValues}{Upper boundaries on the z-test statistic scale
 for stopping for efficacy.}
 
 \item{futilityBounds}{Lower boundaries on the z-test statistic scale
-for stopping for futility at stages 1, ..., kMax-1. Defaults to
+for stopping for futility at stages 1, ..., \code{kMax-1}. Defaults to
 \code{rep(-6, kMax-1)} if left unspecified.}
 
 \item{hazardRatioH0}{Hazard ratio under the null hypothesis for the active
@@ -108,8 +109,8 @@ log-rank test. Defaults to 0 for conventional log-rank test.}
 stage.}
 
 \item{plannedTime}{The planned analysis time for each stage needed for
-analyses planned at calendar times, in which case, plannedEvents should 
-be missing.}
+analyses planned at calendar times, in which case, \code{plannedEvents}
+should be missing.}
 
 \item{maxNumberOfIterations}{The number of simulation iterations.
 Defaults to 1000.}

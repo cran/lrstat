@@ -64,7 +64,7 @@ For variable followup,
 }
 \value{
 A matrix of the number of patients at risk at the specified
-analysis times for each treatment group.
+analysis times (row) for each treatment group (column).
 }
 \description{
 Obtains the number of subjects at risk at given analysis
