@@ -361,23 +361,21 @@ power.</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">lrpower</span>(<span class="at">kMax =</span> <span class="dv">1</span>, <span class="at">criticalValues =</span> <span class="fl">1.96</span>, <span class="at">accrualDuration =</span> <span class="dv">12</span>, </span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>        <span class="at">accrualIntensity =</span> <span class="dv">200</span><span class="sc">/</span><span class="dv">12</span>, <span class="at">lambda1 =</span> <span class="sc">-</span><span class="fu">log</span>(<span class="dv">1</span><span class="fl">-0.2</span>)<span class="sc">/</span><span class="dv">12</span>, </span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>        <span class="at">lambda2 =</span> <span class="sc">-</span><span class="fu">log</span>(<span class="dv">1</span><span class="fl">-0.4</span>)<span class="sc">/</span><span class="dv">12</span>,  <span class="at">followupTime =</span> <span class="fl">1.63</span>)</span></code></pre></div>
-<pre><code>##                         
-## overallReject      0.713
-## alpha              0.025
-## numberOfEvents    39.992
-## numberOfDropouts   0.000
-## numberOfSubjects 200.000
-## studyDuration     13.630
-## accrualDuration   12.000
-## followupTime       1.630
-## fixedFollowup      0.000
-## rho1               0.000
-## rho2               0.000
-## efficacyBounds     1.960
-## efficacyHR         0.516
-## efficacyP          0.025
-## information        9.959
-## HR                 0.437</code></pre>
+<pre><code>##                                                                       
+## Fixed design                                                          
+## Overall power: 0.713, overall significance level (1-sided): 0.025     
+## Number of events: 40                                                  
+## Number of dropouts: 0                                                 
+## Number of subjects: 200                                               
+## Study duration: 13.6                                                  
+## Accrual duration: 12, follow-up duration: 1.6, fixed follow-up: FALSE 
+##                                                                       
+##                                    
+## Efficacy boundary (Z-scale)  1.960 
+## Efficacy boundary (HR-scale) 0.516 
+## Efficacy boundary (p-scale)  0.0250
+## Information                  9.96  
+## HR                           0.437</code></pre>
 <p>Therefore, the power is estimated to be 71.3%. In comparison, the
 Schoenfeld formula yields a power of 74.5%.</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>hazardRatio <span class="ot">=</span> <span class="fu">log</span>(<span class="dv">1</span><span class="fl">-0.2</span>)<span class="sc">/</span><span class="fu">log</span>(<span class="dv">1</span><span class="fl">-0.4</span>)</span>
@@ -392,12 +390,15 @@ replications.</p>
 <span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>      <span class="at">accrualDuration =</span> <span class="dv">12</span>, </span>
 <span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>      <span class="at">plannedEvents =</span> <span class="dv">40</span>, </span>
 <span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>      <span class="at">maxNumberOfIterations =</span> <span class="dv">10000</span>, <span class="at">seed =</span> <span class="dv">314159</span>)</span></code></pre></div>
-<pre><code>##                                 
-## overallReject              0.722
-## expectedNumberOfEvents    40.000
-## expectedNumberOfDropouts   0.000
-## expectedNumberOfSubjects 199.231
-## expectedStudyDuration     13.627</code></pre>
+<pre><code>##                                              
+## Fixed design                                 
+## Overall power: 0.722                         
+## Expected # events: 40                        
+## Expected # dropouts: 0                       
+## Expected # subjects: 199.2                   
+## Expected study duration: 13.6                
+## Accrual duration: 12, fixed follow-up: FALSE 
+## </code></pre>
 <p>Therefore, the direct approximation method yields a more accurate
 power estimate than the Schoenfeld method in this case. The reason for
 this discrepancy is due to the hazard ratio being 0.437, which is rather

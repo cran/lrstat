@@ -973,7 +973,12 @@ List lrsim(const int kMax = NA_INTEGER,
     _["expectedNumberOfSubjects"] = expectedNumberOfSubjects,
     _["expectedStudyDuration"] = expectedStudyDuration,
     _["hazardRatioH0"] = hazardRatioH0,
-    _["useEvents"] = useEvents);
+    _["useEvents"] = useEvents,
+    _["accrualDuration"] = accrualDuration,
+    _["fixedFollowup"] = fixedFollowup,
+    _["rho1"] = rho1,
+    _["rho2"] = rho2,
+    _["kMax"] = kMax);
   
   
   

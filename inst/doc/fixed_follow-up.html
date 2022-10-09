@@ -368,23 +368,21 @@ design 2.</p>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>             <span class="at">lambda2 =</span> <span class="fl">0.95</span><span class="sc">/</span><span class="dv">12</span>, <span class="at">lambda1 =</span> <span class="fl">0.3</span><span class="sc">*</span><span class="fl">0.95</span><span class="sc">/</span><span class="dv">12</span>, </span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>             <span class="at">gamma1 =</span> <span class="sc">-</span><span class="fu">log</span>(<span class="dv">1</span><span class="fl">-0.1</span>)<span class="sc">/</span><span class="dv">24</span>, <span class="at">gamma2 =</span> <span class="sc">-</span><span class="fu">log</span>(<span class="dv">1</span><span class="fl">-0.1</span>)<span class="sc">/</span><span class="dv">24</span>, </span>
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>             <span class="at">accrualDuration =</span> <span class="cn">NA</span>, <span class="at">followupTime =</span> <span class="dv">26</span><span class="sc">/</span><span class="dv">4</span>, <span class="at">fixedFollowup =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
-<pre><code>##                         
-## overallReject      0.900
-## alpha              0.025
-## numberOfEvents    25.876
-## numberOfDropouts   3.162
-## numberOfSubjects 126.182
-## studyDuration     31.736
-## accrualDuration   25.236
-## followupTime       6.500
-## fixedFollowup      1.000
-## rho1               0.000
-## rho2               0.000
-## efficacyBounds     1.960
-## efficacyHR         0.462
-## efficacyP          0.025
-## information        4.435
-## HR                 0.300</code></pre>
+<pre><code>##                                                                        
+## Fixed design                                                           
+## Overall power: 0.9, overall significance level (1-sided): 0.025        
+## Number of events: 25.9                                                 
+## Number of dropouts: 3.2                                                
+## Number of subjects: 126.2                                              
+## Study duration: 31.7                                                   
+## Accrual duration: 25.2, follow-up duration: 6.5, fixed follow-up: TRUE 
+##                                                                        
+##                                    
+## Efficacy boundary (Z-scale)  1.960 
+## Efficacy boundary (HR-scale) 0.462 
+## Efficacy boundary (p-scale)  0.0250
+## Information                  4.44  
+## HR                           0.300</code></pre>
 <p>To check the accuracy of either solution, we run simulations using
 the lrsim function.</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">lrsim</span>(<span class="at">kMax =</span> <span class="dv">1</span>, <span class="at">criticalValues =</span> <span class="fl">1.96</span>,  </span>
@@ -396,12 +394,15 @@ the lrsim function.</p>
 <span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>      <span class="at">fixedFollowup =</span> <span class="cn">TRUE</span>,  </span>
 <span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>      <span class="at">plannedEvents =</span> <span class="dv">39</span>, </span>
 <span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>      <span class="at">maxNumberOfIterations =</span> <span class="dv">1000</span>, <span class="at">seed =</span> <span class="dv">12345</span>)</span></code></pre></div>
-<pre><code>##                                 
-## overallReject              0.947
-## expectedNumberOfEvents    37.495
-## expectedNumberOfDropouts   4.579
-## expectedNumberOfSubjects 189.192
-## expectedStudyDuration     39.678</code></pre>
+<pre><code>##                                               
+## Fixed design                                  
+## Overall power: 0.947                          
+## Expected # events: 37.5                       
+## Expected # dropouts: 4.6                      
+## Expected # subjects: 189.2                    
+## Expected study duration: 39.7                 
+## Accrual duration: 39.2, fixed follow-up: TRUE 
+## </code></pre>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">lrsim</span>(<span class="at">kMax =</span> <span class="dv">1</span>, <span class="at">criticalValues =</span> <span class="fl">1.96</span>,  </span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>      <span class="at">allocation1 =</span> <span class="dv">3</span>, <span class="at">allocation2 =</span> <span class="dv">1</span>,</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>      <span class="at">accrualIntensity =</span> <span class="dv">5</span>, </span>
@@ -411,12 +412,15 @@ the lrsim function.</p>
 <span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>      <span class="at">fixedFollowup =</span> <span class="cn">TRUE</span>,  </span>
 <span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>      <span class="at">plannedEvents =</span> <span class="dv">26</span>, </span>
 <span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>      <span class="at">maxNumberOfIterations =</span> <span class="dv">1000</span>, <span class="at">seed =</span> <span class="dv">12345</span>)</span></code></pre></div>
-<pre><code>##                                 
-## overallReject              0.845
-## expectedNumberOfEvents    24.272
-## expectedNumberOfDropouts   2.962
-## expectedNumberOfSubjects 123.246
-## expectedStudyDuration     26.996</code></pre>
+<pre><code>##                                               
+## Fixed design                                  
+## Overall power: 0.845                          
+## Expected # events: 24.3                       
+## Expected # dropouts: 3                        
+## Expected # subjects: 123.2                    
+## Expected study duration: 27                   
+## Accrual duration: 25.2, fixed follow-up: TRUE 
+## </code></pre>
 <p>The simulated power is about 94% for design 1, and 84% for design 2.
 Neither is close to the target 90% power.</p>
 <p>We use the following formula to adjust the sample size to attain the
@@ -443,12 +447,15 @@ estimate.</p>
 <span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>      <span class="at">fixedFollowup =</span> <span class="cn">TRUE</span>,  </span>
 <span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>      <span class="at">plannedEvents =</span> <span class="dv">32</span>, </span>
 <span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>      <span class="at">maxNumberOfIterations =</span> <span class="dv">1000</span>, <span class="at">seed =</span> <span class="dv">12345</span>)</span></code></pre></div>
-<pre><code>##                                 
-## overallReject              0.904
-## expectedNumberOfEvents    30.221
-## expectedNumberOfDropouts   3.679
-## expectedNumberOfSubjects 152.485
-## expectedStudyDuration     32.747</code></pre>
+<pre><code>##                                               
+## Fixed design                                  
+## Overall power: 0.904                          
+## Expected # events: 30.2                       
+## Expected # dropouts: 3.7                      
+## Expected # subjects: 152.5                    
+## Expected study duration: 32.7                 
+## Accrual duration: 31.2, fixed follow-up: TRUE 
+## </code></pre>
 
 
 

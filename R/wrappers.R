@@ -91,7 +91,7 @@ exitprob <- function(b, a = NA, theta = 0, I = NA) {
 
 #' @title Adjusted p-values for Bonferroni-based graphical approaches
 #' @description Obtains the adjusted p-values for graphical approaches 
-#' using weighted Bonferroni tests for fixed design.
+#' using weighted Bonferroni tests.
 #'
 #' @param w The vector of initial weights for elementary hypotheses.
 #' @param G The initial transition matrix.
@@ -128,3 +128,46 @@ fadjpbon <- function(w, G, p) {
   x
 }
 
+
+#' @title Adjusted p-values for Simes-based graphical approaches
+#' @description Obtains the adjusted p-values for graphical approaches 
+#' using weighted Simes tests.
+#'
+#' @param wgtmat The weight matrix for intersection hypotheses.
+#' @param p Raw p-values for elementary hypotheses.
+#' @param family The matrix of family indicators for elementary hypotheses.
+#'
+#' @return A matrix of adjusted p-values.
+#'
+#' @references
+#' Frank Bretz, Martin Posch, Ekkehard Glimm, Florian Klinglmueller, 
+#' Willi Maurer, and Kornelius Rohmeyer. Graphical approach for multiple
+#' comparison procedures using weighted Bonferroni, Simes, or 
+#' parameter tests. Biometrical Journal. 2011;53:894-913.
+#' 
+#' @examples
+#'
+#' pvalues <- matrix(c(0.01,0.005,0.015,0.022, 0.02,0.015,0.010,0.023),
+#'                   nrow=2, ncol=4, byrow=TRUE)
+#' w <- c(0.5,0.5,0,0)
+#' g <- matrix(c(0,0,1,0,0,0,0,1,0,1,0,0,1,0,0,0), 
+#'             nrow=4, ncol=4, byrow=TRUE)
+#' wgtmat = fwgtmat(w,g)
+#' 
+#' family = matrix(c(1,1,0,0,0,0,1,1), nrow=2, ncol=4, byrow=TRUE)
+#' fadjpsim(wgtmat, pvalues, family)
+#'
+#' @export
+fadjpsim <- function(wgtmat, p, family) {
+  m = ncol(wgtmat)
+  
+  if (!is.matrix(p)) {
+    p = matrix(p, ncol=m)
+  }
+  
+  x = fadjpsimcpp(wgtmat, p, family)
+  if (nrow(x) == 1) {
+    x = as.vector(x)
+  }
+  x
+}

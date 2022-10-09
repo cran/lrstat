@@ -37,6 +37,31 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// fwgtmat
+NumericMatrix fwgtmat(const NumericVector& w, const NumericMatrix& G);
+RcppExport SEXP _lrstat_fwgtmat(SEXP wSEXP, SEXP GSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const NumericVector& >::type w(wSEXP);
+    Rcpp::traits::input_parameter< const NumericMatrix& >::type G(GSEXP);
+    rcpp_result_gen = Rcpp::wrap(fwgtmat(w, G));
+    return rcpp_result_gen;
+END_RCPP
+}
+// fadjpsimcpp
+NumericMatrix fadjpsimcpp(const NumericMatrix& wgtmat, const NumericMatrix& p, const LogicalMatrix& family);
+RcppExport SEXP _lrstat_fadjpsimcpp(SEXP wgtmatSEXP, SEXP pSEXP, SEXP familySEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const NumericMatrix& >::type wgtmat(wgtmatSEXP);
+    Rcpp::traits::input_parameter< const NumericMatrix& >::type p(pSEXP);
+    Rcpp::traits::input_parameter< const LogicalMatrix& >::type family(familySEXP);
+    rcpp_result_gen = Rcpp::wrap(fadjpsimcpp(wgtmat, p, family));
+    return rcpp_result_gen;
+END_RCPP
+}
 // getBound
 NumericVector getBound(const int k, const NumericVector& informationRates, const double alpha, const String typeAlphaSpending, const double parameterAlphaSpending, const NumericVector& userAlphaSpending, const NumericVector& spendingTime);
 RcppExport SEXP _lrstat_getBound(SEXP kSEXP, SEXP informationRatesSEXP, SEXP alphaSEXP, SEXP typeAlphaSpendingSEXP, SEXP parameterAlphaSpendingSEXP, SEXP userAlphaSpendingSEXP, SEXP spendingTimeSEXP) {
@@ -737,6 +762,8 @@ END_RCPP
 static const R_CallMethodDef CallEntries[] = {
     {"_lrstat_updateGraph", (DL_FUNC) &_lrstat_updateGraph, 4},
     {"_lrstat_fadjpboncpp", (DL_FUNC) &_lrstat_fadjpboncpp, 3},
+    {"_lrstat_fwgtmat", (DL_FUNC) &_lrstat_fwgtmat, 2},
+    {"_lrstat_fadjpsimcpp", (DL_FUNC) &_lrstat_fadjpsimcpp, 3},
     {"_lrstat_getBound", (DL_FUNC) &_lrstat_getBound, 7},
     {"_lrstat_repeatedPValue", (DL_FUNC) &_lrstat_repeatedPValue, 6},
     {"_lrstat_fseqbon", (DL_FUNC) &_lrstat_fseqbon, 11},

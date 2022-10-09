@@ -367,38 +367,28 @@ target number of events.</p>
 <span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>             <span class="at">lambda1 =</span> <span class="fu">c</span>(<span class="fu">log</span>(<span class="dv">2</span>)<span class="sc">/</span><span class="dv">13</span>, <span class="fl">0.58</span><span class="sc">*</span><span class="fu">log</span>(<span class="dv">2</span>)<span class="sc">/</span><span class="dv">13</span>),</span>
 <span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>             <span class="at">gamma1 =</span> <span class="sc">-</span><span class="fu">log</span>(<span class="dv">1</span><span class="fl">-0.05</span>)<span class="sc">/</span><span class="dv">12</span>, <span class="at">gamma2 =</span> <span class="sc">-</span><span class="fu">log</span>(<span class="dv">1</span><span class="fl">-0.05</span>)<span class="sc">/</span><span class="dv">12</span>,</span>
 <span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>             <span class="at">accrualDuration =</span> <span class="dv">22</span>, <span class="at">followupTime =</span> <span class="cn">NA</span>)</span></code></pre></div>
-<pre><code>##                          stage 1 stage 2
-## informationRates           0.800   1.000
-## efficacyBounds             2.250   2.025
-## futilityBounds            -6.000   2.025
-## cumulativeRejection        0.450   0.800
-## cumulativeFutility         0.000   0.200
-## cumulativeAlphaSpent       0.012   0.025
-## numberOfEvents           252.184 315.231
-## numberOfDropouts          23.137  29.849
-## numberOfSubjects         468.000 468.000
-## analysisTime              31.391  41.519
-## efficacyHR                 0.752   0.795
-## futilityHR                 2.139   0.795
-## efficacyP                  0.012   0.021
-## futilityP                  1.000   0.021
-## information               62.807  78.025
-## HR                         0.765   0.723
-## overallReject              0.800        
-## alpha                      0.025        
-## numberOfEvents           315.231        
-## expectedNumberOfEvents   286.848        
-## numberOfDropouts          29.849        
-## expectedNumberOfDropouts  26.827        
-## numberOfSubjects         468.000        
-## expectedNumberOfSubjects 468.000        
-## studyDuration             41.519        
-## expectedStudyDuration     36.959        
-## accrualDuration           22.000        
-## followupTime              19.519        
-## fixedFollowup              0.000        
-## rho1                       0.000        
-## rho2                       0.000</code></pre>
+<pre><code>##                                                                        
+## Group-sequential trial with 2 stages                                   
+## Overall power: 0.8, overall significance level (1-sided): 0.025        
+## Maximum # events: 315.2, expected # events: 286.8                      
+## Maximum # dropouts: 29.8, expected # dropouts: 26.8                    
+## Maximum # subjects: 468, expected # subjects: 468                      
+## Total study duration: 41.5, expected study duration: 37                
+## Accrual duration: 22, follow-up duration: 19.5, fixed follow-up: FALSE 
+##                                                                        
+##                              Stage 1 Stage 2
+## Information rate             0.800   1.000  
+## Efficacy boundary (Z-scale)  2.250   2.025  
+## Cumulative rejection         0.450   0.800  
+## Cumulative alpha spent       0.0122  0.0250 
+## Number of events             252.2   315.2  
+## Number of dropouts           23.1    29.8   
+## Number of subjects           468.0   468.0  
+## Analysis time                31.4    41.5   
+## Efficacy boundary (HR-scale) 0.752   0.795  
+## Efficacy boundary (p-scale)  0.0122  0.0214 
+## Information                  62.81   78.02  
+## HR                           0.765   0.723</code></pre>
 <p>Thus we need to observe 315 events with 468 subjects, and the maximum
 study duration is 41.5 months with an expected study duration of 37
 months.</p>
@@ -413,18 +403,22 @@ months.</p>
 <span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>      <span class="at">accrualDuration =</span> <span class="dv">22</span>,</span>
 <span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>      <span class="at">plannedEvents =</span> <span class="fu">c</span>(<span class="dv">252</span>, <span class="dv">315</span>), </span>
 <span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>      <span class="at">maxNumberOfIterations =</span> <span class="dv">10000</span>, <span class="at">seed =</span> <span class="dv">314159</span>)</span></code></pre></div>
-<pre><code>##                          stage 1 stage 2
-## cumulativeRejection        0.450   0.797
-## cumulativeFutility         0.000   0.203
-## numberOfEvents           252.000 315.000
-## numberOfDropouts          23.049  29.778
-## numberOfSubjects         468.000 468.000
-## analysisTime              31.338  41.435
-## overallReject              0.797        
-## expectedNumberOfEvents   286.618        
-## expectedNumberOfDropouts  26.701        
-## expectedNumberOfSubjects 468.000        
-## expectedStudyDuration     36.810</code></pre>
+<pre><code>##                                              
+## Group-sequential trial with 2 stages         
+## Overall power: 0.797                         
+## Expected # events: 286.6                     
+## Expected # dropouts: 26.7                    
+## Expected # subjects: 468                     
+## Expected study duration: 36.8                
+## Accrual duration: 22, fixed follow-up: FALSE 
+##                                              
+##                      Stage 1 Stage 2
+## Cumulative rejection 0.451   0.797  
+## Cumulative futility  0.000   0.203  
+## Number of events     252.0   315.0  
+## Number of dropouts   23.0    29.8   
+## Number of subjects   468.0   468.0  
+## Analysis time        31.3    41.4</code></pre>
 <p>The simulation results confirm the analytic calculations.</p>
 
 

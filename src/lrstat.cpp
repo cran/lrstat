@@ -2350,6 +2350,16 @@ List lrpower(const int kMax = NA_INTEGER,
     hrl = hazardRatioH0*exp(-futilityBounds1*sqrt(vlogHR));
   }
   
+  for (int i=0; i<kMax; i++) {
+    if (criticalValues1[i] == 6) {
+      hru[i] = NA_REAL;
+    }
+    
+    if (futilityBounds1[i] == -6) {
+      hrl[i] = NA_REAL;
+    }
+  }
+  
   IntegerVector stageNumber = seq_len(kMax);
   
   for (int i=0; i<kMax; i++) {

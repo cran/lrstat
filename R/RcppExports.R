@@ -31,6 +31,29 @@ fadjpboncpp <- function(w, G, p) {
     .Call(`_lrstat_fadjpboncpp`, w, G, p)
 }
 
+#' @title Weight matrix for all intersection hypotheses
+#' @description Obtains the weight matrix for all intersection hypotheses.
+#'
+#' @param w The vector of weights for elementary hypotheses.
+#' @param G The transition matrix.
+#'
+#' @return The weight matrix starting with the global null hypothesis.
+#'
+#' @examples
+#'
+#' w = c(0.5,0.5,0,0)
+#' g = matrix(c(0,0,1,0,0,0,0,1,0,1,0,0,1,0,0,0), nrow=4, ncol=4, byrow=TRUE)
+#' (wgtmat = fwgtmat(w,g))
+#'
+#' @export
+fwgtmat <- function(w, G) {
+    .Call(`_lrstat_fwgtmat`, w, G)
+}
+
+fadjpsimcpp <- function(wgtmat, p, family) {
+    .Call(`_lrstat_fadjpsimcpp`, wgtmat, p, family)
+}
+
 #' @title Get efficacy boundaries for group sequential design
 #' @description Obtains the efficacy stopping boundaries for a group
 #' sequential design.

@@ -18,7 +18,7 @@ A matrix of adjusted p-values.
 }
 \description{
 Obtains the adjusted p-values for graphical approaches 
-using weighted Bonferroni tests for fixed design.
+using weighted Bonferroni tests.
 }
 \examples{
 

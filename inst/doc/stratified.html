@@ -387,38 +387,28 @@ months. Now we can evaluate the power using the lrpower function.</p>
 <span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>        <span class="at">lambda2 =</span> lambda2, </span>
 <span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>        <span class="at">accrualDuration =</span> <span class="dv">24</span>, </span>
 <span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>        <span class="at">followupTime =</span> <span class="fl">30.92</span>)</span></code></pre></div>
-<pre><code>##                          stage 1 stage 2 stage 3
-## informationRates           0.333   0.667   1.000
-## efficacyBounds             3.712   2.511   1.993
-## futilityBounds            -6.000  -6.000   1.993
-## cumulativeRejection        0.028   0.524   0.882
-## cumulativeFutility         0.000   0.000   0.118
-## cumulativeAlphaSpent       0.000   0.006   0.025
-## numberOfEvents            21.977  44.020  65.997
-## numberOfDropouts           0.000   0.000   0.000
-## numberOfSubjects         288.000 288.000 288.000
-## analysisTime              24.873  39.040  54.920
-## efficacyHR                 0.183   0.446   0.594
-## futilityHR                15.615   6.901   0.594
-## efficacyP                  0.000   0.006   0.023
-## futilityP                  1.000   1.000   0.023
-## information                5.489  10.980  16.419
-## HR                         0.447   0.447   0.447
-## overallReject              0.882                
-## alpha                      0.025                
-## numberOfEvents            65.997                
-## expectedNumberOfEvents    53.850                
-## numberOfDropouts           0.000                
-## expectedNumberOfDropouts   0.000                
-## numberOfSubjects         288.000                
-## expectedNumberOfSubjects 288.000                
-## studyDuration             54.920                
-## expectedStudyDuration     46.192                
-## accrualDuration           24.000                
-## followupTime              30.920                
-## fixedFollowup              0.000                
-## rho1                       0.000                
-## rho2                       0.000</code></pre>
+<pre><code>##                                                                        
+## Group-sequential trial with 3 stages                                   
+## Overall power: 0.882, overall significance level (1-sided): 0.025      
+## Maximum # events: 66, expected # events: 53.8                          
+## Maximum # dropouts: 0, expected # dropouts: 0                          
+## Maximum # subjects: 288, expected # subjects: 288                      
+## Total study duration: 54.9, expected study duration: 46.2              
+## Accrual duration: 24, follow-up duration: 30.9, fixed follow-up: FALSE 
+##                                                                        
+##                              Stage 1 Stage 2 Stage 3
+## Information rate             0.333   0.667   1.000  
+## Efficacy boundary (Z-scale)  3.712   2.511   1.993  
+## Cumulative rejection         0.028   0.524   0.882  
+## Cumulative alpha spent       0.0001  0.0061  0.0250 
+## Number of events             22.0    44.0    66.0   
+## Number of dropouts           0.0     0.0     0.0    
+## Number of subjects           288.0   288.0   288.0  
+## Analysis time                24.9    39.0    54.9   
+## Efficacy boundary (HR-scale) 0.183   0.446   0.594  
+## Efficacy boundary (p-scale)  0.0001  0.0060  0.0231 
+## Information                  5.49    10.98   16.42  
+## HR                           0.447   0.447   0.447</code></pre>
 <p>Therefore, the overall power is about 88% for the stratified
 analysis. This is confirmed by the simulation below.</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">lrsim</span>(<span class="at">kMax =</span> <span class="dv">3</span>, </span>
@@ -433,18 +423,22 @@ analysis. This is confirmed by the simulation below.</p>
 <span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>      <span class="at">plannedEvents =</span> <span class="fu">c</span>(<span class="dv">22</span>, <span class="dv">44</span>, <span class="dv">66</span>),</span>
 <span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>      <span class="at">maxNumberOfIterations =</span> <span class="dv">1000</span>, </span>
 <span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>      <span class="at">seed =</span> <span class="dv">314159</span>)</span></code></pre></div>
-<pre><code>##                          stage 1 stage 2 stage 3
-## cumulativeRejection        0.013   0.504   0.882
-## cumulativeFutility         0.000   0.000   0.118
-## numberOfEvents            22.000  44.000  66.000
-## numberOfDropouts           0.000   0.000   0.000
-## numberOfSubjects         279.327 288.000 288.000
-## analysisTime              24.820  39.011  55.032
-## overallReject              0.882                
-## expectedNumberOfEvents    54.626                
-## expectedNumberOfDropouts   0.000                
-## expectedNumberOfSubjects 287.845                
-## expectedStudyDuration     46.609</code></pre>
+<pre><code>##                                              
+## Group-sequential trial with 3 stages         
+## Overall power: 0.882                         
+## Expected # events: 54.6                      
+## Expected # dropouts: 0                       
+## Expected # subjects: 287.8                   
+## Expected study duration: 46.6                
+## Accrual duration: 24, fixed follow-up: FALSE 
+##                                              
+##                      Stage 1 Stage 2 Stage 3
+## Cumulative rejection 0.013   0.504   0.882  
+## Cumulative futility  0.000   0.000   0.118  
+## Number of events     22.0    44.0    66.0   
+## Number of dropouts   0.0     0.0     0.0    
+## Number of subjects   279.3   288.0   288.0  
+## Analysis time        24.8    39.0    55.0</code></pre>
 
 
 

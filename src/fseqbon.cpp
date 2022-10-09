@@ -105,16 +105,16 @@ NumericMatrix fadjpboncpp(const NumericVector& w,
   NumericMatrix g1(m,m);  // temporary transition matrix 
   
   
-  if (G.nrow() != m || G.ncol() != m) {
-    stop("Invalid dimension for G");
-  }
-  
   if (is_true(any(w < 0.0))) {
     stop("w must be nonnegative");
   }
   
   if (sum(w) != 1.0) {
     stop("w must sum to 1");
+  }
+  
+  if (G.nrow() != m || G.ncol() != m) {
+    stop("Invalid dimension for G");
   }
   
   if (is_true(any(G < 0.0))) {
@@ -191,6 +191,272 @@ NumericMatrix fadjpboncpp(const NumericVector& w,
   
   return padj;
 }
+
+
+//' @title Weight matrix for all intersection hypotheses
+//' @description Obtains the weight matrix for all intersection hypotheses.
+//'
+//' @param w The vector of weights for elementary hypotheses.
+//' @param G The transition matrix.
+//'
+//' @return The weight matrix starting with the global null hypothesis.
+//'
+//' @examples
+//'
+//' w = c(0.5,0.5,0,0)
+//' g = matrix(c(0,0,1,0,0,0,0,1,0,1,0,0,1,0,0,0), nrow=4, ncol=4, byrow=TRUE)
+//' (wgtmat = fwgtmat(w,g))
+//'
+//' @export
+// [[Rcpp::export]]
+NumericMatrix fwgtmat(const NumericVector& w,  
+                      const NumericMatrix& G) {
+  int m = w.size();
+  int i, j, k, l;
+  int ntests = (1 << m) - 1;
+  
+  if (is_true(any(w < 0.0))) {
+    stop("w must be nonnegative");
+  }
+  
+  if (sum(w) != 1.0) {
+    stop("w must sum to 1");
+  }
+  
+  if (G.nrow() != m || G.ncol() != m) {
+    stop("Invalid dimension for G");
+  }
+  
+  if (is_true(any(G < 0.0))) {
+    stop("G must be nonnegative");
+  }
+  
+  if (is_true(any(rowSums(G) > 1.0 + 1.0e-8))) {
+    stop("Row sums of G must be less than or equal to 1");
+  }
+  
+  for (i=0; i<m; i++) {
+    if (G(i,i) != 0.0) {
+      stop("Diagonal elements of G must be equal to 0");
+    }
+  }
+  
+  NumericVector wx = clone(w);
+  NumericMatrix g = clone(G);
+  NumericMatrix wgtmat(ntests, m);
+  NumericMatrix gtrmat((ntests+1)/2, m*m); // only need to store first half 
+  for (i=0; i<ntests; i++) {
+    int number = ntests - i;
+    
+    // binary representation of elementary hypotheses in the intersection
+    IntegerVector cc(m);
+    for (j=0; j<m; j++) {
+      cc(j) = (number/(1 << (m - 1 - j))) % 2;
+    }
+    
+    
+    if (i >= 1) {
+      j = which_min(cc);
+      
+      // indicators for hypotheses not in the super set
+      IntegerVector cc1 = 1 - cc;
+      cc1(j) = 0;
+      
+      // index of the super set
+      int ip = 0;
+      for (k=0; k<m; k++) {
+        if (cc1(k)) {
+          ip += (1 << (m - 1 - k));
+        }
+      }
+      
+      // load the weights from the super set
+      for (k=0; k<m; k++) {
+        wx(k) = wgtmat(ip, k);
+      }
+      
+      // load the transition matrix from the super set
+      for (k=0; k<m; k++) {
+        for (l=0; l<m; l++) {
+          g(k,l) = gtrmat(ip, k*m+l);
+        }
+      }
+      
+      // update the weights
+      for (k=0; k<m; k++) {
+        if (cc(k)) {
+          wx(k) += wx(j)*g(j,k);
+        }
+      }
+      wx(j) = 0;
+      
+      // update the transition matrix
+      NumericMatrix g1(m,m);
+      for (k=0; k<m; k++) {
+        for (l=0; l<m; l++) {
+          if (cc(k) && cc(l) && (k != l) && (g(k,j)*g(j,k) < 1.0 - 1.0e-12)) {
+            g1(k,l) = (g(k,l) + g(k,j)*g(j,l))/(1 - g(k,j)*g(j,k));
+          }
+        }
+      }
+      g = g1;
+      
+    }
+    
+    // save the weights
+    for (k=0; k<m; k++) {
+      wgtmat(i,k) = wx(k);
+    }
+    
+    // save the transition matrix
+    if (i<(ntests+1)/2) {
+      for (k=0; k<m; k++) {
+        for (l=0; l<m; l++) {
+          gtrmat(i, k*m+l) = g(k,l);
+        }
+      }
+    }
+  }
+  
+  return wgtmat;
+}
+
+
+
+// [[Rcpp::export]]
+NumericMatrix fadjpsimcpp(const NumericMatrix& wgtmat,
+                          const NumericMatrix& p,
+                          const LogicalMatrix& family) {
+  
+  int ntests = wgtmat.nrow();
+  int m = wgtmat.ncol();
+  int niters = p.nrow();
+  int nfams = family.nrow();
+  int i, j, k, l, s, t, iter;
+  LogicalMatrix incid(ntests, m);
+  NumericMatrix pinter(niters, ntests);
+  NumericMatrix padj(niters, m);
+  
+  if (family.ncol() != m) {
+    stop("family must have as many individual hypotheses as columns");
+  }
+  
+  for (j=0; j<m; j++) {
+    if (sum(family(_,j)) != 1) {
+      stop("Each hypothesis should belong to one or only one family");
+    }
+  }
+  
+  for (i=0; i<ntests; i++) {
+    int number = ntests - i;
+    
+    // binary representation of elementary hypotheses in the intersection
+    LogicalVector cc(m);
+    for (j=0; j<m; j++) {
+      cc(j) = (number/(1 << (m - 1 - j))) % 2;
+    }
+    
+    // identify the active families and active hypotheses
+    LogicalMatrix family0(nfams, m);
+    for (k=0; k<nfams; k++) {
+      for (j=0; j<m; j++) {
+        family0(k,j) = family(k,j) && cc(j);
+      }
+    }
+    
+    int nhyps = sum(family0);
+    IntegerVector nhyps0(nfams), hyp(nhyps), fam(nhyps);
+    l = 0;
+    for (k=0; k<nfams; k++) {
+      for (j=0; j<m; j++) {
+        if (family0(k,j)) {
+          nhyps0(k)++;  // number of active hypotheses in family k
+          fam(l) = k;   // family of the l-th active hypothesis
+          hyp(l) = j;   // index of the l-th active hypothesis
+          l++;
+        }
+      }
+    }
+    
+    LogicalVector sub = (nhyps0 > 0);
+    int nfamil1 = sum(sub); // number of active families
+    IntegerVector nhyps1 = nhyps0[sub]; // # of active hypotheses by family
+    
+    NumericVector w(nhyps);
+    for (j=0; j<nhyps; j++) {
+      w(j) = wgtmat(i, hyp(j));
+    }
+    
+    
+    for (iter=0; iter<niters; iter++) {
+      NumericVector pval(nhyps), cw(nhyps);
+      for (j=0; j<nhyps; j++) {
+        pval(j) = p(iter, hyp(j));
+      }
+      
+      // sort p-values within each family and obtain associated cum weights
+      s = 0;
+      for (k=0; k<nfamil1; k++) {
+        t = nhyps1(k);
+        
+        // extract p-values and weights in the family
+        NumericVector p1(t), w1(t);
+        for (j=0; j<t; j++) {
+          p1(j) = pval(s+j);
+          w1(j) = w(s+j);
+        }
+        
+        
+        // obtain the index of sorted p-values with the family
+        IntegerVector index = seq_len(t) - 1;
+        std::sort(index.begin(), index.end(),
+                  [p1](const int&a, const int& b) {
+                    return (p1(a) < p1(b));
+                  });
+        
+        // replace original with sorted values
+        for (j=0; j<t; j++) {
+          pval(s+j) = p1(index(j));
+          
+          // obtain the cumulative weights within each family
+          if (j==0) {
+            cw(s+j) = w1(index(j));
+          } else {
+            cw(s+j) = cw(s+j-1) + w1(index(j));
+          }
+        }
+        
+        s += t;
+      }
+      
+      double q = 1;
+      for (j=0; j<nhyps; j++) {
+        if (cw(j) > 0) {
+          q = std::min(q, pval(j)/cw(j));
+        }
+      }
+      
+      pinter(iter,i) = q;
+    }
+    
+    incid(i, _) = cc;
+  }
+  
+  // obtain the adjusted p-values for individual hypotheses
+  for (iter=0; iter<niters; iter++) {
+    for (j=0; j<m; j++) {
+      padj(iter,j) = 0;
+      for (i=0; i<ntests; i++) {
+        if (incid(i,j) && pinter(iter, i) > padj(iter,j)) {
+          padj(iter,j) = pinter(iter, i);
+        }
+      }
+    }
+  }
+  
+  return padj;
+}
+
 
 
 
@@ -591,16 +857,16 @@ List fseqbon(const NumericVector& w,
   
   NumericVector asfpars = clone(asfpar);
   
-  if (G.nrow() != m || G.ncol() != m) {
-    stop("Invalid dimension for G");
-  }
-  
   if (is_true(any(w < 0.0))) {
     stop("w must be nonnegative");
   }
   
   if (sum(w) != 1.0) {
     stop("w must sum to 1");
+  }
+  
+  if (G.nrow() != m || G.ncol() != m) {
+    stop("Invalid dimension for G");
   }
   
   if (is_true(any(G < 0.0))) {

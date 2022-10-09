@@ -1,3 +1,8 @@
+# lrstat 0.1.9
+
+- Add fwgtmat and fadjpsim to calculate the adjusted p-values for Simes-based graphical approaches.
+- update the print method for design, lrpower, and lrsim.
+
 # lrstat 0.1.8
 
 - Add spendingTime to getDesign, lrpower, and lrsamplesize to allow the error spending time to be different from the information time.

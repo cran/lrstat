@@ -394,18 +394,22 @@ power of 90% under the alternative hypothesis.</p>
 <span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>      <span class="at">maxNumberOfIterations =</span> <span class="dv">1000</span>, </span>
 <span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>      <span class="at">maxNumberOfRawDatasetsPerStage =</span> <span class="dv">0</span>, </span>
 <span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>      <span class="at">seed =</span> <span class="dv">12345</span>)</span></code></pre></div>
-<pre><code>##                          stage 1 stage 2 stage 3
-## cumulativeRejection        0.003   0.740   0.888
-## cumulativeFutility         0.031   0.031   0.112
-## numberOfEvents            16.000  23.981  30.795
-## numberOfDropouts           2.029   2.955   3.745
-## numberOfSubjects          93.911 131.654 158.485
-## analysisTime              18.817  26.500  33.012
-## overallReject              0.888                
-## expectedNumberOfEvents    25.391                
-## expectedNumberOfDropouts   3.131                
-## expectedNumberOfSubjects 137.325                
-## expectedStudyDuration     27.907</code></pre>
+<pre><code>##                                             
+## Group-sequential trial with 3 stages        
+## Overall power: 0.888                        
+## Expected # events: 25.4                     
+## Expected # dropouts: 3.1                    
+## Expected # subjects: 137.3                  
+## Expected study duration: 27.9               
+## Accrual duration: 34, fixed follow-up: TRUE 
+##                                             
+##                      Stage 1 Stage 2 Stage 3
+## Cumulative rejection 0.003   0.740   0.888  
+## Cumulative futility  0.031   0.031   0.112  
+## Number of events     16.0    24.0    30.8   
+## Number of dropouts   2.0     3.0     3.7    
+## Number of subjects   93.9    131.7   158.5  
+## Analysis time        18.8    26.5    33.0</code></pre>
 <p>The simulation below shows that the probability of futility stopping
 under the null hypothesis is 62%.</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">lrsim</span>(<span class="at">kMax =</span> <span class="dv">3</span>, <span class="at">informationTime =</span> <span class="fu">c</span>(<span class="fl">0.5</span>, <span class="fl">0.75</span>, <span class="dv">1</span>), </span>
@@ -424,18 +428,22 @@ under the null hypothesis is 62%.</p>
 <span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>      <span class="at">maxNumberOfIterations =</span> <span class="dv">1000</span>, </span>
 <span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>      <span class="at">maxNumberOfRawDatasetsPerStage =</span> <span class="dv">0</span>, </span>
 <span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>      <span class="at">seed =</span> <span class="dv">12345</span>)</span></code></pre></div>
-<pre><code>##                          stage 1 stage 2 stage 3
-## cumulativeRejection        0.000   0.013   0.029
-## cumulativeFutility         0.617   0.617   0.971
-## numberOfEvents            16.000  24.000  32.000
-## numberOfDropouts           0.908   1.332   1.802
-## numberOfSubjects          55.061  75.344  95.366
-## analysisTime              11.043  15.124  19.148
-## overallReject              0.029                
-## expectedNumberOfEvents    22.024                
-## expectedNumberOfDropouts   1.251                
-## expectedNumberOfSubjects  70.135                
-## expectedStudyDuration     14.072</code></pre>
+<pre><code>##                                             
+## Group-sequential trial with 3 stages        
+## Overall power: 0.029                        
+## Expected # events: 22                       
+## Expected # dropouts: 1.3                    
+## Expected # subjects: 70.1                   
+## Expected study duration: 14.1               
+## Accrual duration: 34, fixed follow-up: TRUE 
+##                                             
+##                      Stage 1 Stage 2 Stage 3
+## Cumulative rejection 0.000   0.013   0.029  
+## Cumulative futility  0.617   0.617   0.971  
+## Number of events     16.0    24.0    32.0   
+## Number of dropouts   0.9     1.3     1.8    
+## Number of subjects   55.1    75.3    95.4   
+## Analysis time        11.0    15.1    19.1</code></pre>
 
 
 
