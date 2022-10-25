@@ -17,7 +17,7 @@ getBound(
 \arguments{
 \item{k}{Look number for the current analysis.}
 
-\item{informationRates}{Information rates up to the current look, must be
+\item{informationRates}{Information rates up to the current look. Must be
 increasing and less than or equal to 1.}
 
 \item{alpha}{The significance level. Defaults to 0.025.}
@@ -37,7 +37,7 @@ Corresponds to Delta for "WT", rho for "sfKD", and gamma for "sfHSD".}
 spent up to each stage.}
 
 \item{spendingTime}{A vector of length \code{k} for the error spending
-time at each analysis, must be increasing and less than or equal to 1. 
+time at each analysis. Must be increasing and less than or equal to 1. 
 Defaults to missing, in which case, it is the same as 
 \code{informationRates}.}
 }

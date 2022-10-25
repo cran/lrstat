@@ -78,15 +78,15 @@ a randomization block. Defaults to 1 for equal randomization.}
 \item{allocation3}{Number of subjects in Arm C in
 a randomization block. Defaults to 1 for equal randomization.}
 
-\item{accrualTime}{Accrual time intervals, must start with 0, e.g.,
+\item{accrualTime}{Accrual time intervals. Must start with 0, e.g.,
 \code{c(0, 3)} breaks the time axis into 2 accrual intervals:
 [0, 3) and [3, Inf).}
 
-\item{accrualIntensity}{A vector of accrual intensities, one for
+\item{accrualIntensity}{A vector of accrual intensities. One for
 each accrual time interval.}
 
 \item{piecewiseSurvivalTime}{A vector that specifies the time intervals for
-the piecewise exponential survival distribution, must start with 0, e.g.,
+the piecewise exponential survival distribution. Must start with 0, e.g.,
 \code{c(0, 6)} breaks the time axis into 2 event intervals:
 [0, 6) and [6, Inf).
 Defaults to 0 for exponential distribution.}
@@ -116,32 +116,32 @@ time interval by stratum for arm 2 and endpoint 2 (OS).}
 \item{lambda3e2}{A vector of hazard rates for the event in each analysis
 time interval by stratum for arm 3 and endpoint 2 (OS).}
 
-\item{gamma1e1}{The hazard rate for exponential dropout, a vector of 
+\item{gamma1e1}{The hazard rate for exponential dropout. A vector of 
 hazard rates for piecewise exponential dropout applicable for all 
 strata, or a vector of hazard rates for dropout in each analysis time 
 interval by stratum for arm 1 and endpoint 1 (PFS).}
 
-\item{gamma2e1}{The hazard rate for exponential dropout, a vector of 
+\item{gamma2e1}{The hazard rate for exponential dropout. A vector of 
 hazard rates for piecewise exponential dropout applicable for all 
 strata, or a vector of hazard rates for dropout in each analysis time 
 interval by stratum for arm 2 and endpoint 1 (PFS).}
 
-\item{gamma3e1}{The hazard rate for exponential dropout, a vector of 
+\item{gamma3e1}{The hazard rate for exponential dropout. A vector of 
 hazard rates for piecewise exponential dropout applicable for all 
 strata, or a vector of hazard rates for dropout in each analysis time 
 interval by stratum for arm 3 and endpoint 1 (PFS).}
 
-\item{gamma1e2}{The hazard rate for exponential dropout, a vector of 
+\item{gamma1e2}{The hazard rate for exponential dropout. A vector of 
 hazard rates for piecewise exponential dropout applicable for all 
 strata, or a vector of hazard rates for dropout in each analysis time 
 interval by stratum for arm 1 and endpoint 2 (OS).}
 
-\item{gamma2e2}{The hazard rate for exponential dropout, a vector of 
+\item{gamma2e2}{The hazard rate for exponential dropout. A vector of 
 hazard rates for piecewise exponential dropout applicable for all 
 strata, or a vector of hazard rates for dropout in each analysis time 
 interval by stratum for arm 2 and endpoint 2 (OS).}
 
-\item{gamma3e2}{The hazard rate for exponential dropout, a vector of 
+\item{gamma3e2}{The hazard rate for exponential dropout. A vector of 
 hazard rates for piecewise exponential dropout applicable for all 
 strata, or a vector of hazard rates for dropout in each analysis time 
 interval by stratum for arm 3 and endpoint 2 (OS).}
@@ -153,20 +153,19 @@ interval by stratum for arm 3 and endpoint 2 (OS).}
 \item{fixedFollowup}{Whether a fixed follow-up design is used.
 Defaults to 0 for variable follow-up.}
 
-\item{rho1}{First parameter of the Fleming-Harrington family of weighted
-log-rank test. Defaults to 0 for conventional log-rank test.}
+\item{rho1}{The first parameter of the Fleming-Harrington family of 
+weighted log-rank test. Defaults to 0 for conventional log-rank test.}
 
-\item{rho2}{Second parameter of the Fleming-Harrington family of weighted
-log-rank test. Defaults to 0 for conventional log-rank test.}
+\item{rho2}{The second parameter of the Fleming-Harrington family of 
+weighted log-rank test. Defaults to 0 for conventional log-rank test.}
 
 \item{plannedEvents}{The planned cumulative total number of PFS events at 
 Look 1 to Look kMaxe1 for Arms A and C combined and the planned 
 cumulative total number of OS events at Look kMaxe1+1 to Look kMax 
 for Arms A and C combined.}
 
-\item{plannedTime}{The planned analysis time for each stage needed for
-analyses planned at calendar times, in which case, \code{plannedEvents} 
-should be missing.}
+\item{plannedTime}{The calendar times for the analyses. To use calendar
+time to plan the analyses, \code{plannedEvents} should be missing.}
 
 \item{maxNumberOfIterations}{The number of simulation iterations.
 Defaults to 1000.}
@@ -182,15 +181,15 @@ A list with 2 components:
 
 * \code{sumdata} is a data frame of summary data by stage for each
 iteration, containing the analysis time, number of accrued subjects 
-overall and by treatment group, and number of events overall and 
+overall and by treatment group, number of events overall and 
 by treatment group, number of dropouts overall and by treatment group, 
 and log-rank test statistic for each comparison by endpoint.
 
 * \code{rawdata} (exists if \code{maxNumberOfRawDatasetsPerStage} is a
 positive integer) is a data frame for subject-level data for selected
 replications, containing the stage number, subject number, arrival time, 
-stratum, treatment group, observation time, and survival time, 
-dropout time, time under observation, event and dropout indicators 
+stratum, treatment group, observation time, survival time, 
+dropout time, time under observation, and event and dropout indicators 
 for each endpoint.
 }
 \description{
@@ -198,7 +197,8 @@ Performs simulation for two-endpoint three-arm group
 sequential trials based on weighted log-rank test. The first \code{kMaxe1} 
 looks are driven by the total number of PFS events in Arm A 
 and Arm C combined, and the subsequent looks are driven by the total 
-number of OS events in Arm A and Arm C combined.
+number of OS events in Arm A and Arm C combined. Alternatively, 
+the analyses can be planned to occur at specified calendar times.
 }
 \examples{
 

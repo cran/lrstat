@@ -59,14 +59,14 @@ fadjpsimcpp <- function(wgtmat, p, family) {
 #' sequential design.
 #'
 #' @param k Look number for the current analysis.
-#' @param informationRates Information rates up to the current look, must be
+#' @param informationRates Information rates up to the current look. Must be
 #'   increasing and less than or equal to 1.
 #' @inheritParams param_alpha
 #' @inheritParams param_typeAlphaSpending
 #' @inheritParams param_parameterAlphaSpending
 #' @inheritParams param_userAlphaSpending
 #' @param spendingTime A vector of length \code{k} for the error spending  
-#'   time at each analysis, must be increasing and less than or equal to 1. 
+#'   time at each analysis. Must be increasing and less than or equal to 1. 
 #'   Defaults to missing, in which case, it is the same as 
 #'   \code{informationRates}.
 #'
@@ -82,100 +82,12 @@ getBound <- function(k = NA_integer_, informationRates = NA_real_, alpha = 0.025
     .Call(`_lrstat_getBound`, k, informationRates, alpha, typeAlphaSpending, parameterAlphaSpending, userAlphaSpending, spendingTime)
 }
 
-#' @title Repeated p-values for group sequential design
-#' @description Obtains the repeated p-values for a group sequential design.
-#'
-#' @param k Look number for the current analysis.
-#' @param informationRates Information rates up to the current look, must be
-#'   increasing and less than or equal to 1.
-#' @param p The raw p-values at look 1 to look \code{k}. 
-#' @inheritParams param_typeAlphaSpending
-#' @inheritParams param_parameterAlphaSpending
-#' @param spendingTime A vector of length \code{k} for the error spending  
-#'   time at each analysis, must be increasing and less than or equal to 1. 
-#'   Defaults to missing, in which case, it is the same as 
-#'   \code{informationRates}.
-#'
-#' @return The repeated p-values at look 1 to look \code{k}.
-#'
-#' @examples
-#'
-#' repeatedPValue(k = 3, informationRates = c(529, 700, 800)/800,
-#'                p = c(0.2, 0.15, 0.1), typeAlphaSpending = "sfOF",
-#'                spendingTime = c(0.6271186, 0.8305085, 1))
-#'
-#' @export
-repeatedPValue <- function(k = NA_integer_, informationRates = NA_real_, p = NA_real_, typeAlphaSpending = "sfOF", parameterAlphaSpending = NA_real_, spendingTime = NA_real_) {
-    .Call(`_lrstat_repeatedPValue`, k, informationRates, p, typeAlphaSpending, parameterAlphaSpending, spendingTime)
+repeatedPValuecpp <- function(kMax = NA_integer_, typeAlphaSpending = "sfOF", parameterAlphaSpending = NA_real_, maxInformation = 1, p = NA_real_, information = NA_real_, spendingTime = matrix(0,1,1)) {
+    .Call(`_lrstat_repeatedPValuecpp`, kMax, typeAlphaSpending, parameterAlphaSpending, maxInformation, p, information, spendingTime)
 }
 
-#' @title Group sequential trials using Bonferroni-based graphical 
-#' approaches
-#' 
-#' @description Obtains the test results for group sequential trials using 
-#' graphical approaches based on weighted Bonferroni tests.
-#'
-#' @param w The vector of initial weights for elementary hypotheses.
-#' @param G The initial transition matrix.
-#' @param alpha The significance level. Defaults to 0.025.
-#' @param typeAlphaSpending The vector of alpha spending functions. 
-#'   Each element is one of the following: 
-#'   "OF" for O'Brien-Fleming boundaries, 
-#'   "P" for Pocock boundaries, "WT" for Wang & Tsiatis boundaries, 
-#'   "sfOF" for O'Brien-Fleming type spending function, 
-#'   "sfP" for Pocock type spending function,
-#'   "sfKD" for Kim & DeMets spending function, 
-#'   "sfHSD" for Hwang, Shi & DeCani spending function, 
-#'   and "none" for no early efficacy stopping.
-#' @param parameterAlphaSpending The vector of parameter values for the 
-#'   alpha spending functions. Each element corresponds to the value of 
-#'   Delta for "WT", rho for "sfKD", or gamma for "sfHSD".
-#' @param incidenceMatrix The incidence matrix indicating whether the 
-#'   specific hypothesis will be tested at the given look.
-#' @param maxInformation The vector of targeted maximum information for each 
-#'   hypothesis.
-#' @param information The matrix of observed information for each hypothesis 
-#'   by look.
-#' @param p The matrix of raw p-values for each hypothesis by look. 
-#' @param spendingTime The spending time for alpha spending. Defaults to 
-#'   missing, in which case, it is the same as \code{informationRates} 
-#'   calculated from \code{information} and \code{maxInformation}.
-#' @param repeatedPValueFlag Flag for whether to report the repeated 
-#'   p-values. Defaults to FALSE.
-#' 
-#' @return A list with a component vector to indicate the first look the 
-#'   specific hypothesis rejected (0 if the hypothesis is not rejected) and,  
-#'   if \code{reppfl = 1}, a component matrix for the repeated p-values for 
-#'   each hypothesis over time. 
-#'
-#' @references
-#' Willi Maurer and Frank Bretz. Multiple testing in group sequential
-#' trials using graphical approaches. Statistics in Biopharmaceutical 
-#' Research. 2013;5:311-320. \doi{10.1080/19466315.2013.807748}
-#'
-#' @examples
-#' 
-#' # Case study from Maurer & Bretz (2013) 
-#' 
-#' fseqbon(
-#'   w = c(0.5, 0.5, 0, 0),
-#'   G = matrix(c(0, 0.5, 0.5, 0,  0.5, 0, 0, 0.5,  
-#'                0, 1, 0, 0,  1, 0, 0, 0), 
-#'              nrow=4, ncol=4, byrow=TRUE),
-#'   alpha = 0.025,
-#'   typeAlphaSpending = rep("sfOF", 4),
-#'   incidenceMatrix = matrix(1, nrow=4, ncol=3),
-#'   maxInformation = rep(1,4),
-#'   information = matrix(c(rep(1/3, 4), rep(2/3, 4)), nrow=4, ncol=2),
-#'   p = matrix(c(0.0062, 0.017, 0.009, 0.13, 
-#'                0.0002, 0.0035, 0.002, 0.06), 
-#'              nrow=4, ncol=2),
-#'   repeatedPValueFlag = 1)
-#' 
-#'
-#' @export
-fseqbon <- function(w, G, alpha = 0.025, typeAlphaSpending = NA_character_, parameterAlphaSpending = NA_real_, incidenceMatrix = NA_integer_, maxInformation = NA_real_, information = NA_real_, p = NA_real_, spendingTime = matrix(0,1,1), repeatedPValueFlag = 0L) {
-    .Call(`_lrstat_fseqbon`, w, G, alpha, typeAlphaSpending, parameterAlphaSpending, incidenceMatrix, maxInformation, information, p, spendingTime, repeatedPValueFlag)
+fseqboncpp <- function(w, G, alpha = 0.025, kMax = NA_integer_, typeAlphaSpending = NA_character_, parameterAlphaSpending = NA_real_, incidenceMatrix = NA_integer_, maxInformation = NA_real_, p = NA_real_, information = NA_real_, spendingTime = NA_real_) {
+    .Call(`_lrstat_fseqboncpp`, w, G, alpha, kMax, typeAlphaSpending, parameterAlphaSpending, incidenceMatrix, maxInformation, p, information, spendingTime)
 }
 
 #' @title Log-rank test simulation
@@ -185,7 +97,7 @@ fseqbon <- function(w, G, alpha = 0.025, typeAlphaSpending = NA_character_, para
 #' @inheritParams param_kMax
 #' @param informationTime Information time in terms of variance of
 #'   weighted log-rank test score statistic under the null hypothesis.
-#'   Same as informationRates in terms of number of events for
+#'   Same as \code{informationRates} in terms of number of events for
 #'   the conventional log-rank test. Use \code{caltime} and \code{lrstat}
 #'   to derive the information time for weighted log-rank tests.
 #'   Fixed prior to the trial. If left unspecified, it defaults to
@@ -213,9 +125,8 @@ fseqbon <- function(w, G, alpha = 0.025, typeAlphaSpending = NA_character_, para
 #' @inheritParams param_rho2
 #' @param plannedEvents The planned cumulative total number of events at each
 #'   stage.
-#' @param plannedTime The planned analysis time for each stage needed for  
-#'   analyses planned at calendar times, in which case, \code{plannedEvents}
-#'   should be missing.
+#' @param plannedTime The calendar times for the analyses. To use calendar  
+#'   time to plan the analyses, \code{plannedEvents} should be missing.
 #' @param maxNumberOfIterations The number of simulation iterations.
 #'   Defaults to 1000.
 #' @param maxNumberOfRawDatasetsPerStage The number of raw datasets per stage
@@ -225,12 +136,12 @@ fseqbon <- function(w, G, alpha = 0.025, typeAlphaSpending = NA_character_, para
 #'
 #' @return A list of S3 class \code{lrsim} with 3 components:
 #'
-#' * \code{overview} is a list of containing incremental and cumulative
+#' * \code{overview} is a list containing incremental and cumulative
 #' efficacy and futility stopping probabilities by stage, expected number
-#' of events, number of dropouts, number of subjects, and analysis time
+#' of events, number of dropouts, number of subjects, analysis time
 #' by stage, overall rejection probability, overall expected number of
-#' events, number of dropouts, number of subjects, and study duration,
-#' the hazard ratio under H0, and whether the analyses are planned 
+#' events, number of dropouts, number of subjects, study duration,
+#' hazard ratio under H0, and whether the analyses are planned 
 #' based on the number of events or calendar time.
 #'
 #' * \code{sumdata} is a data frame of summary data by stage for each
@@ -297,10 +208,10 @@ lrsim <- function(kMax = NA_integer_, informationTime = NA_real_, criticalValues
 }
 
 #' @title Log-rank test simulation for three arms
-#' @description Performs simulation for three-arm group 
-#' sequential trials based on weighted log-rank test. The  
-#' looks are driven by the total number of events in Arm A 
-#' and Arm C combined. 
+#' @description Performs simulation for three-arm group sequential trials 
+#' based on weighted log-rank test. The looks are driven by the total 
+#' number of events in Arm A and Arm C combined. Alternatively, 
+#' the analyses can be planned to occur at specified calendar times.
 #' 
 #' @inheritParams param_kMax
 #' @param hazardRatioH013 Hazard ratio under the null hypothesis for arm 1
@@ -325,15 +236,15 @@ lrsim <- function(kMax = NA_integer_, informationTime = NA_real_, criticalValues
 #'   time interval by stratum for arm 2.
 #' @param lambda3 A vector of hazard rates for the event in each analysis  
 #'   time interval by stratum for arm 3.
-#' @param gamma1 The hazard rate for exponential dropout, a vector of 
+#' @param gamma1 The hazard rate for exponential dropout. A vector of 
 #'   hazard rates for piecewise exponential dropout applicable for all 
 #'   strata, or a vector of hazard rates for dropout in each analysis time 
 #'   interval by stratum for arm 1.
-#' @param gamma2 The hazard rate for exponential dropout, a vector of 
+#' @param gamma2 The hazard rate for exponential dropout. A vector of 
 #'   hazard rates for piecewise exponential dropout applicable for all 
 #'   strata, or a vector of hazard rates for dropout in each analysis time 
 #'   interval by stratum for arm 2.
-#' @param gamma3 The hazard rate for exponential dropout, a vector of 
+#' @param gamma3 The hazard rate for exponential dropout. A vector of 
 #'   hazard rates for piecewise exponential dropout applicable for all 
 #'   strata, or a vector of hazard rates for dropout in each analysis time 
 #'   interval by stratum for arm 3.
@@ -344,9 +255,8 @@ lrsim <- function(kMax = NA_integer_, informationTime = NA_real_, criticalValues
 #' @inheritParams param_rho2
 #' @param plannedEvents The planned cumulative total number of events at 
 #'   Look 1 to Look \code{kMax} for Arms A and C combined.
-#' @param plannedTime The planned analysis time for each stage needed for  
-#'   analyses planned at calendar times, in which case, \code{plannedEvents} 
-#'   should be missing.
+#' @param plannedTime The calendar times for the analyses. To use calendar  
+#'   time to plan the analyses, \code{plannedEvents} should be missing.
 #' @param maxNumberOfIterations The number of simulation iterations.
 #'   Defaults to 1000.
 #' @param maxNumberOfRawDatasetsPerStage The number of raw datasets per stage
@@ -358,15 +268,15 @@ lrsim <- function(kMax = NA_integer_, informationTime = NA_real_, criticalValues
 #'
 #' * \code{sumdata} is a data frame of summary data by stage for each
 #' iteration, containing the analysis time, number of accrued subjects 
-#' overall and by treatment group, and number of events overall and 
+#' overall and by treatment group, number of events overall and 
 #' by treatment group, number of dropouts overall and by treatment group, 
 #' and log-rank test statistic for each comparison.
 #'
 #' * \code{rawdata} (exists if \code{maxNumberOfRawDatasetsPerStage} is a
 #' positive integer) is a data frame for subject-level data for selected
 #' replications, containing the stage number, subject number, arrival time, 
-#' stratum, treatment group, observation time, and survival time, 
-#' dropout time, time under observation, event and dropout indicators.
+#' stratum, treatment group, observation time, survival time, 
+#' dropout time, time under observation, and event and dropout indicators.
 #' 
 #' @examples
 #' 
@@ -400,7 +310,8 @@ lrsim3a <- function(kMax = NA_integer_, hazardRatioH013 = 1, hazardRatioH023 = 1
 #' sequential trials based on weighted log-rank test. The first \code{kMaxe1} 
 #' looks are driven by the total number of PFS events in two arms 
 #' combined, and the subsequent looks are driven by the total 
-#' number of OS events in two arms combined. 
+#' number of OS events in two arms combined. Alternatively, 
+#' the analyses can be planned to occur at specified calendar times.
 #' 
 #' @inheritParams param_kMax
 #' @param kMaxe1 Number of stages with timing determined by PFS events. 
@@ -454,9 +365,8 @@ lrsim3a <- function(kMax = NA_integer_, hazardRatioH013 = 1, hazardRatioH023 = 1
 #' @param plannedEvents The planned cumulative total number of PFS events at 
 #'   Look 1 to Look kMaxe1 and the planned cumulative total number of OS 
 #'   events at Look kMaxe1+1 to Look kMax.
-#' @param plannedTime The planned analysis time for each stage needed for  
-#'   analyses planned at calendar times, in which case, \code{plannedEvents} 
-#'   should be missing.
+#' @param plannedTime The calendar times for the analyses. To use calendar  
+#'   time to plan the analyses, \code{plannedEvents} should be missing.
 #' @param maxNumberOfIterations The number of simulation iterations.
 #'   Defaults to 1000.
 #' @param maxNumberOfRawDatasetsPerStage The number of raw datasets per stage
@@ -476,7 +386,7 @@ lrsim3a <- function(kMax = NA_integer_, hazardRatioH013 = 1, hazardRatioH023 = 1
 #' positive integer) is a data frame for subject-level data for selected
 #' replications, containing the stage number, subject number, arrival time, 
 #' stratum, treatment group, observation time, and survival time, 
-#' dropout time, time under observation, event and dropout indicators 
+#' dropout time, time under observation, and event and dropout indicators 
 #' for each endpoint.
 #' 
 #' @examples
@@ -513,7 +423,8 @@ lrsim2e <- function(kMax = NA_integer_, kMaxe1 = NA_integer_, hazardRatioH0e1 = 
 #' sequential trials based on weighted log-rank test. The first \code{kMaxe1} 
 #' looks are driven by the total number of PFS events in Arm A 
 #' and Arm C combined, and the subsequent looks are driven by the total 
-#' number of OS events in Arm A and Arm C combined. 
+#' number of OS events in Arm A and Arm C combined. Alternatively, 
+#' the analyses can be planned to occur at specified calendar times. 
 #' 
 #' @inheritParams param_kMax
 #' @param kMaxe1 Number of stages with timing determined by PFS events. 
@@ -555,27 +466,27 @@ lrsim2e <- function(kMax = NA_integer_, kMaxe1 = NA_integer_, hazardRatioH0e1 = 
 #'   time interval by stratum for arm 2 and endpoint 2 (OS).
 #' @param lambda3e2 A vector of hazard rates for the event in each analysis  
 #'   time interval by stratum for arm 3 and endpoint 2 (OS).
-#' @param gamma1e1 The hazard rate for exponential dropout, a vector of 
+#' @param gamma1e1 The hazard rate for exponential dropout. A vector of 
 #'   hazard rates for piecewise exponential dropout applicable for all 
 #'   strata, or a vector of hazard rates for dropout in each analysis time 
 #'   interval by stratum for arm 1 and endpoint 1 (PFS).
-#' @param gamma2e1 The hazard rate for exponential dropout, a vector of 
+#' @param gamma2e1 The hazard rate for exponential dropout. A vector of 
 #'   hazard rates for piecewise exponential dropout applicable for all 
 #'   strata, or a vector of hazard rates for dropout in each analysis time 
 #'   interval by stratum for arm 2 and endpoint 1 (PFS).
-#' @param gamma3e1 The hazard rate for exponential dropout, a vector of 
+#' @param gamma3e1 The hazard rate for exponential dropout. A vector of 
 #'   hazard rates for piecewise exponential dropout applicable for all 
 #'   strata, or a vector of hazard rates for dropout in each analysis time 
 #'   interval by stratum for arm 3 and endpoint 1 (PFS).
-#' @param gamma1e2 The hazard rate for exponential dropout, a vector of 
+#' @param gamma1e2 The hazard rate for exponential dropout. A vector of 
 #'   hazard rates for piecewise exponential dropout applicable for all 
 #'   strata, or a vector of hazard rates for dropout in each analysis time 
 #'   interval by stratum for arm 1 and endpoint 2 (OS).
-#' @param gamma2e2 The hazard rate for exponential dropout, a vector of 
+#' @param gamma2e2 The hazard rate for exponential dropout. A vector of 
 #'   hazard rates for piecewise exponential dropout applicable for all 
 #'   strata, or a vector of hazard rates for dropout in each analysis time 
 #'   interval by stratum for arm 2 and endpoint 2 (OS).
-#' @param gamma3e2 The hazard rate for exponential dropout, a vector of 
+#' @param gamma3e2 The hazard rate for exponential dropout. A vector of 
 #'   hazard rates for piecewise exponential dropout applicable for all 
 #'   strata, or a vector of hazard rates for dropout in each analysis time 
 #'   interval by stratum for arm 3 and endpoint 2 (OS).
@@ -588,9 +499,8 @@ lrsim2e <- function(kMax = NA_integer_, kMaxe1 = NA_integer_, hazardRatioH0e1 = 
 #'   Look 1 to Look kMaxe1 for Arms A and C combined and the planned 
 #'   cumulative total number of OS events at Look kMaxe1+1 to Look kMax 
 #'   for Arms A and C combined.
-#' @param plannedTime The planned analysis time for each stage needed for  
-#'   analyses planned at calendar times, in which case, \code{plannedEvents} 
-#'   should be missing.
+#' @param plannedTime The calendar times for the analyses. To use calendar  
+#'   time to plan the analyses, \code{plannedEvents} should be missing.
 #' @param maxNumberOfIterations The number of simulation iterations.
 #'   Defaults to 1000.
 #' @param maxNumberOfRawDatasetsPerStage The number of raw datasets per stage
@@ -602,15 +512,15 @@ lrsim2e <- function(kMax = NA_integer_, kMaxe1 = NA_integer_, hazardRatioH0e1 = 
 #'
 #' * \code{sumdata} is a data frame of summary data by stage for each
 #' iteration, containing the analysis time, number of accrued subjects 
-#' overall and by treatment group, and number of events overall and 
+#' overall and by treatment group, number of events overall and 
 #' by treatment group, number of dropouts overall and by treatment group, 
 #' and log-rank test statistic for each comparison by endpoint.
 #'
 #' * \code{rawdata} (exists if \code{maxNumberOfRawDatasetsPerStage} is a
 #' positive integer) is a data frame for subject-level data for selected
 #' replications, containing the stage number, subject number, arrival time, 
-#' stratum, treatment group, observation time, and survival time, 
-#' dropout time, time under observation, event and dropout indicators 
+#' stratum, treatment group, observation time, survival time, 
+#' dropout time, time under observation, and event and dropout indicators 
 #' for each endpoint.
 #' 
 #' @examples
@@ -1085,7 +995,6 @@ lrstat <- function(time = NA_real_, hazardRatioH0 = 1, allocationRatioPlanned = 
 #' @inheritParams param_accrualDuration
 #' @inheritParams param_followupTime
 #' @inheritParams param_fixedFollowup
-#' @inheritParams param_numSubintervals
 #'
 #' @return A vector of calendar times expected to yield the target
 #' number of events.
@@ -1107,8 +1016,8 @@ lrstat <- function(time = NA_real_, hazardRatioH0 = 1, allocationRatioPlanned = 
 #'         followupTime = 18, fixedFollowup = FALSE)
 #'
 #' @export
-caltime <- function(nevents = NA_real_, allocationRatioPlanned = 1, accrualTime = 0L, accrualIntensity = NA_real_, piecewiseSurvivalTime = 0L, stratumFraction = 1L, lambda1 = NA_real_, lambda2 = NA_real_, gamma1 = 0L, gamma2 = 0L, accrualDuration = NA_real_, followupTime = NA_real_, fixedFollowup = 0L, numSubintervals = 300L) {
-    .Call(`_lrstat_caltime`, nevents, allocationRatioPlanned, accrualTime, accrualIntensity, piecewiseSurvivalTime, stratumFraction, lambda1, lambda2, gamma1, gamma2, accrualDuration, followupTime, fixedFollowup, numSubintervals)
+caltime <- function(nevents = NA_real_, allocationRatioPlanned = 1, accrualTime = 0L, accrualIntensity = NA_real_, piecewiseSurvivalTime = 0L, stratumFraction = 1L, lambda1 = NA_real_, lambda2 = NA_real_, gamma1 = 0L, gamma2 = 0L, accrualDuration = NA_real_, followupTime = NA_real_, fixedFollowup = 0L) {
+    .Call(`_lrstat_caltime`, nevents, allocationRatioPlanned, accrualTime, accrualIntensity, piecewiseSurvivalTime, stratumFraction, lambda1, lambda2, gamma1, gamma2, accrualDuration, followupTime, fixedFollowup)
 }
 
 getCriticalValues <- function(kMax = NA_integer_, informationRates = NA_real_, efficacyStopping = NA_integer_, alpha = 0.025, typeAlphaSpending = "sfOF", parameterAlphaSpending = NA_real_, userAlphaSpending = NA_real_, hazardRatioH0 = 1, allocationRatioPlanned = 1, accrualTime = 0L, accrualIntensity = 20L, piecewiseSurvivalTime = 0L, stratumFraction = 1L, lambda2 = 0.0533, gamma1 = 0L, gamma2 = 0L, accrualDuration = 11.6, followupTime = 18, fixedFollowup = 0L, rho1 = 0, rho2 = 0, numSubintervals = 300L, spendingTime = NA_real_) {
@@ -1167,7 +1076,7 @@ getCumAlphaSpent <- function(kMax = NA_integer_, informationRates = NA_real_, cr
 #' overall significance level, maximum and expected number of events,
 #' maximum and expected number of dropouts, total and expected number
 #' of subjects, maximum and expected study duration, along with
-#' input parameters including accrual duration, followup duration,
+#' input parameters including accrual duration, follow-up duration,
 #' whether a fixed follow-up is used, parameters for the FH weights,
 #' allocation ratio, number of stages, and hazard ratio under H0.
 #'
@@ -1179,7 +1088,7 @@ getCumAlphaSpent <- function(kMax = NA_integer_, informationRates = NA_real_, cr
 #' and expected study time, efficacy and futility boundaries on
 #' the HR scale and on the p-value scale, information for weighted
 #' log-rank test, hazard ratio from weighted Cox regression, and
-#' where efficacy and futility stopping are allowed by stage.
+#' whether efficacy and futility stopping are allowed by stage.
 #'
 #' * \code{settings} containing input parameters such as
 #' alpha and beta spending function and parameter values,
@@ -1187,7 +1096,7 @@ getCumAlphaSpent <- function(kMax = NA_integer_, informationRates = NA_real_, cr
 #' fraction, and hazard rates for survival and dropout by group.
 #'
 #' @examples
-#' # Piecewise accrual, piecewise exponential survivals, and 5% dropout by
+#' # Piecewise accrual, piecewise exponential survival, and 5% dropout by
 #' # the end of 1 year.
 #'
 #' lrpower(kMax = 2, informationRates = c(0.8, 1),
@@ -1203,15 +1112,19 @@ getCumAlphaSpent <- function(kMax = NA_integer_, informationRates = NA_real_, cr
 #'         followupTime = 18, fixedFollowup = FALSE)
 #'
 #' @export
-lrpower <- function(kMax = NA_integer_, informationRates = NA_real_, efficacyStopping = NA_integer_, futilityStopping = NA_integer_, criticalValues = NA_real_, alpha = 0.025, typeAlphaSpending = "sfOF", parameterAlphaSpending = NA_real_, userAlphaSpending = NA_real_, futilityBounds = NA_real_, typeBetaSpending = "none", parameterBetaSpending = NA_real_, hazardRatioH0 = 1, allocationRatioPlanned = 1, accrualTime = 0L, accrualIntensity = 20L, piecewiseSurvivalTime = 0L, stratumFraction = 1L, lambda1 = 0.0309, lambda2 = 0.0533, gamma1 = 0L, gamma2 = 0L, accrualDuration = 11.6, followupTime = 18, fixedFollowup = 0L, rho1 = 0, rho2 = 0, numSubintervals = 300L, estimateHazardRatio = 1L, typeOfComputation = "direct", spendingTime = NA_real_) {
+lrpower <- function(kMax = 1L, informationRates = NA_real_, efficacyStopping = NA_integer_, futilityStopping = NA_integer_, criticalValues = NA_real_, alpha = 0.025, typeAlphaSpending = "sfOF", parameterAlphaSpending = NA_real_, userAlphaSpending = NA_real_, futilityBounds = NA_real_, typeBetaSpending = "none", parameterBetaSpending = NA_real_, hazardRatioH0 = 1, allocationRatioPlanned = 1, accrualTime = 0L, accrualIntensity = 20L, piecewiseSurvivalTime = 0L, stratumFraction = 1L, lambda1 = 0.0309, lambda2 = 0.0533, gamma1 = 0L, gamma2 = 0L, accrualDuration = 11.6, followupTime = 18, fixedFollowup = 0L, rho1 = 0, rho2 = 0, numSubintervals = 300L, estimateHazardRatio = 1L, typeOfComputation = "direct", spendingTime = NA_real_) {
     .Call(`_lrstat_lrpower`, kMax, informationRates, efficacyStopping, futilityStopping, criticalValues, alpha, typeAlphaSpending, parameterAlphaSpending, userAlphaSpending, futilityBounds, typeBetaSpending, parameterBetaSpending, hazardRatioH0, allocationRatioPlanned, accrualTime, accrualIntensity, piecewiseSurvivalTime, stratumFraction, lambda1, lambda2, gamma1, gamma2, accrualDuration, followupTime, fixedFollowup, rho1, rho2, numSubintervals, estimateHazardRatio, typeOfComputation, spendingTime)
 }
 
 #' @title Get group sequential design
 #' @description Obtains the drift parameter and stopping boundaries for a
-#' generic group sequential design assuming a constant treatment effect.
+#' generic group sequential design assuming a constant treatment effect, 
+#' or obtains the power given the drift parameter and stopping boundaries.
 #'
 #' @param beta Type II error. Defaults to 0.2.
+#' @param drift Drift parameter, i.e., \code{(theta-theta0)*sqrt(Imax)}.  
+#' If \code{drift} is provided, then the input \code{beta} will be ignored 
+#' and power will be calculated.
 #' @inheritParams param_kMax
 #' @inheritParams param_informationRates
 #' @inheritParams param_efficacyStopping
@@ -1229,20 +1142,45 @@ lrpower <- function(kMax = NA_integer_, informationRates = NA_real_, efficacySto
 #'   time at each analysis. Defaults to missing, in which case, it is the 
 #'   same as \code{informationRates}.
 #'
-#' @return A list of S3 class \code{design}.
+#' @return A list of S3 class \code{design} with three components:
+#' 
+#' * \code{overallResults} containing the overall rejection probability,
+#' overall significance level, number of stages, drift parameter, 
+#' and inflation factor (relative to fixed design).
+#'
+#' * \code{byStageResults} containing information rates, efficacy
+#' and futility boundaries on the Z-scale, probability for efficacy
+#' and futility stopping at the stage, cumulative probability for
+#' efficacy and futility stopping by the stage, cumulative alpha spent,
+#' efficacy and futility boundaries on the p-value scale, 
+#' and whether efficacy and futility stopping are allowed by stage.
+#'
+#' * \code{settings} containing input parameters such as
+#' alpha and beta spending function and parameter values, spendingTime, 
+#' and calculation target.
 #'
 #' @examples
 #'
+#' # Example 1: obtain the drift parameter given power
 #' getDesign(beta = 0.2,
 #'           kMax = 2,
 #'           informationRates = c(0.5,1),
 #'           alpha = 0.025,
 #'           typeAlphaSpending = "sfOF",
 #'           typeBetaSpending = "sfP")
+#'           
+#' 
+#' # Example 2: obtain power given the drift parameter
+#' getDesign(drift = 3.026,
+#'           kMax = 3,
+#'           informationRates = c(0.5, 0.75, 1),
+#'           alpha = 0.025,
+#'           typeAlphaSpending = "sfOF",
+#'           typeBetaSpending = "sfP")
 #'
 #' @export
-getDesign <- function(beta = 0.2, kMax = NA_integer_, informationRates = NA_real_, efficacyStopping = NA_integer_, futilityStopping = NA_integer_, criticalValues = NA_real_, alpha = 0.025, typeAlphaSpending = "sfOF", parameterAlphaSpending = NA_real_, userAlphaSpending = NA_real_, futilityBounds = NA_real_, typeBetaSpending = "none", parameterBetaSpending = NA_real_, userBetaSpending = NA_real_, spendingTime = NA_real_) {
-    .Call(`_lrstat_getDesign`, beta, kMax, informationRates, efficacyStopping, futilityStopping, criticalValues, alpha, typeAlphaSpending, parameterAlphaSpending, userAlphaSpending, futilityBounds, typeBetaSpending, parameterBetaSpending, userBetaSpending, spendingTime)
+getDesign <- function(beta = 0.2, drift = NA_real_, kMax = 1L, informationRates = NA_real_, efficacyStopping = NA_integer_, futilityStopping = NA_integer_, criticalValues = NA_real_, alpha = 0.025, typeAlphaSpending = "sfOF", parameterAlphaSpending = NA_real_, userAlphaSpending = NA_real_, futilityBounds = NA_real_, typeBetaSpending = "none", parameterBetaSpending = NA_real_, userBetaSpending = NA_real_, spendingTime = NA_real_) {
+    .Call(`_lrstat_getDesign`, beta, drift, kMax, informationRates, efficacyStopping, futilityStopping, criticalValues, alpha, typeAlphaSpending, parameterAlphaSpending, userAlphaSpending, futilityBounds, typeBetaSpending, parameterBetaSpending, userBetaSpending, spendingTime)
 }
 
 #' @title Log-rank test sample size
@@ -1294,7 +1232,7 @@ getDesign <- function(beta = 0.2, kMax = NA_integer_, informationRates = NA_real
 #' @return A list of S3 class \code{lrpower}.
 #'
 #' @examples
-#' # Piecewise accrual, piecewise exponential survivals, and 5% dropout by
+#' # Piecewise accrual, piecewise exponential survival, and 5% dropout by
 #' # the end of 1 year.
 #'
 #' # Example 1: Obtains accrual duration given power and follow-up duration
@@ -1371,7 +1309,7 @@ getDesign <- function(beta = 0.2, kMax = NA_integer_, informationRates = NA_real
 #' 
 #'
 #' @export
-lrsamplesize <- function(beta = 0.2, kMax = NA_integer_, informationRates = NA_real_, efficacyStopping = NA_integer_, futilityStopping = NA_integer_, criticalValues = NA_real_, alpha = 0.025, typeAlphaSpending = "sfOF", parameterAlphaSpending = NA_real_, userAlphaSpending = NA_real_, futilityBounds = NA_real_, typeBetaSpending = "none", parameterBetaSpending = NA_real_, userBetaSpending = NA_real_, hazardRatioH0 = 1, allocationRatioPlanned = 1, accrualTime = 0L, accrualIntensity = 20L, piecewiseSurvivalTime = 0L, stratumFraction = 1L, lambda1 = 0.0309, lambda2 = 0.0533, gamma1 = 0L, gamma2 = 0L, accrualDuration = NA_real_, followupTime = 18, fixedFollowup = 0L, rho1 = 0, rho2 = 0, numSubintervals = 300L, estimateHazardRatio = 1L, typeOfComputation = "direct", interval = as.numeric( c(0.001, 240)), spendingTime = NA_real_) {
+lrsamplesize <- function(beta = 0.2, kMax = 1L, informationRates = NA_real_, efficacyStopping = NA_integer_, futilityStopping = NA_integer_, criticalValues = NA_real_, alpha = 0.025, typeAlphaSpending = "sfOF", parameterAlphaSpending = NA_real_, userAlphaSpending = NA_real_, futilityBounds = NA_real_, typeBetaSpending = "none", parameterBetaSpending = NA_real_, userBetaSpending = NA_real_, hazardRatioH0 = 1, allocationRatioPlanned = 1, accrualTime = 0L, accrualIntensity = 20L, piecewiseSurvivalTime = 0L, stratumFraction = 1L, lambda1 = 0.0309, lambda2 = 0.0533, gamma1 = 0L, gamma2 = 0L, accrualDuration = NA_real_, followupTime = 18, fixedFollowup = 0L, rho1 = 0, rho2 = 0, numSubintervals = 300L, estimateHazardRatio = 1L, typeOfComputation = "direct", interval = as.numeric( c(0.001, 240)), spendingTime = NA_real_) {
     .Call(`_lrstat_lrsamplesize`, beta, kMax, informationRates, efficacyStopping, futilityStopping, criticalValues, alpha, typeAlphaSpending, parameterAlphaSpending, userAlphaSpending, futilityBounds, typeBetaSpending, parameterBetaSpending, userBetaSpending, hazardRatioH0, allocationRatioPlanned, accrualTime, accrualIntensity, piecewiseSurvivalTime, stratumFraction, lambda1, lambda2, gamma1, gamma2, accrualDuration, followupTime, fixedFollowup, rho1, rho2, numSubintervals, estimateHazardRatio, typeOfComputation, interval, spendingTime)
 }
 

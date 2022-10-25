@@ -11,7 +11,7 @@ fadjpbon(w, G, p)
 
 \item{G}{The initial transition matrix.}
 
-\item{p}{Raw p-values for elementary hypotheses.}
+\item{p}{The raw p-values for elementary hypotheses.}
 }
 \value{
 A matrix of adjusted p-values.

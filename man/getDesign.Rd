@@ -6,7 +6,8 @@
 \usage{
 getDesign(
   beta = 0.2,
-  kMax = NA_integer_,
+  drift = NA_real_,
+  kMax = 1L,
   informationRates = NA_real_,
   efficacyStopping = NA_integer_,
   futilityStopping = NA_integer_,
@@ -24,6 +25,10 @@ getDesign(
 }
 \arguments{
 \item{beta}{Type II error. Defaults to 0.2.}
+
+\item{drift}{Drift parameter, i.e., \code{(theta-theta0)*sqrt(Imax)}.
+If \code{drift} is provided, then the input \code{beta} will be ignored 
+and power will be calculated.}
 
 \item{kMax}{The maximum number of stages.}
 
@@ -78,17 +83,43 @@ time at each analysis. Defaults to missing, in which case, it is the
 same as \code{informationRates}.}
 }
 \value{
-A list of S3 class \code{design}.
+A list of S3 class \code{design} with three components:
+
+* \code{overallResults} containing the overall rejection probability,
+overall significance level, number of stages, drift parameter, 
+and inflation factor (relative to fixed design).
+
+* \code{byStageResults} containing information rates, efficacy
+and futility boundaries on the Z-scale, probability for efficacy
+and futility stopping at the stage, cumulative probability for
+efficacy and futility stopping by the stage, cumulative alpha spent,
+efficacy and futility boundaries on the p-value scale, 
+and whether efficacy and futility stopping are allowed by stage.
+
+* \code{settings} containing input parameters such as
+alpha and beta spending function and parameter values, spendingTime, 
+and calculation target.
 }
 \description{
 Obtains the drift parameter and stopping boundaries for a
-generic group sequential design assuming a constant treatment effect.
+generic group sequential design assuming a constant treatment effect, 
+or obtains the power given the drift parameter and stopping boundaries.
 }
 \examples{
 
+# Example 1: obtain the drift parameter given power
 getDesign(beta = 0.2,
           kMax = 2,
           informationRates = c(0.5,1),
+          alpha = 0.025,
+          typeAlphaSpending = "sfOF",
+          typeBetaSpending = "sfP")
+          
+
+# Example 2: obtain power given the drift parameter
+getDesign(drift = 3.026,
+          kMax = 3,
+          informationRates = c(0.5, 0.75, 1),
           alpha = 0.025,
           typeAlphaSpending = "sfOF",
           typeBetaSpending = "sfP")
