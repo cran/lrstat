@@ -82,7 +82,7 @@ getBound <- function(k = NA_integer_, informationRates = NA_real_, alpha = 0.025
     .Call(`_lrstat_getBound`, k, informationRates, alpha, typeAlphaSpending, parameterAlphaSpending, userAlphaSpending, spendingTime)
 }
 
-repeatedPValuecpp <- function(kMax = NA_integer_, typeAlphaSpending = "sfOF", parameterAlphaSpending = NA_real_, maxInformation = 1, p = NA_real_, information = NA_real_, spendingTime = matrix(0,1,1)) {
+repeatedPValuecpp <- function(kMax = NA_integer_, typeAlphaSpending = "sfOF", parameterAlphaSpending = NA_real_, maxInformation = 1, p = NA_real_, information = NA_real_, spendingTime = NA_real_) {
     .Call(`_lrstat_repeatedPValuecpp`, kMax, typeAlphaSpending, parameterAlphaSpending, maxInformation, p, information, spendingTime)
 }
 
@@ -976,6 +976,109 @@ lrstat1 <- function(time = NA_real_, hazardRatioH0 = 1, allocationRatioPlanned =
 #' @export
 lrstat <- function(time = NA_real_, hazardRatioH0 = 1, allocationRatioPlanned = 1, accrualTime = 0L, accrualIntensity = NA_real_, piecewiseSurvivalTime = 0L, stratumFraction = 1L, lambda1 = NA_real_, lambda2 = NA_real_, gamma1 = 0L, gamma2 = 0L, accrualDuration = NA_real_, followupTime = NA_real_, fixedFollowup = 0L, rho1 = 0, rho2 = 0, numSubintervals = 300L, predictEventOnly = 0L) {
     .Call(`_lrstat_lrstat`, time, hazardRatioH0, allocationRatioPlanned, accrualTime, accrualIntensity, piecewiseSurvivalTime, stratumFraction, lambda1, lambda2, gamma1, gamma2, accrualDuration, followupTime, fixedFollowup, rho1, rho2, numSubintervals, predictEventOnly)
+}
+
+#' @title Kaplan-Meier estimate of milestone survival
+#' 
+#' @description Obtains the Kaplan-Meier estimate of milestone survival 
+#' probability and associated variance estimate using the Greenwood formula
+#' by treatment group and by stratum at given analysis time.
+#'
+#' @param time The calendar time for data cut.  
+#' @param milestone The milestone time at which to calculate the 
+#'   Kaplan-Meier estimate of survival probability.
+#' @inheritParams param_allocationRatioPlanned
+#' @inheritParams param_accrualTime
+#' @inheritParams param_accrualIntensity
+#' @inheritParams param_piecewiseSurvivalTime
+#' @inheritParams param_stratumFraction
+#' @inheritParams param_lambda1_stratified
+#' @inheritParams param_lambda2_stratified
+#' @inheritParams param_gamma1_stratified
+#' @inheritParams param_gamma2_stratified
+#' @inheritParams param_accrualDuration
+#' @inheritParams param_followupTime
+#' @inheritParams param_fixedFollowup
+#' @inheritParams param_numSubintervals
+#'
+#' @return A data frame of the number of subjects, survival probability 
+#' and variance estimate in each group, difference in survival probability 
+#' and variance estimate at the specified time by stratum.
+#'
+#' @keywords internal
+#'
+#' @examples
+#' # Piecewise accrual, piecewise exponential survivals, and 5% dropout by
+#' # the end of 1 year.
+#'
+#' kmest1(time = 40, 
+#'        milestone = 18, 
+#'        allocationRatioPlanned = 1,
+#'        accrualTime = seq(0, 9),
+#'        accrualIntensity = c(26/9*seq(1, 9), 26),
+#'        piecewiseSurvivalTime = c(0, 6),
+#'        stratumFraction = c(0.2, 0.8),
+#'        lambda1 = c(0.0533, 0.0309, 1.5*0.0533, 1.5*0.0309),
+#'        lambda2 = c(0.0533, 0.0533, 1.5*0.0533, 1.5*0.0533),
+#'        gamma1 = -log(1-0.05)/12,
+#'        gamma2 = -log(1-0.05)/12,
+#'        accrualDuration = 22,
+#'        followupTime = 18, fixedFollowup = FALSE)
+#'
+#' @export
+kmest1 <- function(time = NA_real_, milestone = NA_real_, allocationRatioPlanned = 1, accrualTime = 0L, accrualIntensity = NA_real_, piecewiseSurvivalTime = 0L, stratumFraction = 1L, lambda1 = NA_real_, lambda2 = NA_real_, gamma1 = 0L, gamma2 = 0L, accrualDuration = NA_real_, followupTime = NA_real_, fixedFollowup = 0L, numSubintervals = 300L) {
+    .Call(`_lrstat_kmest1`, time, milestone, allocationRatioPlanned, accrualTime, accrualIntensity, piecewiseSurvivalTime, stratumFraction, lambda1, lambda2, gamma1, gamma2, accrualDuration, followupTime, fixedFollowup, numSubintervals)
+}
+
+#' @title Stratified difference in milestone survival
+#' @description Obtains the stratified Kaplan-Meier estimate of 
+#'   milestone survival probabilities and difference in milestone 
+#'   survival at given calendar times and milestone time.
+#'
+#' @param time A vector of calendar times at which to calculate the 
+#'   milestone survival.
+#' @param milestone The milestone time at which to calculate the 
+#'   Kaplan-Meier estimate of survival probability.
+#' @inheritParams param_allocationRatioPlanned
+#' @inheritParams param_accrualTime
+#' @inheritParams param_accrualIntensity
+#' @inheritParams param_piecewiseSurvivalTime
+#' @inheritParams param_stratumFraction
+#' @inheritParams param_lambda1_stratified
+#' @inheritParams param_lambda2_stratified
+#' @inheritParams param_gamma1_stratified
+#' @inheritParams param_gamma2_stratified
+#' @inheritParams param_accrualDuration
+#' @inheritParams param_followupTime
+#' @inheritParams param_fixedFollowup
+#' @inheritParams param_numSubintervals
+#' 
+#' @return A data frame of the number of subjects enrolled, stratified 
+#'   estimate of milestone survival for each treatment group, 
+#'   difference in milestone survival, the associated variances, 
+#'   and the Z test statistic at the specified calendar times.
+#'
+#' @examples
+#' # Piecewise accrual, piecewise exponential survivals, and 5% dropout by
+#' # the end of 1 year.
+#'
+#' kmest(time = c(22, 40), 
+#'       milestone = 18, 
+#'       allocationRatioPlanned = 1,
+#'       accrualTime = seq(0, 9),
+#'       accrualIntensity = c(26/9*seq(1, 9), 26),
+#'       piecewiseSurvivalTime = c(0, 6),
+#'       stratumFraction = c(0.2, 0.8),
+#'       lambda1 = c(0.0533, 0.0309, 1.5*0.0533, 1.5*0.0309),
+#'       lambda2 = c(0.0533, 0.0533, 1.5*0.0533, 1.5*0.0533),
+#'       gamma1 = -log(1-0.05)/12,
+#'       gamma2 = -log(1-0.05)/12,
+#'       accrualDuration = 22,
+#'       followupTime = 18, fixedFollowup = FALSE)
+#'
+#' @export
+kmest <- function(time = NA_real_, milestone = NA_real_, allocationRatioPlanned = 1, accrualTime = 0L, accrualIntensity = NA_real_, piecewiseSurvivalTime = 0L, stratumFraction = 1L, lambda1 = NA_real_, lambda2 = NA_real_, gamma1 = 0L, gamma2 = 0L, accrualDuration = NA_real_, followupTime = NA_real_, fixedFollowup = 0L, numSubintervals = 300L) {
+    .Call(`_lrstat_kmest`, time, milestone, allocationRatioPlanned, accrualTime, accrualIntensity, piecewiseSurvivalTime, stratumFraction, lambda1, lambda2, gamma1, gamma2, accrualDuration, followupTime, fixedFollowup, numSubintervals)
 }
 
 #' @title Calendar times for target number of events

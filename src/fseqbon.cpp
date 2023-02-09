@@ -659,7 +659,7 @@ NumericVector repeatedPValuecpp(
     const double maxInformation = 1,
     const NumericMatrix& p = NA_REAL,
     const NumericMatrix& information = NA_REAL,
-    const NumericMatrix& spendingTime = NumericMatrix(0,1,1)) {
+    const NumericMatrix& spendingTime = NA_REAL) {
   
   int iter, i, j, l, L;
   int B = p.nrow(), k = p.ncol();
@@ -965,6 +965,7 @@ IntegerVector fseqboncpp(
       stop("Elements of information must be increasing over time");
     }
   }
+  
   
   
   if (spendingTime.nrow()==1 && spendingTime.ncol()==1 
