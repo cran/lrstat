@@ -358,41 +358,41 @@ stratification variables:</p>
 </ul>
 <p>We consider a three stage Lan-DeMets O’Brien-Fleming group sequential
 design. The stratum fractions are</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">=</span> <span class="fu">c</span>(<span class="fl">0.28</span>, <span class="fl">0.13</span>, <span class="fl">0.25</span>, <span class="fl">0.34</span>)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>p2 <span class="ot">=</span> <span class="fu">c</span>(<span class="fl">0.28</span>, <span class="fl">0.72</span>)</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>p3 <span class="ot">=</span> <span class="fu">c</span>(<span class="fl">0.43</span>, <span class="fl">0.37</span>, <span class="fl">0.2</span>)</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>stratumFraction <span class="ot">=</span> p1 <span class="sc">%x%</span> p2 <span class="sc">%x%</span> p3</span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>p1 <span class="ot">=</span> <span class="fu">c</span>(<span class="fl">0.28</span>, <span class="fl">0.13</span>, <span class="fl">0.25</span>, <span class="fl">0.34</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>p2 <span class="ot">=</span> <span class="fu">c</span>(<span class="fl">0.28</span>, <span class="fl">0.72</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a>p3 <span class="ot">=</span> <span class="fu">c</span>(<span class="fl">0.43</span>, <span class="fl">0.37</span>, <span class="fl">0.2</span>)</span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a>stratumFraction <span class="ot">=</span> p1 <span class="sc">%x%</span> p2 <span class="sc">%x%</span> p3</span></code></pre></div>
 <p>Using the small cancer cell, age &lt;=50, and performance status
 score &lt;=50 as the reference stratum, the hazard ratios are</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>theta1 <span class="ot">=</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="fl">2.127</span>, <span class="fl">0.528</span>, <span class="fl">0.413</span>)</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>theta2 <span class="ot">=</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="fl">0.438</span>)</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>theta3 <span class="ot">=</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="fl">0.614</span>, <span class="fl">0.159</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>theta1 <span class="ot">=</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="fl">2.127</span>, <span class="fl">0.528</span>, <span class="fl">0.413</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>theta2 <span class="ot">=</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="fl">0.438</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a>theta3 <span class="ot">=</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="fl">0.614</span>, <span class="fl">0.159</span>)</span></code></pre></div>
 <p>If the hazard rate of the reference stratum is 0.009211, then the
 hazard rate for the control group is</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>lambda2 <span class="ot">=</span> <span class="fl">0.009211</span><span class="sc">*</span><span class="fu">exp</span>(<span class="fu">log</span>(theta1) <span class="sc">%x%</span> <span class="fu">log</span>(theta2) <span class="sc">%x%</span> <span class="fu">log</span>(theta3))</span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a>lambda2 <span class="ot">=</span> <span class="fl">0.009211</span><span class="sc">*</span><span class="fu">exp</span>(<span class="fu">log</span>(theta1) <span class="sc">%x%</span> <span class="fu">log</span>(theta2) <span class="sc">%x%</span> <span class="fu">log</span>(theta3))</span></code></pre></div>
 <p>The hazard ratio of the active treatment group versus the control
 group is 0.4466.</p>
 <p>In addition, we assume an enrollment period of 24 months with a
 constant enrollment rate of 12 patients per month to enroll 288
 patients, and the target number of events of 66.</p>
 <p>First we obtain the calendar time at which 66 events will occur.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lrstat)</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">caltime</span>(<span class="at">nevents =</span> <span class="dv">66</span>, <span class="at">accrualDuration =</span> <span class="dv">24</span>, <span class="at">accrualIntensity =</span> <span class="dv">12</span>,</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>        <span class="at">stratumFraction =</span> stratumFraction, </span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>        <span class="at">lambda1 =</span> <span class="fl">0.4466</span><span class="sc">*</span>lambda2, <span class="at">lambda2 =</span> lambda2, </span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>        <span class="at">followupTime =</span> <span class="dv">100</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="fu">library</span>(lrstat)</span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a><span class="fu">caltime</span>(<span class="at">nevents =</span> <span class="dv">66</span>, <span class="at">accrualDuration =</span> <span class="dv">24</span>, <span class="at">accrualIntensity =</span> <span class="dv">12</span>,</span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>        <span class="at">stratumFraction =</span> stratumFraction, </span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a>        <span class="at">lambda1 =</span> <span class="fl">0.4466</span><span class="sc">*</span>lambda2, <span class="at">lambda2 =</span> lambda2, </span>
+<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a>        <span class="at">followupTime =</span> <span class="dv">100</span>)</span></code></pre></div>
 <pre><code>## [1] 54.92197</code></pre>
 <p>Therefore, the follow-up time for the last enrolled patient is 30.92
 months. Now we can evaluate the power using the lrpower function.</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">lrpower</span>(<span class="at">kMax =</span> <span class="dv">3</span>, </span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>        <span class="at">informationRates =</span> <span class="fu">c</span>(<span class="fl">0.333</span>, <span class="fl">0.667</span>, <span class="dv">1</span>), </span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>        <span class="at">alpha =</span> <span class="fl">0.025</span>, <span class="at">typeAlphaSpending =</span> <span class="st">&quot;sfOF&quot;</span>, </span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>        <span class="at">accrualIntensity =</span> <span class="dv">12</span>,</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>        <span class="at">stratumFraction =</span> stratumFraction,</span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>        <span class="at">lambda1 =</span> <span class="fl">0.4466</span><span class="sc">*</span>lambda2, </span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>        <span class="at">lambda2 =</span> lambda2, </span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>        <span class="at">accrualDuration =</span> <span class="dv">24</span>, </span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>        <span class="at">followupTime =</span> <span class="fl">30.92</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="fu">lrpower</span>(<span class="at">kMax =</span> <span class="dv">3</span>, </span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>        <span class="at">informationRates =</span> <span class="fu">c</span>(<span class="fl">0.333</span>, <span class="fl">0.667</span>, <span class="dv">1</span>), </span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>        <span class="at">alpha =</span> <span class="fl">0.025</span>, <span class="at">typeAlphaSpending =</span> <span class="st">&quot;sfOF&quot;</span>, </span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a>        <span class="at">accrualIntensity =</span> <span class="dv">12</span>,</span>
+<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a>        <span class="at">stratumFraction =</span> stratumFraction,</span>
+<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a>        <span class="at">lambda1 =</span> <span class="fl">0.4466</span><span class="sc">*</span>lambda2, </span>
+<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a>        <span class="at">lambda2 =</span> lambda2, </span>
+<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a>        <span class="at">accrualDuration =</span> <span class="dv">24</span>, </span>
+<span id="cb6-9"><a href="#cb6-9" tabindex="-1"></a>        <span class="at">followupTime =</span> <span class="fl">30.92</span>)</span></code></pre></div>
 <pre><code>##                                                                        
 ## Group-sequential trial with 3 stages                                   
 ## Overall power: 0.882, overall significance level (1-sided): 0.025      
@@ -417,18 +417,18 @@ months. Now we can evaluate the power using the lrpower function.</p>
 ## HR                           0.447   0.447   0.447</code></pre>
 <p>Therefore, the overall power is about 88% for the stratified
 analysis. This is confirmed by the simulation below.</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">lrsim</span>(<span class="at">kMax =</span> <span class="dv">3</span>, </span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>      <span class="at">informationTime =</span> <span class="fu">c</span>(<span class="fl">0.333</span>, <span class="fl">0.667</span>, <span class="dv">1</span>), </span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>      <span class="at">criticalValues =</span> <span class="fu">c</span>(<span class="fl">3.710</span>, <span class="fl">2.511</span>, <span class="fl">1.993</span>), </span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>      <span class="at">accrualIntensity =</span> <span class="dv">12</span>,</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>      <span class="at">stratumFraction =</span> stratumFraction,</span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>      <span class="at">lambda1 =</span> <span class="fl">0.4466</span><span class="sc">*</span>lambda2, </span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>      <span class="at">lambda2 =</span> lambda2, </span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>      <span class="at">accrualDuration =</span> <span class="dv">24</span>, </span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>      <span class="at">followupTime =</span> <span class="fl">30.92</span>,</span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>      <span class="at">plannedEvents =</span> <span class="fu">c</span>(<span class="dv">22</span>, <span class="dv">44</span>, <span class="dv">66</span>),</span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>      <span class="at">maxNumberOfIterations =</span> <span class="dv">1000</span>, </span>
-<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>      <span class="at">seed =</span> <span class="dv">314159</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="fu">lrsim</span>(<span class="at">kMax =</span> <span class="dv">3</span>, </span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>      <span class="at">informationTime =</span> <span class="fu">c</span>(<span class="fl">0.333</span>, <span class="fl">0.667</span>, <span class="dv">1</span>), </span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a>      <span class="at">criticalValues =</span> <span class="fu">c</span>(<span class="fl">3.710</span>, <span class="fl">2.511</span>, <span class="fl">1.993</span>), </span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a>      <span class="at">accrualIntensity =</span> <span class="dv">12</span>,</span>
+<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a>      <span class="at">stratumFraction =</span> stratumFraction,</span>
+<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a>      <span class="at">lambda1 =</span> <span class="fl">0.4466</span><span class="sc">*</span>lambda2, </span>
+<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a>      <span class="at">lambda2 =</span> lambda2, </span>
+<span id="cb8-8"><a href="#cb8-8" tabindex="-1"></a>      <span class="at">accrualDuration =</span> <span class="dv">24</span>, </span>
+<span id="cb8-9"><a href="#cb8-9" tabindex="-1"></a>      <span class="at">followupTime =</span> <span class="fl">30.92</span>,</span>
+<span id="cb8-10"><a href="#cb8-10" tabindex="-1"></a>      <span class="at">plannedEvents =</span> <span class="fu">c</span>(<span class="dv">22</span>, <span class="dv">44</span>, <span class="dv">66</span>),</span>
+<span id="cb8-11"><a href="#cb8-11" tabindex="-1"></a>      <span class="at">maxNumberOfIterations =</span> <span class="dv">1000</span>, </span>
+<span id="cb8-12"><a href="#cb8-12" tabindex="-1"></a>      <span class="at">seed =</span> <span class="dv">314159</span>)</span></code></pre></div>
 <pre><code>##                                              
 ## Group-sequential trial with 3 stages         
 ## Overall power: 0.882                         

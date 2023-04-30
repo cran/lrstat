@@ -348,7 +348,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 sequential survival trials. This is useful for validating the analytic
 calculation, which might be inaccurate when the allocation ratio is not
 1:1 or the hazard ratio is far from 1.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lrstat)</span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(lrstat)</span></code></pre></div>
 <p>Consider a three-stage O’Brien-Fleming group sequential design with
 two interim looks conducted at 50% and 75% of the target total number of
 events. The first interim is for futility only, and the second interim
@@ -359,11 +359,11 @@ The enrollment rate is 5 patients per month. The 2-year drop-out rate is
 10%. The study uses a fixed follow-up design and each patient is to be
 followed up for 26 weeks. If we use an enrollment duration of 32 months,
 then the maximum number of events is expected to be 32.8.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">lrstat</span>(<span class="at">time=</span><span class="fu">c</span>(<span class="dv">20</span>, <span class="dv">25</span>, <span class="dv">30</span>, <span class="dv">35</span>, <span class="fl">38.5</span>), <span class="at">allocationRatioPlanned =</span> <span class="dv">3</span>, </span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>       <span class="at">accrualIntensity =</span> <span class="dv">5</span>, </span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>       <span class="at">lambda2 =</span> <span class="fl">0.95</span><span class="sc">/</span><span class="dv">12</span>, <span class="at">lambda1 =</span> <span class="fl">0.3</span><span class="sc">*</span><span class="fl">0.95</span><span class="sc">/</span><span class="dv">12</span>, </span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>       <span class="at">gamma1 =</span> <span class="sc">-</span><span class="fu">log</span>(<span class="dv">1</span><span class="fl">-0.1</span>)<span class="sc">/</span><span class="dv">24</span>, <span class="at">gamma2 =</span> <span class="sc">-</span><span class="fu">log</span>(<span class="dv">1</span><span class="fl">-0.1</span>)<span class="sc">/</span><span class="dv">24</span>, </span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>       <span class="at">accrualDuration =</span> <span class="dv">32</span>, <span class="at">followupTime =</span> <span class="fl">6.5</span>, <span class="at">fixedFollowup =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="fu">lrstat</span>(<span class="at">time=</span><span class="fu">c</span>(<span class="dv">20</span>, <span class="dv">25</span>, <span class="dv">30</span>, <span class="dv">35</span>, <span class="fl">38.5</span>), <span class="at">allocationRatioPlanned =</span> <span class="dv">3</span>, </span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>       <span class="at">accrualIntensity =</span> <span class="dv">5</span>, </span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a>       <span class="at">lambda2 =</span> <span class="fl">0.95</span><span class="sc">/</span><span class="dv">12</span>, <span class="at">lambda1 =</span> <span class="fl">0.3</span><span class="sc">*</span><span class="fl">0.95</span><span class="sc">/</span><span class="dv">12</span>, </span>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a>       <span class="at">gamma1 =</span> <span class="sc">-</span><span class="fu">log</span>(<span class="dv">1</span><span class="fl">-0.1</span>)<span class="sc">/</span><span class="dv">24</span>, <span class="at">gamma2 =</span> <span class="sc">-</span><span class="fu">log</span>(<span class="dv">1</span><span class="fl">-0.1</span>)<span class="sc">/</span><span class="dv">24</span>, </span>
+<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a>       <span class="at">accrualDuration =</span> <span class="dv">32</span>, <span class="at">followupTime =</span> <span class="fl">6.5</span>, <span class="at">fixedFollowup =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
 <pre><code>##   time subjects  nevents nevents1  nevents2 ndropouts ndropouts1 ndropouts2
 ## 1 20.0      100 17.37244  8.91394  8.458504  2.116728   1.647680  0.4690486
 ## 2 25.0      125 22.49924 11.55918 10.940058  2.743292   2.136634  0.6066580
@@ -384,22 +384,22 @@ each followed-up for 6.5 month do not yield 32 events, in which case,
 the trial will stop and we allocate all remaining alpha to the final
 look. The simulation below demonstrates that the study has the target
 power of 90% under the alternative hypothesis.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">lrsim</span>(<span class="at">kMax =</span> <span class="dv">3</span>, <span class="at">informationTime =</span> <span class="fu">c</span>(<span class="fl">0.5</span>, <span class="fl">0.75</span>, <span class="dv">1</span>), </span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>      <span class="at">criticalValues =</span> <span class="fu">c</span>(<span class="dv">6</span>, <span class="fl">2.34</span>, <span class="fl">2.012</span>), </span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>      <span class="at">futilityBounds =</span> <span class="fu">c</span>(<span class="fl">0.282</span>, <span class="sc">-</span><span class="dv">6</span>), </span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>      <span class="at">allocation1 =</span> <span class="dv">3</span>, <span class="at">allocation2 =</span> <span class="dv">1</span>,</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>      <span class="at">accrualTime =</span> <span class="dv">0</span>, <span class="at">accrualIntensity =</span> <span class="dv">5</span>, </span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>      <span class="at">piecewiseSurvivalTime =</span> <span class="dv">0</span>, </span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>      <span class="at">stratumFraction =</span> <span class="dv">1</span>, </span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>      <span class="at">lambda1 =</span> <span class="fl">0.3</span><span class="sc">*</span><span class="fl">0.95</span><span class="sc">/</span><span class="dv">12</span>, <span class="at">lambda2 =</span> <span class="fl">0.95</span><span class="sc">/</span><span class="dv">12</span>, </span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>      <span class="at">gamma1 =</span> <span class="sc">-</span><span class="fu">log</span>(<span class="dv">1</span><span class="fl">-0.1</span>)<span class="sc">/</span><span class="dv">24</span>, <span class="at">gamma2 =</span> <span class="sc">-</span><span class="fu">log</span>(<span class="dv">1</span><span class="fl">-0.1</span>)<span class="sc">/</span><span class="dv">24</span>, </span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>      <span class="at">accrualDuration =</span> <span class="dv">34</span>, <span class="at">followupTime =</span> <span class="fl">6.5</span>, </span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>      <span class="at">fixedFollowup =</span> <span class="cn">TRUE</span>, </span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>      <span class="at">rho1 =</span> <span class="dv">0</span>, <span class="at">rho2 =</span> <span class="dv">0</span>, </span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>      <span class="at">plannedEvents =</span> <span class="fu">c</span>(<span class="dv">16</span>, <span class="dv">24</span>, <span class="dv">32</span>), </span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>      <span class="at">maxNumberOfIterations =</span> <span class="dv">1000</span>, </span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>      <span class="at">maxNumberOfRawDatasetsPerStage =</span> <span class="dv">0</span>, </span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>      <span class="at">seed =</span> <span class="dv">12345</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="fu">lrsim</span>(<span class="at">kMax =</span> <span class="dv">3</span>, <span class="at">informationTime =</span> <span class="fu">c</span>(<span class="fl">0.5</span>, <span class="fl">0.75</span>, <span class="dv">1</span>), </span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>      <span class="at">criticalValues =</span> <span class="fu">c</span>(<span class="dv">6</span>, <span class="fl">2.34</span>, <span class="fl">2.012</span>), </span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>      <span class="at">futilityBounds =</span> <span class="fu">c</span>(<span class="fl">0.282</span>, <span class="sc">-</span><span class="dv">6</span>), </span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a>      <span class="at">allocation1 =</span> <span class="dv">3</span>, <span class="at">allocation2 =</span> <span class="dv">1</span>,</span>
+<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a>      <span class="at">accrualTime =</span> <span class="dv">0</span>, <span class="at">accrualIntensity =</span> <span class="dv">5</span>, </span>
+<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a>      <span class="at">piecewiseSurvivalTime =</span> <span class="dv">0</span>, </span>
+<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a>      <span class="at">stratumFraction =</span> <span class="dv">1</span>, </span>
+<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a>      <span class="at">lambda1 =</span> <span class="fl">0.3</span><span class="sc">*</span><span class="fl">0.95</span><span class="sc">/</span><span class="dv">12</span>, <span class="at">lambda2 =</span> <span class="fl">0.95</span><span class="sc">/</span><span class="dv">12</span>, </span>
+<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a>      <span class="at">gamma1 =</span> <span class="sc">-</span><span class="fu">log</span>(<span class="dv">1</span><span class="fl">-0.1</span>)<span class="sc">/</span><span class="dv">24</span>, <span class="at">gamma2 =</span> <span class="sc">-</span><span class="fu">log</span>(<span class="dv">1</span><span class="fl">-0.1</span>)<span class="sc">/</span><span class="dv">24</span>, </span>
+<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a>      <span class="at">accrualDuration =</span> <span class="dv">34</span>, <span class="at">followupTime =</span> <span class="fl">6.5</span>, </span>
+<span id="cb4-11"><a href="#cb4-11" tabindex="-1"></a>      <span class="at">fixedFollowup =</span> <span class="cn">TRUE</span>, </span>
+<span id="cb4-12"><a href="#cb4-12" tabindex="-1"></a>      <span class="at">rho1 =</span> <span class="dv">0</span>, <span class="at">rho2 =</span> <span class="dv">0</span>, </span>
+<span id="cb4-13"><a href="#cb4-13" tabindex="-1"></a>      <span class="at">plannedEvents =</span> <span class="fu">c</span>(<span class="dv">16</span>, <span class="dv">24</span>, <span class="dv">32</span>), </span>
+<span id="cb4-14"><a href="#cb4-14" tabindex="-1"></a>      <span class="at">maxNumberOfIterations =</span> <span class="dv">1000</span>, </span>
+<span id="cb4-15"><a href="#cb4-15" tabindex="-1"></a>      <span class="at">maxNumberOfRawDatasetsPerStage =</span> <span class="dv">0</span>, </span>
+<span id="cb4-16"><a href="#cb4-16" tabindex="-1"></a>      <span class="at">seed =</span> <span class="dv">12345</span>)</span></code></pre></div>
 <pre><code>##                                             
 ## Group-sequential trial with 3 stages        
 ## Overall power: 0.888                        
@@ -418,22 +418,22 @@ power of 90% under the alternative hypothesis.</p>
 ## Analysis time        18.8    26.5    33.0</code></pre>
 <p>The simulation below shows that the probability of futility stopping
 under the null hypothesis is 62%.</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">lrsim</span>(<span class="at">kMax =</span> <span class="dv">3</span>, <span class="at">informationTime =</span> <span class="fu">c</span>(<span class="fl">0.5</span>, <span class="fl">0.75</span>, <span class="dv">1</span>), </span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>      <span class="at">criticalValues =</span> <span class="fu">c</span>(<span class="dv">6</span>, <span class="fl">2.34</span>, <span class="fl">2.012</span>), </span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>      <span class="at">futilityBounds =</span> <span class="fu">c</span>(<span class="fl">0.282</span>, <span class="sc">-</span><span class="dv">6</span>), </span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>      <span class="at">allocation1 =</span> <span class="dv">3</span>, <span class="at">allocation2 =</span> <span class="dv">1</span>,</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>      <span class="at">accrualTime =</span> <span class="dv">0</span>, <span class="at">accrualIntensity =</span> <span class="dv">5</span>, </span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>      <span class="at">piecewiseSurvivalTime =</span> <span class="dv">0</span>, </span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>      <span class="at">stratumFraction =</span> <span class="dv">1</span>, </span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>      <span class="at">lambda1 =</span> <span class="fl">0.95</span><span class="sc">/</span><span class="dv">12</span>, <span class="at">lambda2 =</span> <span class="fl">0.95</span><span class="sc">/</span><span class="dv">12</span>, </span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>      <span class="at">gamma1 =</span> <span class="sc">-</span><span class="fu">log</span>(<span class="dv">1</span><span class="fl">-0.1</span>)<span class="sc">/</span><span class="dv">24</span>, <span class="at">gamma2 =</span> <span class="sc">-</span><span class="fu">log</span>(<span class="dv">1</span><span class="fl">-0.1</span>)<span class="sc">/</span><span class="dv">24</span>, </span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>      <span class="at">accrualDuration =</span> <span class="dv">34</span>, <span class="at">followupTime =</span> <span class="fl">6.5</span>, </span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>      <span class="at">fixedFollowup =</span> <span class="cn">TRUE</span>, </span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>      <span class="at">rho1 =</span> <span class="dv">0</span>, <span class="at">rho2 =</span> <span class="dv">0</span>, </span>
-<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>      <span class="at">plannedEvents =</span> <span class="fu">c</span>(<span class="dv">16</span>, <span class="dv">24</span>, <span class="dv">32</span>), </span>
-<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>      <span class="at">maxNumberOfIterations =</span> <span class="dv">1000</span>, </span>
-<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>      <span class="at">maxNumberOfRawDatasetsPerStage =</span> <span class="dv">0</span>, </span>
-<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>      <span class="at">seed =</span> <span class="dv">12345</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="fu">lrsim</span>(<span class="at">kMax =</span> <span class="dv">3</span>, <span class="at">informationTime =</span> <span class="fu">c</span>(<span class="fl">0.5</span>, <span class="fl">0.75</span>, <span class="dv">1</span>), </span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>      <span class="at">criticalValues =</span> <span class="fu">c</span>(<span class="dv">6</span>, <span class="fl">2.34</span>, <span class="fl">2.012</span>), </span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>      <span class="at">futilityBounds =</span> <span class="fu">c</span>(<span class="fl">0.282</span>, <span class="sc">-</span><span class="dv">6</span>), </span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a>      <span class="at">allocation1 =</span> <span class="dv">3</span>, <span class="at">allocation2 =</span> <span class="dv">1</span>,</span>
+<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a>      <span class="at">accrualTime =</span> <span class="dv">0</span>, <span class="at">accrualIntensity =</span> <span class="dv">5</span>, </span>
+<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a>      <span class="at">piecewiseSurvivalTime =</span> <span class="dv">0</span>, </span>
+<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a>      <span class="at">stratumFraction =</span> <span class="dv">1</span>, </span>
+<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a>      <span class="at">lambda1 =</span> <span class="fl">0.95</span><span class="sc">/</span><span class="dv">12</span>, <span class="at">lambda2 =</span> <span class="fl">0.95</span><span class="sc">/</span><span class="dv">12</span>, </span>
+<span id="cb6-9"><a href="#cb6-9" tabindex="-1"></a>      <span class="at">gamma1 =</span> <span class="sc">-</span><span class="fu">log</span>(<span class="dv">1</span><span class="fl">-0.1</span>)<span class="sc">/</span><span class="dv">24</span>, <span class="at">gamma2 =</span> <span class="sc">-</span><span class="fu">log</span>(<span class="dv">1</span><span class="fl">-0.1</span>)<span class="sc">/</span><span class="dv">24</span>, </span>
+<span id="cb6-10"><a href="#cb6-10" tabindex="-1"></a>      <span class="at">accrualDuration =</span> <span class="dv">34</span>, <span class="at">followupTime =</span> <span class="fl">6.5</span>, </span>
+<span id="cb6-11"><a href="#cb6-11" tabindex="-1"></a>      <span class="at">fixedFollowup =</span> <span class="cn">TRUE</span>, </span>
+<span id="cb6-12"><a href="#cb6-12" tabindex="-1"></a>      <span class="at">rho1 =</span> <span class="dv">0</span>, <span class="at">rho2 =</span> <span class="dv">0</span>, </span>
+<span id="cb6-13"><a href="#cb6-13" tabindex="-1"></a>      <span class="at">plannedEvents =</span> <span class="fu">c</span>(<span class="dv">16</span>, <span class="dv">24</span>, <span class="dv">32</span>), </span>
+<span id="cb6-14"><a href="#cb6-14" tabindex="-1"></a>      <span class="at">maxNumberOfIterations =</span> <span class="dv">1000</span>, </span>
+<span id="cb6-15"><a href="#cb6-15" tabindex="-1"></a>      <span class="at">maxNumberOfRawDatasetsPerStage =</span> <span class="dv">0</span>, </span>
+<span id="cb6-16"><a href="#cb6-16" tabindex="-1"></a>      <span class="at">seed =</span> <span class="dv">12345</span>)</span></code></pre></div>
 <pre><code>##                                             
 ## Group-sequential trial with 3 stages        
 ## Overall power: 0.029                        

@@ -351,7 +351,7 @@ the hazard ratio is 0.3. This is a case for which neither the Schoenfeld
 method nor the Lakatos method provides an accurate sample size estimate,
 and simulation tools are needed to obtain a more accurate result. First
 we load the lrstat package:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lrstat)</span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(lrstat)</span></code></pre></div>
 <p>Consider a fixed design with the hazard rate of the control group
 being 0.95 per year, a hazard ratio of the experimental group to the
 control group being 0.3, a randomization ratio of 3:1, an enrollment
@@ -369,11 +369,11 @@ Denote this design as design 1.</p>
 we only need 26 events with 126 subjects enrolled over 25.2 months, a
 dramatic difference from the Schoenfeld formula. Denote this design as
 design 2.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">lrsamplesize</span>(<span class="at">beta =</span> <span class="fl">0.1</span>, <span class="at">kMax =</span> <span class="dv">1</span>, <span class="at">criticalValues =</span> <span class="fl">1.96</span>, </span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>             <span class="at">allocationRatioPlanned =</span> <span class="dv">3</span>, <span class="at">accrualIntensity =</span> <span class="dv">5</span>, </span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>             <span class="at">lambda2 =</span> <span class="fl">0.95</span><span class="sc">/</span><span class="dv">12</span>, <span class="at">lambda1 =</span> <span class="fl">0.3</span><span class="sc">*</span><span class="fl">0.95</span><span class="sc">/</span><span class="dv">12</span>, </span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>             <span class="at">gamma1 =</span> <span class="sc">-</span><span class="fu">log</span>(<span class="dv">1</span><span class="fl">-0.1</span>)<span class="sc">/</span><span class="dv">24</span>, <span class="at">gamma2 =</span> <span class="sc">-</span><span class="fu">log</span>(<span class="dv">1</span><span class="fl">-0.1</span>)<span class="sc">/</span><span class="dv">24</span>, </span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>             <span class="at">accrualDuration =</span> <span class="cn">NA</span>, <span class="at">followupTime =</span> <span class="dv">26</span><span class="sc">/</span><span class="dv">4</span>, <span class="at">fixedFollowup =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="fu">lrsamplesize</span>(<span class="at">beta =</span> <span class="fl">0.1</span>, <span class="at">kMax =</span> <span class="dv">1</span>, <span class="at">criticalValues =</span> <span class="fl">1.96</span>, </span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>             <span class="at">allocationRatioPlanned =</span> <span class="dv">3</span>, <span class="at">accrualIntensity =</span> <span class="dv">5</span>, </span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a>             <span class="at">lambda2 =</span> <span class="fl">0.95</span><span class="sc">/</span><span class="dv">12</span>, <span class="at">lambda1 =</span> <span class="fl">0.3</span><span class="sc">*</span><span class="fl">0.95</span><span class="sc">/</span><span class="dv">12</span>, </span>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a>             <span class="at">gamma1 =</span> <span class="sc">-</span><span class="fu">log</span>(<span class="dv">1</span><span class="fl">-0.1</span>)<span class="sc">/</span><span class="dv">24</span>, <span class="at">gamma2 =</span> <span class="sc">-</span><span class="fu">log</span>(<span class="dv">1</span><span class="fl">-0.1</span>)<span class="sc">/</span><span class="dv">24</span>, </span>
+<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a>             <span class="at">accrualDuration =</span> <span class="cn">NA</span>, <span class="at">followupTime =</span> <span class="dv">26</span><span class="sc">/</span><span class="dv">4</span>, <span class="at">fixedFollowup =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
 <pre><code>##                                                                        
 ## Fixed design                                                           
 ## Overall power: 0.9, overall significance level (1-sided): 0.025        
@@ -391,15 +391,15 @@ design 2.</p>
 ## HR                           0.300</code></pre>
 <p>To check the accuracy of either solution, we run simulations using
 the lrsim function.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">lrsim</span>(<span class="at">kMax =</span> <span class="dv">1</span>, <span class="at">criticalValues =</span> <span class="fl">1.96</span>,  </span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>      <span class="at">allocation1 =</span> <span class="dv">3</span>, <span class="at">allocation2 =</span> <span class="dv">1</span>,</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>      <span class="at">accrualIntensity =</span> <span class="dv">5</span>, </span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>      <span class="at">lambda2 =</span> <span class="fl">0.95</span><span class="sc">/</span><span class="dv">12</span>, <span class="at">lambda1 =</span> <span class="fl">0.3</span><span class="sc">*</span><span class="fl">0.95</span><span class="sc">/</span><span class="dv">12</span>, </span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>      <span class="at">gamma1 =</span> <span class="sc">-</span><span class="fu">log</span>(<span class="dv">1</span><span class="fl">-0.1</span>)<span class="sc">/</span><span class="dv">24</span>, <span class="at">gamma2 =</span> <span class="sc">-</span><span class="fu">log</span>(<span class="dv">1</span><span class="fl">-0.1</span>)<span class="sc">/</span><span class="dv">24</span>,</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>      <span class="at">accrualDuration =</span> <span class="fl">39.2</span>, <span class="at">followupTime =</span> <span class="fl">6.5</span>, </span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>      <span class="at">fixedFollowup =</span> <span class="cn">TRUE</span>,  </span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>      <span class="at">plannedEvents =</span> <span class="dv">39</span>, </span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>      <span class="at">maxNumberOfIterations =</span> <span class="dv">1000</span>, <span class="at">seed =</span> <span class="dv">12345</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="fu">lrsim</span>(<span class="at">kMax =</span> <span class="dv">1</span>, <span class="at">criticalValues =</span> <span class="fl">1.96</span>,  </span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>      <span class="at">allocation1 =</span> <span class="dv">3</span>, <span class="at">allocation2 =</span> <span class="dv">1</span>,</span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>      <span class="at">accrualIntensity =</span> <span class="dv">5</span>, </span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a>      <span class="at">lambda2 =</span> <span class="fl">0.95</span><span class="sc">/</span><span class="dv">12</span>, <span class="at">lambda1 =</span> <span class="fl">0.3</span><span class="sc">*</span><span class="fl">0.95</span><span class="sc">/</span><span class="dv">12</span>, </span>
+<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a>      <span class="at">gamma1 =</span> <span class="sc">-</span><span class="fu">log</span>(<span class="dv">1</span><span class="fl">-0.1</span>)<span class="sc">/</span><span class="dv">24</span>, <span class="at">gamma2 =</span> <span class="sc">-</span><span class="fu">log</span>(<span class="dv">1</span><span class="fl">-0.1</span>)<span class="sc">/</span><span class="dv">24</span>,</span>
+<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a>      <span class="at">accrualDuration =</span> <span class="fl">39.2</span>, <span class="at">followupTime =</span> <span class="fl">6.5</span>, </span>
+<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a>      <span class="at">fixedFollowup =</span> <span class="cn">TRUE</span>,  </span>
+<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a>      <span class="at">plannedEvents =</span> <span class="dv">39</span>, </span>
+<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a>      <span class="at">maxNumberOfIterations =</span> <span class="dv">1000</span>, <span class="at">seed =</span> <span class="dv">12345</span>)</span></code></pre></div>
 <pre><code>##                                               
 ## Fixed design                                  
 ## Overall power: 0.947                          
@@ -409,15 +409,15 @@ the lrsim function.</p>
 ## Expected study duration: 39.7                 
 ## Accrual duration: 39.2, fixed follow-up: TRUE 
 ## </code></pre>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">lrsim</span>(<span class="at">kMax =</span> <span class="dv">1</span>, <span class="at">criticalValues =</span> <span class="fl">1.96</span>,  </span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>      <span class="at">allocation1 =</span> <span class="dv">3</span>, <span class="at">allocation2 =</span> <span class="dv">1</span>,</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>      <span class="at">accrualIntensity =</span> <span class="dv">5</span>, </span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>      <span class="at">lambda2 =</span> <span class="fl">0.95</span><span class="sc">/</span><span class="dv">12</span>, <span class="at">lambda1 =</span> <span class="fl">0.3</span><span class="sc">*</span><span class="fl">0.95</span><span class="sc">/</span><span class="dv">12</span>, </span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>      <span class="at">gamma1 =</span> <span class="sc">-</span><span class="fu">log</span>(<span class="dv">1</span><span class="fl">-0.1</span>)<span class="sc">/</span><span class="dv">24</span>, <span class="at">gamma2 =</span> <span class="sc">-</span><span class="fu">log</span>(<span class="dv">1</span><span class="fl">-0.1</span>)<span class="sc">/</span><span class="dv">24</span>,</span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>      <span class="at">accrualDuration =</span> <span class="fl">25.2</span>, <span class="at">followupTime =</span> <span class="fl">6.5</span>, </span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>      <span class="at">fixedFollowup =</span> <span class="cn">TRUE</span>,  </span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>      <span class="at">plannedEvents =</span> <span class="dv">26</span>, </span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>      <span class="at">maxNumberOfIterations =</span> <span class="dv">1000</span>, <span class="at">seed =</span> <span class="dv">12345</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="fu">lrsim</span>(<span class="at">kMax =</span> <span class="dv">1</span>, <span class="at">criticalValues =</span> <span class="fl">1.96</span>,  </span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>      <span class="at">allocation1 =</span> <span class="dv">3</span>, <span class="at">allocation2 =</span> <span class="dv">1</span>,</span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>      <span class="at">accrualIntensity =</span> <span class="dv">5</span>, </span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a>      <span class="at">lambda2 =</span> <span class="fl">0.95</span><span class="sc">/</span><span class="dv">12</span>, <span class="at">lambda1 =</span> <span class="fl">0.3</span><span class="sc">*</span><span class="fl">0.95</span><span class="sc">/</span><span class="dv">12</span>, </span>
+<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a>      <span class="at">gamma1 =</span> <span class="sc">-</span><span class="fu">log</span>(<span class="dv">1</span><span class="fl">-0.1</span>)<span class="sc">/</span><span class="dv">24</span>, <span class="at">gamma2 =</span> <span class="sc">-</span><span class="fu">log</span>(<span class="dv">1</span><span class="fl">-0.1</span>)<span class="sc">/</span><span class="dv">24</span>,</span>
+<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a>      <span class="at">accrualDuration =</span> <span class="fl">25.2</span>, <span class="at">followupTime =</span> <span class="fl">6.5</span>, </span>
+<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a>      <span class="at">fixedFollowup =</span> <span class="cn">TRUE</span>,  </span>
+<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a>      <span class="at">plannedEvents =</span> <span class="dv">26</span>, </span>
+<span id="cb6-9"><a href="#cb6-9" tabindex="-1"></a>      <span class="at">maxNumberOfIterations =</span> <span class="dv">1000</span>, <span class="at">seed =</span> <span class="dv">12345</span>)</span></code></pre></div>
 <pre><code>##                                               
 ## Fixed design                                  
 ## Overall power: 0.845                          
@@ -444,15 +444,15 @@ N = \frac{D}{ \frac{r}{1+r}\frac{\lambda_1}{\lambda_1+\gamma_1} (1 -
 \exp(-(\lambda_2+\gamma_2)T_f)) }
 \]</span> Simulation results confirmed the accuracy of this sample size
 estimate.</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">lrsim</span>(<span class="at">kMax =</span> <span class="dv">1</span>, <span class="at">criticalValues =</span> <span class="fl">1.96</span>,  </span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>      <span class="at">allocation1 =</span> <span class="dv">3</span>, <span class="at">allocation2 =</span> <span class="dv">1</span>,</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>      <span class="at">accrualIntensity =</span> <span class="dv">5</span>, </span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>      <span class="at">lambda2 =</span> <span class="fl">0.95</span><span class="sc">/</span><span class="dv">12</span>, <span class="at">lambda1 =</span> <span class="fl">0.3</span><span class="sc">*</span><span class="fl">0.95</span><span class="sc">/</span><span class="dv">12</span>, </span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>      <span class="at">gamma1 =</span> <span class="sc">-</span><span class="fu">log</span>(<span class="dv">1</span><span class="fl">-0.1</span>)<span class="sc">/</span><span class="dv">24</span>, <span class="at">gamma2 =</span> <span class="sc">-</span><span class="fu">log</span>(<span class="dv">1</span><span class="fl">-0.1</span>)<span class="sc">/</span><span class="dv">24</span>,</span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>      <span class="at">accrualDuration =</span> <span class="fl">31.2</span>, <span class="at">followupTime =</span> <span class="fl">6.5</span>, </span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>      <span class="at">fixedFollowup =</span> <span class="cn">TRUE</span>,  </span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>      <span class="at">plannedEvents =</span> <span class="dv">32</span>, </span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>      <span class="at">maxNumberOfIterations =</span> <span class="dv">1000</span>, <span class="at">seed =</span> <span class="dv">12345</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="fu">lrsim</span>(<span class="at">kMax =</span> <span class="dv">1</span>, <span class="at">criticalValues =</span> <span class="fl">1.96</span>,  </span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>      <span class="at">allocation1 =</span> <span class="dv">3</span>, <span class="at">allocation2 =</span> <span class="dv">1</span>,</span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a>      <span class="at">accrualIntensity =</span> <span class="dv">5</span>, </span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a>      <span class="at">lambda2 =</span> <span class="fl">0.95</span><span class="sc">/</span><span class="dv">12</span>, <span class="at">lambda1 =</span> <span class="fl">0.3</span><span class="sc">*</span><span class="fl">0.95</span><span class="sc">/</span><span class="dv">12</span>, </span>
+<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a>      <span class="at">gamma1 =</span> <span class="sc">-</span><span class="fu">log</span>(<span class="dv">1</span><span class="fl">-0.1</span>)<span class="sc">/</span><span class="dv">24</span>, <span class="at">gamma2 =</span> <span class="sc">-</span><span class="fu">log</span>(<span class="dv">1</span><span class="fl">-0.1</span>)<span class="sc">/</span><span class="dv">24</span>,</span>
+<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a>      <span class="at">accrualDuration =</span> <span class="fl">31.2</span>, <span class="at">followupTime =</span> <span class="fl">6.5</span>, </span>
+<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a>      <span class="at">fixedFollowup =</span> <span class="cn">TRUE</span>,  </span>
+<span id="cb8-8"><a href="#cb8-8" tabindex="-1"></a>      <span class="at">plannedEvents =</span> <span class="dv">32</span>, </span>
+<span id="cb8-9"><a href="#cb8-9" tabindex="-1"></a>      <span class="at">maxNumberOfIterations =</span> <span class="dv">1000</span>, <span class="at">seed =</span> <span class="dv">12345</span>)</span></code></pre></div>
 <pre><code>##                                               
 ## Fixed design                                  
 ## Overall power: 0.904                          
