@@ -1,3 +1,13 @@
+# lrstat 0.1.13
+
+- add a rounding argument to lrsamplesize to round up the total sample size and events at each stage.
+- add by treatment counts of events, counts, and subjects to lrpower output.
+- add results under H0 to lrsamplesize output.
+
+# lrstat 0.1.12
+
+- use tolower to make typeAlphaSpending and typeBetaSpending into case insensitive inputs.
+
 # lrstat 0.1.11
 
 - Add Kaplan-Meier estimate of milestone survival, Greendwood variance estimate, difference in milestone survival, and Z test statistic for survival difference.

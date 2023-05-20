@@ -15,7 +15,7 @@ lrsamplesize(beta = 0.2, kMax = 2,
              lambda1 = c(log(2)/13, 0.58*log(2)/13),
              gamma1 = -log(1-0.05)/12, 
              gamma2 = -log(1-0.05)/12,
-             accrualDuration = 22, followupTime = NA)
+             accrualDuration = 22, followupTime = NA)$resultsUnderH1
 
 ## -----------------------------------------------------------------------------
 lrsim(kMax = 2, criticalValues = c(2.250, 2.025), 

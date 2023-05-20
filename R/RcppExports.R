@@ -1326,12 +1326,15 @@ getDesign <- function(beta = 0.2, drift = NA_real_, kMax = 1L, informationRates 
 #' @inheritParams param_estimateHazardRatio
 #' @inheritParams param_typeOfComputation
 #' @param interval The interval to search for the solution of
-#' accrualDuration or followupDuration. Defaults to \code{c(0.001, 240)}.
+#' accrualDuration, followupDuration, or the proportionality constant 
+#' of accrualIntensity. Defaults to \code{c(0.001, 240)}.
 #' Adjustment may be needed for non-monotone relationship with study power.
 #' @param spendingTime A vector of length \code{kMax} for the error spending 
 #'   time at each analysis. Defaults to missing, in which case, it is the 
 #'   same as \code{informationRates}.
-#'
+#' @param rounding Whether to round up sample size and events. 
+#'   Defaults to 0 for no sample size rounding.
+#' 
 #' @return A list of S3 class \code{lrpower}.
 #'
 #' @examples
@@ -1412,8 +1415,8 @@ getDesign <- function(beta = 0.2, drift = NA_real_, kMax = 1L, informationRates 
 #' 
 #'
 #' @export
-lrsamplesize <- function(beta = 0.2, kMax = 1L, informationRates = NA_real_, efficacyStopping = NA_integer_, futilityStopping = NA_integer_, criticalValues = NA_real_, alpha = 0.025, typeAlphaSpending = "sfOF", parameterAlphaSpending = NA_real_, userAlphaSpending = NA_real_, futilityBounds = NA_real_, typeBetaSpending = "none", parameterBetaSpending = NA_real_, userBetaSpending = NA_real_, hazardRatioH0 = 1, allocationRatioPlanned = 1, accrualTime = 0L, accrualIntensity = 20L, piecewiseSurvivalTime = 0L, stratumFraction = 1L, lambda1 = 0.0309, lambda2 = 0.0533, gamma1 = 0L, gamma2 = 0L, accrualDuration = NA_real_, followupTime = 18, fixedFollowup = 0L, rho1 = 0, rho2 = 0, numSubintervals = 300L, estimateHazardRatio = 1L, typeOfComputation = "direct", interval = as.numeric( c(0.001, 240)), spendingTime = NA_real_) {
-    .Call(`_lrstat_lrsamplesize`, beta, kMax, informationRates, efficacyStopping, futilityStopping, criticalValues, alpha, typeAlphaSpending, parameterAlphaSpending, userAlphaSpending, futilityBounds, typeBetaSpending, parameterBetaSpending, userBetaSpending, hazardRatioH0, allocationRatioPlanned, accrualTime, accrualIntensity, piecewiseSurvivalTime, stratumFraction, lambda1, lambda2, gamma1, gamma2, accrualDuration, followupTime, fixedFollowup, rho1, rho2, numSubintervals, estimateHazardRatio, typeOfComputation, interval, spendingTime)
+lrsamplesize <- function(beta = 0.2, kMax = 1L, informationRates = NA_real_, efficacyStopping = NA_integer_, futilityStopping = NA_integer_, criticalValues = NA_real_, alpha = 0.025, typeAlphaSpending = "sfOF", parameterAlphaSpending = NA_real_, userAlphaSpending = NA_real_, futilityBounds = NA_real_, typeBetaSpending = "none", parameterBetaSpending = NA_real_, userBetaSpending = NA_real_, hazardRatioH0 = 1, allocationRatioPlanned = 1, accrualTime = 0L, accrualIntensity = 20L, piecewiseSurvivalTime = 0L, stratumFraction = 1L, lambda1 = 0.0309, lambda2 = 0.0533, gamma1 = 0L, gamma2 = 0L, accrualDuration = NA_real_, followupTime = 18, fixedFollowup = 0L, rho1 = 0, rho2 = 0, numSubintervals = 300L, estimateHazardRatio = 1L, typeOfComputation = "direct", interval = as.numeric( c(0.001, 240)), spendingTime = NA_real_, rounding = 0L) {
+    .Call(`_lrstat_lrsamplesize`, beta, kMax, informationRates, efficacyStopping, futilityStopping, criticalValues, alpha, typeAlphaSpending, parameterAlphaSpending, userAlphaSpending, futilityBounds, typeBetaSpending, parameterBetaSpending, userBetaSpending, hazardRatioH0, allocationRatioPlanned, accrualTime, accrualIntensity, piecewiseSurvivalTime, stratumFraction, lambda1, lambda2, gamma1, gamma2, accrualDuration, followupTime, fixedFollowup, rho1, rho2, numSubintervals, estimateHazardRatio, typeOfComputation, interval, spendingTime, rounding)
 }
 
 set_seed <- function(seed) {

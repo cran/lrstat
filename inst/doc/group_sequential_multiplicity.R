@@ -32,7 +32,7 @@ for (j in 1:6) {
   accrualTime = c(0,8), accrualIntensity = c(10,28)*3/5, 
   lambda1 = log(2)/22, lambda2 = log(2)/12, 
   accrualDuration = 30.143, followupTime = NA, 
-  typeOfComputation = "Schoenfeld"))
+  typeOfComputation = "Schoenfeld")$resultsUnderH1)
 
 
 ## ----expected number of OS events at look 1 and look 2------------------------
@@ -59,7 +59,7 @@ for (j in 1:6) {
     accrualIntensity = c(10,28)*3/5, 
     lambda1 = log(2)/50, lambda2 = log(2)/30, 
     accrualDuration = 30.143, followupTime = NA, 
-    typeOfComputation = "Schoenfeld")
+    typeOfComputation = "Schoenfeld")$resultsUnderH1
   lr$overallResults$numberOfEvents - d}, 
   c(138,300))$root) 
 
@@ -73,7 +73,7 @@ for (j in 1:6) {
   accrualTime = c(0,8), accrualIntensity = c(10,28)*3/5, 
   lambda1 = log(2)/50, lambda2 = log(2)/30,
   accrualDuration = 30.143, followupTime = NA, 
-  typeOfComputation = "Schoenfeld"))
+  typeOfComputation = "Schoenfeld")$resultsUnderH1)
 
 ## ----expected number of events for other comparisons--------------------------
 
