@@ -1,3 +1,12 @@
+# lrstat 0.1.14
+
+- add the getAccrualDuration function to obtain the accrual duration to enroll the target number of subjects.
+- add the getDurationFromNevents function to obtain a range of accrual duration to reach the target number of events.
+- add the getNeventsFromHazardRatio function to obtain the required number of events given the hazard ratios under the null and alternative hypotheses for a group sequential design.
+- allow studyDuration < accrualDuration + followupTime for fixed follow-up in lrpower
+- update the handling of rounding for fixed follow-up design in lrsamplesize
+- update the handling of null hypothesis for fixed follow-up design
+
 # lrstat 0.1.13
 
 - add a rounding argument to lrsamplesize to round up the total sample size and events at each stage.

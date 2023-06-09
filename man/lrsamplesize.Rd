@@ -39,7 +39,7 @@ lrsamplesize(
   typeOfComputation = "direct",
   interval = as.numeric(c(0.001, 240)),
   spendingTime = NA_real_,
-  rounding = 0L
+  rounding = 1L
 )
 }
 \arguments{
@@ -166,7 +166,7 @@ time at each analysis. Defaults to missing, in which case, it is the
 same as \code{informationRates}.}
 
 \item{rounding}{Whether to round up sample size and events. 
-Defaults to 0 for no sample size rounding.}
+Defaults to 1 for sample size rounding.}
 }
 \value{
 A list of S3 class \code{lrpower}.

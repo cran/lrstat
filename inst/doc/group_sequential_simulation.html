@@ -382,8 +382,8 @@ stopped early for futility or efficacy. Due to the fixed follow-up
 design, there might be situations where a total of 160 patients with
 each followed-up for 6.5 month do not yield 32 events, in which case,
 the trial will stop and we allocate all remaining alpha to the final
-look. The simulation below demonstrates that the study has the target
-power of 90% under the alternative hypothesis.</p>
+look. The simulation below demonstrates that the study has approximately
+88% under the alternative hypothesis.</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="fu">lrsim</span>(<span class="at">kMax =</span> <span class="dv">3</span>, <span class="at">informationTime =</span> <span class="fu">c</span>(<span class="fl">0.5</span>, <span class="fl">0.75</span>, <span class="dv">1</span>), </span>
 <span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>      <span class="at">criticalValues =</span> <span class="fu">c</span>(<span class="dv">6</span>, <span class="fl">2.34</span>, <span class="fl">2.012</span>), </span>
 <span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>      <span class="at">futilityBounds =</span> <span class="fu">c</span>(<span class="fl">0.282</span>, <span class="sc">-</span><span class="dv">6</span>), </span>
@@ -393,7 +393,7 @@ power of 90% under the alternative hypothesis.</p>
 <span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a>      <span class="at">stratumFraction =</span> <span class="dv">1</span>, </span>
 <span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a>      <span class="at">lambda1 =</span> <span class="fl">0.3</span><span class="sc">*</span><span class="fl">0.95</span><span class="sc">/</span><span class="dv">12</span>, <span class="at">lambda2 =</span> <span class="fl">0.95</span><span class="sc">/</span><span class="dv">12</span>, </span>
 <span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a>      <span class="at">gamma1 =</span> <span class="sc">-</span><span class="fu">log</span>(<span class="dv">1</span><span class="fl">-0.1</span>)<span class="sc">/</span><span class="dv">24</span>, <span class="at">gamma2 =</span> <span class="sc">-</span><span class="fu">log</span>(<span class="dv">1</span><span class="fl">-0.1</span>)<span class="sc">/</span><span class="dv">24</span>, </span>
-<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a>      <span class="at">accrualDuration =</span> <span class="dv">34</span>, <span class="at">followupTime =</span> <span class="fl">6.5</span>, </span>
+<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a>      <span class="at">accrualDuration =</span> <span class="dv">32</span>, <span class="at">followupTime =</span> <span class="fl">6.5</span>, </span>
 <span id="cb4-11"><a href="#cb4-11" tabindex="-1"></a>      <span class="at">fixedFollowup =</span> <span class="cn">TRUE</span>, </span>
 <span id="cb4-12"><a href="#cb4-12" tabindex="-1"></a>      <span class="at">rho1 =</span> <span class="dv">0</span>, <span class="at">rho2 =</span> <span class="dv">0</span>, </span>
 <span id="cb4-13"><a href="#cb4-13" tabindex="-1"></a>      <span class="at">plannedEvents =</span> <span class="fu">c</span>(<span class="dv">16</span>, <span class="dv">24</span>, <span class="dv">32</span>), </span>
@@ -402,22 +402,22 @@ power of 90% under the alternative hypothesis.</p>
 <span id="cb4-16"><a href="#cb4-16" tabindex="-1"></a>      <span class="at">seed =</span> <span class="dv">12345</span>)</span></code></pre></div>
 <pre><code>##                                             
 ## Group-sequential trial with 3 stages        
-## Overall power: 0.888                        
+## Overall power: 0.881                        
 ## Expected # events: 25.4                     
 ## Expected # dropouts: 3.1                    
-## Expected # subjects: 137.3                  
-## Expected study duration: 27.9               
-## Accrual duration: 34, fixed follow-up: TRUE 
+## Expected # subjects: 135.6                  
+## Expected study duration: 27.8               
+## Accrual duration: 32, fixed follow-up: TRUE 
 ##                                             
 ##                      Stage 1 Stage 2 Stage 3
-## Cumulative rejection 0.003   0.740   0.888  
-## Cumulative futility  0.031   0.031   0.112  
-## Number of events     16.0    24.0    30.8   
-## Number of dropouts   2.0     3.0     3.7    
-## Number of subjects   93.9    131.7   158.5  
-## Analysis time        18.8    26.5    33.0</code></pre>
+## Cumulative rejection 0.004   0.742   0.881  
+## Cumulative futility  0.020   0.026   0.119  
+## Number of events     16.0    24.0    29.9   
+## Number of dropouts   2.0     2.9     3.5    
+## Number of subjects   92.9    130.3   149.7  
+## Analysis time        18.7    26.4    31.7</code></pre>
 <p>The simulation below shows that the probability of futility stopping
-under the null hypothesis is 62%.</p>
+under the null hypothesis is 65%.</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="fu">lrsim</span>(<span class="at">kMax =</span> <span class="dv">3</span>, <span class="at">informationTime =</span> <span class="fu">c</span>(<span class="fl">0.5</span>, <span class="fl">0.75</span>, <span class="dv">1</span>), </span>
 <span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>      <span class="at">criticalValues =</span> <span class="fu">c</span>(<span class="dv">6</span>, <span class="fl">2.34</span>, <span class="fl">2.012</span>), </span>
 <span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>      <span class="at">futilityBounds =</span> <span class="fu">c</span>(<span class="fl">0.282</span>, <span class="sc">-</span><span class="dv">6</span>), </span>
@@ -427,7 +427,7 @@ under the null hypothesis is 62%.</p>
 <span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a>      <span class="at">stratumFraction =</span> <span class="dv">1</span>, </span>
 <span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a>      <span class="at">lambda1 =</span> <span class="fl">0.95</span><span class="sc">/</span><span class="dv">12</span>, <span class="at">lambda2 =</span> <span class="fl">0.95</span><span class="sc">/</span><span class="dv">12</span>, </span>
 <span id="cb6-9"><a href="#cb6-9" tabindex="-1"></a>      <span class="at">gamma1 =</span> <span class="sc">-</span><span class="fu">log</span>(<span class="dv">1</span><span class="fl">-0.1</span>)<span class="sc">/</span><span class="dv">24</span>, <span class="at">gamma2 =</span> <span class="sc">-</span><span class="fu">log</span>(<span class="dv">1</span><span class="fl">-0.1</span>)<span class="sc">/</span><span class="dv">24</span>, </span>
-<span id="cb6-10"><a href="#cb6-10" tabindex="-1"></a>      <span class="at">accrualDuration =</span> <span class="dv">34</span>, <span class="at">followupTime =</span> <span class="fl">6.5</span>, </span>
+<span id="cb6-10"><a href="#cb6-10" tabindex="-1"></a>      <span class="at">accrualDuration =</span> <span class="dv">32</span>, <span class="at">followupTime =</span> <span class="fl">6.5</span>, </span>
 <span id="cb6-11"><a href="#cb6-11" tabindex="-1"></a>      <span class="at">fixedFollowup =</span> <span class="cn">TRUE</span>, </span>
 <span id="cb6-12"><a href="#cb6-12" tabindex="-1"></a>      <span class="at">rho1 =</span> <span class="dv">0</span>, <span class="at">rho2 =</span> <span class="dv">0</span>, </span>
 <span id="cb6-13"><a href="#cb6-13" tabindex="-1"></a>      <span class="at">plannedEvents =</span> <span class="fu">c</span>(<span class="dv">16</span>, <span class="dv">24</span>, <span class="dv">32</span>), </span>
@@ -436,20 +436,20 @@ under the null hypothesis is 62%.</p>
 <span id="cb6-16"><a href="#cb6-16" tabindex="-1"></a>      <span class="at">seed =</span> <span class="dv">12345</span>)</span></code></pre></div>
 <pre><code>##                                             
 ## Group-sequential trial with 3 stages        
-## Overall power: 0.029                        
-## Expected # events: 22                       
-## Expected # dropouts: 1.3                    
-## Expected # subjects: 70.1                   
-## Expected study duration: 14.1               
-## Accrual duration: 34, fixed follow-up: TRUE 
+## Overall power: 0.033                        
+## Expected # events: 21.6                     
+## Expected # dropouts: 1.2                    
+## Expected # subjects: 68.8                   
+## Expected study duration: 13.9               
+## Accrual duration: 32, fixed follow-up: TRUE 
 ##                                             
 ##                      Stage 1 Stage 2 Stage 3
-## Cumulative rejection 0.000   0.013   0.029  
-## Cumulative futility  0.617   0.617   0.971  
+## Cumulative rejection 0.000   0.013   0.033  
+## Cumulative futility  0.646   0.646   0.967  
 ## Number of events     16.0    24.0    32.0   
-## Number of dropouts   0.9     1.3     1.8    
-## Number of subjects   55.1    75.3    95.4   
-## Analysis time        11.0    15.1    19.1</code></pre>
+## Number of dropouts   0.9     1.4     1.8    
+## Number of subjects   54.8    75.1    95.3   
+## Analysis time        11.1    15.2    19.2</code></pre>
 
 
 

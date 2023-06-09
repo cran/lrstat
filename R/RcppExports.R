@@ -587,6 +587,25 @@ accrual <- function(time = NA_real_, accrualTime = 0L, accrualIntensity = NA_rea
     .Call(`_lrstat_accrual`, time, accrualTime, accrualIntensity, accrualDuration)
 }
 
+#' @title Accrual duration to enroll target number of subjects
+#' @description Obtains the accrual duration to enroll the target number 
+#' of subjects.
+#'
+#' @param nsubjects The vector of target number of subjects.
+#' @inheritParams param_accrualTime
+#' @inheritParams param_accrualIntensity
+#'
+#' @return The vector of accrual duration.
+#'
+#' @examples
+#' getAccrualDuration(nsubjects = c(20, 150), accrualTime = c(0, 3),
+#'                    accrualIntensity = c(10, 20))
+#'
+#' @export
+getAccrualDuration <- function(nsubjects = NA_real_, accrualTime = 0L, accrualIntensity = NA_real_) {
+    .Call(`_lrstat_getAccrualDuration`, nsubjects, accrualTime, accrualIntensity)
+}
+
 #' @title Probability of being at risk
 #' @description Obtains the probability of being at risk at given analysis
 #' times.
@@ -1123,6 +1142,51 @@ caltime <- function(nevents = NA_real_, allocationRatioPlanned = 1, accrualTime 
     .Call(`_lrstat_caltime`, nevents, allocationRatioPlanned, accrualTime, accrualIntensity, piecewiseSurvivalTime, stratumFraction, lambda1, lambda2, gamma1, gamma2, accrualDuration, followupTime, fixedFollowup)
 }
 
+#' @title Range of accrual duration for target number of events
+#' @description Obtains a range of accrual duration to reach the 
+#' target number of events.
+#'
+#' @param nevents The target number of events.
+#' @inheritParams param_allocationRatioPlanned
+#' @inheritParams param_accrualTime
+#' @inheritParams param_accrualIntensity
+#' @inheritParams param_piecewiseSurvivalTime
+#' @inheritParams param_stratumFraction
+#' @inheritParams param_lambda1_stratified
+#' @inheritParams param_lambda2_stratified
+#' @inheritParams param_gamma1_stratified
+#' @inheritParams param_gamma2_stratified
+#' @inheritParams param_followupTime
+#' @inheritParams param_fixedFollowup
+#' @param npoints The number of accrual duration time points. 
+#'   Defaults to 23.
+#' @param interval The interval to search for the solution of
+#'   accrualDuration. Defaults to \code{c(0.001, 240)}.
+#' 
+#' @return A data frame of enrollment duration, sample size, and study 
+#' duration to yield the target number of events.
+#'
+#' @examples
+#' # Piecewise accrual, piecewise exponential survivals, and 5% dropout by
+#' # the end of 1 year.
+#'
+#' getDurationFromNevents(
+#'   nevents = 80, allocationRatioPlanned = 1,
+#'   accrualTime = seq(0, 8),
+#'   accrualIntensity = 26/9*seq(1, 9),
+#'   piecewiseSurvivalTime = c(0, 6),
+#'   stratumFraction = c(0.2, 0.8),
+#'   lambda1 = c(0.0533, 0.0309, 1.5*0.0533, 1.5*0.0309),
+#'   lambda2 = c(0.0533, 0.0533, 1.5*0.0533, 1.5*0.0533),
+#'   gamma1 = -log(1-0.05)/12,
+#'   gamma2 = -log(1-0.05)/12,
+#'   fixedFollowup = FALSE)
+#'
+#' @export
+getDurationFromNevents <- function(nevents = NA_real_, allocationRatioPlanned = 1, accrualTime = 0L, accrualIntensity = NA_real_, piecewiseSurvivalTime = 0L, stratumFraction = 1L, lambda1 = NA_real_, lambda2 = NA_real_, gamma1 = 0L, gamma2 = 0L, followupTime = 18, fixedFollowup = 0L, npoints = 23L, interval = as.numeric( c(0.001, 240))) {
+    .Call(`_lrstat_getDurationFromNevents`, nevents, allocationRatioPlanned, accrualTime, accrualIntensity, piecewiseSurvivalTime, stratumFraction, lambda1, lambda2, gamma1, gamma2, followupTime, fixedFollowup, npoints, interval)
+}
+
 getCriticalValues <- function(kMax = NA_integer_, informationRates = NA_real_, efficacyStopping = NA_integer_, alpha = 0.025, typeAlphaSpending = "sfOF", parameterAlphaSpending = NA_real_, userAlphaSpending = NA_real_, hazardRatioH0 = 1, allocationRatioPlanned = 1, accrualTime = 0L, accrualIntensity = 20L, piecewiseSurvivalTime = 0L, stratumFraction = 1L, lambda2 = 0.0533, gamma1 = 0L, gamma2 = 0L, accrualDuration = 11.6, followupTime = 18, fixedFollowup = 0L, rho1 = 0, rho2 = 0, numSubintervals = 300L, spendingTime = NA_real_) {
     .Call(`_lrstat_getCriticalValues`, kMax, informationRates, efficacyStopping, alpha, typeAlphaSpending, parameterAlphaSpending, userAlphaSpending, hazardRatioH0, allocationRatioPlanned, accrualTime, accrualIntensity, piecewiseSurvivalTime, stratumFraction, lambda2, gamma1, gamma2, accrualDuration, followupTime, fixedFollowup, rho1, rho2, numSubintervals, spendingTime)
 }
@@ -1172,6 +1236,12 @@ getCumAlphaSpent <- function(kMax = NA_integer_, informationRates = NA_real_, cr
 #' @param spendingTime A vector of length \code{kMax} for the error spending 
 #'   time at each analysis. Defaults to missing, in which case, it is the 
 #'   same as \code{informationRates}.
+#' @param studyDuration Study duration for fixed follow-up design. 
+#'   Defaults to missing, which is to be replaced with the sum of 
+#'   \code{accrualDuration} and \code{followupTime}. If provided, 
+#'   the value is allowed to be less than the sum of \code{accrualDuration} 
+#'   and \code{followupTime}.
+#' 
 #'   
 #' @return A list of S3 class \code{lrpower} with 3 components:
 #'
@@ -1215,8 +1285,8 @@ getCumAlphaSpent <- function(kMax = NA_integer_, informationRates = NA_real_, cr
 #'         followupTime = 18, fixedFollowup = FALSE)
 #'
 #' @export
-lrpower <- function(kMax = 1L, informationRates = NA_real_, efficacyStopping = NA_integer_, futilityStopping = NA_integer_, criticalValues = NA_real_, alpha = 0.025, typeAlphaSpending = "sfOF", parameterAlphaSpending = NA_real_, userAlphaSpending = NA_real_, futilityBounds = NA_real_, typeBetaSpending = "none", parameterBetaSpending = NA_real_, hazardRatioH0 = 1, allocationRatioPlanned = 1, accrualTime = 0L, accrualIntensity = 20L, piecewiseSurvivalTime = 0L, stratumFraction = 1L, lambda1 = 0.0309, lambda2 = 0.0533, gamma1 = 0L, gamma2 = 0L, accrualDuration = 11.6, followupTime = 18, fixedFollowup = 0L, rho1 = 0, rho2 = 0, numSubintervals = 300L, estimateHazardRatio = 1L, typeOfComputation = "direct", spendingTime = NA_real_) {
-    .Call(`_lrstat_lrpower`, kMax, informationRates, efficacyStopping, futilityStopping, criticalValues, alpha, typeAlphaSpending, parameterAlphaSpending, userAlphaSpending, futilityBounds, typeBetaSpending, parameterBetaSpending, hazardRatioH0, allocationRatioPlanned, accrualTime, accrualIntensity, piecewiseSurvivalTime, stratumFraction, lambda1, lambda2, gamma1, gamma2, accrualDuration, followupTime, fixedFollowup, rho1, rho2, numSubintervals, estimateHazardRatio, typeOfComputation, spendingTime)
+lrpower <- function(kMax = 1L, informationRates = NA_real_, efficacyStopping = NA_integer_, futilityStopping = NA_integer_, criticalValues = NA_real_, alpha = 0.025, typeAlphaSpending = "sfOF", parameterAlphaSpending = NA_real_, userAlphaSpending = NA_real_, futilityBounds = NA_real_, typeBetaSpending = "none", parameterBetaSpending = NA_real_, hazardRatioH0 = 1, allocationRatioPlanned = 1, accrualTime = 0L, accrualIntensity = 20L, piecewiseSurvivalTime = 0L, stratumFraction = 1L, lambda1 = 0.0309, lambda2 = 0.0533, gamma1 = 0L, gamma2 = 0L, accrualDuration = 11.6, followupTime = 18, fixedFollowup = 0L, rho1 = 0, rho2 = 0, numSubintervals = 300L, estimateHazardRatio = 1L, typeOfComputation = "direct", spendingTime = NA_real_, studyDuration = NA_real_) {
+    .Call(`_lrstat_lrpower`, kMax, informationRates, efficacyStopping, futilityStopping, criticalValues, alpha, typeAlphaSpending, parameterAlphaSpending, userAlphaSpending, futilityBounds, typeBetaSpending, parameterBetaSpending, hazardRatioH0, allocationRatioPlanned, accrualTime, accrualIntensity, piecewiseSurvivalTime, stratumFraction, lambda1, lambda2, gamma1, gamma2, accrualDuration, followupTime, fixedFollowup, rho1, rho2, numSubintervals, estimateHazardRatio, typeOfComputation, spendingTime, studyDuration)
 }
 
 #' @title Get group sequential design
@@ -1286,6 +1356,51 @@ getDesign <- function(beta = 0.2, drift = NA_real_, kMax = 1L, informationRates 
     .Call(`_lrstat_getDesign`, beta, drift, kMax, informationRates, efficacyStopping, futilityStopping, criticalValues, alpha, typeAlphaSpending, parameterAlphaSpending, userAlphaSpending, futilityBounds, typeBetaSpending, parameterBetaSpending, userBetaSpending, spendingTime)
 }
 
+#' @title Get the required number of events from hazard ratios
+#' @description Obtains the required number of events given the hazard 
+#' ratios under the null and alternative hypotheses for a group 
+#' sequential design.
+#'
+#' @param beta Type II error. Defaults to 0.2.
+#' @inheritParams param_kMax
+#' @inheritParams param_informationRates
+#' @inheritParams param_efficacyStopping
+#' @inheritParams param_futilityStopping
+#' @inheritParams param_criticalValues
+#' @inheritParams param_alpha
+#' @inheritParams param_typeAlphaSpending
+#' @inheritParams param_parameterAlphaSpending
+#' @inheritParams param_userAlphaSpending
+#' @inheritParams param_futilityBounds
+#' @inheritParams param_typeBetaSpending
+#' @inheritParams param_parameterBetaSpending
+#' @inheritParams param_userBetaSpending
+#' @param spendingTime A vector of length \code{kMax} for the error spending 
+#'   time at each analysis. Defaults to missing, in which case, it is the 
+#'   same as \code{informationRates}.
+#' @inheritParams param_hazardRatioH0
+#' @param hazardRatio Hazard ratio under the alternative hypothesis 
+#'   for the active treatment versus control. Defaults to 0.5.
+#' @inheritParams param_allocationRatioPlanned
+#' @param rounding Whether to round up the number of events. 
+#'   Defaults to 1 for rounding.
+#'
+#' @return The required number of events.
+#'
+#' @examples
+#'
+#' getNeventsFromHazardRatio(
+#'   beta = 0.2, kMax = 2, 
+#'   informationRates = c(0.5,1), 
+#'   alpha = 0.025, typeAlphaSpending = "sfOF",
+#'   typeBetaSpending = "sfP", 
+#'   hazardRatio = 0.673)
+#' 
+#' @export
+getNeventsFromHazardRatio <- function(beta = 0.2, kMax = 1L, informationRates = NA_real_, efficacyStopping = NA_integer_, futilityStopping = NA_integer_, criticalValues = NA_real_, alpha = 0.025, typeAlphaSpending = "sfOF", parameterAlphaSpending = NA_real_, userAlphaSpending = NA_real_, futilityBounds = NA_real_, typeBetaSpending = "none", parameterBetaSpending = NA_real_, userBetaSpending = NA_real_, spendingTime = NA_real_, hazardRatioH0 = 1, hazardRatio = 0.5, allocationRatioPlanned = 1, rounding = 1L) {
+    .Call(`_lrstat_getNeventsFromHazardRatio`, beta, kMax, informationRates, efficacyStopping, futilityStopping, criticalValues, alpha, typeAlphaSpending, parameterAlphaSpending, userAlphaSpending, futilityBounds, typeBetaSpending, parameterBetaSpending, userBetaSpending, spendingTime, hazardRatioH0, hazardRatio, allocationRatioPlanned, rounding)
+}
+
 #' @title Log-rank test sample size
 #' @description Obtains the needed accrual duration given power and
 #' follow-up time, the needed follow-up time given power and
@@ -1333,7 +1448,7 @@ getDesign <- function(beta = 0.2, drift = NA_real_, kMax = 1L, informationRates 
 #'   time at each analysis. Defaults to missing, in which case, it is the 
 #'   same as \code{informationRates}.
 #' @param rounding Whether to round up sample size and events. 
-#'   Defaults to 0 for no sample size rounding.
+#'   Defaults to 1 for sample size rounding.
 #' 
 #' @return A list of S3 class \code{lrpower}.
 #'
@@ -1415,7 +1530,7 @@ getDesign <- function(beta = 0.2, drift = NA_real_, kMax = 1L, informationRates 
 #' 
 #'
 #' @export
-lrsamplesize <- function(beta = 0.2, kMax = 1L, informationRates = NA_real_, efficacyStopping = NA_integer_, futilityStopping = NA_integer_, criticalValues = NA_real_, alpha = 0.025, typeAlphaSpending = "sfOF", parameterAlphaSpending = NA_real_, userAlphaSpending = NA_real_, futilityBounds = NA_real_, typeBetaSpending = "none", parameterBetaSpending = NA_real_, userBetaSpending = NA_real_, hazardRatioH0 = 1, allocationRatioPlanned = 1, accrualTime = 0L, accrualIntensity = 20L, piecewiseSurvivalTime = 0L, stratumFraction = 1L, lambda1 = 0.0309, lambda2 = 0.0533, gamma1 = 0L, gamma2 = 0L, accrualDuration = NA_real_, followupTime = 18, fixedFollowup = 0L, rho1 = 0, rho2 = 0, numSubintervals = 300L, estimateHazardRatio = 1L, typeOfComputation = "direct", interval = as.numeric( c(0.001, 240)), spendingTime = NA_real_, rounding = 0L) {
+lrsamplesize <- function(beta = 0.2, kMax = 1L, informationRates = NA_real_, efficacyStopping = NA_integer_, futilityStopping = NA_integer_, criticalValues = NA_real_, alpha = 0.025, typeAlphaSpending = "sfOF", parameterAlphaSpending = NA_real_, userAlphaSpending = NA_real_, futilityBounds = NA_real_, typeBetaSpending = "none", parameterBetaSpending = NA_real_, userBetaSpending = NA_real_, hazardRatioH0 = 1, allocationRatioPlanned = 1, accrualTime = 0L, accrualIntensity = 20L, piecewiseSurvivalTime = 0L, stratumFraction = 1L, lambda1 = 0.0309, lambda2 = 0.0533, gamma1 = 0L, gamma2 = 0L, accrualDuration = NA_real_, followupTime = 18, fixedFollowup = 0L, rho1 = 0, rho2 = 0, numSubintervals = 300L, estimateHazardRatio = 1L, typeOfComputation = "direct", interval = as.numeric( c(0.001, 240)), spendingTime = NA_real_, rounding = 1L) {
     .Call(`_lrstat_lrsamplesize`, beta, kMax, informationRates, efficacyStopping, futilityStopping, criticalValues, alpha, typeAlphaSpending, parameterAlphaSpending, userAlphaSpending, futilityBounds, typeBetaSpending, parameterBetaSpending, userBetaSpending, hazardRatioH0, allocationRatioPlanned, accrualTime, accrualIntensity, piecewiseSurvivalTime, stratumFraction, lambda1, lambda2, gamma1, gamma2, accrualDuration, followupTime, fixedFollowup, rho1, rho2, numSubintervals, estimateHazardRatio, typeOfComputation, interval, spendingTime, rounding)
 }
 

@@ -377,28 +377,28 @@ target number of events.</p>
 <span id="cb2-11"><a href="#cb2-11" tabindex="-1"></a>             <span class="at">accrualDuration =</span> <span class="dv">22</span>, <span class="at">followupTime =</span> <span class="cn">NA</span>)<span class="sc">$</span>resultsUnderH1</span></code></pre></div>
 <pre><code>##                                                                        
 ## Group-sequential trial with 2 stages                                   
-## Overall power: 0.8, overall significance level (1-sided): 0.025        
-## Maximum # events: 315.2, expected # events: 286.8                      
-## Maximum # dropouts: 29.8, expected # dropouts: 26.8                    
+## Overall power: 0.802, overall significance level (1-sided): 0.025      
+## Maximum # events: 316, expected # events: 287.4                        
+## Maximum # dropouts: 29.9, expected # dropouts: 26.9                    
 ## Maximum # subjects: 468, expected # subjects: 468                      
-## Total study duration: 41.5, expected study duration: 37                
-## Accrual duration: 22, follow-up duration: 19.5, fixed follow-up: FALSE 
+## Total study duration: 41.7, expected study duration: 37                
+## Accrual duration: 22, follow-up duration: 19.7, fixed follow-up: FALSE 
 ##                                                                        
 ##                              Stage 1 Stage 2
-## Information rate             0.800   1.000  
-## Efficacy boundary (Z-scale)  2.250   2.025  
-## Cumulative rejection         0.450   0.800  
+## Information rate             0.801   1.000  
+## Efficacy boundary (Z-scale)  2.249   2.025  
+## Cumulative rejection         0.455   0.802  
 ## Cumulative alpha spent       0.0122  0.0250 
-## Number of events             252.2   315.2  
-## Number of dropouts           23.1    29.8   
+## Number of events             253.0   316.0  
+## Number of dropouts           23.2    29.9   
 ## Number of subjects           468.0   468.0  
-## Analysis time                31.4    41.5   
+## Analysis time                31.5    41.7   
 ## Efficacy boundary (HR-scale) 0.752   0.795  
 ## Efficacy boundary (p-scale)  0.0122  0.0214 
-## Information                  62.81   78.02  
-## HR                           0.765   0.723</code></pre>
-<p>Thus we need to observe 315 events with 468 subjects, and the maximum
-study duration is 41.5 months with an expected study duration of 37
+## Information                  63.01   78.21  
+## HR                           0.764   0.723</code></pre>
+<p>Thus we need to observe 316 events with 468 subjects, and the maximum
+study duration is 41.7 months with an expected study duration of 37
 months.</p>
 <p>To verify this requirement, we resort to the lrsim function.</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="fu">lrsim</span>(<span class="at">kMax =</span> <span class="dv">2</span>, <span class="at">criticalValues =</span> <span class="fu">c</span>(<span class="fl">2.250</span>, <span class="fl">2.025</span>), </span>
@@ -410,24 +410,24 @@ months.</p>
 <span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a>      <span class="at">gamma1 =</span> <span class="sc">-</span><span class="fu">log</span>(<span class="dv">1</span><span class="fl">-0.05</span>)<span class="sc">/</span><span class="dv">12</span>, </span>
 <span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a>      <span class="at">gamma2 =</span> <span class="sc">-</span><span class="fu">log</span>(<span class="dv">1</span><span class="fl">-0.05</span>)<span class="sc">/</span><span class="dv">12</span>,</span>
 <span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a>      <span class="at">accrualDuration =</span> <span class="dv">22</span>,</span>
-<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a>      <span class="at">plannedEvents =</span> <span class="fu">c</span>(<span class="dv">252</span>, <span class="dv">315</span>), </span>
+<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a>      <span class="at">plannedEvents =</span> <span class="fu">c</span>(<span class="dv">253</span>, <span class="dv">316</span>), </span>
 <span id="cb4-11"><a href="#cb4-11" tabindex="-1"></a>      <span class="at">maxNumberOfIterations =</span> <span class="dv">10000</span>, <span class="at">seed =</span> <span class="dv">314159</span>)</span></code></pre></div>
 <pre><code>##                                              
 ## Group-sequential trial with 2 stages         
-## Overall power: 0.797                         
-## Expected # events: 286.6                     
-## Expected # dropouts: 26.7                    
+## Overall power: 0.8                           
+## Expected # events: 287.3                     
+## Expected # dropouts: 26.8                    
 ## Expected # subjects: 468                     
-## Expected study duration: 36.8                
+## Expected study duration: 36.9                
 ## Accrual duration: 22, fixed follow-up: FALSE 
 ##                                              
 ##                      Stage 1 Stage 2
-## Cumulative rejection 0.451   0.797  
-## Cumulative futility  0.000   0.203  
-## Number of events     252.0   315.0  
-## Number of dropouts   23.0    29.8   
+## Cumulative rejection 0.456   0.800  
+## Cumulative futility  0.000   0.200  
+## Number of events     253.0   316.0  
+## Number of dropouts   23.2    29.9   
 ## Number of subjects   468.0   468.0  
-## Analysis time        31.3    41.4</code></pre>
+## Analysis time        31.5    41.6</code></pre>
 <p>The simulation results confirm the analytic calculations.</p>
 
 

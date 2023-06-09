@@ -481,29 +481,29 @@ combined.</p>
 <span id="cb5-9"><a href="#cb5-9" tabindex="-1"></a>  <span class="at">typeOfComputation =</span> <span class="st">&quot;Schoenfeld&quot;</span>)<span class="sc">$</span>resultsUnderH1)</span></code></pre></div>
 <pre><code>##                                                                          
 ## Group-sequential trial with 2 stages                                     
-## Overall power: 0.97, overall significance level (1-sided): 0.005         
-## Maximum # events: 247, expected # events: 195.4                          
+## Overall power: 0.971, overall significance level (1-sided): 0.005        
+## Maximum # events: 248, expected # events: 196.1                          
 ## Maximum # dropouts: 0, expected # dropouts: 0                            
-## Maximum # subjects: 420, expected # subjects: 420                        
-## Total study duration: 41.5, expected study duration: 34.7                
-## Accrual duration: 30.1, follow-up duration: 11.3, fixed follow-up: FALSE 
+## Maximum # subjects: 423, expected # subjects: 423                        
+## Total study duration: 41.5, expected study duration: 34.8                
+## Accrual duration: 30.3, follow-up duration: 11.1, fixed follow-up: FALSE 
 ##                                                                          
 ##                              Stage 1 Stage 2
 ## Information rate             0.750   1.000  
 ## Efficacy boundary (Z-scale)  2.915   2.629  
-## Cumulative rejection         0.835   0.970  
+## Cumulative rejection         0.837   0.971  
 ## Cumulative alpha spent       0.0018  0.0050 
-## Number of events             185.3   247.0  
+## Number of events             186.0   248.0  
 ## Number of dropouts           0.0     0.0    
-## Number of subjects           420.0   420.0  
+## Number of subjects           423.0   423.0  
 ## Analysis time                33.4    41.5   
-## Efficacy boundary (HR-scale) 0.635   0.701  
+## Efficacy boundary (HR-scale) 0.635   0.702  
 ## Efficacy boundary (p-scale)  0.0018  0.0043 
-## Information                  41.17   54.89  
+## Information                  41.33   55.11  
 ## HR                           0.545   0.545</code></pre>
 <p>It can be seen that Look 1 and Look 2 are expected to take place at
 months 33.4 and 41.5, respectively, with the target number of events for
-Arm A and Arm C combined of 185 and 247 at the two looks,
+Arm A and Arm C combined of 186 and 248 at the two looks,
 respectively.</p>
 <p>We can now calculate the expected number of OS events for Arm A and
 Arm C combined at Look 1 and Look 2, respectively.</p>
@@ -514,12 +514,12 @@ Arm C combined at Look 1 and Look 2, respectively.</p>
 <span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a>  <span class="at">lambda1 =</span> <span class="fu">log</span>(<span class="dv">2</span>)<span class="sc">/</span><span class="dv">50</span>, <span class="at">lambda2 =</span> <span class="fu">log</span>(<span class="dv">2</span>)<span class="sc">/</span><span class="dv">30</span>,</span>
 <span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a>  <span class="at">accrualDuration =</span> <span class="fl">30.143</span>, <span class="at">followupTime =</span> <span class="dv">100</span>,</span>
 <span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a>  <span class="at">predictEventOnly =</span> <span class="dv">1</span>))</span></code></pre></div>
-<pre><code>##       time subjects   nevents nevents1 nevents2 ndropouts ndropouts1 ndropouts2
-## 1 33.40175 420.0024  96.43897 54.58462 41.85435         0          0          0
-## 2 41.47688 420.0024 137.01703 78.45778 58.55925         0          0          0</code></pre>
+<pre><code>##       time subjects  nevents nevents1 nevents2 ndropouts ndropouts1 ndropouts2
+## 1 33.44355 420.0024  96.6643 54.71521 41.94909         0          0          0
+## 2 41.46301 420.0024 136.9521 78.41901 58.53314         0          0          0</code></pre>
 <p>Look 3 is planned to have 90% power for the OS A/C comparison at
 1-sided alpha of 2%, which can be done as follows:</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a>(d_os <span class="ot">&lt;-</span> <span class="fu">uniroot</span>(<span class="cf">function</span>(d) {</span>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a>(d_os <span class="ot">&lt;-</span> <span class="fu">ceiling</span>(<span class="fu">uniroot</span>(<span class="cf">function</span>(d) {</span>
 <span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>  lr <span class="ot">&lt;-</span> <span class="fu">lrsamplesize</span>(</span>
 <span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a>    <span class="at">beta =</span> <span class="fl">0.1</span>, <span class="at">kMax =</span> <span class="dv">3</span>, </span>
 <span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a>    <span class="at">informationRates =</span> <span class="fu">c</span>(lr2a<span class="sc">$</span>nevents, d)<span class="sc">/</span>d,</span>
@@ -530,90 +530,100 @@ Arm C combined at Look 1 and Look 2, respectively.</p>
 <span id="cb9-9"><a href="#cb9-9" tabindex="-1"></a>    <span class="at">accrualIntensity =</span> <span class="fu">c</span>(<span class="dv">10</span>,<span class="dv">28</span>)<span class="sc">*</span><span class="dv">3</span><span class="sc">/</span><span class="dv">5</span>, </span>
 <span id="cb9-10"><a href="#cb9-10" tabindex="-1"></a>    <span class="at">lambda1 =</span> <span class="fu">log</span>(<span class="dv">2</span>)<span class="sc">/</span><span class="dv">50</span>, <span class="at">lambda2 =</span> <span class="fu">log</span>(<span class="dv">2</span>)<span class="sc">/</span><span class="dv">30</span>, </span>
 <span id="cb9-11"><a href="#cb9-11" tabindex="-1"></a>    <span class="at">accrualDuration =</span> <span class="fl">30.143</span>, <span class="at">followupTime =</span> <span class="cn">NA</span>, </span>
-<span id="cb9-12"><a href="#cb9-12" tabindex="-1"></a>    <span class="at">typeOfComputation =</span> <span class="st">&quot;Schoenfeld&quot;</span>)<span class="sc">$</span>resultsUnderH1</span>
-<span id="cb9-13"><a href="#cb9-13" tabindex="-1"></a>  lr<span class="sc">$</span>overallResults<span class="sc">$</span>numberOfEvents <span class="sc">-</span> d}, </span>
-<span id="cb9-14"><a href="#cb9-14" tabindex="-1"></a>  <span class="fu">c</span>(<span class="dv">138</span>,<span class="dv">300</span>))<span class="sc">$</span>root) </span></code></pre></div>
-<pre><code>## [1] 195.1146</code></pre>
+<span id="cb9-12"><a href="#cb9-12" tabindex="-1"></a>    <span class="at">typeOfComputation =</span> <span class="st">&quot;Schoenfeld&quot;</span>,</span>
+<span id="cb9-13"><a href="#cb9-13" tabindex="-1"></a>    <span class="at">rounding =</span> <span class="dv">0</span>)<span class="sc">$</span>resultsUnderH1</span>
+<span id="cb9-14"><a href="#cb9-14" tabindex="-1"></a>  lr<span class="sc">$</span>overallResults<span class="sc">$</span>numberOfEvents <span class="sc">-</span> d}, </span>
+<span id="cb9-15"><a href="#cb9-15" tabindex="-1"></a>  <span class="fu">c</span>(<span class="dv">137</span>,<span class="dv">300</span>))<span class="sc">$</span>root))</span></code></pre></div>
+<pre><code>## [1] 196</code></pre>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a>(<span class="at">studyDuration =</span> <span class="fu">caltime</span>(</span>
+<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a>  <span class="at">nevents =</span> d_os, </span>
+<span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a>  <span class="at">allocationRatioPlanned =</span> <span class="dv">2</span>, </span>
+<span id="cb11-4"><a href="#cb11-4" tabindex="-1"></a>  <span class="at">accrualTime =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">8</span>), </span>
+<span id="cb11-5"><a href="#cb11-5" tabindex="-1"></a>  <span class="at">accrualIntensity =</span> <span class="fu">c</span>(<span class="dv">10</span>,<span class="dv">28</span>)<span class="sc">*</span><span class="dv">3</span><span class="sc">/</span><span class="dv">5</span>, </span>
+<span id="cb11-6"><a href="#cb11-6" tabindex="-1"></a>  <span class="at">lambda1 =</span> <span class="fu">log</span>(<span class="dv">2</span>)<span class="sc">/</span><span class="dv">50</span>, <span class="at">lambda2 =</span> <span class="fu">log</span>(<span class="dv">2</span>)<span class="sc">/</span><span class="dv">30</span>,</span>
+<span id="cb11-7"><a href="#cb11-7" tabindex="-1"></a>  <span class="at">accrualDuration =</span> <span class="fl">30.143</span>, <span class="at">followupTime =</span> <span class="dv">1000</span>))</span></code></pre></div>
+<pre><code>## [1] 55.72894</code></pre>
 <p>In summary, the OS A/C power calculation is as follows:</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a>(lr2 <span class="ot">&lt;-</span> <span class="fu">lrsamplesize</span>(</span>
-<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a>  <span class="at">beta =</span> <span class="fl">0.1</span>, <span class="at">kMax =</span> <span class="dv">3</span>, </span>
-<span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a>  <span class="at">informationRates =</span> <span class="fu">c</span>(lr2a<span class="sc">$</span>nevents, d_os)<span class="sc">/</span>d_os, </span>
-<span id="cb11-4"><a href="#cb11-4" tabindex="-1"></a>  <span class="at">alpha =</span> <span class="fl">0.020</span>, <span class="at">typeAlphaSpending =</span> <span class="st">&quot;sfHSD&quot;</span>, </span>
-<span id="cb11-5"><a href="#cb11-5" tabindex="-1"></a>  <span class="at">parameterAlphaSpending =</span> <span class="sc">-</span><span class="dv">4</span>, </span>
-<span id="cb11-6"><a href="#cb11-6" tabindex="-1"></a>  <span class="at">allocationRatioPlanned =</span> <span class="dv">2</span>, </span>
-<span id="cb11-7"><a href="#cb11-7" tabindex="-1"></a>  <span class="at">accrualTime =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">8</span>), <span class="at">accrualIntensity =</span> <span class="fu">c</span>(<span class="dv">10</span>,<span class="dv">28</span>)<span class="sc">*</span><span class="dv">3</span><span class="sc">/</span><span class="dv">5</span>, </span>
-<span id="cb11-8"><a href="#cb11-8" tabindex="-1"></a>  <span class="at">lambda1 =</span> <span class="fu">log</span>(<span class="dv">2</span>)<span class="sc">/</span><span class="dv">50</span>, <span class="at">lambda2 =</span> <span class="fu">log</span>(<span class="dv">2</span>)<span class="sc">/</span><span class="dv">30</span>,</span>
-<span id="cb11-9"><a href="#cb11-9" tabindex="-1"></a>  <span class="at">accrualDuration =</span> <span class="fl">30.143</span>, <span class="at">followupTime =</span> <span class="cn">NA</span>, </span>
-<span id="cb11-10"><a href="#cb11-10" tabindex="-1"></a>  <span class="at">typeOfComputation =</span> <span class="st">&quot;Schoenfeld&quot;</span>)<span class="sc">$</span>resultsUnderH1)</span></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a>(lr2 <span class="ot">&lt;-</span> <span class="fu">lrpower</span>(</span>
+<span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a>  <span class="at">kMax =</span> <span class="dv">3</span>, </span>
+<span id="cb13-3"><a href="#cb13-3" tabindex="-1"></a>  <span class="at">informationRates =</span> <span class="fu">c</span>(lr2a<span class="sc">$</span>nevents, d_os)<span class="sc">/</span>d_os, </span>
+<span id="cb13-4"><a href="#cb13-4" tabindex="-1"></a>  <span class="at">alpha =</span> <span class="fl">0.020</span>, <span class="at">typeAlphaSpending =</span> <span class="st">&quot;sfHSD&quot;</span>, </span>
+<span id="cb13-5"><a href="#cb13-5" tabindex="-1"></a>  <span class="at">parameterAlphaSpending =</span> <span class="sc">-</span><span class="dv">4</span>, </span>
+<span id="cb13-6"><a href="#cb13-6" tabindex="-1"></a>  <span class="at">allocationRatioPlanned =</span> <span class="dv">2</span>, </span>
+<span id="cb13-7"><a href="#cb13-7" tabindex="-1"></a>  <span class="at">accrualTime =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">8</span>), </span>
+<span id="cb13-8"><a href="#cb13-8" tabindex="-1"></a>  <span class="at">accrualIntensity =</span> <span class="fu">c</span>(<span class="dv">10</span>,<span class="dv">28</span>)<span class="sc">*</span><span class="dv">3</span><span class="sc">/</span><span class="dv">5</span>, </span>
+<span id="cb13-9"><a href="#cb13-9" tabindex="-1"></a>  <span class="at">lambda1 =</span> <span class="fu">log</span>(<span class="dv">2</span>)<span class="sc">/</span><span class="dv">50</span>, <span class="at">lambda2 =</span> <span class="fu">log</span>(<span class="dv">2</span>)<span class="sc">/</span><span class="dv">30</span>,</span>
+<span id="cb13-10"><a href="#cb13-10" tabindex="-1"></a>  <span class="at">accrualDuration =</span> <span class="fl">30.143</span>, <span class="at">followupTime =</span> <span class="fl">25.586</span>, </span>
+<span id="cb13-11"><a href="#cb13-11" tabindex="-1"></a>  <span class="at">typeOfComputation =</span> <span class="st">&quot;Schoenfeld&quot;</span>))</span></code></pre></div>
 <pre><code>##                                                                          
 ## Group-sequential trial with 3 stages                                     
-## Overall power: 0.9, overall significance level (1-sided): 0.02           
-## Maximum # events: 195.1, expected # events: 147.3                        
+## Overall power: 0.901, overall significance level (1-sided): 0.02         
+## Maximum # events: 196, expected # events: 147.8                          
 ## Maximum # dropouts: 0, expected # dropouts: 0                            
 ## Maximum # subjects: 420, expected # subjects: 420                        
-## Total study duration: 55.5, expected study duration: 44.5                
-## Accrual duration: 30.1, follow-up duration: 25.3, fixed follow-up: FALSE 
+## Total study duration: 55.7, expected study duration: 44.6                
+## Accrual duration: 30.1, follow-up duration: 25.6, fixed follow-up: FALSE 
 ##                                                                          
 ##                              Stage 1 Stage 2 Stage 3
-## Information rate             0.494   0.702   1.000  
-## Efficacy boundary (Z-scale)  2.831   2.598   2.100  
-## Cumulative rejection         0.321   0.600   0.900  
-## Cumulative alpha spent       0.0023  0.0058  0.0200 
-## Number of events             96.4    137.0   195.1  
+## Information rate             0.493   0.699   1.000  
+## Efficacy boundary (Z-scale)  2.832   2.605   2.099  
+## Cumulative rejection         0.321   0.597   0.901  
+## Cumulative alpha spent       0.0023  0.0057  0.0200 
+## Number of events             96.7    137.0   196.0  
 ## Number of dropouts           0.0     0.0     0.0    
 ## Number of subjects           420.0   420.0   420.0  
-## Analysis time                33.4    41.5    55.5   
-## Efficacy boundary (HR-scale) 0.543   0.624   0.727  
-## Efficacy boundary (p-scale)  0.0023  0.0047  0.0179 
-## Information                  21.43   30.45   43.36  
+## Analysis time                33.4    41.5    55.7   
+## Efficacy boundary (HR-scale) 0.543   0.624   0.728  
+## Efficacy boundary (p-scale)  0.0023  0.0046  0.0179 
+## Information                  21.48   30.43   43.56  
 ## HR                           0.600   0.600   0.600</code></pre>
-<p>Therefore, Look 3 is expected to take place at month 55.5. Based on
+<p>Therefore, Look 3 is expected to take place at month 55.7. Based on
 the timing of the three looks, we obtain the expected number of events
 for the other four comparisons:</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a>(lr3 <span class="ot">&lt;-</span> <span class="fu">lrstat</span>(</span>
-<span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a>  <span class="at">time =</span> lr2<span class="sc">$</span>byStageResults<span class="sc">$</span>analysisTime, </span>
-<span id="cb13-3"><a href="#cb13-3" tabindex="-1"></a>  <span class="at">allocationRatioPlanned =</span> <span class="dv">2</span>,</span>
-<span id="cb13-4"><a href="#cb13-4" tabindex="-1"></a>  <span class="at">accrualTime =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">8</span>), <span class="at">accrualIntensity =</span> <span class="fu">c</span>(<span class="dv">10</span>,<span class="dv">28</span>)<span class="sc">*</span><span class="dv">3</span><span class="sc">/</span><span class="dv">5</span>, </span>
-<span id="cb13-5"><a href="#cb13-5" tabindex="-1"></a>  <span class="at">lambda1 =</span> <span class="fu">log</span>(<span class="dv">2</span>)<span class="sc">/</span><span class="dv">17</span>, <span class="at">lambda2 =</span> <span class="fu">log</span>(<span class="dv">2</span>)<span class="sc">/</span><span class="dv">12</span>,</span>
-<span id="cb13-6"><a href="#cb13-6" tabindex="-1"></a>  <span class="at">accrualDuration =</span> <span class="fl">30.143</span>, <span class="at">followupTime =</span> <span class="dv">100</span>,</span>
-<span id="cb13-7"><a href="#cb13-7" tabindex="-1"></a>  <span class="at">predictEventOnly =</span> <span class="dv">1</span>))</span></code></pre></div>
-<pre><code>##       time subjects  nevents nevents1  nevents2 ndropouts ndropouts1 ndropouts2
-## 1 33.40176 420.0024 206.3885 127.3042  79.08424         0          0          0
-## 2 41.47688 420.0024 271.9334 170.1415 101.79194         0          0          0
-## 3 55.48666 420.0024 340.9393 217.9490 122.99030         0          0          0</code></pre>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a>(lr4 <span class="ot">&lt;-</span> <span class="fu">lrstat</span>(</span>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a>(lr3 <span class="ot">&lt;-</span> <span class="fu">lrstat</span>(</span>
 <span id="cb15-2"><a href="#cb15-2" tabindex="-1"></a>  <span class="at">time =</span> lr2<span class="sc">$</span>byStageResults<span class="sc">$</span>analysisTime, </span>
 <span id="cb15-3"><a href="#cb15-3" tabindex="-1"></a>  <span class="at">allocationRatioPlanned =</span> <span class="dv">2</span>,</span>
 <span id="cb15-4"><a href="#cb15-4" tabindex="-1"></a>  <span class="at">accrualTime =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">8</span>), <span class="at">accrualIntensity =</span> <span class="fu">c</span>(<span class="dv">10</span>,<span class="dv">28</span>)<span class="sc">*</span><span class="dv">3</span><span class="sc">/</span><span class="dv">5</span>, </span>
-<span id="cb15-5"><a href="#cb15-5" tabindex="-1"></a>  <span class="at">lambda1 =</span> <span class="fu">log</span>(<span class="dv">2</span>)<span class="sc">/</span><span class="dv">40</span>, <span class="at">lambda2 =</span> <span class="fu">log</span>(<span class="dv">2</span>)<span class="sc">/</span><span class="dv">30</span>,</span>
-<span id="cb15-6"><a href="#cb15-6" tabindex="-1"></a>  <span class="at">accrualDuration =</span> <span class="fl">30.143</span>, <span class="at">followupTime =</span> <span class="dv">100</span>,</span>
+<span id="cb15-5"><a href="#cb15-5" tabindex="-1"></a>  <span class="at">lambda1 =</span> <span class="fu">log</span>(<span class="dv">2</span>)<span class="sc">/</span><span class="dv">17</span>, <span class="at">lambda2 =</span> <span class="fu">log</span>(<span class="dv">2</span>)<span class="sc">/</span><span class="dv">12</span>,</span>
+<span id="cb15-6"><a href="#cb15-6" tabindex="-1"></a>  <span class="at">accrualDuration =</span> <span class="fl">30.143</span>, <span class="at">followupTime =</span> <span class="dv">1000</span>,</span>
 <span id="cb15-7"><a href="#cb15-7" tabindex="-1"></a>  <span class="at">predictEventOnly =</span> <span class="dv">1</span>))</span></code></pre></div>
-<pre><code>##       time subjects  nevents  nevents1 nevents2 ndropouts ndropouts1 ndropouts2
-## 1 33.40176 420.0024 107.9582  66.10382 41.85436         0          0          0
-## 2 41.47688 420.0024 152.5943  94.03503 58.55925         0          0          0
-## 3 55.48666 420.0024 215.2001 134.11990 81.08019         0          0          0</code></pre>
-<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" tabindex="-1"></a>(lr5 <span class="ot">&lt;-</span> <span class="fu">lrstat</span>(</span>
+<pre><code>##       time subjects  nevents nevents1  nevents2 ndropouts ndropouts1 ndropouts2
+## 1 33.44358 420.0024 206.7956 127.5644  79.23122         0          0          0
+## 2 41.46304 420.0024 271.8408 170.0795 101.76138         0          0          0
+## 3 55.72900 420.0024 341.7859 218.5591 123.22675         0          0          0</code></pre>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" tabindex="-1"></a>(lr4 <span class="ot">&lt;-</span> <span class="fu">lrstat</span>(</span>
 <span id="cb17-2"><a href="#cb17-2" tabindex="-1"></a>  <span class="at">time =</span> lr2<span class="sc">$</span>byStageResults<span class="sc">$</span>analysisTime, </span>
-<span id="cb17-3"><a href="#cb17-3" tabindex="-1"></a>  <span class="at">allocationRatioPlanned =</span> <span class="dv">1</span>,</span>
-<span id="cb17-4"><a href="#cb17-4" tabindex="-1"></a>  <span class="at">accrualTime =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">8</span>), <span class="at">accrualIntensity =</span> <span class="fu">c</span>(<span class="dv">10</span>,<span class="dv">28</span>)<span class="sc">*</span><span class="dv">4</span><span class="sc">/</span><span class="dv">5</span>, </span>
-<span id="cb17-5"><a href="#cb17-5" tabindex="-1"></a>  <span class="at">lambda1 =</span> <span class="fu">log</span>(<span class="dv">2</span>)<span class="sc">/</span><span class="dv">22</span>, <span class="at">lambda2 =</span> <span class="fu">log</span>(<span class="dv">2</span>)<span class="sc">/</span><span class="dv">17</span>,</span>
-<span id="cb17-6"><a href="#cb17-6" tabindex="-1"></a>  <span class="at">accrualDuration =</span> <span class="fl">30.143</span>, <span class="at">followupTime =</span> <span class="dv">100</span>,</span>
+<span id="cb17-3"><a href="#cb17-3" tabindex="-1"></a>  <span class="at">allocationRatioPlanned =</span> <span class="dv">2</span>,</span>
+<span id="cb17-4"><a href="#cb17-4" tabindex="-1"></a>  <span class="at">accrualTime =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">8</span>), <span class="at">accrualIntensity =</span> <span class="fu">c</span>(<span class="dv">10</span>,<span class="dv">28</span>)<span class="sc">*</span><span class="dv">3</span><span class="sc">/</span><span class="dv">5</span>, </span>
+<span id="cb17-5"><a href="#cb17-5" tabindex="-1"></a>  <span class="at">lambda1 =</span> <span class="fu">log</span>(<span class="dv">2</span>)<span class="sc">/</span><span class="dv">40</span>, <span class="at">lambda2 =</span> <span class="fu">log</span>(<span class="dv">2</span>)<span class="sc">/</span><span class="dv">30</span>,</span>
+<span id="cb17-6"><a href="#cb17-6" tabindex="-1"></a>  <span class="at">accrualDuration =</span> <span class="fl">30.143</span>, <span class="at">followupTime =</span> <span class="dv">1000</span>,</span>
 <span id="cb17-7"><a href="#cb17-7" tabindex="-1"></a>  <span class="at">predictEventOnly =</span> <span class="dv">1</span>))</span></code></pre></div>
-<pre><code>##       time subjects  nevents nevents1 nevents2 ndropouts ndropouts1 ndropouts2
-## 1 33.40176 560.0032 233.4828 106.1786 127.3042         0          0          0
-## 2 41.47688 560.0032 315.3667 145.2252 170.1415         0          0          0
-## 3 55.48666 560.0032 411.2713 193.3223 217.9490         0          0          0</code></pre>
-<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" tabindex="-1"></a>(lr6 <span class="ot">&lt;-</span> <span class="fu">lrstat</span>(</span>
+<pre><code>##       time subjects  nevents  nevents1 nevents2 ndropouts ndropouts1 ndropouts2
+## 1 33.44358 420.0024 108.2079  66.25878 41.94915         0          0          0
+## 2 41.46304 420.0024 152.5236  93.99041 58.53320         0          0          0
+## 3 55.72900 420.0024 216.1404 134.73124 81.40917         0          0          0</code></pre>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" tabindex="-1"></a>(lr5 <span class="ot">&lt;-</span> <span class="fu">lrstat</span>(</span>
 <span id="cb19-2"><a href="#cb19-2" tabindex="-1"></a>  <span class="at">time =</span> lr2<span class="sc">$</span>byStageResults<span class="sc">$</span>analysisTime, </span>
 <span id="cb19-3"><a href="#cb19-3" tabindex="-1"></a>  <span class="at">allocationRatioPlanned =</span> <span class="dv">1</span>,</span>
 <span id="cb19-4"><a href="#cb19-4" tabindex="-1"></a>  <span class="at">accrualTime =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">8</span>), <span class="at">accrualIntensity =</span> <span class="fu">c</span>(<span class="dv">10</span>,<span class="dv">28</span>)<span class="sc">*</span><span class="dv">4</span><span class="sc">/</span><span class="dv">5</span>, </span>
-<span id="cb19-5"><a href="#cb19-5" tabindex="-1"></a>  <span class="at">lambda1 =</span> <span class="fu">log</span>(<span class="dv">2</span>)<span class="sc">/</span><span class="dv">50</span>, <span class="at">lambda2 =</span> <span class="fu">log</span>(<span class="dv">2</span>)<span class="sc">/</span><span class="dv">40</span>,</span>
-<span id="cb19-6"><a href="#cb19-6" tabindex="-1"></a>  <span class="at">accrualDuration =</span> <span class="fl">30.143</span>, <span class="at">followupTime =</span> <span class="dv">100</span>,</span>
+<span id="cb19-5"><a href="#cb19-5" tabindex="-1"></a>  <span class="at">lambda1 =</span> <span class="fu">log</span>(<span class="dv">2</span>)<span class="sc">/</span><span class="dv">22</span>, <span class="at">lambda2 =</span> <span class="fu">log</span>(<span class="dv">2</span>)<span class="sc">/</span><span class="dv">17</span>,</span>
+<span id="cb19-6"><a href="#cb19-6" tabindex="-1"></a>  <span class="at">accrualDuration =</span> <span class="fl">30.143</span>, <span class="at">followupTime =</span> <span class="dv">1000</span>,</span>
 <span id="cb19-7"><a href="#cb19-7" tabindex="-1"></a>  <span class="at">predictEventOnly =</span> <span class="dv">1</span>))</span></code></pre></div>
+<pre><code>##       time subjects  nevents nevents1 nevents2 ndropouts ndropouts1 ndropouts2
+## 1 33.44358 560.0032 233.9718 106.4074 127.5644         0          0          0
+## 2 41.46304 560.0032 315.2459 145.1664 170.0795         0          0          0
+## 3 55.72900 560.0032 412.5407 193.9816 218.5591         0          0          0</code></pre>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" tabindex="-1"></a>(lr6 <span class="ot">&lt;-</span> <span class="fu">lrstat</span>(</span>
+<span id="cb21-2"><a href="#cb21-2" tabindex="-1"></a>  <span class="at">time =</span> lr2<span class="sc">$</span>byStageResults<span class="sc">$</span>analysisTime, </span>
+<span id="cb21-3"><a href="#cb21-3" tabindex="-1"></a>  <span class="at">allocationRatioPlanned =</span> <span class="dv">1</span>,</span>
+<span id="cb21-4"><a href="#cb21-4" tabindex="-1"></a>  <span class="at">accrualTime =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">8</span>), <span class="at">accrualIntensity =</span> <span class="fu">c</span>(<span class="dv">10</span>,<span class="dv">28</span>)<span class="sc">*</span><span class="dv">4</span><span class="sc">/</span><span class="dv">5</span>, </span>
+<span id="cb21-5"><a href="#cb21-5" tabindex="-1"></a>  <span class="at">lambda1 =</span> <span class="fu">log</span>(<span class="dv">2</span>)<span class="sc">/</span><span class="dv">50</span>, <span class="at">lambda2 =</span> <span class="fu">log</span>(<span class="dv">2</span>)<span class="sc">/</span><span class="dv">40</span>,</span>
+<span id="cb21-6"><a href="#cb21-6" tabindex="-1"></a>  <span class="at">accrualDuration =</span> <span class="fl">30.143</span>, <span class="at">followupTime =</span> <span class="dv">1000</span>,</span>
+<span id="cb21-7"><a href="#cb21-7" tabindex="-1"></a>  <span class="at">predictEventOnly =</span> <span class="dv">1</span>))</span></code></pre></div>
 <pre><code>##       time subjects  nevents  nevents1  nevents2 ndropouts ndropouts1
-## 1 33.40176 560.0032 120.6884  54.58463  66.10382         0          0
-## 2 41.47688 560.0032 172.4928  78.45778  94.03503         0          0
-## 3 55.48666 560.0032 248.1543 114.03442 134.11990         0          0
+## 1 33.44358 560.0032 120.9741  54.71529  66.25878         0          0
+## 2 41.46304 560.0032 172.4095  78.41910  93.99041         0          0
+## 3 55.72900 560.0032 249.3223 114.59105 134.73124         0          0
 ##   ndropouts2
 ## 1          0
 ## 2          0
@@ -626,32 +636,32 @@ for the six hypotheses.</p>
 </div>
 <div id="simulation-and-empirical-power" class="section level2">
 <h2>Simulation and empirical power</h2>
-<p>First we simulate 1000 trials, with the first 2 looks planned at 185
-and 247 events for endpoint 1 and the final look planned at 195 events
-for endpoint 2, i.e., kMaxe1 = 2 and plannedEvents = c(185, 247,
-195).</p>
-<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" tabindex="-1"></a>sim1 <span class="ot">=</span> <span class="fu">lrsim2e3a</span>(</span>
-<span id="cb21-2"><a href="#cb21-2" tabindex="-1"></a>  <span class="at">kMax =</span> <span class="dv">3</span>, </span>
-<span id="cb21-3"><a href="#cb21-3" tabindex="-1"></a>  <span class="at">kMaxe1 =</span> <span class="dv">2</span>,</span>
-<span id="cb21-4"><a href="#cb21-4" tabindex="-1"></a>  <span class="at">allocation1 =</span> <span class="dv">2</span>, </span>
-<span id="cb21-5"><a href="#cb21-5" tabindex="-1"></a>  <span class="at">allocation2 =</span> <span class="dv">2</span>, </span>
-<span id="cb21-6"><a href="#cb21-6" tabindex="-1"></a>  <span class="at">allocation3 =</span> <span class="dv">1</span>,</span>
-<span id="cb21-7"><a href="#cb21-7" tabindex="-1"></a>  <span class="at">accrualTime =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">8</span>), </span>
-<span id="cb21-8"><a href="#cb21-8" tabindex="-1"></a>  <span class="at">accrualIntensity =</span> <span class="fu">c</span>(<span class="dv">10</span>, <span class="dv">28</span>),</span>
-<span id="cb21-9"><a href="#cb21-9" tabindex="-1"></a>  <span class="at">lambda1e1 =</span> <span class="fu">log</span>(<span class="dv">2</span>)<span class="sc">/</span><span class="dv">22</span>,</span>
-<span id="cb21-10"><a href="#cb21-10" tabindex="-1"></a>  <span class="at">lambda2e1 =</span> <span class="fu">log</span>(<span class="dv">2</span>)<span class="sc">/</span><span class="dv">17</span>,</span>
-<span id="cb21-11"><a href="#cb21-11" tabindex="-1"></a>  <span class="at">lambda3e1 =</span> <span class="fu">log</span>(<span class="dv">2</span>)<span class="sc">/</span><span class="dv">12</span>,</span>
-<span id="cb21-12"><a href="#cb21-12" tabindex="-1"></a>  <span class="at">lambda1e2 =</span> <span class="fu">log</span>(<span class="dv">2</span>)<span class="sc">/</span><span class="dv">50</span>, </span>
-<span id="cb21-13"><a href="#cb21-13" tabindex="-1"></a>  <span class="at">lambda2e2 =</span> <span class="fu">log</span>(<span class="dv">2</span>)<span class="sc">/</span><span class="dv">40</span>,</span>
-<span id="cb21-14"><a href="#cb21-14" tabindex="-1"></a>  <span class="at">lambda3e2 =</span> <span class="fu">log</span>(<span class="dv">2</span>)<span class="sc">/</span><span class="dv">30</span>,</span>
-<span id="cb21-15"><a href="#cb21-15" tabindex="-1"></a>  <span class="at">accrualDuration =</span> <span class="fl">30.143</span>,</span>
-<span id="cb21-16"><a href="#cb21-16" tabindex="-1"></a>  <span class="at">plannedEvents =</span> <span class="fu">c</span>(<span class="dv">185</span>, <span class="dv">247</span>, <span class="dv">195</span>),</span>
-<span id="cb21-17"><a href="#cb21-17" tabindex="-1"></a>  <span class="at">maxNumberOfIterations =</span> <span class="dv">1000</span>,</span>
-<span id="cb21-18"><a href="#cb21-18" tabindex="-1"></a>  <span class="at">maxNumberOfRawDatasetsPerStage =</span> <span class="dv">1</span>,</span>
-<span id="cb21-19"><a href="#cb21-19" tabindex="-1"></a>  <span class="at">seed =</span> <span class="dv">314159</span>)</span></code></pre></div>
+<p>First we simulate 500 trials, with the first 2 looks planned at 186
+and 248 events for endpoint 1 and the final look planned at 196 events
+for endpoint 2, i.e., kMaxe1 = 2 and plannedEvents = c(186, 248,
+196).</p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" tabindex="-1"></a>sim1 <span class="ot">=</span> <span class="fu">lrsim2e3a</span>(</span>
+<span id="cb23-2"><a href="#cb23-2" tabindex="-1"></a>  <span class="at">kMax =</span> <span class="dv">3</span>, </span>
+<span id="cb23-3"><a href="#cb23-3" tabindex="-1"></a>  <span class="at">kMaxe1 =</span> <span class="dv">2</span>,</span>
+<span id="cb23-4"><a href="#cb23-4" tabindex="-1"></a>  <span class="at">allocation1 =</span> <span class="dv">2</span>, </span>
+<span id="cb23-5"><a href="#cb23-5" tabindex="-1"></a>  <span class="at">allocation2 =</span> <span class="dv">2</span>, </span>
+<span id="cb23-6"><a href="#cb23-6" tabindex="-1"></a>  <span class="at">allocation3 =</span> <span class="dv">1</span>,</span>
+<span id="cb23-7"><a href="#cb23-7" tabindex="-1"></a>  <span class="at">accrualTime =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">8</span>), </span>
+<span id="cb23-8"><a href="#cb23-8" tabindex="-1"></a>  <span class="at">accrualIntensity =</span> <span class="fu">c</span>(<span class="dv">10</span>, <span class="dv">28</span>),</span>
+<span id="cb23-9"><a href="#cb23-9" tabindex="-1"></a>  <span class="at">lambda1e1 =</span> <span class="fu">log</span>(<span class="dv">2</span>)<span class="sc">/</span><span class="dv">22</span>,</span>
+<span id="cb23-10"><a href="#cb23-10" tabindex="-1"></a>  <span class="at">lambda2e1 =</span> <span class="fu">log</span>(<span class="dv">2</span>)<span class="sc">/</span><span class="dv">17</span>,</span>
+<span id="cb23-11"><a href="#cb23-11" tabindex="-1"></a>  <span class="at">lambda3e1 =</span> <span class="fu">log</span>(<span class="dv">2</span>)<span class="sc">/</span><span class="dv">12</span>,</span>
+<span id="cb23-12"><a href="#cb23-12" tabindex="-1"></a>  <span class="at">lambda1e2 =</span> <span class="fu">log</span>(<span class="dv">2</span>)<span class="sc">/</span><span class="dv">50</span>, </span>
+<span id="cb23-13"><a href="#cb23-13" tabindex="-1"></a>  <span class="at">lambda2e2 =</span> <span class="fu">log</span>(<span class="dv">2</span>)<span class="sc">/</span><span class="dv">40</span>,</span>
+<span id="cb23-14"><a href="#cb23-14" tabindex="-1"></a>  <span class="at">lambda3e2 =</span> <span class="fu">log</span>(<span class="dv">2</span>)<span class="sc">/</span><span class="dv">30</span>,</span>
+<span id="cb23-15"><a href="#cb23-15" tabindex="-1"></a>  <span class="at">accrualDuration =</span> <span class="fl">30.143</span>,</span>
+<span id="cb23-16"><a href="#cb23-16" tabindex="-1"></a>  <span class="at">plannedEvents =</span> <span class="fu">c</span>(<span class="dv">186</span>, <span class="dv">248</span>, <span class="dv">196</span>),</span>
+<span id="cb23-17"><a href="#cb23-17" tabindex="-1"></a>  <span class="at">maxNumberOfIterations =</span> <span class="dv">500</span>,</span>
+<span id="cb23-18"><a href="#cb23-18" tabindex="-1"></a>  <span class="at">maxNumberOfRawDatasetsPerStage =</span> <span class="dv">1</span>,</span>
+<span id="cb23-19"><a href="#cb23-19" tabindex="-1"></a>  <span class="at">seed =</span> <span class="dv">314159</span>)</span></code></pre></div>
 <p>From the summary data for each simulated data set, we obtain the
 pairwise total number of events and the raw p-values.</p>
-<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span></code></pre></div>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span></code></pre></div>
 <pre><code>## 
 ## Attaching package: &#39;dplyr&#39;</code></pre>
 <pre><code>## The following objects are masked from &#39;package:stats&#39;:
@@ -660,76 +670,76 @@ pairwise total number of events and the raw p-values.</p>
 <pre><code>## The following objects are masked from &#39;package:base&#39;:
 ## 
 ##     intersect, setdiff, setequal, union</code></pre>
-<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" tabindex="-1"></a><span class="fu">library</span>(tidyr)</span>
-<span id="cb26-2"><a href="#cb26-2" tabindex="-1"></a></span>
-<span id="cb26-3"><a href="#cb26-3" tabindex="-1"></a>df <span class="ot">&lt;-</span> sim1<span class="sc">$</span>sumdata <span class="sc">%&gt;%</span> </span>
-<span id="cb26-4"><a href="#cb26-4" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">events13 =</span> events1 <span class="sc">+</span> events3,</span>
-<span id="cb26-5"><a href="#cb26-5" tabindex="-1"></a>         <span class="at">events23 =</span> events2 <span class="sc">+</span> events3,</span>
-<span id="cb26-6"><a href="#cb26-6" tabindex="-1"></a>         <span class="at">events12 =</span> events1 <span class="sc">+</span> events2,</span>
-<span id="cb26-7"><a href="#cb26-7" tabindex="-1"></a>         <span class="at">p13 =</span> <span class="fu">pnorm</span>(logRankStatistic13), </span>
-<span id="cb26-8"><a href="#cb26-8" tabindex="-1"></a>         <span class="at">p23 =</span> <span class="fu">pnorm</span>(logRankStatistic23), </span>
-<span id="cb26-9"><a href="#cb26-9" tabindex="-1"></a>         <span class="at">p12 =</span> <span class="fu">pnorm</span>(logRankStatistic12)) <span class="sc">%&gt;%</span> </span>
-<span id="cb26-10"><a href="#cb26-10" tabindex="-1"></a>  <span class="fu">select</span>(iterationNumber, stageNumber, endpoint, </span>
-<span id="cb26-11"><a href="#cb26-11" tabindex="-1"></a>         events13, events23, events12, </span>
-<span id="cb26-12"><a href="#cb26-12" tabindex="-1"></a>         p13, p23, p12)</span>
-<span id="cb26-13"><a href="#cb26-13" tabindex="-1"></a></span>
-<span id="cb26-14"><a href="#cb26-14" tabindex="-1"></a>dfcomp <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">comparison =</span> <span class="fu">c</span>(<span class="st">&quot;13&quot;</span>, <span class="st">&quot;23&quot;</span>, <span class="st">&quot;12&quot;</span>),</span>
-<span id="cb26-15"><a href="#cb26-15" tabindex="-1"></a>                 <span class="at">order =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>))</span>
-<span id="cb26-16"><a href="#cb26-16" tabindex="-1"></a></span>
-<span id="cb26-17"><a href="#cb26-17" tabindex="-1"></a></span>
-<span id="cb26-18"><a href="#cb26-18" tabindex="-1"></a></span>
-<span id="cb26-19"><a href="#cb26-19" tabindex="-1"></a>dfinfo <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span> </span>
-<span id="cb26-20"><a href="#cb26-20" tabindex="-1"></a>  <span class="fu">arrange</span>(iterationNumber, endpoint) <span class="sc">%&gt;%</span> </span>
-<span id="cb26-21"><a href="#cb26-21" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(</span>
-<span id="cb26-22"><a href="#cb26-22" tabindex="-1"></a>    <span class="fu">c</span>(<span class="st">&quot;events13&quot;</span>, <span class="st">&quot;events23&quot;</span>, <span class="st">&quot;events12&quot;</span>), </span>
-<span id="cb26-23"><a href="#cb26-23" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="st">&quot;c_events&quot;</span>, </span>
-<span id="cb26-24"><a href="#cb26-24" tabindex="-1"></a>    <span class="at">values_to =</span> <span class="st">&quot;events&quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb26-25"><a href="#cb26-25" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">comparison =</span> <span class="fu">substring</span>(c_events, <span class="dv">7</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb26-26"><a href="#cb26-26" tabindex="-1"></a>  <span class="fu">left_join</span>(dfcomp, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;comparison&quot;</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb26-27"><a href="#cb26-27" tabindex="-1"></a>  <span class="fu">arrange</span>(iterationNumber, order, endpoint, </span>
-<span id="cb26-28"><a href="#cb26-28" tabindex="-1"></a>          stageNumber)</span>
-<span id="cb26-29"><a href="#cb26-29" tabindex="-1"></a></span>
-<span id="cb26-30"><a href="#cb26-30" tabindex="-1"></a></span>
-<span id="cb26-31"><a href="#cb26-31" tabindex="-1"></a>dfp <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span> </span>
-<span id="cb26-32"><a href="#cb26-32" tabindex="-1"></a>  <span class="fu">arrange</span>(iterationNumber, endpoint) <span class="sc">%&gt;%</span> </span>
-<span id="cb26-33"><a href="#cb26-33" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(</span>
-<span id="cb26-34"><a href="#cb26-34" tabindex="-1"></a>    <span class="fu">c</span>(<span class="st">&quot;p13&quot;</span>, <span class="st">&quot;p23&quot;</span>, <span class="st">&quot;p12&quot;</span>), </span>
-<span id="cb26-35"><a href="#cb26-35" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="st">&quot;c_p&quot;</span>, </span>
-<span id="cb26-36"><a href="#cb26-36" tabindex="-1"></a>    <span class="at">values_to =</span> <span class="st">&quot;p&quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb26-37"><a href="#cb26-37" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">comparison =</span> <span class="fu">substring</span>(c_p, <span class="dv">2</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb26-38"><a href="#cb26-38" tabindex="-1"></a>  <span class="fu">left_join</span>(dfcomp, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;comparison&quot;</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb26-39"><a href="#cb26-39" tabindex="-1"></a>  <span class="fu">arrange</span>(iterationNumber, order, endpoint, </span>
-<span id="cb26-40"><a href="#cb26-40" tabindex="-1"></a>          stageNumber)</span></code></pre></div>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" tabindex="-1"></a><span class="fu">library</span>(tidyr)</span>
+<span id="cb28-2"><a href="#cb28-2" tabindex="-1"></a></span>
+<span id="cb28-3"><a href="#cb28-3" tabindex="-1"></a>df <span class="ot">&lt;-</span> sim1<span class="sc">$</span>sumdata <span class="sc">%&gt;%</span> </span>
+<span id="cb28-4"><a href="#cb28-4" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">events13 =</span> events1 <span class="sc">+</span> events3,</span>
+<span id="cb28-5"><a href="#cb28-5" tabindex="-1"></a>         <span class="at">events23 =</span> events2 <span class="sc">+</span> events3,</span>
+<span id="cb28-6"><a href="#cb28-6" tabindex="-1"></a>         <span class="at">events12 =</span> events1 <span class="sc">+</span> events2,</span>
+<span id="cb28-7"><a href="#cb28-7" tabindex="-1"></a>         <span class="at">p13 =</span> <span class="fu">pnorm</span>(logRankStatistic13), </span>
+<span id="cb28-8"><a href="#cb28-8" tabindex="-1"></a>         <span class="at">p23 =</span> <span class="fu">pnorm</span>(logRankStatistic23), </span>
+<span id="cb28-9"><a href="#cb28-9" tabindex="-1"></a>         <span class="at">p12 =</span> <span class="fu">pnorm</span>(logRankStatistic12)) <span class="sc">%&gt;%</span> </span>
+<span id="cb28-10"><a href="#cb28-10" tabindex="-1"></a>  <span class="fu">select</span>(iterationNumber, stageNumber, endpoint, </span>
+<span id="cb28-11"><a href="#cb28-11" tabindex="-1"></a>         events13, events23, events12, </span>
+<span id="cb28-12"><a href="#cb28-12" tabindex="-1"></a>         p13, p23, p12)</span>
+<span id="cb28-13"><a href="#cb28-13" tabindex="-1"></a></span>
+<span id="cb28-14"><a href="#cb28-14" tabindex="-1"></a>dfcomp <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">comparison =</span> <span class="fu">c</span>(<span class="st">&quot;13&quot;</span>, <span class="st">&quot;23&quot;</span>, <span class="st">&quot;12&quot;</span>),</span>
+<span id="cb28-15"><a href="#cb28-15" tabindex="-1"></a>                 <span class="at">order =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>))</span>
+<span id="cb28-16"><a href="#cb28-16" tabindex="-1"></a></span>
+<span id="cb28-17"><a href="#cb28-17" tabindex="-1"></a></span>
+<span id="cb28-18"><a href="#cb28-18" tabindex="-1"></a></span>
+<span id="cb28-19"><a href="#cb28-19" tabindex="-1"></a>dfinfo <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span> </span>
+<span id="cb28-20"><a href="#cb28-20" tabindex="-1"></a>  <span class="fu">arrange</span>(iterationNumber, endpoint) <span class="sc">%&gt;%</span> </span>
+<span id="cb28-21"><a href="#cb28-21" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(</span>
+<span id="cb28-22"><a href="#cb28-22" tabindex="-1"></a>    <span class="fu">c</span>(<span class="st">&quot;events13&quot;</span>, <span class="st">&quot;events23&quot;</span>, <span class="st">&quot;events12&quot;</span>), </span>
+<span id="cb28-23"><a href="#cb28-23" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="st">&quot;c_events&quot;</span>, </span>
+<span id="cb28-24"><a href="#cb28-24" tabindex="-1"></a>    <span class="at">values_to =</span> <span class="st">&quot;events&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb28-25"><a href="#cb28-25" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">comparison =</span> <span class="fu">substring</span>(c_events, <span class="dv">7</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb28-26"><a href="#cb28-26" tabindex="-1"></a>  <span class="fu">left_join</span>(dfcomp, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;comparison&quot;</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb28-27"><a href="#cb28-27" tabindex="-1"></a>  <span class="fu">arrange</span>(iterationNumber, order, endpoint, </span>
+<span id="cb28-28"><a href="#cb28-28" tabindex="-1"></a>          stageNumber)</span>
+<span id="cb28-29"><a href="#cb28-29" tabindex="-1"></a></span>
+<span id="cb28-30"><a href="#cb28-30" tabindex="-1"></a></span>
+<span id="cb28-31"><a href="#cb28-31" tabindex="-1"></a>dfp <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span> </span>
+<span id="cb28-32"><a href="#cb28-32" tabindex="-1"></a>  <span class="fu">arrange</span>(iterationNumber, endpoint) <span class="sc">%&gt;%</span> </span>
+<span id="cb28-33"><a href="#cb28-33" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(</span>
+<span id="cb28-34"><a href="#cb28-34" tabindex="-1"></a>    <span class="fu">c</span>(<span class="st">&quot;p13&quot;</span>, <span class="st">&quot;p23&quot;</span>, <span class="st">&quot;p12&quot;</span>), </span>
+<span id="cb28-35"><a href="#cb28-35" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="st">&quot;c_p&quot;</span>, </span>
+<span id="cb28-36"><a href="#cb28-36" tabindex="-1"></a>    <span class="at">values_to =</span> <span class="st">&quot;p&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb28-37"><a href="#cb28-37" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">comparison =</span> <span class="fu">substring</span>(c_p, <span class="dv">2</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb28-38"><a href="#cb28-38" tabindex="-1"></a>  <span class="fu">left_join</span>(dfcomp, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;comparison&quot;</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb28-39"><a href="#cb28-39" tabindex="-1"></a>  <span class="fu">arrange</span>(iterationNumber, order, endpoint, </span>
+<span id="cb28-40"><a href="#cb28-40" tabindex="-1"></a>          stageNumber)</span></code></pre></div>
 <p>Now we use specified alpha-spending function along with the target
 total number of events to adjust the critical values based on the
 current alpha for the hypothesis. We compare the p-values to the
 critical values to determine whether to reject the hypothesis at the
 current look. The empirical power for a hypothesis is estimated by the
 proportion of simulations which reject the hypothesis.</p>
-<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" tabindex="-1"></a>w <span class="ot">=</span> <span class="fu">c</span>(<span class="fl">0.2</span>, <span class="fl">0.8</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>) </span>
-<span id="cb27-2"><a href="#cb27-2" tabindex="-1"></a>G <span class="ot">=</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">0.8</span>, <span class="fl">0.2</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, </span>
-<span id="cb27-3"><a href="#cb27-3" tabindex="-1"></a>             <span class="fl">0.5</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="fl">0.5</span>, <span class="dv">0</span>, <span class="dv">0</span>,</span>
-<span id="cb27-4"><a href="#cb27-4" tabindex="-1"></a>             <span class="dv">0</span>, <span class="fl">0.8</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="fl">0.2</span>, <span class="dv">0</span>, </span>
-<span id="cb27-5"><a href="#cb27-5" tabindex="-1"></a>             <span class="fl">0.72</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="fl">0.28</span>,</span>
-<span id="cb27-6"><a href="#cb27-6" tabindex="-1"></a>             <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, </span>
-<span id="cb27-7"><a href="#cb27-7" tabindex="-1"></a>             <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>), </span>
-<span id="cb27-8"><a href="#cb27-8" tabindex="-1"></a>           <span class="at">nrow=</span><span class="dv">6</span>, <span class="at">ncol=</span><span class="dv">6</span>, <span class="at">byrow=</span><span class="cn">TRUE</span>)</span>
-<span id="cb27-9"><a href="#cb27-9" tabindex="-1"></a></span>
-<span id="cb27-10"><a href="#cb27-10" tabindex="-1"></a></span>
-<span id="cb27-11"><a href="#cb27-11" tabindex="-1"></a>rejStage <span class="ot">=</span> <span class="fu">fseqbon</span>(</span>
-<span id="cb27-12"><a href="#cb27-12" tabindex="-1"></a>  <span class="at">w =</span> w, <span class="at">G =</span> G, <span class="at">alpha =</span> <span class="fl">0.025</span>, <span class="at">kMax =</span> <span class="dv">3</span>,</span>
-<span id="cb27-13"><a href="#cb27-13" tabindex="-1"></a>  <span class="at">typeAlphaSpending =</span> <span class="fu">rep</span>(<span class="st">&quot;sfHSD&quot;</span>, <span class="dv">6</span>),</span>
-<span id="cb27-14"><a href="#cb27-14" tabindex="-1"></a>  <span class="at">parameterAlphaSpending =</span> <span class="fu">rep</span>(<span class="sc">-</span><span class="dv">4</span>, <span class="dv">6</span>),</span>
-<span id="cb27-15"><a href="#cb27-15" tabindex="-1"></a>  <span class="at">incidenceMatrix =</span> <span class="fu">matrix</span>(</span>
-<span id="cb27-16"><a href="#cb27-16" tabindex="-1"></a>    <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">0</span>, <span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>, <span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>, <span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>, <span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>, <span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>), </span>
-<span id="cb27-17"><a href="#cb27-17" tabindex="-1"></a>    <span class="at">nrow=</span><span class="dv">6</span>, <span class="at">ncol=</span><span class="dv">3</span>, <span class="at">byrow=</span><span class="cn">TRUE</span>),</span>
-<span id="cb27-18"><a href="#cb27-18" tabindex="-1"></a>  <span class="at">maxInformation =</span> <span class="fu">c</span>(<span class="dv">247</span>, <span class="dv">195</span>, <span class="dv">341</span>, <span class="dv">215</span>, <span class="dv">411</span>, <span class="dv">248</span>),</span>
-<span id="cb27-19"><a href="#cb27-19" tabindex="-1"></a>  <span class="at">p =</span> <span class="fu">matrix</span>(dfp<span class="sc">$</span>p, <span class="dv">6000</span>, <span class="dv">3</span>, <span class="at">byrow=</span><span class="cn">TRUE</span>),</span>
-<span id="cb27-20"><a href="#cb27-20" tabindex="-1"></a>  <span class="at">information =</span> <span class="fu">matrix</span>(dfinfo<span class="sc">$</span>events, <span class="dv">6000</span>, <span class="dv">3</span>, <span class="at">byrow=</span><span class="cn">TRUE</span>))</span>
-<span id="cb27-21"><a href="#cb27-21" tabindex="-1"></a></span>
-<span id="cb27-22"><a href="#cb27-22" tabindex="-1"></a>reject2a <span class="ot">=</span> <span class="fu">matrix</span>(rejStage<span class="sc">&gt;</span><span class="dv">0</span>, <span class="at">nrow=</span><span class="dv">1000</span>, <span class="at">ncol=</span><span class="dv">6</span>, <span class="at">byrow=</span><span class="cn">TRUE</span>)</span>
-<span id="cb27-23"><a href="#cb27-23" tabindex="-1"></a>(<span class="at">power2 =</span> <span class="fu">apply</span>(reject2a, <span class="dv">2</span>, mean))</span></code></pre></div>
-<pre><code>## [1] 0.983 0.929 0.720 0.517 0.275 0.129</code></pre>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" tabindex="-1"></a>w <span class="ot">=</span> <span class="fu">c</span>(<span class="fl">0.2</span>, <span class="fl">0.8</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>) </span>
+<span id="cb29-2"><a href="#cb29-2" tabindex="-1"></a>G <span class="ot">=</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">0.8</span>, <span class="fl">0.2</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, </span>
+<span id="cb29-3"><a href="#cb29-3" tabindex="-1"></a>             <span class="fl">0.5</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="fl">0.5</span>, <span class="dv">0</span>, <span class="dv">0</span>,</span>
+<span id="cb29-4"><a href="#cb29-4" tabindex="-1"></a>             <span class="dv">0</span>, <span class="fl">0.8</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="fl">0.2</span>, <span class="dv">0</span>, </span>
+<span id="cb29-5"><a href="#cb29-5" tabindex="-1"></a>             <span class="fl">0.72</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="fl">0.28</span>,</span>
+<span id="cb29-6"><a href="#cb29-6" tabindex="-1"></a>             <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, </span>
+<span id="cb29-7"><a href="#cb29-7" tabindex="-1"></a>             <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>), </span>
+<span id="cb29-8"><a href="#cb29-8" tabindex="-1"></a>           <span class="at">nrow=</span><span class="dv">6</span>, <span class="at">ncol=</span><span class="dv">6</span>, <span class="at">byrow=</span><span class="cn">TRUE</span>)</span>
+<span id="cb29-9"><a href="#cb29-9" tabindex="-1"></a></span>
+<span id="cb29-10"><a href="#cb29-10" tabindex="-1"></a></span>
+<span id="cb29-11"><a href="#cb29-11" tabindex="-1"></a>rejStage <span class="ot">=</span> <span class="fu">fseqbon</span>(</span>
+<span id="cb29-12"><a href="#cb29-12" tabindex="-1"></a>  <span class="at">w =</span> w, <span class="at">G =</span> G, <span class="at">alpha =</span> <span class="fl">0.025</span>, <span class="at">kMax =</span> <span class="dv">3</span>,</span>
+<span id="cb29-13"><a href="#cb29-13" tabindex="-1"></a>  <span class="at">typeAlphaSpending =</span> <span class="fu">rep</span>(<span class="st">&quot;sfHSD&quot;</span>, <span class="dv">6</span>),</span>
+<span id="cb29-14"><a href="#cb29-14" tabindex="-1"></a>  <span class="at">parameterAlphaSpending =</span> <span class="fu">rep</span>(<span class="sc">-</span><span class="dv">4</span>, <span class="dv">6</span>),</span>
+<span id="cb29-15"><a href="#cb29-15" tabindex="-1"></a>  <span class="at">incidenceMatrix =</span> <span class="fu">matrix</span>(</span>
+<span id="cb29-16"><a href="#cb29-16" tabindex="-1"></a>    <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">0</span>, <span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>, <span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>, <span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>, <span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>, <span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>), </span>
+<span id="cb29-17"><a href="#cb29-17" tabindex="-1"></a>    <span class="at">nrow=</span><span class="dv">6</span>, <span class="at">ncol=</span><span class="dv">3</span>, <span class="at">byrow=</span><span class="cn">TRUE</span>),</span>
+<span id="cb29-18"><a href="#cb29-18" tabindex="-1"></a>  <span class="at">maxInformation =</span> <span class="fu">c</span>(<span class="dv">248</span>, <span class="dv">196</span>, <span class="dv">342</span>, <span class="dv">216</span>, <span class="dv">413</span>, <span class="dv">249</span>),</span>
+<span id="cb29-19"><a href="#cb29-19" tabindex="-1"></a>  <span class="at">p =</span> <span class="fu">matrix</span>(dfp<span class="sc">$</span>p, <span class="dv">3000</span>, <span class="dv">3</span>, <span class="at">byrow=</span><span class="cn">TRUE</span>),</span>
+<span id="cb29-20"><a href="#cb29-20" tabindex="-1"></a>  <span class="at">information =</span> <span class="fu">matrix</span>(dfinfo<span class="sc">$</span>events, <span class="dv">3000</span>, <span class="dv">3</span>, <span class="at">byrow=</span><span class="cn">TRUE</span>))</span>
+<span id="cb29-21"><a href="#cb29-21" tabindex="-1"></a></span>
+<span id="cb29-22"><a href="#cb29-22" tabindex="-1"></a>reject2a <span class="ot">=</span> <span class="fu">matrix</span>(rejStage<span class="sc">&gt;</span><span class="dv">0</span>, <span class="at">nrow=</span><span class="dv">500</span>, <span class="at">ncol=</span><span class="dv">6</span>, <span class="at">byrow=</span><span class="cn">TRUE</span>)</span>
+<span id="cb29-23"><a href="#cb29-23" tabindex="-1"></a>(<span class="at">power2 =</span> <span class="fu">apply</span>(reject2a, <span class="dv">2</span>, mean))</span></code></pre></div>
+<pre><code>## [1] 0.992 0.942 0.722 0.530 0.286 0.136</code></pre>
 </div>
 
 

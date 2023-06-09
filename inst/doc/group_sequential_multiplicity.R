@@ -48,7 +48,7 @@ for (j in 1:6) {
 
 ## ----required number of OS events at look 3 for 90% power---------------------
 
-(d_os <- uniroot(function(d) {
+(d_os <- ceiling(uniroot(function(d) {
   lr <- lrsamplesize(
     beta = 0.1, kMax = 3, 
     informationRates = c(lr2a$nevents, d)/d,
@@ -59,21 +59,32 @@ for (j in 1:6) {
     accrualIntensity = c(10,28)*3/5, 
     lambda1 = log(2)/50, lambda2 = log(2)/30, 
     accrualDuration = 30.143, followupTime = NA, 
-    typeOfComputation = "Schoenfeld")$resultsUnderH1
+    typeOfComputation = "Schoenfeld",
+    rounding = 0)$resultsUnderH1
   lr$overallResults$numberOfEvents - d}, 
-  c(138,300))$root) 
+  c(137,300))$root))
+
+(studyDuration = caltime(
+  nevents = d_os, 
+  allocationRatioPlanned = 2, 
+  accrualTime = c(0,8), 
+  accrualIntensity = c(10,28)*3/5, 
+  lambda1 = log(2)/50, lambda2 = log(2)/30,
+  accrualDuration = 30.143, followupTime = 1000))
+
 
 ## ----OS sample size-----------------------------------------------------------
-(lr2 <- lrsamplesize(
-  beta = 0.1, kMax = 3, 
+(lr2 <- lrpower(
+  kMax = 3, 
   informationRates = c(lr2a$nevents, d_os)/d_os, 
   alpha = 0.020, typeAlphaSpending = "sfHSD", 
   parameterAlphaSpending = -4, 
   allocationRatioPlanned = 2, 
-  accrualTime = c(0,8), accrualIntensity = c(10,28)*3/5, 
+  accrualTime = c(0,8), 
+  accrualIntensity = c(10,28)*3/5, 
   lambda1 = log(2)/50, lambda2 = log(2)/30,
-  accrualDuration = 30.143, followupTime = NA, 
-  typeOfComputation = "Schoenfeld")$resultsUnderH1)
+  accrualDuration = 30.143, followupTime = 25.586, 
+  typeOfComputation = "Schoenfeld"))
 
 ## ----expected number of events for other comparisons--------------------------
 
@@ -82,7 +93,7 @@ for (j in 1:6) {
   allocationRatioPlanned = 2,
   accrualTime = c(0,8), accrualIntensity = c(10,28)*3/5, 
   lambda1 = log(2)/17, lambda2 = log(2)/12,
-  accrualDuration = 30.143, followupTime = 100,
+  accrualDuration = 30.143, followupTime = 1000,
   predictEventOnly = 1))
 
 
@@ -91,7 +102,7 @@ for (j in 1:6) {
   allocationRatioPlanned = 2,
   accrualTime = c(0,8), accrualIntensity = c(10,28)*3/5, 
   lambda1 = log(2)/40, lambda2 = log(2)/30,
-  accrualDuration = 30.143, followupTime = 100,
+  accrualDuration = 30.143, followupTime = 1000,
   predictEventOnly = 1))
 
 
@@ -100,7 +111,7 @@ for (j in 1:6) {
   allocationRatioPlanned = 1,
   accrualTime = c(0,8), accrualIntensity = c(10,28)*4/5, 
   lambda1 = log(2)/22, lambda2 = log(2)/17,
-  accrualDuration = 30.143, followupTime = 100,
+  accrualDuration = 30.143, followupTime = 1000,
   predictEventOnly = 1))
 
 
@@ -109,7 +120,7 @@ for (j in 1:6) {
   allocationRatioPlanned = 1,
   accrualTime = c(0,8), accrualIntensity = c(10,28)*4/5, 
   lambda1 = log(2)/50, lambda2 = log(2)/40,
-  accrualDuration = 30.143, followupTime = 100,
+  accrualDuration = 30.143, followupTime = 1000,
   predictEventOnly = 1))
 
 
@@ -131,8 +142,8 @@ sim1 = lrsim2e3a(
   lambda2e2 = log(2)/40,
   lambda3e2 = log(2)/30,
   accrualDuration = 30.143,
-  plannedEvents = c(185, 247, 195),
-  maxNumberOfIterations = 1000,
+  plannedEvents = c(186, 248, 196),
+  maxNumberOfIterations = 500,
   maxNumberOfRawDatasetsPerStage = 1,
   seed = 314159)
 
@@ -198,11 +209,11 @@ rejStage = fseqbon(
   incidenceMatrix = matrix(
     c(1,1,0, 1,1,1, 1,1,1, 1,1,1, 1,1,1, 1,1,1), 
     nrow=6, ncol=3, byrow=TRUE),
-  maxInformation = c(247, 195, 341, 215, 411, 248),
-  p = matrix(dfp$p, 6000, 3, byrow=TRUE),
-  information = matrix(dfinfo$events, 6000, 3, byrow=TRUE))
+  maxInformation = c(248, 196, 342, 216, 413, 249),
+  p = matrix(dfp$p, 3000, 3, byrow=TRUE),
+  information = matrix(dfinfo$events, 3000, 3, byrow=TRUE))
 
-reject2a = matrix(rejStage>0, nrow=1000, ncol=6, byrow=TRUE)
+reject2a = matrix(rejStage>0, nrow=500, ncol=6, byrow=TRUE)
 (power2 = apply(reject2a, 2, mean))
 
 

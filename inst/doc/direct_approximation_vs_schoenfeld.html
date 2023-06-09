@@ -388,7 +388,7 @@ Schoenfeld formula yields a power of 74.5%.</p>
 <span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a><span class="fu">pnorm</span>(<span class="fu">abs</span>(<span class="fu">log</span>(hazardRatio))<span class="sc">*</span><span class="fu">sqrt</span>(<span class="dv">40</span><span class="sc">/</span><span class="dv">4</span>) <span class="sc">-</span> <span class="fu">qnorm</span>(<span class="fl">0.975</span>))</span></code></pre></div>
 <pre><code>## [1] 0.7450763</code></pre>
 <p>To see which method yields a more accurate power estimate, we run a
-lrsim function, which reports a power of 71.2% with 10000
+lrsim function, which reports a power of 72.2% with 10000
 replications.</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="fu">lrsim</span>(<span class="at">kMax =</span> <span class="dv">1</span>, <span class="at">criticalValues =</span> <span class="fl">1.96</span>, </span>
 <span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>      <span class="at">accrualIntensity =</span> <span class="dv">200</span><span class="sc">/</span><span class="dv">12</span>, </span>

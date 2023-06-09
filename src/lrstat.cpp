@@ -60,6 +60,47 @@ NumericVector accrual(const NumericVector& time = NA_REAL,
   return n;
 }
 
+
+//' @title Accrual duration to enroll target number of subjects
+//' @description Obtains the accrual duration to enroll the target number 
+//' of subjects.
+//'
+//' @param nsubjects The vector of target number of subjects.
+//' @inheritParams param_accrualTime
+//' @inheritParams param_accrualIntensity
+//'
+//' @return The vector of accrual duration.
+//'
+//' @examples
+//' getAccrualDuration(nsubjects = c(20, 150), accrualTime = c(0, 3),
+//'                    accrualIntensity = c(10, 20))
+//'
+//' @export
+// [[Rcpp::export]]
+NumericVector getAccrualDuration(
+    const NumericVector& nsubjects = NA_REAL,
+    const NumericVector& accrualTime = 0,
+    const NumericVector& accrualIntensity = NA_REAL) {
+  
+  int i, j, I = nsubjects.size(), J = accrualTime.size();
+  NumericVector t(I), p(J);
+  
+  p[0] = 0;
+  for (j=0; j<J-1; j++) {
+    p[j+1] = p[j] + accrualIntensity[j]*(accrualTime[j+1] - accrualTime[j]);
+  }
+  
+  IntegerVector m = findInterval2(nsubjects, p);
+
+  for (i=0; i<I; i++) {
+    j = m[i] - 1;
+    t[i] = accrualTime[j] + (nsubjects[i] - p[j])/accrualIntensity[j];
+  }
+  
+  return t;
+}
+
+
 //' @title Probability of being at risk
 //' @description Obtains the probability of being at risk at given analysis
 //' times.
@@ -1926,6 +1967,306 @@ NumericVector caltime(const NumericVector& nevents = NA_REAL,
 }
 
 
+//' @title Range of accrual duration for target number of events
+//' @description Obtains a range of accrual duration to reach the 
+//' target number of events.
+//'
+//' @param nevents The target number of events.
+//' @inheritParams param_allocationRatioPlanned
+//' @inheritParams param_accrualTime
+//' @inheritParams param_accrualIntensity
+//' @inheritParams param_piecewiseSurvivalTime
+//' @inheritParams param_stratumFraction
+//' @inheritParams param_lambda1_stratified
+//' @inheritParams param_lambda2_stratified
+//' @inheritParams param_gamma1_stratified
+//' @inheritParams param_gamma2_stratified
+//' @inheritParams param_followupTime
+//' @inheritParams param_fixedFollowup
+//' @param npoints The number of accrual duration time points. 
+//'   Defaults to 23.
+//' @param interval The interval to search for the solution of
+//'   accrualDuration. Defaults to \code{c(0.001, 240)}.
+//' 
+//' @return A data frame of enrollment duration, sample size, and study 
+//' duration to yield the target number of events.
+//'
+//' @examples
+//' # Piecewise accrual, piecewise exponential survivals, and 5% dropout by
+//' # the end of 1 year.
+//'
+//' getDurationFromNevents(
+//'   nevents = 80, allocationRatioPlanned = 1,
+//'   accrualTime = seq(0, 8),
+//'   accrualIntensity = 26/9*seq(1, 9),
+//'   piecewiseSurvivalTime = c(0, 6),
+//'   stratumFraction = c(0.2, 0.8),
+//'   lambda1 = c(0.0533, 0.0309, 1.5*0.0533, 1.5*0.0309),
+//'   lambda2 = c(0.0533, 0.0533, 1.5*0.0533, 1.5*0.0533),
+//'   gamma1 = -log(1-0.05)/12,
+//'   gamma2 = -log(1-0.05)/12,
+//'   fixedFollowup = FALSE)
+//'
+//' @export
+// [[Rcpp::export]]
+DataFrame getDurationFromNevents(
+    const double nevents = NA_REAL,
+    const double allocationRatioPlanned = 1,
+    const NumericVector& accrualTime = 0,
+    const NumericVector& accrualIntensity = NA_REAL,
+    const NumericVector& piecewiseSurvivalTime = 0,
+    const NumericVector& stratumFraction = 1,
+    const NumericVector& lambda1 = NA_REAL,
+    const NumericVector& lambda2 = NA_REAL,
+    const NumericVector& gamma1 = 0,
+    const NumericVector& gamma2 = 0,
+    const double followupTime = 18,
+    const bool fixedFollowup = 0, 
+    const int npoints = 23, 
+    const NumericVector& interval =
+      NumericVector::create(0.001, 240)) {
+  
+  int nstrata = stratumFraction.size();
+  int nintervals = piecewiseSurvivalTime.size();
+  int nsi = nstrata*nintervals;
+  
+  if (R_isnancpp(nevents)) {
+    stop("nevents must be provided");
+  }
+  
+  if (nevents <= 0) {
+    stop("nevents must be positive");
+  }
+  
+  if (allocationRatioPlanned <= 0) {
+    stop("allocationRatioPlanned must be positive");
+  }
+  
+  if (accrualTime[0] != 0) {
+    stop("accrualTime must start with 0");
+  }
+  
+  if (accrualTime.size() > 1 && is_true(any(diff(accrualTime) <= 0))) {
+    stop("accrualTime should be increasing");
+  }
+  
+  if (accrualTime.size() != accrualIntensity.size()) {
+    stop("accrualTime must have the same length as accrualIntensity");
+  }
+  
+  if (is_true(any(accrualIntensity < 0))) {
+    stop("accrualIntensity must be non-negative");
+  }
+  
+  if (piecewiseSurvivalTime[0] != 0) {
+    stop("piecewiseSurvivalTime must start with 0");
+  }
+  
+  if (nintervals > 1 && is_true(any(diff(piecewiseSurvivalTime) <= 0))) {
+    stop("piecewiseSurvivalTime should be increasing");
+  }
+  
+  if (is_true(any(stratumFraction <= 0))) {
+    stop("stratumFraction must be positive");
+  }
+  
+  if (sum(stratumFraction) != 1) {
+    stop("stratumFraction must sum to 1");
+  }
+  
+  if (is_true(any(lambda1 < 0))) {
+    stop("lambda1 must be non-negative");
+  }
+  
+  if (is_true(any(lambda2 < 0))) {
+    stop("lambda2 must be non-negative");
+  }
+  
+  if (is_true(any(gamma1 < 0))) {
+    stop("gamma1 must be non-negative");
+  }
+  
+  if (is_true(any(gamma2 < 0))) {
+    stop("gamma2 must be non-negative");
+  }
+  
+  if (lambda1.size() != 1 && lambda1.size() != nintervals &&
+      lambda1.size() != nsi) {
+    stop("Invalid length for lambda1");
+  }
+  
+  if (lambda2.size() != 1 && lambda2.size() != nintervals &&
+      lambda2.size() != nsi) {
+    stop("Invalid length for lambda2");
+  }
+  
+  if (gamma1.size() != 1 && gamma1.size() != nintervals &&
+      gamma1.size() != nsi) {
+    stop("Invalid length for gamma1");
+  }
+  
+  if (gamma2.size() != 1 && gamma2.size() != nintervals &&
+      gamma2.size() != nsi) {
+    stop("Invalid length for gamma2");
+  }
+  
+  
+  if (fixedFollowup && !R_isnancpp(followupTime) && followupTime <= 0) {
+    stop("followupTime must be positive for fixed follow-up");
+  }
+  
+  if (npoints < 2) {
+    stop("npoints must be greater than or equal to 2");
+  }
+  
+  if (interval.size() != 2) {
+    stop("interval must have 2 elements");
+  }
+  
+  if (interval[0] < 0) {
+    stop("lower limit of interval must be positive");
+  }
+  
+  if (interval[0] >= interval[1]) {
+    stop("upper limit must be greater than lower limit for interval");
+  }
+  
+  
+  NumericVector t(2);
+  
+  // Lambda function
+  if (!fixedFollowup) {
+    auto fmin = [allocationRatioPlanned, accrualTime, accrualIntensity,
+                 piecewiseSurvivalTime, stratumFraction,
+                 lambda1, lambda2, gamma1, gamma2,
+                 fixedFollowup, nevents](double t)->double {
+                   NumericVector t0(1);
+                   t0[0] = t + 1000;
+                   DataFrame lr = lrstat(
+                     t0, 1, allocationRatioPlanned, 
+                     accrualTime, accrualIntensity,
+                     piecewiseSurvivalTime, stratumFraction,
+                     lambda1, lambda2, gamma1, gamma2,
+                     t, 1000, fixedFollowup, 0, 0, 1, 1);
+                   return sum(NumericVector(lr[2])) - nevents;
+                 };
+    
+    t[0] = brent(fmin, interval[0], interval[1], 0.001);
+    
+    auto fmax = [allocationRatioPlanned, accrualTime, accrualIntensity,
+                 piecewiseSurvivalTime, stratumFraction,
+                 lambda1, lambda2, gamma1, gamma2,
+                 fixedFollowup, nevents](double t)->double {
+                   NumericVector t0(1);
+                   t0[0] = t;
+                   DataFrame lr = lrstat(
+                     t0, 1, allocationRatioPlanned, 
+                     accrualTime, accrualIntensity,
+                     piecewiseSurvivalTime, stratumFraction,
+                     lambda1, lambda2, gamma1, gamma2,
+                     t, 0, fixedFollowup, 0, 0, 1, 1);
+                   return sum(NumericVector(lr[2])) - nevents;
+                 };
+    
+    t[1] = brent(fmax, t[0], interval[1], 0.001);
+  } else {
+    auto fmin = [allocationRatioPlanned, accrualTime, accrualIntensity,
+                 piecewiseSurvivalTime, stratumFraction,
+                 lambda1, lambda2, gamma1, gamma2,
+                 followupTime, fixedFollowup, nevents](double t)->double {
+                   NumericVector t0(1);
+                   t0[0] = t + followupTime;
+                   DataFrame lr = lrstat(
+                     t0, 1, allocationRatioPlanned, 
+                     accrualTime, accrualIntensity,
+                     piecewiseSurvivalTime, stratumFraction,
+                     lambda1, lambda2, gamma1, gamma2,
+                     t, followupTime, fixedFollowup, 0, 0, 1, 1);
+                   return sum(NumericVector(lr[2])) - nevents;
+                 };
+    
+    t[0] = brent(fmin, interval[0], interval[1], 0.001);
+    
+    auto fmax = [allocationRatioPlanned, accrualTime, accrualIntensity,
+                 piecewiseSurvivalTime, stratumFraction,
+                 lambda1, lambda2, gamma1, gamma2,
+                 followupTime, fixedFollowup, nevents](double t)->double {
+                   NumericVector t0(1);
+                   t0[0] = t;
+                   DataFrame lr = lrstat(
+                     t0, 1, allocationRatioPlanned, 
+                     accrualTime, accrualIntensity,
+                     piecewiseSurvivalTime, stratumFraction,
+                     lambda1, lambda2, gamma1, gamma2,
+                     t, followupTime, fixedFollowup, 0, 0, 1, 1);
+                   return sum(NumericVector(lr[2])) - nevents;
+                 };
+    
+    t[1] = brent(fmax, t[0], interval[1], 0.001);
+  }
+  
+ 
+  NumericVector time(1), bigd(1);
+  bigd[0] = nevents;
+  
+  NumericVector ta(npoints), n(npoints), ts(npoints);
+  double dt = (t[1] - t[0])/(npoints - 1);
+  
+  for (int i=0; i<npoints; i++) {
+    ta[i] = t[0] + i*dt;
+    time = ta[i];
+    
+    if (!fixedFollowup) {
+      if (i==0) {
+        ts[i] = ta[i] + 1000;
+      } else if (i == npoints - 1){
+        ts[i] = ta[i];
+      } else {
+        time = caltime(bigd, allocationRatioPlanned, 
+                       accrualTime, accrualIntensity, 
+                       piecewiseSurvivalTime, stratumFraction,
+                       lambda1, lambda2, gamma1, gamma2, 
+                       ta[i], 1000, fixedFollowup);
+        ts[i] = time[0];
+      }
+    } else {
+      if (i==0) {
+        ts[i] = ta[i] + followupTime;
+      } else if (i == npoints - 1) {
+        ts[i] = ta[i];
+      } else {
+        time = caltime(bigd, allocationRatioPlanned, 
+                       accrualTime, accrualIntensity, 
+                       piecewiseSurvivalTime, stratumFraction,
+                       lambda1, lambda2, gamma1, gamma2, 
+                       ta[i], followupTime, fixedFollowup);
+        ts[i] = time[0];
+      }
+    }
+  }
+  
+  n = accrual(ta, accrualTime, accrualIntensity, 1000);
+  
+  DataFrame df;
+  
+  if (!fixedFollowup) {
+    df = DataFrame::create(_["nevents"] = rep(nevents, npoints),
+                           _["fixedFollowup"] = rep(fixedFollowup, npoints),
+                           _["accrualDuration"] = ta,
+                           _["subjects"] = n,
+                           _["studyDuration"] = ts);
+  } else {
+    df = DataFrame::create(_["nevents"] = rep(nevents, npoints),
+                           _["fixedFollowup"] = rep(fixedFollowup, npoints),
+                           _["followupTime"] = rep(followupTime, npoints),
+                           _["accrualDuration"] = ta,
+                           _["subjects"] = n,
+                           _["studyDuration"] = ts);
+  }
+  
+  return df;
+}
+
 
 // [[Rcpp::export]]
 NumericVector getCriticalValues(
@@ -2212,6 +2553,12 @@ NumericVector getCumAlphaSpent(
 //' @param spendingTime A vector of length \code{kMax} for the error spending 
 //'   time at each analysis. Defaults to missing, in which case, it is the 
 //'   same as \code{informationRates}.
+//' @param studyDuration Study duration for fixed follow-up design. 
+//'   Defaults to missing, which is to be replaced with the sum of 
+//'   \code{accrualDuration} and \code{followupTime}. If provided, 
+//'   the value is allowed to be less than the sum of \code{accrualDuration} 
+//'   and \code{followupTime}.
+//' 
 //'   
 //' @return A list of S3 class \code{lrpower} with 3 components:
 //'
@@ -2286,7 +2633,8 @@ List lrpower(const int kMax = 1,
              const int numSubintervals = 300,
              const bool estimateHazardRatio = 1,
              const String typeOfComputation = "direct",
-             const NumericVector& spendingTime = NA_REAL) {
+             const NumericVector& spendingTime = NA_REAL,
+             const double studyDuration = NA_REAL) {
   
   NumericVector informationRates1 = clone(informationRates);
   LogicalVector efficacyStopping1 = clone(efficacyStopping);
@@ -2570,6 +2918,16 @@ List lrpower(const int kMax = 1,
     }
   }
   
+  if (fixedFollowup && !R_isnancpp(studyDuration) && 
+      studyDuration < accrualDuration) {
+    stop("studyDuration must be greater than or equal to accrualDuration");
+  }
+  
+  if (fixedFollowup && !R_isnancpp(studyDuration) && 
+      studyDuration > accrualDuration + followupTime) {
+    stop("studyDuration cannot exceed accrualDuration + followupTime");
+  }
+  
   
   NumericVector cumAlphaSpent(kMax);
   if (su == "direct") {
@@ -2638,7 +2996,12 @@ List lrpower(const int kMax = 1,
   NumericVector HR(kMax), vlogHR(kMax), hru(kMax), hrl(kMax);
   
   // obtain the total number of events at study end
-  u0[0] = accrualDuration + followupTime;
+  if (!fixedFollowup || R_isnancpp(studyDuration)) {
+    u0[0] = accrualDuration + followupTime;
+  } else {
+    u0[0] = studyDuration;
+  }
+  
   lr = lrstat(u0, hazardRatioH0, allocationRatioPlanned,
               accrualTime, accrualIntensity,
               piecewiseSurvivalTime, stratumFraction,
@@ -2655,8 +3018,7 @@ List lrpower(const int kMax = 1,
                  lambda1, lambda2, gamma1, gamma2,
                  accrualDuration, followupTime, fixedFollowup);
   
-  // obtain the mean and variance of log-rank test score statistic at
-  // each stage
+  // obtain mean and variance of log-rank test score statistic at each stage
   NumericVector theta(kMax), vscore(kMax);
   
   double r1 = allocationRatioPlanned/(allocationRatioPlanned+1);
@@ -3059,7 +3421,6 @@ List getDesign(const double beta = 0.2,
                const NumericVector& userBetaSpending = NA_REAL, 
                const NumericVector& spendingTime = NA_REAL) {
   
-  
   NumericVector informationRates1 = clone(informationRates);
   LogicalVector efficacyStopping1 = clone(efficacyStopping);
   LogicalVector futilityStopping1 = clone(futilityStopping);
@@ -3069,6 +3430,10 @@ List getDesign(const double beta = 0.2,
   double beta1 = beta;
   double drift1 = drift;
   double inflationFactor;
+  
+  if (kMax < 1) {
+    stop("kMax must be a positive integer");
+  }
   
   std::string asf = typeAlphaSpending;
   std::for_each(asf.begin(), asf.end(), [](char & c) {
@@ -3648,6 +4013,103 @@ List getDesign(const double beta = 0.2,
   
 }
 
+//' @title Get the required number of events from hazard ratios
+//' @description Obtains the required number of events given the hazard 
+//' ratios under the null and alternative hypotheses for a group 
+//' sequential design.
+//'
+//' @param beta Type II error. Defaults to 0.2.
+//' @inheritParams param_kMax
+//' @inheritParams param_informationRates
+//' @inheritParams param_efficacyStopping
+//' @inheritParams param_futilityStopping
+//' @inheritParams param_criticalValues
+//' @inheritParams param_alpha
+//' @inheritParams param_typeAlphaSpending
+//' @inheritParams param_parameterAlphaSpending
+//' @inheritParams param_userAlphaSpending
+//' @inheritParams param_futilityBounds
+//' @inheritParams param_typeBetaSpending
+//' @inheritParams param_parameterBetaSpending
+//' @inheritParams param_userBetaSpending
+//' @param spendingTime A vector of length \code{kMax} for the error spending 
+//'   time at each analysis. Defaults to missing, in which case, it is the 
+//'   same as \code{informationRates}.
+//' @inheritParams param_hazardRatioH0
+//' @param hazardRatio Hazard ratio under the alternative hypothesis 
+//'   for the active treatment versus control. Defaults to 0.5.
+//' @inheritParams param_allocationRatioPlanned
+//' @param rounding Whether to round up the number of events. 
+//'   Defaults to 1 for rounding.
+//'
+//' @return The required number of events.
+//'
+//' @examples
+//'
+//' getNeventsFromHazardRatio(
+//'   beta = 0.2, kMax = 2, 
+//'   informationRates = c(0.5,1), 
+//'   alpha = 0.025, typeAlphaSpending = "sfOF",
+//'   typeBetaSpending = "sfP", 
+//'   hazardRatio = 0.673)
+//' 
+//' @export
+// [[Rcpp::export]]
+double getNeventsFromHazardRatio(
+    const double beta = 0.2,
+    const int kMax = 1,
+    const NumericVector& informationRates = NA_REAL,
+    const LogicalVector& efficacyStopping = NA_LOGICAL,
+    const LogicalVector& futilityStopping = NA_LOGICAL,
+    const NumericVector& criticalValues = NA_REAL,
+    const double alpha = 0.025,
+    const String typeAlphaSpending = "sfOF",
+    const double parameterAlphaSpending = NA_REAL,
+    const NumericVector& userAlphaSpending = NA_REAL,
+    const NumericVector& futilityBounds = NA_REAL,
+    const String typeBetaSpending = "none",
+    const double parameterBetaSpending = NA_REAL,
+    const NumericVector& userBetaSpending = NA_REAL, 
+    const NumericVector& spendingTime = NA_REAL,
+    const double hazardRatioH0 = 1,
+    const double hazardRatio = 0.5,
+    const double allocationRatioPlanned = 1,
+    const bool rounding = 1) {
+  
+  if (beta >= 1-alpha || beta < 0.0001) {
+    stop("beta must lie in [0.0001, 1-alpha)");
+  }
+  
+  if (hazardRatioH0 <= 0) {
+    stop("hazardRatioH0 must be positive");
+  }
+  
+  if (hazardRatio <= 0) {
+    stop("hazardRatio must be positive");
+  }
+  
+  if (allocationRatioPlanned <= 0) {
+    stop("allocationRatioPlanned must be positive");
+  }
+  
+  List design = getDesign(beta, NA_REAL, kMax, informationRates, 
+                          efficacyStopping, futilityStopping, 
+                          criticalValues, alpha, typeAlphaSpending,
+                          parameterAlphaSpending, userAlphaSpending, 
+                          futilityBounds, typeBetaSpending, 
+                          parameterBetaSpending, userBetaSpending, 
+                          spendingTime);
+  
+  DataFrame overallResults = as<DataFrame>(design["overallResults"]);
+  double drift = overallResults["drift"];
+  
+  double delta = -log(hazardRatio) + log(hazardRatioH0);
+  double phi = allocationRatioPlanned/(1+allocationRatioPlanned);
+  
+  double D = pow(drift,2)/(phi*(1-phi)*pow(delta,2));
+  if (rounding) D = std::ceil(D);
+  return D;
+}
 
 
 //' @title Log-rank test sample size
@@ -3697,7 +4159,7 @@ List getDesign(const double beta = 0.2,
 //'   time at each analysis. Defaults to missing, in which case, it is the 
 //'   same as \code{informationRates}.
 //' @param rounding Whether to round up sample size and events. 
-//'   Defaults to 0 for no sample size rounding.
+//'   Defaults to 1 for sample size rounding.
 //' 
 //' @return A list of S3 class \code{lrpower}.
 //'
@@ -3815,7 +4277,7 @@ List lrsamplesize(const double beta = 0.2,
                   const NumericVector& interval =
                     NumericVector::create(0.001, 240),
                     const NumericVector& spendingTime = NA_REAL,
-                    const bool rounding = 0) {
+                    const bool rounding = 1) {
   
   NumericVector informationRates1 = clone(informationRates);
   LogicalVector efficacyStopping1 = clone(efficacyStopping);
@@ -4433,9 +4895,52 @@ List lrsamplesize(const double beta = 0.2,
                           accrualDuration, followupTime, fixedFollowup, 
                           0, 0, 1, 1);
     
-    // round up total number of subjects and number of events
-    double n = sum(NumericVector(lr[1]));
+    // round up the total number of events
+    double D0 = sum(NumericVector(lr[2]));
+    double D = std::ceil(D0);
+    NumericVector nevents = floor(D*informationRates1 + 0.5);
     
+    // new information rates for boundary calculations
+    informationRates1 = nevents/nevents[kMax-1];
+    
+    // sample size before rounding up
+    double n;
+    
+    if (fixedFollowup) {
+      // adjust accrual intensity or duration to obtain int number of events
+      if (unknown == "accrualIntensity") {
+        double aval = D/D0;
+        accrualIntensity1 = aval*accrualIntensity1;
+      } else {
+        auto h = [hazardRatioH0, allocationRatioPlanned, accrualTime, 
+                  accrualIntensity1, piecewiseSurvivalTime, stratumFraction,
+                  lambda1, lambda2, gamma1, gamma2, accrualDuration, 
+                  followupTime, fixedFollowup, D](double aval)->double {
+                    NumericVector u(1);
+                    u[0] = aval*accrualDuration + followupTime;
+                    DataFrame lr = lrstat(
+                      u, hazardRatioH0, allocationRatioPlanned,
+                      accrualTime, accrualIntensity1,
+                      piecewiseSurvivalTime, stratumFraction,
+                      lambda1, lambda2, gamma1, gamma2,
+                      aval*accrualDuration, followupTime, fixedFollowup, 
+                      0, 0, 1, 1);
+                    return sum(NumericVector(lr[2])) - D;
+                  };
+        
+        double aval = brent(h, 1, 1.1, 1e-6);
+        accrualDuration = aval*accrualDuration;
+      }
+      
+      u[0] = accrualDuration;
+      NumericVector ns = accrual(u, accrualTime, accrualIntensity1, u[0]);
+      n = ns[0];      
+    } else {
+      n = sum(NumericVector(lr[1]));
+    }
+
+  
+    // round up the sample size
     NumericVector frac = NumericVector::create(
       1/1, 1/2, 1/3, 1/4, 1/5, 2/1, 2/3, 2/5, 3/1, 3/2, 3/4, 3/5, 
       4/1, 4/3, 4/5, 5/1, 5/2, 5/3, 5/4);
@@ -4447,73 +4952,50 @@ List lrsamplesize(const double beta = 0.2,
     int i = which_min(abs(frac - allocationRatioPlanned));
     int b = blocksize[i];
     
+    double n0 = n;
     n = std::ceil(n/b)*b;
-    
-    double D = std::ceil(sum(NumericVector(lr[2])));
-    NumericVector nevents = floor(D*informationRates1 + 0.5);
-    
-    // new information rates for boundary calculations
-    informationRates1 = nevents/nevents[kMax-1];
     
     // adjust accrual intensity or duration to obtain int number of subjects
     if (unknown == "accrualIntensity") {
-      auto h = [accrualDuration, accrualTime, accrualIntensity1, 
-                n](double aval)->double {
-                  NumericVector u(1);
-                  u[0] = accrualDuration;
-                  NumericVector ns = accrual(u, accrualTime, 
-                                             aval*accrualIntensity1, u[0]);
-                  return ns[0] - n;
-                };
-      
-      double aval = brent(h, 1, 1.01, 1e-6);
+      double aval = n/n0;
       accrualIntensity1 = aval*accrualIntensity1;
     } else {
-      auto h = [accrualDuration, accrualTime, accrualIntensity1, 
-                n](double aval)->double {
-                  NumericVector u(1);
-                  u[0] = aval*accrualDuration;
-                  NumericVector ns = accrual(u, accrualTime, 
-                                             accrualIntensity1, u[0]);
-                  return ns[0] - n;
-                };
-      
-      double aval = brent(h, 1, 1.01, 1e-6);
-      accrualDuration = aval*accrualDuration;
+      NumericVector ns(1);
+      ns[0] = n;
+      u = getAccrualDuration(ns, accrualTime, accrualIntensity1);
+      accrualDuration = u[0];
     }
     
-    // adjust follow-up time to obtain int number of events
-    NumericVector d(1);
-    d[0] = D;
+    // adjust study duration to obtain integer number of events
+    auto h = [hazardRatioH0, allocationRatioPlanned, accrualTime, 
+              accrualIntensity1, piecewiseSurvivalTime, stratumFraction,
+              lambda1, lambda2, gamma1, gamma2, accrualDuration, 
+              followupTime, fixedFollowup, D](double aval)->double {
+                NumericVector u(1);
+                u[0] = accrualDuration + aval*followupTime;
+                double followupTime1 = fixedFollowup ? followupTime : 
+                  aval*followupTime;
+                
+                DataFrame lr = lrstat(
+                  u, hazardRatioH0, allocationRatioPlanned, 
+                  accrualTime, accrualIntensity1, 
+                  piecewiseSurvivalTime, stratumFraction,
+                  lambda1, lambda2, gamma1, gamma2,
+                  accrualDuration, followupTime1, 
+                  fixedFollowup, 0, 0, 1, 1);
+                return sum(NumericVector(lr[2])) - D;
+              };
     
+    double aval;
     if (!fixedFollowup) {
-      NumericVector t = caltime(d, allocationRatioPlanned, 
-                                accrualTime, accrualIntensity1, 
-                                piecewiseSurvivalTime, stratumFraction,
-                                lambda1, lambda2, gamma1, gamma2,
-                                accrualDuration, 10000,
-                                fixedFollowup);
-      
-      followupTime = t[0] - accrualDuration;
+      aval = brent(h, 0.5, 1.1, 1e-6);
     } else {
-      auto h = [hazardRatioH0, allocationRatioPlanned, accrualTime, 
-                accrualIntensity1, piecewiseSurvivalTime, stratumFraction,
-                lambda1, lambda2, gamma1, gamma2, accrualDuration, 
-                followupTime, fixedFollowup, D](double aval)->double {
-                  NumericVector u(1);
-                  u[0] = accrualDuration + aval*followupTime;
-                  DataFrame lr = lrstat(
-                    u, hazardRatioH0, allocationRatioPlanned, 
-                    accrualTime, accrualIntensity1, 
-                    piecewiseSurvivalTime, stratumFraction,
-                    lambda1, lambda2, gamma1, gamma2,
-                    accrualDuration, aval*followupTime, 
-                    fixedFollowup, 0, 0, 1, 1);     
-                  return sum(NumericVector(lr[2])) - D;
-                };
-      
-      double aval = brent(h, 0.99, 1.01, 1e-6);
-      followupTime = aval*followupTime;
+      aval = brent(h, 0.5, 1, 1e-6);
+    }
+    
+    double studyDuration = accrualDuration + aval*followupTime;
+    if (!fixedFollowup) {
+      followupTime = aval*followupTime; 
     }
     
     // recalculate boundaries
@@ -4527,7 +5009,7 @@ List lrsamplesize(const double beta = 0.2,
                        lambda1, lambda2, gamma1, gamma2,
                        accrualDuration, followupTime, fixedFollowup,
                        rho1, rho2, numSubintervals, estimateHazardRatio,
-                       typeOfComputation, spendingTime);
+                       typeOfComputation, spendingTime, studyDuration);
   } else {
     resultH1 = lrpower(kMax, informationRates1,
                        efficacyStopping1, futilityStopping1, criticalValues1,
@@ -4542,80 +5024,73 @@ List lrsamplesize(const double beta = 0.2,
                        typeOfComputation, spendingTime);
   }
   
-  
-  DataFrame byStageResults = as<DataFrame>(resultH1["byStageResults"]);
-  criticalValues1 = byStageResults["efficacyBounds"];
-  futilityBounds1 = byStageResults["futilityBounds"];
-  
+  // results under H0 by matching the total number of events
+  // adjust study duration to obtain integer number of events
   DataFrame overallResults = as<DataFrame>(resultH1["overallResults"]);
   double D = overallResults["numberOfEvents"];
+  double aval, studyDuration;
   
-  // results under H0 by matching the total number of events
-  if (fixedFollowup) {
-    auto h = [hazardRatioH0, allocationRatioPlanned, accrualTime, 
-              accrualIntensity1, piecewiseSurvivalTime, stratumFraction,
-              lambda2, gamma1, gamma2,
-              followupTime, fixedFollowup, D](double aval)->double {
-                NumericVector u(1);
-                u[0] = aval;
-                DataFrame lr = lrstat(
-                  u, hazardRatioH0, allocationRatioPlanned, 
-                  accrualTime, accrualIntensity1, 
-                  piecewiseSurvivalTime, stratumFraction,
-                  lambda2*hazardRatioH0, lambda2, gamma1, gamma2,
-                  aval - followupTime, followupTime, 
-                  fixedFollowup, 0, 0, 1, 1);     
-                return sum(NumericVector(lr[2])) - D;
-              };
-    
-    double t = brent(h, followupTime+interval[0], interval[1], 0.0001);
-    
-    resultH0 = lrpower(
-      kMax, informationRates1,
-      efficacyStopping1, futilityStopping1, criticalValues1,
-      alpha, typeAlphaSpending, parameterAlphaSpending,
-      userAlphaSpending, futilityBounds1,
-      typeBetaSpending, parameterBetaSpending, hazardRatioH0,
-      allocationRatioPlanned, accrualTime, accrualIntensity1,
-      piecewiseSurvivalTime, stratumFraction,
-      lambda2*hazardRatioH0, lambda2, gamma1, gamma2,
-      t - followupTime, followupTime, fixedFollowup,
-      rho1, rho2, numSubintervals, 0,
-      typeOfComputation, spendingTime);
-  } else {
-    auto h = [hazardRatioH0, allocationRatioPlanned, accrualTime, 
+  // fix accrualDuration
+  auto h = [hazardRatioH0, allocationRatioPlanned, accrualTime, 
+            accrualIntensity1, piecewiseSurvivalTime, stratumFraction,
+            lambda2, gamma1, gamma2, accrualDuration, 
+            followupTime, fixedFollowup, D](double aval)->double {
+              NumericVector u(1);
+              u[0] = accrualDuration + aval*followupTime;
+              double followupTime1 = fixedFollowup ? followupTime : 
+                aval*followupTime;
+              
+              DataFrame lr = lrstat(
+                u, hazardRatioH0, allocationRatioPlanned, 
+                accrualTime, accrualIntensity1, 
+                piecewiseSurvivalTime, stratumFraction,
+                lambda2*hazardRatioH0, lambda2, gamma1, gamma2,
+                accrualDuration, followupTime1, 
+                fixedFollowup, 0, 0, 1, 1);
+              return sum(NumericVector(lr[2])) - D;
+            };
+  
+  if (!fixedFollowup || h(0) < 0) { // reduce study duration
+    aval = brent(h, 0, 1, 1e-6);
+    studyDuration = accrualDuration + aval*followupTime;
+    if (!fixedFollowup) {
+      followupTime = aval*followupTime;
+    }
+  } else { // reduce accrualDuration for fixed follow-up
+    auto g = [hazardRatioH0, allocationRatioPlanned, accrualTime, 
               accrualIntensity1, piecewiseSurvivalTime, stratumFraction,
               lambda2, gamma1, gamma2, accrualDuration, 
               followupTime, fixedFollowup, D](double aval)->double {
                 NumericVector u(1);
-                u[0] = aval;
+                u[0] = aval*accrualDuration;
+                
                 DataFrame lr = lrstat(
                   u, hazardRatioH0, allocationRatioPlanned, 
                   accrualTime, accrualIntensity1, 
                   piecewiseSurvivalTime, stratumFraction,
                   lambda2*hazardRatioH0, lambda2, gamma1, gamma2,
-                  std::min(aval, accrualDuration), 
-                  std::max(0.0, aval - accrualDuration), 
-                  fixedFollowup, 0, 0, 1, 1);     
+                  aval*accrualDuration, followupTime, 
+                  fixedFollowup, 0, 0, 1, 1);
                 return sum(NumericVector(lr[2])) - D;
               };
     
-    double t = brent(h, interval[0], interval[1], 0.0001);
-    
-    resultH0 = lrpower(
-      kMax, informationRates1,
-      efficacyStopping1, futilityStopping1, criticalValues1,
-      alpha, typeAlphaSpending, parameterAlphaSpending,
-      userAlphaSpending, futilityBounds1,
-      typeBetaSpending, parameterBetaSpending, hazardRatioH0,
-      allocationRatioPlanned, accrualTime, accrualIntensity1,
-      piecewiseSurvivalTime, stratumFraction,
-      lambda2*hazardRatioH0, lambda2, gamma1, gamma2,
-      std::min(t, accrualDuration), 
-      std::max(0.0, t - accrualDuration), 
-      fixedFollowup, rho1, rho2, numSubintervals, 0,
-      typeOfComputation, spendingTime);
+    aval = brent(g, 1e-6, 1, 1e-6);
+    accrualDuration = aval*accrualDuration;
+    studyDuration = accrualDuration;
   }
+  
+  resultH0 = lrpower(
+    kMax, informationRates1,
+    efficacyStopping1, futilityStopping1, criticalValues1,
+    alpha, typeAlphaSpending, parameterAlphaSpending,
+    userAlphaSpending, futilityBounds1,
+    typeBetaSpending, parameterBetaSpending, hazardRatioH0,
+    allocationRatioPlanned, accrualTime, accrualIntensity1,
+    piecewiseSurvivalTime, stratumFraction,
+    lambda2*hazardRatioH0, lambda2, gamma1, gamma2,
+    accrualDuration, followupTime, fixedFollowup,
+    rho1, rho2, numSubintervals, 0,
+    typeOfComputation, spendingTime, studyDuration);
   
   result = List::create(
     _["resultsUnderH1"] = resultH1,
@@ -4623,6 +5098,3 @@ List lrsamplesize(const double beta = 0.2,
 
   return result;
 }
-
-
-

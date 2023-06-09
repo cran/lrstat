@@ -27,6 +27,6 @@ lrsim(kMax = 2, criticalValues = c(2.250, 2.025),
       gamma1 = -log(1-0.05)/12, 
       gamma2 = -log(1-0.05)/12,
       accrualDuration = 22,
-      plannedEvents = c(252, 315), 
+      plannedEvents = c(253, 316), 
       maxNumberOfIterations = 10000, seed = 314159)
 
