@@ -117,6 +117,54 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// fstp2seqcpp
+NumericMatrix fstp2seqcpp(const NumericMatrix& p, const NumericVector& gamma, const String test, const bool retest);
+RcppExport SEXP _lrstat_fstp2seqcpp(SEXP pSEXP, SEXP gammaSEXP, SEXP testSEXP, SEXP retestSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const NumericMatrix& >::type p(pSEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type gamma(gammaSEXP);
+    Rcpp::traits::input_parameter< const String >::type test(testSEXP);
+    Rcpp::traits::input_parameter< const bool >::type retest(retestSEXP);
+    rcpp_result_gen = Rcpp::wrap(fstp2seqcpp(p, gamma, test, retest));
+    return rcpp_result_gen;
+END_RCPP
+}
+// fstdmixcpp
+NumericMatrix fstdmixcpp(const NumericMatrix& p, const LogicalMatrix& family, const LogicalMatrix& serial, const LogicalMatrix& parallel, const NumericVector& gamma, const String test, const bool exhaust);
+RcppExport SEXP _lrstat_fstdmixcpp(SEXP pSEXP, SEXP familySEXP, SEXP serialSEXP, SEXP parallelSEXP, SEXP gammaSEXP, SEXP testSEXP, SEXP exhaustSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const NumericMatrix& >::type p(pSEXP);
+    Rcpp::traits::input_parameter< const LogicalMatrix& >::type family(familySEXP);
+    Rcpp::traits::input_parameter< const LogicalMatrix& >::type serial(serialSEXP);
+    Rcpp::traits::input_parameter< const LogicalMatrix& >::type parallel(parallelSEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type gamma(gammaSEXP);
+    Rcpp::traits::input_parameter< const String >::type test(testSEXP);
+    Rcpp::traits::input_parameter< const bool >::type exhaust(exhaustSEXP);
+    rcpp_result_gen = Rcpp::wrap(fstdmixcpp(p, family, serial, parallel, gamma, test, exhaust));
+    return rcpp_result_gen;
+END_RCPP
+}
+// fmodmixcpp
+NumericMatrix fmodmixcpp(const NumericMatrix& p, const LogicalMatrix& family, const LogicalMatrix& serial, const LogicalMatrix& parallel, const NumericVector& gamma, const String test, const bool exhaust);
+RcppExport SEXP _lrstat_fmodmixcpp(SEXP pSEXP, SEXP familySEXP, SEXP serialSEXP, SEXP parallelSEXP, SEXP gammaSEXP, SEXP testSEXP, SEXP exhaustSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const NumericMatrix& >::type p(pSEXP);
+    Rcpp::traits::input_parameter< const LogicalMatrix& >::type family(familySEXP);
+    Rcpp::traits::input_parameter< const LogicalMatrix& >::type serial(serialSEXP);
+    Rcpp::traits::input_parameter< const LogicalMatrix& >::type parallel(parallelSEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type gamma(gammaSEXP);
+    Rcpp::traits::input_parameter< const String >::type test(testSEXP);
+    Rcpp::traits::input_parameter< const bool >::type exhaust(exhaustSEXP);
+    rcpp_result_gen = Rcpp::wrap(fmodmixcpp(p, family, serial, parallel, gamma, test, exhaust));
+    return rcpp_result_gen;
+END_RCPP
+}
 // lrsim
 List lrsim(const int kMax, const NumericVector& informationTime, const NumericVector& criticalValues, const NumericVector& futilityBounds, const double hazardRatioH0, const int allocation1, const int allocation2, const NumericVector& accrualTime, const NumericVector& accrualIntensity, const NumericVector& piecewiseSurvivalTime, const NumericVector& stratumFraction, const NumericVector& lambda1, const NumericVector& lambda2, const NumericVector& gamma1, const NumericVector& gamma2, const double accrualDuration, const double followupTime, const bool fixedFollowup, const double rho1, const double rho2, const IntegerVector& plannedEvents, const NumericVector& plannedTime, const int maxNumberOfIterations, const int maxNumberOfRawDatasetsPerStage, int seed);
 RcppExport SEXP _lrstat_lrsim(SEXP kMaxSEXP, SEXP informationTimeSEXP, SEXP criticalValuesSEXP, SEXP futilityBoundsSEXP, SEXP hazardRatioH0SEXP, SEXP allocation1SEXP, SEXP allocation2SEXP, SEXP accrualTimeSEXP, SEXP accrualIntensitySEXP, SEXP piecewiseSurvivalTimeSEXP, SEXP stratumFractionSEXP, SEXP lambda1SEXP, SEXP lambda2SEXP, SEXP gamma1SEXP, SEXP gamma2SEXP, SEXP accrualDurationSEXP, SEXP followupTimeSEXP, SEXP fixedFollowupSEXP, SEXP rho1SEXP, SEXP rho2SEXP, SEXP plannedEventsSEXP, SEXP plannedTimeSEXP, SEXP maxNumberOfIterationsSEXP, SEXP maxNumberOfRawDatasetsPerStageSEXP, SEXP seedSEXP) {
@@ -886,6 +934,9 @@ static const R_CallMethodDef CallEntries[] = {
     {"_lrstat_getBound", (DL_FUNC) &_lrstat_getBound, 7},
     {"_lrstat_repeatedPValuecpp", (DL_FUNC) &_lrstat_repeatedPValuecpp, 7},
     {"_lrstat_fseqboncpp", (DL_FUNC) &_lrstat_fseqboncpp, 11},
+    {"_lrstat_fstp2seqcpp", (DL_FUNC) &_lrstat_fstp2seqcpp, 4},
+    {"_lrstat_fstdmixcpp", (DL_FUNC) &_lrstat_fstdmixcpp, 7},
+    {"_lrstat_fmodmixcpp", (DL_FUNC) &_lrstat_fmodmixcpp, 7},
     {"_lrstat_lrsim", (DL_FUNC) &_lrstat_lrsim, 25},
     {"_lrstat_lrsim3a", (DL_FUNC) &_lrstat_lrsim3a, 27},
     {"_lrstat_lrsim2e", (DL_FUNC) &_lrstat_lrsim2e, 29},

@@ -90,6 +90,18 @@ fseqboncpp <- function(w, G, alpha = 0.025, kMax = NA_integer_, typeAlphaSpendin
     .Call(`_lrstat_fseqboncpp`, w, G, alpha, kMax, typeAlphaSpending, parameterAlphaSpending, incidenceMatrix, maxInformation, p, information, spendingTime)
 }
 
+fstp2seqcpp <- function(p, gamma, test = "hochberg", retest = 1L) {
+    .Call(`_lrstat_fstp2seqcpp`, p, gamma, test, retest)
+}
+
+fstdmixcpp <- function(p, family, serial, parallel, gamma, test = "hommel", exhaust = 1L) {
+    .Call(`_lrstat_fstdmixcpp`, p, family, serial, parallel, gamma, test, exhaust)
+}
+
+fmodmixcpp <- function(p, family, serial, parallel, gamma, test = "hommel", exhaust = 1L) {
+    .Call(`_lrstat_fmodmixcpp`, p, family, serial, parallel, gamma, test, exhaust)
+}
+
 #' @title Log-rank test simulation
 #' @description Performs simulation for two-arm group sequential
 #' trials based on weighted log-rank test.

@@ -1,3 +1,9 @@
+# lrstat 0.1.15
+
+- add fstp2seq for stepwise gatekeeping procedures with or without retesting for multiplicity problems involving two sequences of hypotheses.
+- add fstdmix to obtain adjusted p-values for standard mixture gatekeeping procedures
+- add fmodmix to obtain adjusted p-values for modified mixture gatekeeping procedures
+
 # lrstat 0.1.14
 
 - add the getAccrualDuration function to obtain the accrual duration to enroll the target number of subjects.
