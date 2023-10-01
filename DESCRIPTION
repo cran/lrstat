@@ -1,8 +1,8 @@
 Package: lrstat
 Type: Package
 Title: Power and Sample Size Calculation for Non-Proportional Hazards
-Version: 0.1.15
-Date: 2023-08-17
+Version: 0.2.0
+Date: 2023-10-01
 Author: Kaifeng Lu
 Maintainer: Kaifeng Lu <kaifenglu@gmail.com>
 Description: Performs power and sample size calculation for non-proportional 
@@ -15,13 +15,13 @@ Description: Performs power and sample size calculation for non-proportional
   are calculated using the recursive integration algorithm described in 
   Christopher Jennison and Bruce W. Turnbull (2000, ISBN:0849303168).
 License: GPL (>= 2)
-Imports: Rcpp (>= 1.0.9)
+Imports: Rcpp (>= 1.0.9), mvtnorm (>= 1.1-3)
 LinkingTo: Rcpp
-Suggests: knitr, rmarkdown, testthat (>= 3.0.0), mvtnorm, dplyr, tidyr
+Suggests: knitr, rmarkdown, testthat (>= 3.0.0), dplyr, tidyr
 VignetteBuilder: knitr
 RoxygenNote: 7.2.3
 Encoding: UTF-8
 NeedsCompilation: yes
-Packaged: 2023-08-17 17:50:16 UTC; kaife
+Packaged: 2023-10-01 16:19:43 UTC; kaife
 Repository: CRAN
-Date/Publication: 2023-08-17 18:42:33 UTC
+Date/Publication: 2023-10-01 16:40:05 UTC

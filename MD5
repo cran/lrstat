@@ -1,11 +1,11 @@
-092937b8c6ab95eda306ebede8fbde81 *DESCRIPTION
-9c27feaa98b68d6a8323fd0b03b9b854 *NAMESPACE
-fd4362e589fabf275659bbb908434ccc *NEWS.md
+c330da9875a7274ae521313b1cb7990f *DESCRIPTION
+1ac49ba61f8571ac82c6456f2360aaba *NAMESPACE
+0a975368622d5365b5168c076dec5e36 *NEWS.md
 373fee523d19bf057876070361803a69 *R/RcppExports.R
-5bd1b0ae50996eeb77defd732984de65 *R/lrstat-package.R
+9874cb960fb112165e3905d854efe047 *R/lrstat-package.R
 a7241488f2712a850e4894a7cc3452ac *R/parameter_descriptions.R
 0e2d6b06aad6a35a588eff5dff773e35 *R/prints.R
-0e56efb98eee3bd6ad5f7d104cb79144 *R/wrappers.R
+9c34e607c56413106025ed0e7c448f98 *R/wrappers.R
 3f4c605248c2909ab413a491e157ce15 *README.md
 781e4202df3ac19770045de1878ff5f0 *build/vignette.rds
 9d0df389fb76ce7e3eb9825d7ca8389d *inst/doc/direct_approximation_vs_schoenfeld.R
@@ -35,6 +35,7 @@ e93de0c865e9ba7a43ce9ef960fa374e *man/ad.Rd
 bf233a1069f92a3d2fed6ff7722733ea *man/errorSpent.Rd
 57ad75d64f2d15b5e246c9402d3f6925 *man/exitprob.Rd
 96fc4574afd35697d6a173bed23c1d4d *man/fadjpbon.Rd
+5f684ce05aebb8de0c84575b3fee997e *man/fadjpdun.Rd
 88bc56e498ae6845754c800ee9d270ec *man/fadjpsim.Rd
 ae3b55f1a51f4ab5ad461d1faaf2406d *man/findInterval2.Rd
 e8fea891eb6b8359dbca05793186ede9 *man/fmodmix.Rd
