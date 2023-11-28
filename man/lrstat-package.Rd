@@ -17,7 +17,7 @@ the calendar time plays a key role in determining the mean and
 variance of the log-rank test score statistic. It requires an
 iterative algorithm to find the calendar time at which the
 targeted number of events will be reached for each interim
-analysis. The lrstat package uses the analytic method 
+analysis. The lrstat package uses the analytic method
 in Lu (2021) to find the mean and variance of the weighted
 log-rank test score statistic at each interim analysis. In
 addition, the package approximates the variance and covariance
@@ -47,16 +47,36 @@ self-explanatory. We have used the same names whenever appropriate
 so that users familiar with the rpact package can learn the
 lrstat package quickly. However, there are notable differences:
 \itemize{
-  \item lrstat uses direct approximation, while rpact uses the Schoenfeld
-    method for log-rank test power and sample size calculation.
-  \item lrstat uses \code{accrualDuration} to explicitly set the end of
-    accrual period, while rpact incorporates the end of accrual period
-    in \code{accrualTime}.
-  \item lrstat considers the trial a failure at the last stage if
-    the log-rank test cannot reject the null hypothesis up to this
-    stage and cannot stop for futility at an earlier stage.
-  \item the \code{lrsim} function uses the variance of the log-rank
-    test score statistic as the information.
+\item lrstat uses direct approximation, while rpact uses the Schoenfeld
+method for log-rank test power and sample size calculation.
+\item lrstat uses \code{accrualDuration} to explicitly set the end of
+accrual period, while rpact incorporates the end of accrual period
+in \code{accrualTime}.
+\item lrstat considers the trial a failure at the last stage if
+the log-rank test cannot reject the null hypothesis up to this
+stage and cannot stop for futility at an earlier stage.
+\item the \code{lrsim} function uses the variance of the log-rank
+test score statistic as the information.
+}
+
+In addition to the log-rank test power and sample size calculations,
+the lrstat package can also be used for the following tasks:
+\itemize{
+\item design generic group sequential trials for continuous, binary,
+or other endpoints.
+\item design adaptive group sequential trials for changes in sample
+size, error spending function, number and spacing or future looks.
+\item calculate the terminating and repeated confidence intervals for
+standard and adaptive group sequential trials.
+\item calculate the conditional power for non-proportional hazards
+with or without design changes.
+\item perform multiplicity adjustment based on graphical approaches
+using weighted Bonferroni tests, Bonferroni mixture of weighted
+Simes test, and Bonferroni mixture of Dunnett test as well as
+group sequential trials with multiple hypotheses.
+\item perform multiplicity adjustment using stepwise gatekeeping
+procedures for two sequences of hypotheses and the standard or
+modified mixture gatekeeping procedures in the general case.
 }
 }
 \examples{
@@ -71,7 +91,7 @@ lrpower(kMax = 2, informationRates = c(0.8, 1),
 \references{
 Anastasios A. Tsiatis. Repeated significance testing for a general class
 of statistics used in censored survival analysis. J Am Stat Assoc.
-1982;77:855-861. 
+1982;77:855-861.
 
 Christopher Jennison, Bruce W. Turnbull. Group Sequential Methods with
 Applications to Clinical Trials. Chapman & Hall/CRC: Boca Raton, 2000,

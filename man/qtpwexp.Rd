@@ -14,8 +14,8 @@ qtpwexp(
 \arguments{
 \item{probability}{The scalar probability corresponding to the quantile.}
 
-\item{piecewiseSurvivalTime}{A vector that specifies the time intervals for
-the piecewise exponential survival distribution. Must start with 0, e.g.,
+\item{piecewiseSurvivalTime}{A vector that specifies the starting time of
+piecewise exponential survival time intervals. Must start with 0, e.g.,
 \code{c(0, 6)} breaks the time axis into 2 event intervals:
 [0, 6) and [6, Inf).
 Defaults to 0 for exponential distribution.}
@@ -38,4 +38,7 @@ given that it exceeds a specified lower bound.
 qtpwexp(probability = c(0.3, 0.5), piecewiseSurvivalTime = c(0, 6, 9, 15),
         lambda = c(0.025, 0.04, 0.015, 0.007))
 
+}
+\author{
+Kaifeng Lu, \email{kaifenglu@gmail.com}
 }

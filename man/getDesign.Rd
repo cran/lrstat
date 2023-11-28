@@ -5,8 +5,9 @@
 \title{Get group sequential design}
 \usage{
 getDesign(
-  beta = 0.2,
-  drift = NA_real_,
+  beta = NA_real_,
+  IMax = NA_real_,
+  theta = NA_real_,
   kMax = 1L,
   informationRates = NA_real_,
   efficacyStopping = NA_integer_,
@@ -24,17 +25,17 @@ getDesign(
 )
 }
 \arguments{
-\item{beta}{Type II error. Defaults to 0.2.}
+\item{beta}{The type II error.}
 
-\item{drift}{Drift parameter, i.e., \code{(theta-theta0)*sqrt(Imax)}.
-If \code{drift} is provided, then the input \code{beta} will be ignored 
-and power will be calculated.}
+\item{IMax}{The maximum information. Either \code{beta} or \code{IMax}
+should be provided while the other one should be missing.}
+
+\item{theta}{The parameter value.}
 
 \item{kMax}{The maximum number of stages.}
 
-\item{informationRates}{The information rates in terms of number of events.
-Fixed prior to the trial. Defaults to \code{(1:kMax) / kMax} if left
-unspecified.}
+\item{informationRates}{The information rates. Fixed prior to the trial.
+Defaults to \code{(1:kMax) / kMax} if left unspecified.}
 
 \item{efficacyStopping}{Indicators of whether efficacy stopping is allowed
 at each stage. Defaults to true if left unspecified.}
@@ -78,50 +79,88 @@ Corresponds to rho for "sfKD", and gamma for "sfHSD".}
 \item{userBetaSpending}{The user defined beta spending. Cumulative beta
 spent up to each stage.}
 
-\item{spendingTime}{A vector of length \code{kMax} for the error spending 
-time at each analysis. Defaults to missing, in which case, it is the 
+\item{spendingTime}{A vector of length \code{kMax} for the error spending
+time at each analysis. Defaults to missing, in which case, it is the
 same as \code{informationRates}.}
 }
 \value{
-A list of S3 class \code{design} with three components:
-
-* \code{overallResults} containing the overall rejection probability,
-overall significance level, number of stages, drift parameter, 
-and inflation factor (relative to fixed design).
-
-* \code{byStageResults} containing information rates, efficacy
-and futility boundaries on the Z-scale, probability for efficacy
-and futility stopping at the stage, cumulative probability for
-efficacy and futility stopping by the stage, cumulative alpha spent,
-efficacy and futility boundaries on the p-value scale, 
-and whether efficacy and futility stopping are allowed by stage.
-
-* \code{settings} containing input parameters such as
-alpha and beta spending function and parameter values, spendingTime, 
-and calculation target.
+An S3 class \code{design} object with three components:
+\itemize{
+\item \code{overallResults}: A data frame containing the following variables:
+\itemize{
+\item \code{overallReject}: The overall rejection probability.
+\item \code{alpha}: The overall significance level.
+\item \code{kMax}: The number of stages.
+\item \code{theta}: The parameter value.
+\item \code{maxInformation}: The maximum information.
+\item \code{expectedInformationH1}: The expected information under H1.
+\item \code{expectedInformationH0}: The expected information under H0.
+\item \code{drift}: The drift parameter, equal to
+\code{theta*sqrt(maxInformation)}.
+\item \code{inflationFactor}: The inflation factor (relative to the
+fixed design).
+}
+\item \code{byStageResults}: A data frame containing the following variables:
+\itemize{
+\item \code{informationRates}: The information rates.
+\item \code{efficacyBounds}: The efficacy boundaries on the Z-scale.
+\item \code{futilityBounds}: The futility boundaries on the Z-scale.
+\item \code{rejectPerStage}: The probability for efficacy stopping.
+\item \code{futilityPerStage}: The probability for futility stopping.
+\item \code{cumulativeRejection}: The cumulative probability for efficacy
+stopping.
+\item \code{cumulativeFutility}: The cumulative probability for futility
+stopping.
+\item \code{cumulativeAlphaSpent}: The cumulative alpha spent.
+\item \code{efficacyTheta}: The efficacy boundaries on the parameter scale.
+\item \code{futilityTheta}: The futility boundaries on the parameter scale.
+\item \code{efficacyP}: The efficacy boundaries on the p-value scale.
+\item \code{futilityP}: The futility boundaries on the p-value scale.
+\item \code{information}: The cumulative information.
+\item \code{efficacyStopping}: Whether to allow efficacy stopping.
+\item \code{futilityStopping}: Whether to allow futility stopping.
+}
+\item \code{settings}: A list containing the following input parameters:
+\itemize{
+\item \code{typeAlphaSpending}: The type of alpha spending.
+\item \code{parameterAlphaSpending}: The parameter value for alpha spending.
+\item \code{userAlphaSpending}: The user defined alpha spending.
+\item \code{typeBetaSpending}: The type of beta spending.
+\item \code{parameterBetaSpending}: The parameter value for beta spending.
+\item \code{userBetaSpending}: The user defined beta spending.
+\item \code{spendingTime}: The error spending time at each analysis.
+\item \code{calculationTarget}: The calculation target, \code{beta} or
+\code{IMax}.
+}
+}
 }
 \description{
-Obtains the drift parameter and stopping boundaries for a
-generic group sequential design assuming a constant treatment effect, 
-or obtains the power given the drift parameter and stopping boundaries.
+Obtains the maximum information and stopping boundaries
+for a generic group sequential design assuming a constant treatment
+effect, or obtains the power given the maximum information and
+stopping boundaries.
 }
 \examples{
 
-# Example 1: obtain the drift parameter given power
-getDesign(beta = 0.2,
-          kMax = 2,
-          informationRates = c(0.5,1),
-          alpha = 0.025,
-          typeAlphaSpending = "sfOF",
+# Example 1: obtain the maximum information given power
+getDesign(beta = 0.2, theta = -log(0.7),
+          kMax = 2, informationRates = c(0.5,1),
+          alpha = 0.025, typeAlphaSpending = "sfOF",
           typeBetaSpending = "sfP")
           
 
-# Example 2: obtain power given the drift parameter
-getDesign(drift = 3.026,
-          kMax = 3,
-          informationRates = c(0.5, 0.75, 1),
-          alpha = 0.025,
-          typeAlphaSpending = "sfOF",
+# Example 2: obtain power given the maximum information
+getDesign(IMax = 72.5, theta = -log(0.7),
+          kMax = 3, informationRates = c(0.5, 0.75, 1),
+          alpha = 0.025, typeAlphaSpending = "sfOF",
           typeBetaSpending = "sfP")
 
+}
+\references{
+Christopher Jennison, Bruce W. Turnbull. Group Sequential Methods with
+Applications to Clinical Trials. Chapman & Hall/CRC: Boca Raton, 2000,
+ISBN:0849303168
+}
+\author{
+Kaifeng Lu, \email{kaifenglu@gmail.com}
 }

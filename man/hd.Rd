@@ -20,8 +20,8 @@ hd(
 
 \item{t2}{Upper bound of the analysis time interval.}
 
-\item{piecewiseSurvivalTime}{A vector that specifies the time intervals for
-the piecewise exponential survival distribution. Must start with 0, e.g.,
+\item{piecewiseSurvivalTime}{A vector that specifies the starting time of
+piecewise exponential survival time intervals. Must start with 0, e.g.,
 \code{c(0, 6)} breaks the time axis into 2 event intervals:
 [0, 6) and [6, Inf).
 Defaults to 0 for exponential distribution.}
@@ -49,5 +49,8 @@ during an interval with constant hazard.
 hd(j = 1, t1 = 1, t2 = 3, piecewiseSurvivalTime = c(0, 6),
    lambda = c(0.0533, 0.0309), gamma = -log(1-0.05)/12)
 
+}
+\author{
+Kaifeng Lu, \email{kaifenglu@gmail.com}
 }
 \keyword{internal}

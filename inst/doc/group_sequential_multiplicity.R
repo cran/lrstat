@@ -43,7 +43,7 @@ for (j in 1:6) {
   accrualTime = c(0,8), accrualIntensity = c(10,28)*3/5, 
   lambda1 = log(2)/50, lambda2 = log(2)/30,
   accrualDuration = 30.143, followupTime = 100,
-  predictEventOnly = 1))
+  predictTarget = 1))
 
 
 ## ----required number of OS events at look 3 for 90% power---------------------
@@ -94,7 +94,7 @@ for (j in 1:6) {
   accrualTime = c(0,8), accrualIntensity = c(10,28)*3/5, 
   lambda1 = log(2)/17, lambda2 = log(2)/12,
   accrualDuration = 30.143, followupTime = 1000,
-  predictEventOnly = 1))
+  predictTarget = 1))
 
 
 (lr4 <- lrstat(
@@ -103,7 +103,7 @@ for (j in 1:6) {
   accrualTime = c(0,8), accrualIntensity = c(10,28)*3/5, 
   lambda1 = log(2)/40, lambda2 = log(2)/30,
   accrualDuration = 30.143, followupTime = 1000,
-  predictEventOnly = 1))
+  predictTarget = 1))
 
 
 (lr5 <- lrstat(
@@ -112,7 +112,7 @@ for (j in 1:6) {
   accrualTime = c(0,8), accrualIntensity = c(10,28)*4/5, 
   lambda1 = log(2)/22, lambda2 = log(2)/17,
   accrualDuration = 30.143, followupTime = 1000,
-  predictEventOnly = 1))
+  predictTarget = 1))
 
 
 (lr6 <- lrstat(
@@ -121,7 +121,7 @@ for (j in 1:6) {
   accrualTime = c(0,8), accrualIntensity = c(10,28)*4/5, 
   lambda1 = log(2)/50, lambda2 = log(2)/40,
   accrualDuration = 30.143, followupTime = 1000,
-  predictEventOnly = 1))
+  predictTarget = 1))
 
 
 

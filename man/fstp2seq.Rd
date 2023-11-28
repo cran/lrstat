@@ -20,7 +20,7 @@ or "Hochberg", and it defaults to "Hochberg".}
 A matrix of adjusted p-values.
 }
 \description{
-Obtains the adjusted p-values for the stepwise gatekeeping 
+Obtains the adjusted p-values for the stepwise gatekeeping
 procedures for multiplicity problems involving two sequences of hypotheses.
 }
 \examples{
@@ -29,4 +29,7 @@ p = c(0.0194, 0.0068, 0.0271, 0.0088, 0.0370, 0.0018, 0.0814, 0.0066)
 gamma = c(0.6, 0.6, 0.6, 1)
 fstp2seq(p, gamma, test="hochberg", retest=1)
 
+}
+\author{
+Kaifeng Lu, \email{kaifenglu@gmail.com}
 }

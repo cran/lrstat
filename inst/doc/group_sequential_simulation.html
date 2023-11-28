@@ -370,12 +370,12 @@ then the maximum number of events is expected to be 32.8.</p>
 ## 3 30.0      150 27.62603 14.20442 13.421612  3.369855   2.625588  0.7442674
 ## 4 35.0      160 31.95277 16.45992 15.492843  3.901625   3.042502  0.8591231
 ## 5 38.5      160 32.81148 16.92953 15.881948  4.010006   3.129306  0.8807001
-##      uscore   vscore  logRankZ hazardRatioH0
-## 1 -4.598872 2.996796 -2.656579             1
-## 2 -5.951438 3.875556 -3.023117             1
-## 3 -7.304005 4.754316 -3.349786             1
-## 4 -8.438436 5.487095 -3.602390             1
-## 5 -8.656427 5.624064 -3.650174             1</code></pre>
+##       nfmax   nfmax1    nfmax2    uscore   vscore  logRankZ hazardRatioH0
+## 1  51.96593 42.16268  9.803258 -4.598872 2.996796 -2.656579             1
+## 2  71.21258 57.77848 13.434094 -5.951438 3.875556 -3.023117             1
+## 3  90.45922 73.39429 17.064930 -7.304005 4.754316 -3.349786             1
+## 4 109.70586 89.01009 20.695767 -8.438436 5.487095 -3.602390             1
+## 5 123.17851 99.94116 23.237352 -8.656427 5.624064 -3.650174             1</code></pre>
 <p>Suppose we run the trial for a target maximum number of 32 events.
 The trial will stop once 32 events have been observed or the trial is
 stopped early for futility or efficacy. Due to the fixed follow-up
@@ -401,7 +401,7 @@ look. The simulation below demonstrates that the study has approximately
 <span id="cb4-15"><a href="#cb4-15" tabindex="-1"></a>      <span class="at">maxNumberOfRawDatasetsPerStage =</span> <span class="dv">0</span>, </span>
 <span id="cb4-16"><a href="#cb4-16" tabindex="-1"></a>      <span class="at">seed =</span> <span class="dv">12345</span>)</span></code></pre></div>
 <pre><code>##                                             
-## Group-sequential trial with 3 stages        
+## Group-sequential design with 3 stages       
 ## Overall power: 0.881                        
 ## Expected # events: 25.4                     
 ## Expected # dropouts: 3.1                    
@@ -435,7 +435,7 @@ under the null hypothesis is 65%.</p>
 <span id="cb6-15"><a href="#cb6-15" tabindex="-1"></a>      <span class="at">maxNumberOfRawDatasetsPerStage =</span> <span class="dv">0</span>, </span>
 <span id="cb6-16"><a href="#cb6-16" tabindex="-1"></a>      <span class="at">seed =</span> <span class="dv">12345</span>)</span></code></pre></div>
 <pre><code>##                                             
-## Group-sequential trial with 3 stages        
+## Group-sequential design with 3 stages       
 ## Overall power: 0.033                        
 ## Expected # events: 21.6                     
 ## Expected # dropouts: 1.2                    

@@ -22,7 +22,7 @@ lrstat(
   rho1 = 0,
   rho2 = 0,
   numSubintervals = 300L,
-  predictEventOnly = 0L
+  predictTarget = 2L
 )
 }
 \arguments{
@@ -35,15 +35,16 @@ treatment versus control. Defaults to 1 for superiority test.}
 \item{allocationRatioPlanned}{Allocation ratio for the active treatment
 versus control. Defaults to 1 for equal randomization.}
 
-\item{accrualTime}{Accrual time intervals. Must start with 0, e.g.,
+\item{accrualTime}{A vector that specifies the starting time of
+piecewise Poisson enrollment time intervals. Must start with 0, e.g.,
 \code{c(0, 3)} breaks the time axis into 2 accrual intervals:
 [0, 3) and [3, Inf).}
 
 \item{accrualIntensity}{A vector of accrual intensities. One for
 each accrual time interval.}
 
-\item{piecewiseSurvivalTime}{A vector that specifies the time intervals for
-the piecewise exponential survival distribution. Must start with 0, e.g.,
+\item{piecewiseSurvivalTime}{A vector that specifies the starting time of
+piecewise exponential survival time intervals. Must start with 0, e.g.,
 \code{c(0, 6)} breaks the time axis into 2 event intervals:
 [0, 6) and [6, Inf).
 Defaults to 0 for exponential distribution.}
@@ -74,34 +75,64 @@ by stratum for the control group.}
 \item{fixedFollowup}{Whether a fixed follow-up design is used.
 Defaults to 0 for variable follow-up.}
 
-\item{rho1}{The first parameter of the Fleming-Harrington family of 
+\item{rho1}{The first parameter of the Fleming-Harrington family of
 weighted log-rank test. Defaults to 0 for conventional log-rank test.}
 
-\item{rho2}{The second parameter of the Fleming-Harrington family of 
+\item{rho2}{The second parameter of the Fleming-Harrington family of
 weighted log-rank test. Defaults to 0 for conventional log-rank test.}
 
 \item{numSubintervals}{Number of sub-intervals to approximate the mean
 and variance of the weighted log-rank test score statistic.
 Defaults to 300. Specify a larger number for better approximation.}
 
-\item{predictEventOnly}{Whether to predict the number of events only.
-Defaults to 0 for obtaining log-rank score statistic mean and variance.
-Set \code{predictEventOnly = 1} for predicting the number of events only.
-Set \code{predictEventOnly = 2} for predicting the number of events,
-calculating the mean and variance of log-rank score statistic, and
-calculating the estimated hazard ratio and variance of log hazard ratio.}
+\item{predictTarget}{The target of prediction.
+Set \code{predictTarget = 1} to predict the number of events only.
+Set \code{predictTarget = 2} (default) to predict the umber of events
+and log-rank score statistic mean and variance.
+Set \code{predictTarget = 3} to predict the number of events,
+log-rank score statistic mean and variance, and
+hazard ratio and variance of log hazard ratio.}
 }
 \value{
-A data frame of the number of subjects enrolled, the number of
-subjects having an event overall and in each group, the number of subjects
-who drop out overall and in each group, the mean and variance of weighted
-log-rank score statistic, the estimated hazard ratio from weighted Cox
-regression, and variance of the log hazard ratio estimate at the
-specified calendar times.
+A data frame containing the following variables if
+\code{predictTarget = 1}:
+\itemize{
+\item \code{time}: The analysis time since trial start.
+\item \code{subjects}: The number of enrolled subjects.
+\item \code{nevents}: The total number of events.
+\item \code{nevents1}: The number of events in the active treatment group.
+\item \code{nevents2}: The number of events in the control group.
+\item \code{ndropouts}: The total number of dropouts.
+\item \code{ndropouts1}: The number of events for the active treatment group.
+\item \code{ndropouts2}: The number of events for the control group.
+\item \code{nfmax}: The total number of subjects reaching maximum follow-up.
+\item \code{nfmax1}: The number of subjects reaching maximum follow-up in
+the active treatment group.
+\item \code{nfmax2}: The number of subjects reaching maximum follow-up in
+the control group.
+}
+
+If \code{predictTarget = 2}, the following variables will also
+be included:
+\itemize{
+\item \code{uscore}: The numerator of the log-rank test statistic.
+\item \code{vscore}: The variance of the log-rank score test statistic.
+\item \code{logRankZ}: The log-rank test statistic on the Z-scale.
+\item \code{hazardRatioH0}: The hazard ratio under the null hypothesis.
+}
+
+Furthermore, if \code{predictTarget = 3}, the following additional
+variables will also be included:
+\itemize{
+\item \code{HR}: The average hazard ratio from weighted Cox regression.
+\item \code{vlogHR}: The variance of log hazard ratio.
+\item \code{zlogHR}: The Z-statistic for log hazard ratio.
+}
 }
 \description{
-Obtains the number of subjects accrued, number of events and
-number of dropouts in each group, mean and variance of weighted log-rank
+Obtains the number of subjects accrued, number of events,
+number of dropouts, and number of subjects reaching the maximum
+follow-up in each group, mean and variance of weighted log-rank
 score statistic, estimated hazard ratio from weighted Cox regression
 and variance of log hazard ratio estimate at given calendar times.
 }
@@ -121,4 +152,7 @@ lrstat(time = c(22, 40), allocationRatioPlanned = 1,
        accrualDuration = 22,
        followupTime = 18, fixedFollowup = FALSE)
 
+}
+\author{
+Kaifeng Lu, \email{kaifenglu@gmail.com}
 }

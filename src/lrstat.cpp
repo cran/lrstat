@@ -16,6 +16,8 @@ using namespace Rcpp;
 //' @return A vector of total number of subjects enrolled by the
 //' specified calendar times.
 //'
+//' @author Kaifeng Lu, \email{kaifenglu@@gmail.com}
+//' 
 //' @examples
 //' # Example 1: Uniform enrollment with 20 patients per month for 12 months.
 //'
@@ -69,15 +71,17 @@ NumericVector accrual(const NumericVector& time = NA_REAL,
 //' @inheritParams param_accrualTime
 //' @inheritParams param_accrualIntensity
 //'
-//' @return The vector of accrual duration.
+//' @return A vector of accrual durations.
+//'
+//' @author Kaifeng Lu, \email{kaifenglu@@gmail.com}
 //'
 //' @examples
-//' getAccrualDuration(nsubjects = c(20, 150), accrualTime = c(0, 3),
-//'                    accrualIntensity = c(10, 20))
+//' getAccrualDurationFromN(nsubjects = c(20, 150), accrualTime = c(0, 3),
+//'                         accrualIntensity = c(10, 20))
 //'
 //' @export
 // [[Rcpp::export]]
-NumericVector getAccrualDuration(
+NumericVector getAccrualDurationFromN(
     const NumericVector& nsubjects = NA_REAL,
     const NumericVector& accrualTime = 0,
     const NumericVector& accrualIntensity = NA_REAL) {
@@ -116,6 +120,8 @@ NumericVector getAccrualDuration(
 //' specified piecewise exponential survival and dropout distributions.
 //'
 //' @keywords internal
+//'
+//' @author Kaifeng Lu, \email{kaifenglu@@gmail.com}
 //' 
 //' @examples
 //' # Piecewise exponential survival with hazard 0.0533 in the first 6 months,
@@ -177,6 +183,8 @@ NumericVector patrisk(const NumericVector& time = NA_REAL,
 //' specified piecewise exponential survival and dropout distributions.
 //'
 //' @keywords internal
+//'
+//' @author Kaifeng Lu, \email{kaifenglu@@gmail.com}
 //'
 //' @examples
 //' # Piecewise exponential survival with hazard 0.0533 in the first 6 months,
@@ -244,6 +252,8 @@ NumericVector pevent(const NumericVector& time = NA_REAL,
 //'
 //' @keywords internal
 //'
+//' @author Kaifeng Lu, \email{kaifenglu@@gmail.com}
+//'
 //' @examples
 //' # Piecewise exponential survival with hazard 0.0533 in the first 6 months,
 //' # and hazard 0.0309 thereafter, and 5% dropout by the end of 1 year.
@@ -308,6 +318,8 @@ double hd(const int j = NA_INTEGER,
 //' piecewise exponential survival and dropout distributions.
 //'
 //' @keywords internal
+//'
+//' @author Kaifeng Lu, \email{kaifenglu@@gmail.com}
 //'
 //' @examples
 //' # Piecewise exponential survival with hazard 0.0533 in the first 6 months,
@@ -374,6 +386,8 @@ double pd(const double t1 = NA_REAL,
 //' \code{time >= u2}.
 //'
 //' @keywords internal
+//'
+//' @author Kaifeng Lu, \email{kaifenglu@@gmail.com}
 //'
 //' @examples
 //' # Piecewise accrual, 10 patients per month for the first 3 months, and
@@ -450,6 +464,8 @@ NumericVector ad(const NumericVector& time = NA_REAL,
 //' analysis times (row) for each treatment group (column).
 //'
 //' @keywords internal
+//'
+//' @author Kaifeng Lu, \email{kaifenglu@@gmail.com}
 //' 
 //' @examples
 //' # Piecewise accrual, piecewise exponential survivals, and 5% dropout by
@@ -522,6 +538,8 @@ NumericMatrix natrisk(const NumericVector& time = NA_REAL,
 //' analysis times (row) for each treatment group (column).
 //'
 //' @keywords internal
+//'
+//' @author Kaifeng Lu, \email{kaifenglu@@gmail.com}
 //'
 //' @examples
 //' # Piecewise accrual, piecewise exponential survivals, and 5% dropout by
@@ -607,6 +625,8 @@ NumericMatrix nevent(const NumericVector& time = NA_REAL,
 //' calendar times (row) for each treatment group (column).
 //'
 //' @keywords internal
+//'
+//' @author Kaifeng Lu, \email{kaifenglu@@gmail.com}
 //'
 //' @examples
 //' # Piecewise accrual, piecewise exponential survivals, and 5% dropout by
@@ -699,13 +719,49 @@ NumericMatrix nevent2(const NumericVector& time = NA_REAL,
 //'  Defaults to 0 for obtaining log-rank test score statistic mean
 //'  and variance.
 //'
-//' @return A data frame of the number of subjects enrolled, the number of
-//' subjects having an event overall and in each group, the number of
-//' subjects who drop out overall and in each group, the mean and
-//' variance of weighted log-rank score statistic at the specified
-//' calendar time by stratum.
+//' @return A data frame of the following variables if 
+//' \code{predictEventOnly = 1}:
+//' 
+//' * \code{stratum}: The stratum number.
+//' 
+//' * \code{time}: The analysis time since trial start.
+//' 
+//' * \code{subjects}: The number of enrolled subjects.
+//' 
+//' * \code{nevents}: The total number of events. 
+//' 
+//' * \code{nevents1}: The number of events in the active treatment group.
+//' 
+//' * \code{nevents2}: The number of events in the control group.
+//' 
+//' * \code{ndropouts}: The total number of dropouts.
+//' 
+//' * \code{ndropouts1}: The number of events for the active treatment group.
+//' 
+//' * \code{ndropouts2}: The number of events for the control group.
+//' 
+//' * \code{nfmax}: The total number of subjects reaching maximum follow-up.
+//' 
+//' * \code{nfmax1}: The number of subjects reaching maximum follow-up in 
+//' the active treatment group. 
+//' 
+//' * \code{nfmax2}: The number of subjects reaching maximum follow-up in 
+//' the control group. 
+//' 
+//' If \code{predictEventOnly = 0}, the following variables will also 
+//' be included:
+//' 
+//' * \code{uscore}: The numerator of the weighted log-rank test statistic.
+//' 
+//' * \code{vscore}: The variance of the weighted log-rank score statistic 
+//' with weight squared.
+//' 
+//' * \code{iscore}: The Fisher information of the weighted log-rank score 
+//' statistic. 
 //'
 //' @keywords internal
+//'
+//' @author Kaifeng Lu, \email{kaifenglu@@gmail.com}
 //'
 //' @examples
 //' # Piecewise accrual, piecewise exponential survivals, and 5% dropout by
@@ -743,7 +799,7 @@ DataFrame lrstat1(const double time = NA_REAL,
                   const double rho1 = 0,
                   const double rho2 = 0,
                   const int numSubintervals = 300,
-                  const int predictEventOnly = 0) {
+                  const bool predictEventOnly = 0) {
   
   int nstrata = stratumFraction.size();
   int nintervals = piecewiseSurvivalTime.size();
@@ -832,6 +888,11 @@ DataFrame lrstat1(const double time = NA_REAL,
   NumericVector times(nstrata);
   DataFrame df;
   
+  double phi = allocationRatioPlanned/(1+allocationRatioPlanned);
+  NumericVector maxFU = NumericVector::create(maxFollowupTime);
+  NumericVector s2 = NumericVector::create(s - maxFollowupTime);
+  double a2 = accrual(s2, accrualTime, accrualIntensity, accrualDuration)[0];
+  NumericVector nfmax1(nstrata), nfmax2(nstrata), nfmax(nstrata);
   
   for (h=0; h<nstrata; h++) {
     frac = stratumFraction[h];
@@ -840,7 +901,6 @@ DataFrame lrstat1(const double time = NA_REAL,
     lam2 = lambda2x[l];
     gam1 = gamma1x[l];
     gam2 = gamma2x[l];
-    
     
     // number of events in the stratum at the specified calendar time
     x = nevent2(s1, allocationRatioPlanned, accrualTime,
@@ -858,9 +918,17 @@ DataFrame lrstat1(const double time = NA_REAL,
     nevents(h, _) = x.row(0);
     ndropouts(h, _) = y.row(0);
     
+    // obtain number of subjects censored due to reaching the max follow-up
+    double ncom = frac*a2;
+    double p1 = patrisk(maxFU, piecewiseSurvivalTime, lam1, gam1)[0];
+    double p2 = patrisk(maxFU, piecewiseSurvivalTime, lam2, gam2)[0];
+    nfmax1[h] = phi*ncom*p1;
+    nfmax2[h] = (1-phi)*ncom*p2;
+    nfmax[h] = nfmax1[h] + nfmax2[h];
+    
     // approximate the mean and variance of weighted log-rank test
     // score statistic
-    if (predictEventOnly != 1) {
+    if (!predictEventOnly) {
       
       // modify the study design at the calendar time of interest
       accrualDuration0 = std::min(s, accrualDuration);
@@ -933,7 +1001,7 @@ DataFrame lrstat1(const double time = NA_REAL,
   
   
   // output the requested information
-  if (predictEventOnly == 1) {
+  if (predictEventOnly) {
     df = DataFrame::create(_["stratum"] = stratum,
                            _["time"] = times,
                            _["subjects"] = nsubjects,
@@ -942,7 +1010,10 @@ DataFrame lrstat1(const double time = NA_REAL,
                            _["nevents2"] = nevents2,
                            _["ndropouts"] = ndropoutst,
                            _["ndropouts1"] = ndropouts1,
-                           _["ndropouts2"] = ndropouts2);
+                           _["ndropouts2"] = ndropouts2,
+                           _["nfmax"] = nfmax,
+                           _["nfmax1"] = nfmax1,
+                           _["nfmax2"] = nfmax2);
   } else {
     df = DataFrame::create(_["stratum"] = stratum,
                            _["time"] = times,
@@ -953,6 +1024,9 @@ DataFrame lrstat1(const double time = NA_REAL,
                            _["ndropouts"] = ndropoutst,
                            _["ndropouts1"] = ndropouts1,
                            _["ndropouts2"] = ndropouts2,
+                           _["nfmax"] = nfmax,
+                           _["nfmax1"] = nfmax1,
+                           _["nfmax2"] = nfmax2,
                            _["uscore"] = uscore,
                            _["vscore"] = vscore,
                            _["iscore"] = iscore);
@@ -963,8 +1037,9 @@ DataFrame lrstat1(const double time = NA_REAL,
 
 
 //' @title Number of subjects having an event and log-rank statistics
-//' @description Obtains the number of subjects accrued, number of events and
-//' number of dropouts in each group, mean and variance of weighted log-rank
+//' @description Obtains the number of subjects accrued, number of events,
+//' number of dropouts, and number of subjects reaching the maximum 
+//' follow-up in each group, mean and variance of weighted log-rank
 //' score statistic, estimated hazard ratio from weighted Cox regression
 //' and variance of log hazard ratio estimate at given calendar times.
 //'
@@ -986,19 +1061,62 @@ DataFrame lrstat1(const double time = NA_REAL,
 //' @inheritParams param_rho1
 //' @inheritParams param_rho2
 //' @inheritParams param_numSubintervals
-//' @param predictEventOnly Whether to predict the number of events only.
-//' Defaults to 0 for obtaining log-rank score statistic mean and variance.
-//' Set \code{predictEventOnly = 1} for predicting the number of events only.
-//' Set \code{predictEventOnly = 2} for predicting the number of events,
-//' calculating the mean and variance of log-rank score statistic, and
-//' calculating the estimated hazard ratio and variance of log hazard ratio.
+//' @param predictTarget The target of prediction. 
+//' Set \code{predictTarget = 1} to predict the number of events only.
+//' Set \code{predictTarget = 2} (default) to predict the umber of events 
+//' and log-rank score statistic mean and variance.
+//' Set \code{predictTarget = 3} to predict the number of events,
+//' log-rank score statistic mean and variance, and
+//' hazard ratio and variance of log hazard ratio.
 //'
-//' @return A data frame of the number of subjects enrolled, the number of
-//' subjects having an event overall and in each group, the number of subjects
-//' who drop out overall and in each group, the mean and variance of weighted
-//' log-rank score statistic, the estimated hazard ratio from weighted Cox
-//' regression, and variance of the log hazard ratio estimate at the
-//' specified calendar times.
+//' @return A data frame containing the following variables if 
+//' \code{predictTarget = 1}: 
+//' 
+//' * \code{time}: The analysis time since trial start.
+//' 
+//' * \code{subjects}: The number of enrolled subjects.
+//' 
+//' * \code{nevents}: The total number of events. 
+//' 
+//' * \code{nevents1}: The number of events in the active treatment group.
+//' 
+//' * \code{nevents2}: The number of events in the control group.
+//' 
+//' * \code{ndropouts}: The total number of dropouts.
+//' 
+//' * \code{ndropouts1}: The number of events for the active treatment group.
+//' 
+//' * \code{ndropouts2}: The number of events for the control group.
+//' 
+//' * \code{nfmax}: The total number of subjects reaching maximum follow-up.
+//' 
+//' * \code{nfmax1}: The number of subjects reaching maximum follow-up in 
+//' the active treatment group. 
+//' 
+//' * \code{nfmax2}: The number of subjects reaching maximum follow-up in 
+//' the control group. 
+//' 
+//' If \code{predictTarget = 2}, the following variables will also 
+//' be included:
+//' 
+//' * \code{uscore}: The numerator of the log-rank test statistic.
+//' 
+//' * \code{vscore}: The variance of the log-rank score test statistic.
+//' 
+//' * \code{logRankZ}: The log-rank test statistic on the Z-scale. 
+//' 
+//' * \code{hazardRatioH0}: The hazard ratio under the null hypothesis. 
+//' 
+//' Furthermore, if \code{predictTarget = 3}, the following additional 
+//' variables will also be included:
+//' 
+//' * \code{HR}: The average hazard ratio from weighted Cox regression.
+//' 
+//' * \code{vlogHR}: The variance of log hazard ratio.
+//' 
+//' * \code{zlogHR}: The Z-statistic for log hazard ratio. 
+//'
+//' @author Kaifeng Lu, \email{kaifenglu@@gmail.com}
 //'
 //' @examples
 //' # Piecewise accrual, piecewise exponential survivals, and 5% dropout by
@@ -1035,7 +1153,7 @@ DataFrame lrstat(const NumericVector& time = NA_REAL,
                  const double rho1 = 0,
                  const double rho2 = 0,
                  const int numSubintervals = 300,
-                 const int predictEventOnly = 0) {
+                 const int predictTarget = 2) {
   
   int nstrata = stratumFraction.size();
   int nintervals = piecewiseSurvivalTime.size();
@@ -1181,8 +1299,15 @@ DataFrame lrstat(const NumericVector& time = NA_REAL,
   
   NumericVector subjects(k), nevents(k), nevents1(k), nevents2(k);
   NumericVector ndropouts(k), ndropouts1(k), ndropouts2(k);
+  NumericVector nfmax(k), nfmax1(k), nfmax2(k);
   NumericVector uscore(k), vscore(k), logRankZ(k);
   NumericVector logHR(k), HR(k), vlogHR(k), zlogHR(k);
+  
+  if (predictTarget != 1 && predictTarget != 2 && predictTarget != 3) {
+    stop("predictTarget must be equal to 1, 2, or 3");
+  }
+  
+  bool predictEventOnly = predictTarget == 1;
   
   for (int j=0; j<k; j++) {
     df = lrstat1(time[j], hazardRatioH0, allocationRatioPlanned,
@@ -1199,17 +1324,20 @@ DataFrame lrstat(const NumericVector& time = NA_REAL,
     ndropouts[j] = sum(NumericVector(df[6]));
     ndropouts1[j] = sum(NumericVector(df[7]));
     ndropouts2[j] = sum(NumericVector(df[8]));
+    nfmax[j] = sum(NumericVector(df[9]));
+    nfmax1[j] = sum(NumericVector(df[10]));
+    nfmax2[j] = sum(NumericVector(df[11]));
     
-    if (predictEventOnly != 1) {
-      uscore[j] = sum(NumericVector(df[9]));
-      vscore[j] = sum(NumericVector(df[10]));
+    if (predictTarget > 1) {
+      uscore[j] = sum(NumericVector(df[12]));
+      vscore[j] = sum(NumericVector(df[13]));
       logRankZ[j] = uscore[j]/sqrt(vscore[j]);
     }
   }
   
   
   // solve for weighted Cox regression estimator
-  if (predictEventOnly == 2) {
+  if (predictTarget == 3) {
     double time1 = 0;
     
     auto g = [&time1, allocationRatioPlanned, accrualTime, accrualIntensity,
@@ -1229,7 +1357,7 @@ DataFrame lrstat(const NumericVector& time = NA_REAL,
                                        rho1, rho2, numSubintervals, 
                                        predictEventOnly);
                 
-                return sum(NumericVector(df[9]));
+                return sum(NumericVector(df[12]));
               };
     
     
@@ -1245,8 +1373,8 @@ DataFrame lrstat(const NumericVector& time = NA_REAL,
                              accrualDuration, followupTime, fixedFollowup,
                              rho1, rho2, numSubintervals, predictEventOnly);
       
-      double vscore1 = sum(NumericVector(df[10]));
-      double iscore1 = sum(NumericVector(df[11]));
+      double vscore1 = sum(NumericVector(df[13]));
+      double iscore1 = sum(NumericVector(df[14]));
       
       vlogHR[j] = vscore1/(iscore1*iscore1);
       zlogHR[j] = (logHR[j] - log(hazardRatioH0))/sqrt(vlogHR[j]);
@@ -1260,6 +1388,9 @@ DataFrame lrstat(const NumericVector& time = NA_REAL,
                            _["ndropouts"] = ndropouts,
                            _["ndropouts1"] = ndropouts1,
                            _["ndropouts2"] = ndropouts2,
+                           _["nfmax"] = nfmax,
+                           _["nfmax1"] = nfmax1,
+                           _["nfmax2"] = nfmax2,
                            _["uscore"] = uscore,
                            _["vscore"] = vscore,
                            _["logRankZ"] = logRankZ,
@@ -1267,7 +1398,7 @@ DataFrame lrstat(const NumericVector& time = NA_REAL,
                            _["HR"] = HR,
                            _["vlogHR"] = vlogHR,
                            _["zlogHR"] = zlogHR);
-  } else if (predictEventOnly == 1) {
+  } else if (predictTarget == 1) {
     df = DataFrame::create(_["time"] = time,
                            _["subjects"] = subjects,
                            _["nevents"] = nevents,
@@ -1275,7 +1406,10 @@ DataFrame lrstat(const NumericVector& time = NA_REAL,
                            _["nevents2"] = nevents2,
                            _["ndropouts"] = ndropouts,
                            _["ndropouts1"] = ndropouts1,
-                           _["ndropouts2"] = ndropouts2);
+                           _["ndropouts2"] = ndropouts2,
+                           _["nfmax"] = nfmax,
+                           _["nfmax1"] = nfmax1,
+                           _["nfmax2"] = nfmax2);
   } else {
     df = DataFrame::create(_["time"] = time,
                            _["subjects"] = subjects,
@@ -1285,6 +1419,9 @@ DataFrame lrstat(const NumericVector& time = NA_REAL,
                            _["ndropouts"] = ndropouts,
                            _["ndropouts1"] = ndropouts1,
                            _["ndropouts2"] = ndropouts2,
+                           _["nfmax"] = nfmax,
+                           _["nfmax1"] = nfmax1,
+                           _["nfmax2"] = nfmax2,
                            _["uscore"] = uscore,
                            _["vscore"] = vscore,
                            _["logRankZ"] = logRankZ,
@@ -1295,7 +1432,6 @@ DataFrame lrstat(const NumericVector& time = NA_REAL,
   return df;
   
 }
-
 
 
 //' @title Kaplan-Meier estimate of milestone survival
@@ -1321,11 +1457,33 @@ DataFrame lrstat(const NumericVector& time = NA_REAL,
 //' @inheritParams param_fixedFollowup
 //' @inheritParams param_numSubintervals
 //'
-//' @return A data frame of the number of subjects, survival probability 
-//' and variance estimate in each group, difference in survival probability 
-//' and variance estimate at the specified time by stratum.
+//' @return A data frame containing the following variables: 
+//' 
+//' * \code{stratum}: The stratum.
+//' 
+//' * \code{time}: The calendar time since trial start.
+//' 
+//' * \code{subjects}: The enrolled number of subjects. 
+//' 
+//' * \code{milestone}: The milestone time relative to randomization. 
+//' 
+//' * \code{surv1}: The milestone survival probability for the treatment group.
+//' 
+//' * \code{surv2}: The milestone survival probability for the control group.
+//' 
+//' * \code{vsurv1}: The variance for \code{surv1}.
+//' 
+//' * \code{vsurv2}: The variance for \code{surv2}.
+//' 
+//' * \code{survdiff}: The difference in milestone survival probabilities, 
+//' i.e., \code{surv1 - surv2}.
+//' 
+//' * \code{vsurvdiff}: The variance for \code{survdiff}.
+//' 
 //'
 //' @keywords internal
+//'
+//' @author Kaifeng Lu, \email{kaifenglu@@gmail.com}
 //'
 //' @examples
 //' # Piecewise accrual, piecewise exponential survivals, and 5% dropout by
@@ -1558,10 +1716,32 @@ DataFrame kmest1(const double time = NA_REAL,
 //' @inheritParams param_fixedFollowup
 //' @inheritParams param_numSubintervals
 //' 
-//' @return A data frame of the number of subjects enrolled, stratified 
-//'   estimate of milestone survival for each treatment group, 
-//'   difference in milestone survival, the associated variances, 
-//'   and the Z test statistic at the specified calendar times.
+//' @return A data frame containing the following variables: 
+//' 
+//' * \code{time}: The calendar time at which to calculate the milestone 
+//' survival.
+//' 
+//' * \code{subjects}: The enrolled number of subjects. 
+//' 
+//' * \code{milestone}: The milestone time relative to randomization. 
+//' 
+//' * \code{surv1}: The milestone survival probability for the treatment group.
+//' 
+//' * \code{surv2}: The milestone survival probability for the control group.
+//' 
+//' * \code{vsurv1}: The variance for \code{surv1}.
+//' 
+//' * \code{vsurv2}: The variance for \code{surv2}.
+//' 
+//' * \code{survdiff}: The difference in milestone survival probabilities, 
+//' i.e., \code{surv1 - surv2}.
+//' 
+//' * \code{vsurvdiff}: The variance for \code{survdiff}.
+//' 
+//' * \code{survdiffZ}: The Z-statistic value, i.e., 
+//' \code{survdiff/sqrt(vsurvdiff)}.
+//'
+//' @author Kaifeng Lu, \email{kaifenglu@@gmail.com}
 //'
 //' @examples
 //' # Piecewise accrual, piecewise exponential survivals, and 5% dropout by
@@ -1775,7 +1955,6 @@ DataFrame kmest(const NumericVector& time = NA_REAL,
 }
 
 
-
 //' @title Calendar times for target number of events
 //' @description Obtains the calendar times to reach the target number of
 //' subjects having an event.
@@ -1796,6 +1975,8 @@ DataFrame kmest(const NumericVector& time = NA_REAL,
 //'
 //' @return A vector of calendar times expected to yield the target
 //' number of events.
+//'
+//' @author Kaifeng Lu, \email{kaifenglu@@gmail.com}
 //'
 //' @examples
 //' # Piecewise accrual, piecewise exponential survivals, and 5% dropout by
@@ -1988,8 +2169,19 @@ NumericVector caltime(const NumericVector& nevents = NA_REAL,
 //' @param interval The interval to search for the solution of
 //'   accrualDuration. Defaults to \code{c(0.001, 240)}.
 //' 
-//' @return A data frame of enrollment duration, sample size, and study 
-//' duration to yield the target number of events.
+//' @return A data frame of the following variables: 
+//' 
+//' * \code{nevents}: The target number of events.
+//' 
+//' * \code{fixedFollowup}: Whether a fixed follow-up design is used.
+//' 
+//' * \code{accrualDuration}: The accrual duration.
+//' 
+//' * \code{subjects}: The total number of subjects.
+//' 
+//' * \code{studyDuration}: The study duration. 
+//'
+//' @author Kaifeng Lu, \email{kaifenglu@@gmail.com}
 //'
 //' @examples
 //' # Piecewise accrual, piecewise exponential survivals, and 5% dropout by
@@ -2294,7 +2486,6 @@ NumericVector getCriticalValues(
     const int numSubintervals = 300,
     const NumericVector& spendingTime = NA_REAL) {
   
-  NumericVector criticalValues(kMax);
   NumericVector st = clone(spendingTime);
   
   
@@ -2329,9 +2520,9 @@ NumericVector getCriticalValues(
               piecewiseSurvivalTime, stratumFraction,
               lambda1, lambda2, gamma1, gamma2,
               accrualDuration, followupTime, fixedFollowup,
-              rho1, rho2, numSubintervals, 0);
+              rho1, rho2, numSubintervals, 2);
   
-  NumericVector vscore = NumericVector(lr[9]);
+  NumericVector vscore = NumericVector(lr[12]);
   
   NumericVector theta(kMax); // mean values under H0, initialized to zero
   
@@ -2347,102 +2538,8 @@ NumericVector getCriticalValues(
     c = std::tolower(c);
   });
   
-  double asfpar = parameterAlphaSpending;
-  
-  if (asf == "none") {
-    for (int i=0; i<kMax-1; i++) {
-      criticalValues[i] = 6.0;
-    }
-    criticalValues[kMax-1] = R::qnorm(1-alpha, 0, 1, 1, 0);
-  } else if (asf == "of" || asf == "p" || asf == "wt") {
-    double Delta;
-    if (asf == "of") {
-      Delta = 0;
-    } else if (asf == "p") {
-      Delta = 0.5;
-    } else {
-      Delta = asfpar;
-    }
-    
-    auto f = [kMax, alpha, Delta, theta, vscore, t,
-              efficacyStopping] (double aval)->double {
-                NumericVector u(kMax), l(kMax);
-                for (int i=0; i<kMax; i++) {
-                  u[i] = aval*pow(t[i], Delta-0.5);
-                  if (!efficacyStopping[i]) u[i] = 6.0;
-                  l[i] = -6.0;
-                }
-                
-                List probs = exitprobcpp(u, l, theta, vscore);
-                NumericVector pu = NumericVector(probs[0]);
-                return sum(pu) - alpha;
-              };
-    
-    double cwt = brent(f, 0, 10, 1e-6);
-    for (int i=0; i<kMax; i++) {
-      criticalValues[i] = cwt*pow(t[i], Delta-0.5);
-      if (!efficacyStopping[i]) criticalValues[i] = 6.0;
-    }
-  } else if (asf == "sfof" || asf == "sfp" || asf == "sfkd" ||
-    asf == "sfhsd" || asf == "user") {
-    
-    // stage 1
-    double cumAlphaSpent;
-    if (asf == "user") {
-      cumAlphaSpent = userAlphaSpending[0];
-    } else {
-      cumAlphaSpent = errorSpentcpp(st[0], alpha, asf, asfpar);
-    }
-    
-    if (!efficacyStopping[0]) {
-      criticalValues[0] = 6.0;
-    } else {
-      criticalValues[0] = R::qnorm(1 - cumAlphaSpent, 0, 1, 1, 0);
-    }
-    
-    
-    // lambda expression for finding the critical value at stage k
-    int k=0;
-    auto f = [&k, &cumAlphaSpent, &criticalValues,
-              theta, vscore](double aval)->double {
-                NumericVector u(k+1), l(k+1);
-                for (int i=0; i<k; i++) {
-                  u[i] = criticalValues[i];
-                  l[i] = -6.0;
-                }
-                u[k] = aval;
-                l[k] = -6.0;
-                
-                IntegerVector idx = Range(0,k);
-                List probs = exitprobcpp(u, l, theta[idx], vscore[idx]);
-                double cpu = sum(NumericVector(probs[0]));
-                return cpu - cumAlphaSpent;
-              };
-    
-    // subsequent stages
-    for (k=1; k<kMax; k++) {
-      if (asf == "user") {
-        cumAlphaSpent = userAlphaSpending[k];
-      } else {
-        cumAlphaSpent = errorSpentcpp(st[k], alpha, asf, asfpar);
-      }
-      
-      if (!efficacyStopping[k]) {
-        criticalValues[k] = 6.0;
-      } else {
-        if (f(6) > 0) { // no alpha spent at current visit
-          criticalValues[k] = 6.0;
-        } else {
-          criticalValues[k] = brent(f, 0, 6, 1e-6);
-        }
-      }
-    }
-  } else {
-    stop("Invalid type of alpha spending");
-  }
-  
-  return criticalValues;
-  
+  return getBoundcpp(kMax, t, alpha, asf, parameterAlphaSpending, 
+                     userAlphaSpending, st, efficacyStopping);
 }
 
 
@@ -2498,9 +2595,9 @@ NumericVector getCumAlphaSpent(
               piecewiseSurvivalTime, stratumFraction,
               lambda1, lambda2, gamma1, gamma2,
               accrualDuration, followupTime, fixedFollowup,
-              rho1, rho2, numSubintervals, 0);
+              rho1, rho2, numSubintervals, 2);
   
-  NumericVector vscore = NumericVector(lr[9]);
+  NumericVector vscore = NumericVector(lr[12]);
   
   NumericVector theta(kMax); // mean values under H0, initialized to zero
   NumericVector l = rep(-6.0, kMax);
@@ -2509,7 +2606,6 @@ NumericVector getCumAlphaSpent(
   NumericVector pu = NumericVector(probs[0]);
   return cumsum(pu);
 }
-
 
 
 //' @title Log-rank test power
@@ -2560,31 +2656,149 @@ NumericVector getCumAlphaSpent(
 //'   and \code{followupTime}.
 //' 
 //'   
-//' @return A list of S3 class \code{lrpower} with 3 components:
+//' @return An S3 class \code{lrpower} object with 4 components:
 //'
-//' * \code{overallResults} containing the overall rejection probability,
-//' overall significance level, maximum and expected number of events,
-//' maximum and expected number of dropouts, total and expected number
-//' of subjects, maximum and expected study duration, along with
-//' input parameters including accrual duration, follow-up duration,
-//' whether a fixed follow-up is used, parameters for the FH weights,
-//' allocation ratio, number of stages, and hazard ratio under H0.
+//'* \code{overallResults}: A data frame containing the following variables: 
 //'
-//' * \code{byStageResults} containing information rates, efficacy
-//' and futility boundaries on the Z-scale, probability for efficacy
-//' and futility stopping at the stage, cumulative probability for
-//' efficacy and futility stopping by the stage, cumulative alpha spent,
-//' expected number of events, number of dropouts, number of subjects,
-//' and expected study time, efficacy and futility boundaries on
-//' the HR scale and on the p-value scale, information for weighted
-//' log-rank test, hazard ratio from weighted Cox regression, and
-//' whether efficacy and futility stopping are allowed by stage.
+//'   - \code{overallReject}: The overall rejection probability.
+//'   
+//'   - \code{alpha}: The overall significance level.
+//'   
+//'   - \code{numberOfEvents}: The total number of events. 
+//'   
+//'   - \code{numberOfDropouts}: The total number of dropouts. 
+//'   
+//'   - \code{numbeOfSubjects}: The total number of subjects.
+//'   
+//'   - \code{studyDuration}: The total study duration. 
+//'   
+//'   - \code{expectedNumberOfEvents}: The expected number of events.
+//'   
+//'   - \code{expectedNumberOfDropouts}: The expected number of dropouts. 
+//'   
+//'   - \code{expectedNumberOfSubjects}: The expected number of subjects.
+//'   
+//'   - \code{expectedStudyDuration}: The expected study duration.
+//'   
+//'   - \code{accrualDuration}: The accrual duration.
+//'   
+//'   - \code{followupTime}: The follow-up duration. 
+//'   
+//'   - \code{fixedFollowup}: Whether a fixed follow-up design is used.
+//'   
+//'   - \code{rho1}: The first parameter of the Fleming-Harrington family 
+//'   of weighted log-rank test.
+//'   
+//'   - \code{rho2}: The second parameter of the Fleming-Harrington family 
+//'   of weighted log-rank test.
+//'   
+//'   - \code{allocationRatioPlanned}: Allocation ratio for the active 
+//'   treatment versus control. 
+//'   
+//'   - \code{kMax}: The number of stages.
+//'   
+//'   - \code{hazardRatioH0}: The hazard ratio under the null hypothesis.
+//'   
+//'   - \code{etimateHazardRatio}: Whether to estimate the hazard ratio.
+//'   
+//'   - \code{typeOfComputation}: The type of computation, 
+//'   either "direct" for the direct approximation method, 
+//'   or "schoenfeld" for the Schoenfeld method.
 //'
-//' * \code{settings} containing input parameters such as
-//' alpha and beta spending function and parameter values,
-//' accrual time, accrual intensity, piecewise survival time, stratum
-//' fraction, and hazard rates for survival and dropout by group.
+//' * \code{byStageResults}: A data frame containing the following variables:
+//' 
+//'   - \code{informationRates}: The information rates.
+//'   
+//'   - \code{efficacyBounds}: The efficacy boundaries on the Z-scale.
+//'   
+//'   - \code{futilityBounds}: The futility boundaries on the Z-scale.
+//'   
+//'   - \code{rejectPerStage}: The probability for efficacy stopping.
+//'   
+//'   - \code{futilityPerStage}: The probability for futility stopping.
+//'   
+//'   - \code{cumulativeRejection}: The cumulative probability for efficacy 
+//'   stopping.
+//'   
+//'   - \code{cumulativeFutility}: The cumulative probability for futility 
+//'   stopping.
+//'   
+//'   - \code{cumulativeAlphaSpent}: The cumulative alpha spent.
+//'   
+//'   - \code{numberOfEvents}: The number of events.
+//'   
+//'   - \code{numberOfDropouts}: The number of dropouts.
+//'   
+//'   - \code{numberOfSubjects}: The number of subjects.
+//'   
+//'   - \code{analysisTime}: The average time since trial start.
+//'   
+//'   - \code{efficacyHR}: The efficacy boundaries on the hazard ratio scale.
+//'   
+//'   - \code{futilityHR}: The futility boundaries on the hazard ratio scale.
+//'   
+//'   - \code{efficacyP}: The efficacy boundaries on the p-value scale.
+//'   
+//'   - \code{futilityP}: The futility boundaries on the p-value scale.
+//'   
+//'   - \code{information}: The cumulative information.
+//'   
+//'   - \code{HR}: The average hazard ratio. 
+//'   
+//'   - \code{efficacyStopping}: Whether to allow efficacy stopping.
+//'   
+//'   - \code{futilityStopping}: Whether to allow futility stopping.
 //'
+//' * \code{settings}: A list containing the following input parameters: 
+//'   \code{typeAlphaSpending}, \code{parameterAlphaSpending},
+//'   \code{userAlphaSpending}, \code{typeBetaSpending},
+//'   \code{parameterBetaSpending}, \code{userBetaSpending},
+//'   \code{accrualTime}, \code{accuralIntensity},
+//'   \code{piecewiseSurvivalTime}, \code{stratumFraction},
+//'   \code{lambda1}, \code{lambda2}, \code{gamma1}, \code{gamma2}, and
+//'   \code{spendingTime}.
+//'
+//' * \code{byTreatmentCounts}: A list containing the following counts by 
+//' treatment group:
+//' 
+//'   - \code{numberOfEvents1}: The number of events by stage for 
+//'   the treatment group.
+//'   
+//'   - \code{numberOfDropouts1}: The number of dropouts by stage for 
+//'   the treatment group.
+//'   
+//'   - \code{numberOfSubjects1}: The number of subjects by stage for 
+//'   the treatment group.
+//'   
+//'   - \code{numberOfEvents2}: The number of events by stage for 
+//'   the control group.
+//'   
+//'   - \code{numberOfDropouts2}: The number of dropouts by stage for 
+//'   the control group.
+//'   
+//'   - \code{numberOfSubjects2}: The number of subjects by stage for 
+//'   the control group.   
+//'   
+//'   - \code{expectedNumberOfEvents1}: The expected number of events for 
+//'   the treatment group.
+//'   
+//'   - \code{expectedNumberOfDropouts1}: The expected number of dropouts for 
+//'   the treatment group.
+//'   
+//'   - \code{expectedNumberOfSubjects1}: The expected number of subjects for 
+//'   the treatment group.
+//'   
+//'   - \code{expectedNumberOfEvents2}: The expected number of events for 
+//'   control group.
+//'   
+//'   - \code{expectedNumberOfDropouts2}: The expected number of dropouts for 
+//'   the control group.
+//'   
+//'   - \code{expectedNumberOfSubjects2}: The expected number of subjects for 
+//'   the control group.
+//'
+//' @author Kaifeng Lu, \email{kaifenglu@@gmail.com}
+//' 
 //' @examples
 //' # Piecewise accrual, piecewise exponential survival, and 5% dropout by
 //' # the end of 1 year.
@@ -2635,6 +2849,8 @@ List lrpower(const int kMax = 1,
              const String typeOfComputation = "direct",
              const NumericVector& spendingTime = NA_REAL,
              const double studyDuration = NA_REAL) {
+  
+  double alpha1 = alpha;
   
   NumericVector informationRates1 = clone(informationRates);
   LogicalVector efficacyStopping1 = clone(efficacyStopping);
@@ -2687,6 +2903,9 @@ List lrpower(const int kMax = 1,
       stop("Invalid length for efficacyStopping");
     } else if (efficacyStopping[kMax-1] != 1) {
       stop("efficacyStopping must end with 1");
+    } else if (is_false(all((efficacyStopping == 1) | 
+      (efficacyStopping == 0)))) {
+      stop("Elements of efficacyStopping must be 1 or 0");
     }
   } else {
     efficacyStopping1 = rep(1, kMax);
@@ -2697,6 +2916,9 @@ List lrpower(const int kMax = 1,
       stop("Invalid length for futilityStopping");
     } else if (futilityStopping[kMax-1] != 1) {
       stop("futilityStopping must end with 1");
+    } else if (is_false(all((futilityStopping == 1) | 
+      (futilityStopping == 0)))) {
+      stop("Elements of futilityStopping must be 1 or 0");
     }
   } else {
     futilityStopping1 = rep(1, kMax);
@@ -2708,38 +2930,18 @@ List lrpower(const int kMax = 1,
     }
   }
   
-  if (!R_isnancpp(alpha)) {
-    if (alpha < 0.00001 || alpha >= 0.5) {
-      stop("alpha must lie in [0.00001, 0.5)");
-    }
-  }
-  
   if (is_true(any(is_na(criticalValues))) && !(asf=="of" || asf=="p" ||
       asf=="wt" || asf=="sfof" || asf=="sfp" ||
       asf=="sfkd" || asf=="sfhsd" || asf=="user" || asf=="none")) {
-    stop("Invalid type for alpha spending");
+    stop("Invalid value for typeAlphaSpending");
   }
   
   if ((asf=="wt" || asf=="sfkd" || asf=="sfhsd") && R_isnancpp(asfpar)) {
-    stop("Missing parameter for the alpha spending function");
+    stop("Missing value for parameterAlphaSpending");
   }
   
   if (asf=="sfkd" && asfpar <= 0) {
     stop ("parameterAlphaSpending must be positive for sfKD");
-  }
-  
-  if (asf=="user") {
-    if (is_true(any(is_na(userAlphaSpending)))) {
-      stop("userAlphaSpending must be specified");
-    } else if (userAlphaSpending.size() < kMax) {
-      stop("Insufficient length of userAlphaSpending");
-    } else if (userAlphaSpending[0] < 0) {
-      stop("Elements of userAlphaSpending must be nonnegnative");
-    } else if (kMax > 1 && is_true(any(diff(userAlphaSpending) < 0))) {
-      stop("Elements of userAlphaSpending must be nondecreasing");
-    } else if (userAlphaSpending[kMax-1] != alpha) {
-      stop("userAlphaSpending must end with specified alpha");
-    }
   }
   
   if (is_false(any(is_na(futilityBounds)))) {
@@ -2765,11 +2967,11 @@ List lrpower(const int kMax = 1,
   
   if (is_true(any(is_na(futilityBounds))) && !(bsf=="sfof" || bsf=="sfp" ||
       bsf=="sfkd" || bsf=="sfhsd" || bsf=="none")) {
-    stop("Invalid type for beta spending");
+    stop("Invalid value for typeBetaSpending");
   }
   
   if ((bsf=="sfkd" || bsf=="sfhsd") && R_isnancpp(bsfpar)) {
-    stop("Missing parameter for the beta spending function");
+    stop("Missing value for parameterBetaSpending");
   }
   
   if (bsf=="sfkd" && bsfpar <= 0) {
@@ -2934,7 +3136,7 @@ List lrpower(const int kMax = 1,
     if (is_true(any(is_na(criticalValues)))) {
       criticalValues1 = getCriticalValues(
         kMax, informationRates1, efficacyStopping1,
-        alpha, asf, asfpar, userAlphaSpending, hazardRatioH0,
+        alpha1, asf, asfpar, userAlphaSpending, hazardRatioH0,
         allocationRatioPlanned, accrualTime, accrualIntensity,
         piecewiseSurvivalTime, stratumFraction,
         lambda2, gamma1, gamma2, accrualDuration,
@@ -2954,7 +3156,7 @@ List lrpower(const int kMax = 1,
     if (is_true(any(is_na(criticalValues)))) {
       criticalValues1 = getCriticalValues(
         kMax, informationRates1, efficacyStopping1,
-        alpha, asf, asfpar, userAlphaSpending, 1,
+        alpha1, asf, asfpar, userAlphaSpending, 1,
         allocationRatioPlanned, accrualTime, accrualIntensity,
         piecewiseSurvivalTime, stratumFraction,
         lambda2, gamma1, gamma2, accrualDuration,
@@ -2971,6 +3173,28 @@ List lrpower(const int kMax = 1,
       rho1, rho2, numSubintervals);
   }
   
+  alpha1 = cumAlphaSpent[kMax - 1];
+  
+  if (!R_isnancpp(alpha1)) {
+    if (alpha1 < 0.00001 || alpha1 >= 0.5) {
+      stop("alpha must lie in [0.00001, 0.5)");
+    }
+  }
+  
+  if (is_true(any(is_na(criticalValues))) && asf=="user") {
+    if (is_true(any(is_na(userAlphaSpending)))) {
+      stop("userAlphaSpending must be specified");
+    } else if (userAlphaSpending.size() < kMax) { 
+      stop("Insufficient length of userAlphaSpending");
+    } else if (userAlphaSpending[0] < 0) { 
+      stop("Elements of userAlphaSpending must be nonnegnative");
+    } else if (kMax > 1 && is_true(any(diff(userAlphaSpending) < 0))) { 
+      stop("Elements of userAlphaSpending must be nondecreasing");
+    } else if (userAlphaSpending[kMax-1] != alpha) { 
+      stop("userAlphaSpending must end with specified alpha");
+    }
+  }
+
   
   bool missingFutilityBounds = is_true(any(is_na(futilityBounds)));
   
@@ -3045,23 +3269,23 @@ List lrpower(const int kMax = 1,
                   piecewiseSurvivalTime, stratumFraction,
                   lambda1, lambda2, gamma1, gamma2,
                   accrualDuration, followupTime, fixedFollowup,
-                  rho1, rho2, numSubintervals, 2);
+                  rho1, rho2, numSubintervals, 3);
     } else {
       lr = lrstat(time, hazardRatioH0, allocationRatioPlanned,
                   accrualTime, accrualIntensity,
                   piecewiseSurvivalTime, stratumFraction,
                   lambda1, lambda2, gamma1, gamma2,
                   accrualDuration, followupTime, fixedFollowup,
-                  rho1, rho2, numSubintervals, 0);
+                  rho1, rho2, numSubintervals, 2);
     }
     
     if (estimateHazardRatio) {
-      HR = NumericVector(lr[12]);
-      vlogHR = NumericVector(lr[13]);
+      HR = NumericVector(lr[15]);
+      vlogHR = NumericVector(lr[16]);
     }
     
-    NumericVector uscore = NumericVector(lr[8]);
-    vscore = NumericVector(lr[9]);
+    NumericVector uscore = NumericVector(lr[11]);
+    vscore = NumericVector(lr[12]);
     theta = -uscore/vscore;
   }
   
@@ -3099,81 +3323,11 @@ List lrpower(const int kMax = 1,
   if (!missingFutilityBounds || bsf=="none" || kMax==1) {
     probs = exitprobcpp(criticalValues1, futilityBounds1, theta, vscore);
   } else {
-    auto f = [kMax, criticalValues1, futilityStopping1, &futilityBounds1,
-              bsf, bsfpar, theta, vscore, t, st](double beta)->double {
-                // initialize futilityBounds to be updated
-                futilityBounds1 = NumericVector(kMax);
-                double epsilon;
-                
-                // first stage
-                int k = 0;
-                double cumBetaSpent = errorSpentcpp(st[0], beta, bsf, bsfpar);
-                if (!futilityStopping1[0]) {
-                  futilityBounds1[0] = -6.0;
-                } else {
-                  epsilon = R::pnorm(criticalValues1[0] -
-                    theta[0]*sqrt(vscore[0]), 0, 1, 1, 0) - cumBetaSpent;
-                  if (epsilon < 0) return -1.0; // to decrease beta
-                  futilityBounds1[0] = R::qnorm(cumBetaSpent, 0, 1, 1, 0) +
-                    theta[0]*sqrt(vscore[0]);
-                }
-                
-                // lambda expression for finding the futility bound at stage k
-                auto g = [&k, &cumBetaSpent, criticalValues1, &futilityBounds1,
-                          theta, vscore](double aval)->double {
-                            NumericVector u(k+1);
-                            NumericVector l(k+1);
-                            for (int i=0; i<k; i++) {
-                              u[i] = criticalValues1[i];
-                              l[i] = futilityBounds1[i];
-                            }
-                            u[k] = 6.0;
-                            l[k] = aval;
-                            
-                            IntegerVector idx = Range(0,k);
-                            List probs = exitprobcpp(u, l, theta[idx], 
-                                                     vscore[idx]);
-                            double cpl = sum(NumericVector(probs[1]));
-                            return cpl - cumBetaSpent;
-                          };
-                
-                for (k=1; k<kMax; k++) {
-                  cumBetaSpent = errorSpentcpp(st[k], beta, bsf, bsfpar);
-                  
-                  if (!futilityStopping1[k]) {
-                    futilityBounds1[k] = -6.0;
-                  } else {
-                    epsilon = g(criticalValues1[k]);
-                    
-                    if (g(-6.0) > 0) { // no beta spent at current visit
-                      futilityBounds1[k] = -6.0;
-                    } else if (epsilon > 0) {
-                      futilityBounds1[k] = brent(g, -6.0, criticalValues1[k], 
-                                                 1e-6);
-                    } else if (k < kMax-1) {
-                      return -1.0;
-                    }
-                  }
-                }
-                
-                return epsilon;
-              };
-    
-    double v1 = f(0.0001), v2 = f(1-alpha);
-    
-    if (v1 == -1.0 || (v1 < 0 && futilityBounds1[kMax-1] == 0)) {
-      stop("Power must be less than 0.9999 to use beta spending");
-    } else if (v2 > 0) {
-      stop("Power must be greater than alpha to use beta spending");
-    } else {
-      brent(f, 0.0001, 1-alpha, 1e-6);
-      futilityBounds1[kMax-1] = criticalValues1[kMax-1];
-    }
-    
-    probs = exitprobcpp(criticalValues1, futilityBounds1, theta, vscore);
+    List out = getPower(alpha1, kMax, criticalValues1, theta, vscore, 
+                        bsf, bsfpar, st, futilityStopping1);
+    futilityBounds1 = out[1];
+    probs = out[2];
   }
-  
-  
   
   NumericVector efficacyP(kMax);
   NumericVector futilityP(kMax);
@@ -3339,18 +3493,19 @@ List lrpower(const int kMax = 1,
 }
 
 
-
 //' @title Get group sequential design
-//' @description Obtains the drift parameter and stopping boundaries for a
-//' generic group sequential design assuming a constant treatment effect, 
-//' or obtains the power given the drift parameter and stopping boundaries.
+//' @description Obtains the maximum information and stopping boundaries 
+//' for a generic group sequential design assuming a constant treatment 
+//' effect, or obtains the power given the maximum information and 
+//' stopping boundaries.
 //'
-//' @param beta Type II error. Defaults to 0.2.
-//' @param drift Drift parameter, i.e., \code{(theta-theta0)*sqrt(Imax)}.  
-//' If \code{drift} is provided, then the input \code{beta} will be ignored 
-//' and power will be calculated.
+//' @param beta The type II error.
+//' @param IMax The maximum information. Either \code{beta} or \code{IMax} 
+//' should be provided while the other one should be missing.
+//' @param theta The parameter value.
 //' @inheritParams param_kMax
-//' @inheritParams param_informationRates
+//' @param informationRates The information rates. Fixed prior to the trial. 
+//'   Defaults to \code{(1:kMax) / kMax} if left unspecified.
 //' @inheritParams param_efficacyStopping
 //' @inheritParams param_futilityStopping
 //' @inheritParams param_criticalValues
@@ -3366,46 +3521,110 @@ List lrpower(const int kMax = 1,
 //'   time at each analysis. Defaults to missing, in which case, it is the 
 //'   same as \code{informationRates}.
 //'
-//' @return A list of S3 class \code{design} with three components:
+//' @return An S3 class \code{design} object with three components:
 //' 
-//' * \code{overallResults} containing the overall rejection probability,
-//' overall significance level, number of stages, drift parameter, 
-//' and inflation factor (relative to fixed design).
+//' * \code{overallResults}: A data frame containing the following variables:
+//' 
+//'   - \code{overallReject}: The overall rejection probability.
+//'   
+//'   - \code{alpha}: The overall significance level.
+//'   
+//'   - \code{kMax}: The number of stages.
+//'   
+//'   - \code{theta}: The parameter value.
+//'   
+//'   - \code{maxInformation}: The maximum information.
+//'   
+//'   - \code{expectedInformationH1}: The expected information under H1.
+//'   
+//'   - \code{expectedInformationH0}: The expected information under H0.
+//'   
+//'   - \code{drift}: The drift parameter, equal to 
+//'   \code{theta*sqrt(maxInformation)}.
+//'   
+//'   - \code{inflationFactor}: The inflation factor (relative to the 
+//'   fixed design).
 //'
-//' * \code{byStageResults} containing information rates, efficacy
-//' and futility boundaries on the Z-scale, probability for efficacy
-//' and futility stopping at the stage, cumulative probability for
-//' efficacy and futility stopping by the stage, cumulative alpha spent,
-//' efficacy and futility boundaries on the p-value scale, 
-//' and whether efficacy and futility stopping are allowed by stage.
+//' * \code{byStageResults}: A data frame containing the following variables:
+//' 
+//'   - \code{informationRates}: The information rates.
+//'   
+//'   - \code{efficacyBounds}: The efficacy boundaries on the Z-scale.
+//'   
+//'   - \code{futilityBounds}: The futility boundaries on the Z-scale.
+//'   
+//'   - \code{rejectPerStage}: The probability for efficacy stopping.
+//'   
+//'   - \code{futilityPerStage}: The probability for futility stopping.
+//'   
+//'   - \code{cumulativeRejection}: The cumulative probability for efficacy 
+//'   stopping.
+//'   
+//'   - \code{cumulativeFutility}: The cumulative probability for futility 
+//'   stopping.
+//'   
+//'   - \code{cumulativeAlphaSpent}: The cumulative alpha spent.
+//'   
+//'   - \code{efficacyTheta}: The efficacy boundaries on the parameter scale.
+//'   
+//'   - \code{futilityTheta}: The futility boundaries on the parameter scale.
+//'   
+//'   - \code{efficacyP}: The efficacy boundaries on the p-value scale.
+//'   
+//'   - \code{futilityP}: The futility boundaries on the p-value scale.
+//'   
+//'   - \code{information}: The cumulative information.
+//'   
+//'   - \code{efficacyStopping}: Whether to allow efficacy stopping.
+//'   
+//'   - \code{futilityStopping}: Whether to allow futility stopping.
 //'
-//' * \code{settings} containing input parameters such as
-//' alpha and beta spending function and parameter values, spendingTime, 
-//' and calculation target.
+//' * \code{settings}: A list containing the following input parameters: 
+//' 
+//'   - \code{typeAlphaSpending}: The type of alpha spending. 
+//'   
+//'   - \code{parameterAlphaSpending}: The parameter value for alpha spending.
+//'   
+//'   - \code{userAlphaSpending}: The user defined alpha spending. 
+//'   
+//'   - \code{typeBetaSpending}: The type of beta spending. 
+//'   
+//'   - \code{parameterBetaSpending}: The parameter value for beta spending. 
+//'   
+//'   - \code{userBetaSpending}: The user defined beta spending.
+//'   
+//'   - \code{spendingTime}: The error spending time at each analysis. 
+//'   
+//'   - \code{calculationTarget}: The calculation target, \code{beta} or 
+//'   \code{IMax}.
+//'
+//' @author Kaifeng Lu, \email{kaifenglu@@gmail.com}
+//' 
+//' @references 
+//' Christopher Jennison, Bruce W. Turnbull. Group Sequential Methods with
+//' Applications to Clinical Trials. Chapman & Hall/CRC: Boca Raton, 2000,
+//' ISBN:0849303168
 //'
 //' @examples
 //'
-//' # Example 1: obtain the drift parameter given power
-//' getDesign(beta = 0.2,
-//'           kMax = 2,
-//'           informationRates = c(0.5,1),
-//'           alpha = 0.025,
-//'           typeAlphaSpending = "sfOF",
+//' # Example 1: obtain the maximum information given power
+//' getDesign(beta = 0.2, theta = -log(0.7),
+//'           kMax = 2, informationRates = c(0.5,1),
+//'           alpha = 0.025, typeAlphaSpending = "sfOF",
 //'           typeBetaSpending = "sfP")
 //'           
 //' 
-//' # Example 2: obtain power given the drift parameter
-//' getDesign(drift = 3.026,
-//'           kMax = 3,
-//'           informationRates = c(0.5, 0.75, 1),
-//'           alpha = 0.025,
-//'           typeAlphaSpending = "sfOF",
+//' # Example 2: obtain power given the maximum information
+//' getDesign(IMax = 72.5, theta = -log(0.7),
+//'           kMax = 3, informationRates = c(0.5, 0.75, 1),
+//'           alpha = 0.025, typeAlphaSpending = "sfOF",
 //'           typeBetaSpending = "sfP")
 //'
 //' @export
 // [[Rcpp::export]]
-List getDesign(const double beta = 0.2,
-               const double drift = NA_REAL,
+List getDesign(const double beta = NA_REAL,
+               const double IMax = NA_REAL,
+               const double theta = NA_REAL,
                const int kMax = 1,
                const NumericVector& informationRates = NA_REAL,
                const LogicalVector& efficacyStopping = NA_LOGICAL,
@@ -3426,44 +3645,38 @@ List getDesign(const double beta = 0.2,
   LogicalVector futilityStopping1 = clone(futilityStopping);
   NumericVector criticalValues1 = clone(criticalValues);
   NumericVector futilityBounds1 = clone(futilityBounds);
-  
-  double beta1 = beta;
-  double drift1 = drift;
-  double inflationFactor;
-  
-  if (kMax < 1) {
-    stop("kMax must be a positive integer");
-  }
-  
-  std::string asf = typeAlphaSpending;
-  std::for_each(asf.begin(), asf.end(), [](char & c) {
-    c = std::tolower(c);
-  });
-  
-  double asfpar = parameterAlphaSpending;
-  
-  std::string bsf = typeBetaSpending;
-  std::for_each(bsf.begin(), bsf.end(), [](char & c) {
-    c = std::tolower(c);
-  });
-  
-  double bsfpar = parameterBetaSpending;
-  
   NumericVector spendingTime1 = clone(spendingTime);
+  
+  double alpha1 = alpha;
+  double beta1 = beta;
+  double IMax1 = IMax;
+  double drift, inflationFactor;
   
   String unknown;
   
-  // search for the solution according to the input
-  if (!R_isnancpp(drift)) {
-    unknown = "beta";
-  } else if (!R_isnancpp(beta)) {
-    unknown = "drift";
-  } else {
-    stop("beta and drift cannot be both missing");
+  if (R_isnancpp(beta) && R_isnancpp(IMax)) {
+    stop("beta and IMax cannot be both missing");
   }
   
-  if ((unknown == "drift") && (beta >= 1-alpha || beta < 0.0001)) {
-    stop("beta must lie in [0.0001, 1-alpha)");
+  if (!R_isnancpp(beta) && !R_isnancpp(IMax)) {
+    stop("Only one of beta and IMax should be provided");
+  }
+  
+  if (!R_isnancpp(IMax)) {
+    if (IMax <= 0) {
+      stop("IMax must be positive");
+    }
+    unknown = "beta";
+  } else if (!R_isnancpp(beta)) {
+    unknown = "IMax";
+  }
+  
+  if (R_isnancpp(theta)) {
+    stop("theta must be provided");
+  }
+  
+  if (R_isnancpp(kMax)) {
+    stop("kMax must be provided");
   }
   
   if (kMax < 1) {
@@ -3485,26 +3698,14 @@ List getDesign(const double beta = 0.2,
     informationRates1 = as<NumericVector>(tem)/(kMax+0.0);
   }
   
-  if (is_false(any(is_na(spendingTime)))) {
-    if (spendingTime.size() != kMax) {
-      stop("Invalid length for spendingTime");
-    } else if (spendingTime[0] <= 0) {
-      stop("Elements of spendingTime must be positive");
-    } else if (kMax > 1 && is_true(any(diff(spendingTime) <= 0))) {
-      stop("Elements of spendingTime must be increasing");
-    } else if (spendingTime[kMax-1] != 1) {
-      stop("spendingTime must end with 1");
-    }
-  } else {
-    spendingTime1 = clone(informationRates1);
-  }
-  
-  
   if (is_false(any(is_na(efficacyStopping)))) {
     if (efficacyStopping.size() != kMax) {
       stop("Invalid length for efficacyStopping");
     } else if (efficacyStopping[kMax-1] != 1) {
       stop("efficacyStopping must end with 1");
+    } else if (is_false(all((efficacyStopping == 1) | 
+      (efficacyStopping == 0)))) {
+      stop("Elements of efficacyStopping must be 1 or 0");
     }
   } else {
     efficacyStopping1 = rep(1, kMax);
@@ -3515,6 +3716,9 @@ List getDesign(const double beta = 0.2,
       stop("Invalid length for futilityStopping");
     } else if (futilityStopping[kMax-1] != 1) {
       stop("futilityStopping must end with 1");
+    } else if (is_false(all((futilityStopping == 1) | 
+      (futilityStopping == 0)))) {
+      stop("Elements of futilityStopping must be 1 or 0");
     }
   } else {
     futilityStopping1 = rep(1, kMax);
@@ -3524,29 +3728,52 @@ List getDesign(const double beta = 0.2,
     if (criticalValues.size() != kMax) {
       stop("Invalid length for criticalValues");
     }
+    
+    NumericVector u(kMax), l(kMax, -6.0), theta0(kMax);
+    for (int i=0; i<kMax; i++) {
+      u[i] = criticalValues[i];
+      if (!efficacyStopping1[i]) u[i] = 6.0;
+    }
+    
+    List probs = exitprobcpp(u, l, theta0, informationRates1);
+    alpha1 = sum(NumericVector(probs[0]));
   }
   
-  if (!R_isnancpp(alpha)) {
-    if (alpha < 0.00001 || alpha >= 0.5) {
+  if (!R_isnancpp(alpha1)) {
+    if (alpha1 < 0.00001 || alpha1 >= 0.5) {
       stop("alpha must lie in [0.00001, 0.5)");
     }
+  } else {
+    stop("alpha must be provided for missing criticalValues");
   }
+  
+  if ((unknown == "IMax") && (beta >= 1-alpha1 || beta < 0.0001)) {
+    stop("beta must lie in [0.0001, 1-alpha)");
+  }
+  
+  
+  std::string asf = typeAlphaSpending;
+  std::for_each(asf.begin(), asf.end(), [](char & c) {
+    c = std::tolower(c);
+  });
+  
+  double asfpar = parameterAlphaSpending;
   
   if (is_true(any(is_na(criticalValues))) && !(asf=="of" || asf=="p" ||
       asf=="wt" || asf=="sfof" || asf=="sfp" ||
       asf=="sfkd" || asf=="sfhsd" || asf=="user" || asf=="none")) {
-    stop("Invalid type for alpha spending");
+    stop("Invalid value for typeAlphaSpending");
   }
   
   if ((asf=="wt" || asf=="sfkd" || asf=="sfhsd") && R_isnancpp(asfpar)) {
-    stop("Missing parameter for the alpha spending function");
+    stop("Missing value for parameterAlphaSpending");
   }
   
   if (asf=="sfkd" && asfpar <= 0) {
     stop ("parameterAlphaSpending must be positive for sfKD");
   }
   
-  if (asf=="user") {
+  if (is_true(any(is_na(criticalValues))) && asf=="user") {
     if (is_true(any(is_na(userAlphaSpending)))) {
       stop("userAlphaSpending must be specified");
     } else if (userAlphaSpending.size() < kMax) {
@@ -3581,30 +3808,34 @@ List getDesign(const double beta = 0.2,
     }
   }
   
-
-  if (unknown == "drift") {
+  std::string bsf = typeBetaSpending;
+  std::for_each(bsf.begin(), bsf.end(), [](char & c) {
+    c = std::tolower(c);
+  });
+  
+  double bsfpar = parameterBetaSpending;
+  
+  if (unknown == "IMax") {
     if (is_true(any(is_na(futilityBounds))) && !(bsf=="sfof" || bsf=="sfp" ||
         bsf=="sfkd" || bsf=="sfhsd" || bsf=="user" || bsf=="none")) {
-      stop("Invalid type for beta spending");
+      stop("Invalid value for typeBetaSpending");
     }
   } else {
     if (is_true(any(is_na(futilityBounds))) && !(bsf=="sfof" || bsf=="sfp" ||
         bsf=="sfkd" || bsf=="sfhsd" || bsf=="none")) {
-      stop("Invalid type for beta spending");
+      stop("Invalid value for typeBetaSpending");
     }
   }
   
-  
   if ((bsf=="sfkd" || bsf=="sfhsd") && R_isnancpp(bsfpar)) {
-    stop("Missing parameter for the beta spending function");
+    stop("Missing value for parameterBetaSpending");
   }
   
   if (bsf=="sfkd" && bsfpar <= 0) {
     stop ("parameterBetaSpending must be positive for sfKD");
   }
   
-  
-  if (unknown=="drift" && bsf=="user") {
+  if (unknown=="IMax" && bsf=="user") {
     if (is_true(any(is_na(userBetaSpending)))) {
       stop("userBetaSpending must be specified");
     } else if (userBetaSpending.size() < kMax) {
@@ -3618,113 +3849,27 @@ List getDesign(const double beta = 0.2,
     }
   }
   
-  
-  
-  bool missingCriticalValues = is_true(any(is_na(criticalValues)));
-  bool missingFutilityBounds = is_true(any(is_na(futilityBounds)));
-  
-  if (missingCriticalValues) {
-    criticalValues1 = rep(6.0, kMax);
-    
-    NumericVector theta(kMax); // mean values under H0, initialized to zero
-    NumericVector t = clone(informationRates1); // information time
-    NumericVector st = clone(spendingTime1); // spending time
-    
-    
-    if (asf == "none") {
-      for (int i=0; i<kMax-1; i++) {
-        criticalValues1[i] = 6.0;
-      }
-      criticalValues1[kMax-1] = R::qnorm(1-alpha, 0, 1, 1, 0);
-    } else if (asf == "of" || asf == "p" || asf == "wt") {
-      double Delta;
-      if (asf == "of") {
-        Delta = 0;
-      } else if (asf == "p") {
-        Delta = 0.5;
-      } else {
-        Delta = asfpar;
-      }
-      
-      auto f = [kMax, alpha, Delta, theta, t, 
-                efficacyStopping1] (double aval)->double {
-                  NumericVector u(kMax), l(kMax);
-                  for (int i=0; i<kMax; i++) {
-                    u[i] = aval*pow(t[i], Delta-0.5);
-                    if (!efficacyStopping1[i]) u[i] = 6.0;
-                    l[i] = -6.0;
-                  }
-                  
-                  List probs = exitprobcpp(u, l, theta, t);
-                  double cpu = sum(NumericVector(probs[0]));
-                  return cpu - alpha;
-                };
-      
-      double cwt = brent(f, 0, 10, 1e-6);
-      for (int i=0; i<kMax; i++) {
-        criticalValues1[i] = cwt*pow(t[i], Delta-0.5);
-        if (!efficacyStopping1[i]) criticalValues1[i] = 6.0;
-      }
-    } else if (asf == "sfof" || asf == "sfp" || asf == "sfkd" ||
-      asf == "sfhsd" || asf == "user") {
-      
-      // stage 1
-      double cumAlphaSpent;
-      if (asf == "user") {
-        cumAlphaSpent = userAlphaSpending[0];
-      } else {
-        cumAlphaSpent = errorSpentcpp(st[0], alpha, asf, asfpar);
-      }
-      
-      if (!efficacyStopping1[0]) {
-        criticalValues1[0] = 6.0;
-      } else {
-        criticalValues1[0] = R::qnorm(1 - cumAlphaSpent, 0, 1, 1, 0);
-      }
-      
-      
-      // lambda expression for finding the critical Values at stage k
-      int k=0;
-      auto f = [&k, &cumAlphaSpent, &criticalValues1,
-                theta, t](double aval)->double {
-                  NumericVector u(k+1), l(k+1);
-                  for (int i=0; i<k; i++) {
-                    u[i] = criticalValues1[i];
-                    l[i] = -6.0;
-                  }
-                  u[k] = aval;
-                  l[k] = -6.0;
-                  
-                  IntegerVector idx = Range(0,k);
-                  List probs = exitprobcpp(u, l, theta[idx], t[idx]);
-                  double cpu = sum(NumericVector(probs[0]));
-                  return cpu - cumAlphaSpent;
-                };
-      
-      // subsequent stages
-      for (k=1; k<kMax; k++) {
-        if (asf == "user") {
-          cumAlphaSpent = userAlphaSpending[k];
-        } else {
-          cumAlphaSpent = errorSpentcpp(st[k], alpha, asf, asfpar);
-        }
-        
-        if (!efficacyStopping1[k]) {
-          criticalValues1[k] = 6.0;
-        } else {
-          if (f(6) > 0) { // no alpha spent at current visit
-            criticalValues1[k] = 6.0;
-          } else {
-            criticalValues1[k] = brent(f, 0, 6, 1e-6);
-          }
-        }
-      }
-    } else {
-      stop("Invalid type of alpha spending");
+  if (is_false(any(is_na(spendingTime)))) {
+    if (spendingTime.size() != kMax) {
+      stop("Invalid length for spendingTime");
+    } else if (spendingTime[0] <= 0) {
+      stop("Elements of spendingTime must be positive");
+    } else if (kMax > 1 && is_true(any(diff(spendingTime) <= 0))) {
+      stop("Elements of spendingTime must be increasing");
+    } else if (spendingTime[kMax-1] != 1) {
+      stop("spendingTime must end with 1");
     }
+  } else {
+    spendingTime1 = clone(informationRates1);
   }
   
+  if (is_true(any(is_na(criticalValues)))) {
+    criticalValues1 = getBoundcpp(kMax, informationRates1, alpha1, 
+                                  asf, asfpar, userAlphaSpending, 
+                                  spendingTime1, efficacyStopping1);
+  }
   
+  bool missingFutilityBounds = is_true(any(is_na(futilityBounds)));
   if (kMax > 1) {
     if (missingFutilityBounds && bsf=="none") {
       futilityBounds1 = rep(-6.0, kMax);
@@ -3732,9 +3877,6 @@ List getDesign(const double beta = 0.2,
     } else if (!missingFutilityBounds && 
       futilityBounds1.size() == kMax-1) {
       futilityBounds1.push_back(criticalValues1[kMax-1]);
-    } else if (!missingFutilityBounds && 
-      futilityBounds1.size() < kMax-1) {
-      stop("Insufficient length of futilityBounds");
     }
   } else {
     if (missingFutilityBounds) {
@@ -3742,29 +3884,28 @@ List getDesign(const double beta = 0.2,
     }
   }
   
-
-  List probs;
   
-  if (unknown == "drift") {
-    auto f = [beta, kMax, informationRates1, futilityStopping1,
+  List probs;
+  NumericVector t = informationRates1;
+  NumericVector st = spendingTime1;
+  NumericVector theta1(kMax);
+  if (unknown == "IMax") {
+    auto f = [beta, kMax, t, futilityStopping1,
               criticalValues1, &futilityBounds1, 
-              bsf, bsfpar, userBetaSpending, spendingTime1, 
+              bsf, bsfpar, userBetaSpending, st, 
               missingFutilityBounds](double aval)->double {
                 
-                NumericVector theta = rep(aval, kMax);
-                NumericVector t = clone(informationRates1);
-                NumericVector st = clone(spendingTime1);
-                
-                // stagewise exit probabilities for efficacy and futility
-                
+                NumericVector theta1 = rep(aval, kMax);
+
+                // compute stagewise exit probabilities
                 if (!missingFutilityBounds || bsf=="none" || kMax==1) {
-                  List probs = exitprobcpp(criticalValues1, futilityBounds1, 
-                                           theta, t);
+                  List probs = exitprobcpp(
+                    criticalValues1, futilityBounds1, theta1, t);
                   NumericVector pu = NumericVector(probs[0]);
                   double overallReject = sum(pu);
                   return overallReject - (1-beta);
                 } else {
-                  // initialize futilityBounds to be updated
+                  // initialize futility bound to be updated
                   futilityBounds1 = NumericVector(kMax);
                   double epsilon;
                   
@@ -3781,18 +3922,17 @@ List getDesign(const double beta = 0.2,
                     futilityBounds1[0] = -6.0;
                   } else {
                     epsilon = R::pnorm(criticalValues1[0] -
-                      theta[0]*sqrt(t[0]), 0, 1, 1, 0) - cumBetaSpent;
+                      theta1[0]*sqrt(t[0]), 0, 1, 1, 0) - cumBetaSpent;
                     if (epsilon < 0) return -1.0;
                     futilityBounds1[0] = R::qnorm(cumBetaSpent, 0, 1, 1, 0) +
-                      theta[0]*sqrt(t[0]);
+                      theta1[0]*sqrt(t[0]);
                   }
                   
                   
                   // lambda expression for finding futility bound at stage k
                   auto g = [&k, &cumBetaSpent, criticalValues1, 
-                            &futilityBounds1, theta, t](double aval)->double {
-                              NumericVector u(k+1);
-                              NumericVector l(k+1);
+                            &futilityBounds1, theta1, t](double aval)->double {
+                              NumericVector u(k+1), l(k+1);
                               for (int i=0; i<k; i++) {
                                 u[i] = criticalValues1[i];
                                 l[i] = futilityBounds1[i];
@@ -3801,8 +3941,8 @@ List getDesign(const double beta = 0.2,
                               l[k] = aval;
                               
                               IntegerVector idx = Range(0,k);
-                              List probs = exitprobcpp(u, l, theta[idx], 
-                                                       t[idx]);
+                              List probs = exitprobcpp(
+                                u, l, theta1[idx], t[idx]);
                               double cpl = sum(NumericVector(probs[1]));
                               return cpl - cumBetaSpent;
                             };
@@ -3820,87 +3960,11 @@ List getDesign(const double beta = 0.2,
                     } else {
                       epsilon = g(criticalValues1[k]);
                       
-                      if (g(-6.0) > 0) { // no beta spent at the current visit
-                        futilityBounds1[k] = -6.0;
-                      } else if (epsilon > 0) {
-                        futilityBounds1[k] = brent(g, -6.0, criticalValues1[k],
-                                                   1e-6);
-                      } else if (k < kMax-1) {
-                        return -1.0;
-                      }
-                      
-                    }
-                  }
-                  
-                  return epsilon;
-                  
-                }
-              };
-    
-    drift1 = brent(f, 0, 6, 0.0001);
-    futilityBounds1[kMax-1] = criticalValues1[kMax-1];
-    NumericVector theta = rep(drift1, kMax);
-    NumericVector t = clone(informationRates1);
-    probs = exitprobcpp(criticalValues1, futilityBounds1, theta, t);
-  } else {
-    NumericVector theta = rep(drift1, kMax);
-    NumericVector t = clone(informationRates1);
-    NumericVector st = clone(spendingTime1);
-    if (!missingFutilityBounds || bsf=="none" || kMax==1) {
-      probs = exitprobcpp(criticalValues1, futilityBounds1, theta, t);
-    } else {
-      auto f = [kMax, criticalValues1, futilityStopping1, &futilityBounds1,
-                bsf, bsfpar, theta, t, st](double beta)->double {
-                  // initialize futilityBounds to be updated
-                  futilityBounds1 = NumericVector(kMax);
-                  double epsilon;
-                  
-                  // first stage
-                  int k = 0;
-                  double cumBetaSpent = errorSpentcpp(st[0], beta, bsf, 
-                                                      bsfpar);
-                  if (!futilityStopping1[0]) {
-                    futilityBounds1[0] = -6.0;
-                  } else {
-                    epsilon = R::pnorm(criticalValues1[0] -
-                      theta[0]*sqrt(t[0]), 0, 1, 1, 0) - cumBetaSpent;
-                    if (epsilon < 0) return -1.0; // to decrease beta
-                    futilityBounds1[0] = R::qnorm(cumBetaSpent, 0, 1, 1, 0) +
-                      theta[0]*sqrt(t[0]);
-                  }
-                  
-                  // lambda expression for finding futility bound at stage k
-                  auto g = [&k, &cumBetaSpent, criticalValues1, 
-                            &futilityBounds1, theta, t](double aval)->double {
-                              NumericVector u(k+1);
-                              NumericVector l(k+1);
-                              for (int i=0; i<k; i++) {
-                                u[i] = criticalValues1[i];
-                                l[i] = futilityBounds1[i];
-                              }
-                              u[k] = 6.0;
-                              l[k] = aval;
-                              
-                              IntegerVector idx = Range(0,k);
-                              List probs = exitprobcpp(u, l, theta[idx], 
-                                                       t[idx]);
-                              double cpl = sum(NumericVector(probs[1]));
-                              return cpl - cumBetaSpent;
-                            };
-                  
-                  for (k=1; k<kMax; k++) {
-                    cumBetaSpent = errorSpentcpp(st[k], beta, bsf, bsfpar);
-                    
-                    if (!futilityStopping1[k]) {
-                      futilityBounds1[k] = -6.0;
-                    } else {
-                      epsilon = g(criticalValues1[k]);
-                      
                       if (g(-6.0) > 0) { // no beta spent at current visit
                         futilityBounds1[k] = -6.0;
                       } else if (epsilon > 0) {
-                        futilityBounds1[k] = brent(g, -6.0, 
-                                                   criticalValues1[k], 1e-6);
+                        futilityBounds1[k] = brent(
+                          g, -6.0, criticalValues1[k], 1e-6);
                       } else if (k < kMax-1) {
                         return -1.0;
                       }
@@ -3908,63 +3972,85 @@ List getDesign(const double beta = 0.2,
                   }
                   
                   return epsilon;
-                };
-      
-      double v1 = f(0.0001), v2 = f(1-alpha);
-      
-      if (v1 == -1.0 || (v1 < 0 && futilityBounds1[kMax-1] == 0)) {
-        stop("Power must be less than 0.9999 to use beta spending");
-      } else if (v2 > 0) {
-        stop("Power must be greater than alpha to use beta spending");
-      } else {
-        brent(f, 0.0001, 1-alpha, 1e-6);
-        futilityBounds1[kMax-1] = criticalValues1[kMax-1];
-      }
-      
-      probs = exitprobcpp(criticalValues1, futilityBounds1, theta, t);
-    }
+                }
+              };
     
-    beta1 = 1 - sum(NumericVector(probs[0]));
-  }
+    drift = brent(f, 0, 6, 0.0001);
+    IMax1 = pow(drift/theta, 2);
+    futilityBounds1[kMax-1] = criticalValues1[kMax-1];
+    theta1 = rep(drift, kMax);
+    probs = exitprobcpp(criticalValues1, futilityBounds1, theta1, t);
+  } else {
+    drift = theta*sqrt(IMax1);
+    theta1 = rep(drift, kMax);
 
-  double driftf = R::qnorm(1-alpha, 0, 1, 1, 0) + 
+    if (!missingFutilityBounds || bsf=="none" || kMax==1) {
+      probs = exitprobcpp(criticalValues1, futilityBounds1, theta1, t);
+      beta1 = 1 - sum(NumericVector(probs[0]));
+    } else {
+      List out = getPower(alpha1, kMax, criticalValues1, theta1, t,
+                          bsf, bsfpar, st, futilityStopping1);
+      
+      beta1 = out[0];
+      futilityBounds1 = out[1];
+      probs = out[2];
+    }
+  }
+  
+  double driftf = R::qnorm(1-alpha1, 0, 1, 1, 0) +
     R::qnorm(1-beta1, 0, 1, 1, 0);
-  inflationFactor = pow(drift1/driftf, 2);
+  inflationFactor = pow(drift/driftf, 2);
   
   
   // output the results
+  NumericVector information(kMax);
+  NumericVector efficacyTheta(kMax);
+  NumericVector futilityTheta(kMax);
   NumericVector efficacyP(kMax);
   NumericVector futilityP(kMax);
   for (int i=0; i<kMax; i++) {
+    information[i] = IMax1*informationRates1[i];
+    efficacyTheta[i] = criticalValues1[i]/sqrt(information[i]);
+    futilityTheta[i] = futilityBounds1[i]/sqrt(information[i]);
     efficacyP[i] = 1 - R::pnorm(criticalValues1[i], 0, 1, 1, 0);
     futilityP[i] = 1 - R::pnorm(futilityBounds1[i], 0, 1, 1, 0);
   }
   
-  
-  // stagewise total exit probabilities
+  // stagewise exit probabilities under H1
   NumericVector pu(kMax), pl(kMax), ptotal(kMax);
   pu = NumericVector(probs[0]);
   pl = NumericVector(probs[1]);
   ptotal = pu + pl;
   
+  double expectedInformationH1 = sum(ptotal*information);
+  
   double overallReject = sum(pu);
   NumericVector cpu = cumsum(pu);
   NumericVector cpl = cumsum(pl);
   
-  NumericVector futilityBounds0 = rep(-6.0, kMax);
-  futilityBounds0[kMax-1] = criticalValues1[kMax-1];
-  NumericVector theta0(kMax);
-  NumericVector t = clone(informationRates1);
+  // cumulative alpha spent under H0 with non-binding futility
+  NumericVector futilityBounds0(kMax, -6.0), theta0(kMax);
   List probs0 = exitprobcpp(criticalValues1, futilityBounds0, theta0, t);
   NumericVector cumAlphaSpent = cumsum(NumericVector(probs0[0]));
   
-  IntegerVector stageNumber = seq_len(kMax);
+  // stagewise exit probabilities under H0 with binding futility 
+  probs0 = exitprobcpp(criticalValues1, futilityBounds1, theta0, t);
+  NumericVector pu0(kMax), pl0(kMax), ptotal0(kMax);
+  pu0 = NumericVector(probs0[0]);
+  pl0 = NumericVector(probs0[1]);
+  ptotal0 = pu0 + pl0;
   
+  double expectedInformationH0 = sum(ptotal0*information);
+  
+  double overallRejectH0 = sum(pu0);
+  NumericVector cpu0 = cumsum(pu0);
+  NumericVector cpl0 = cumsum(pl0);
+  
+  IntegerVector stageNumber = seq_len(kMax);
   for (int i=0; i<kMax; i++) {
     if (criticalValues1[i] == 6) {
       efficacyStopping1[i] = 0;
     }
-    
     if (futilityBounds1[i] == -6) {
       futilityStopping1[i] = 0;
     }
@@ -3980,16 +4066,28 @@ List getDesign(const double beta = 0.2,
     _["cumulativeRejection"] = cpu,
     _["cumulativeFutility"] = cpl,
     _["cumulativeAlphaSpent"] = cumAlphaSpent,
+    _["efficacyTheta"] = efficacyTheta,
+    _["futilityTheta"] = futilityTheta,
     _["efficacyP"] = efficacyP,
     _["futilityP"] = futilityP,
+    _["information"] = information,
     _["efficacyStopping"] = efficacyStopping1,
-    _["futilityStopping"] = futilityStopping1);
+    _["futilityStopping"] = futilityStopping1,
+    _["rejectPerStageH0"] = pu0,
+    _["futilityPerStageH0"] = pl0,
+    _["cumulativeRejectionH0"] = cpu0,
+    _["cumulativeFutilityH0"] = cpl0);
   
   DataFrame overallResults = DataFrame::create(
     _["overallReject"] = overallReject,
     _["alpha"] = (cumAlphaSpent[kMax-1]),
+    _["attainedAlpha"] = overallRejectH0,
     _["kMax"] = kMax,
-    _["drift"] = drift1,
+    _["theta"] = theta,
+    _["maxInformation"] = IMax1,
+    _["expectedInformationH1"] = expectedInformationH1,
+    _["expectedInformationH0"] = expectedInformationH0,
+    _["drift"] = drift,
     _["inflationFactor"] = inflationFactor);
   
   List settings = List::create(
@@ -4010,8 +4108,652 @@ List getDesign(const double beta = 0.2,
   result.attr("class") = "design";
   
   return result;
-  
 }
+
+
+//' @title Adaptive design at an interim look
+//' @description Obtains the conditional power for specified incremental 
+//' information given the interim results, parameter value, and data-dependent 
+//' changes in the error spending function and the number and spacing of 
+//' interim looks. Conversely, obtain the incremental information needed 
+//' to attain a specified conditional power given the interim results,
+//' parameter value, and data-dependent changes in the error spending 
+//' function and the number and spacing of interim looks.
+//'
+//' @param betaNew The type II error for the secondary trial.
+//' @param INew The maximum information of the secondary trial. Either 
+//' \code{betaNew} or \code{INew} should be provided while the other one 
+//' should be missing.
+//' @param L The interim adaptation look of the primary trial.
+//' @param zL The z-test statistic at the interim adaptation look of 
+//'   the primary trial.
+//' @param theta The parameter value.
+//' @param IMax The maximum information of the primary trial. Must be 
+//'   provided if \code{futilityBounds} is missing and 
+//'   \code{typeBetaSpending} is not equal to "none".
+//' @param kMax The maximum number of stages of the primary trial.
+//' @param informationRates The information rates of the primary trial.
+//' @param efficacyStopping Indicators of whether efficacy stopping is 
+//'   allowed at each stage of the primary trial. Defaults to true 
+//'   if left unspecified.
+//' @param futilityStopping Indicators of whether futility stopping is 
+//'   allowed at each stage of the primary trial. Defaults to true 
+//'   if left unspecified.
+//' @param criticalValues The upper boundaries on the z-test statistic scale
+//'   for efficacy stopping for the primary trial.
+//' @param alpha The significance level of the primary trial. 
+//'   Defaults to 0.025.
+//' @param typeAlphaSpending The type of alpha spending for the primary 
+//'   trial. One of the following: 
+//'   "OF" for O'Brien-Fleming boundaries, 
+//'   "P" for Pocock boundaries, 
+//'   "WT" for Wang & Tsiatis boundaries, 
+//'   "sfOF" for O'Brien-Fleming type spending function, 
+//'   "sfP" for Pocock type spending function, 
+//'   "sfKD" for Kim & DeMets spending function, 
+//'   "sfHSD" for Hwang, Shi & DeCani spending function, 
+//'   "user" for user defined spending, and 
+//'   "none" for no early efficacy stopping. 
+//'   Defaults to "sfOF".
+//' @param parameterAlphaSpending The parameter value of alpha spending
+//'   for the primary trial. Corresponds to Delta for "WT", rho for "sfKD", 
+//'   and gamma for "sfHSD".
+//' @param userAlphaSpending The user defined alpha spending for the primary 
+//'   trial. Cumulative alpha spent up to each stage.
+//' @param futilityBounds The lower boundaries on the z-test statistic scale 
+//'   for futility stopping for the primary trial. Defaults to 
+//'   \code{rep(-6, kMax-1)} if left unspecified.
+//' @param typeBetaSpending The type of beta spending for the primary trial. 
+//'   One of the following: 
+//'   "sfOF" for O'Brien-Fleming type spending function, 
+//'   "sfP" for Pocock type spending function, 
+//'   "sfKD" for Kim & DeMets spending function, 
+//'   "sfHSD" for Hwang, Shi & DeCani spending function, and
+//'   "none" for no early futility stopping. 
+//'   Defaults to "none".
+//' @param parameterBetaSpending The parameter value of beta spending 
+//'   for the primary trial. Corresponds to rho for "sfKD", 
+//'   and gamma for "sfHSD".
+//' @param spendingTime The error spending time of the primary trial. 
+//'   Defaults to missing, in which case, it is the same as 
+//'   \code{informationRates}.
+//' @param MullerSchafer Whether to use the Muller and Schafer (2001) method 
+//'   for trial adaptation.
+//' @param kNew The number of looks of the secondary trial.
+//' @param informationRatesNew The spacing of looks of the secondary trial.
+//' @param efficacyStoppingNew The indicators of whether efficacy stopping is 
+//'   allowed at each look of the secondary trial. Defaults to true 
+//'   if left unspecified.
+//' @param futilityStoppingNew The indicators of whether futility stopping is 
+//'   allowed at each look of the secondary trial. Defaults to true 
+//'   if left unspecified.
+//' @param typeAlphaSpendingNew The type of alpha spending for the secondary
+//'   trial. One of the following: 
+//'   "OF" for O'Brien-Fleming boundaries, 
+//'   "P" for Pocock boundaries, 
+//'   "WT" for Wang & Tsiatis boundaries, 
+//'   "sfOF" for O'Brien-Fleming type spending function, 
+//'   "sfP" for Pocock type spending function, 
+//'   "sfKD" for Kim & DeMets spending function, 
+//'   "sfHSD" for Hwang, Shi & DeCani spending function, and 
+//'   "none" for no early efficacy stopping. 
+//'   Defaults to "sfOF".
+//' @param parameterAlphaSpendingNew The parameter value of alpha spending 
+//'   for the secondary trial. Corresponds to Delta for "WT", rho for "sfKD", 
+//'   and gamma for "sfHSD".
+//' @param typeBetaSpendingNew The type of beta spending for the secondary
+//'   trial. One of the following: 
+//'   "sfOF" for O'Brien-Fleming type spending function, 
+//'   "sfP" for Pocock type spending function, 
+//'   "sfKD" for Kim & DeMets spending function, 
+//'   "sfHSD" for Hwang, Shi & DeCani spending function, 
+//'   "user" for user defined spending, and 
+//'   "none" for no early futility stopping. 
+//'   Defaults to "none".
+//' @param parameterBetaSpendingNew The parameter value of beta spending 
+//'   for the secondary trial. Corresponds to rho for "sfKD", 
+//'   and gamma for "sfHSD".
+//' @param userBetaSpendingNew The user defined cumulative beta spending. 
+//'   Cumulative beta spent up to each stage of the secondary trial.
+//' @param spendingTimeNew The error spending time of the secondary trial. 
+//'   Defaults to missing, in which case, it is the same as 
+//'   \code{informationRatesNew}.
+//'
+//' @return An \code{adaptDesign} object with two list components: 
+//' 
+//' * \code{primaryTrial}: A list of selected information for the primary 
+//' trial, including \code{L}, \code{zL}, \code{theta}, \code{kMax}, 
+//' \code{informationRates}, \code{efficacyBounds}, \code{futilityBounds},
+//' and \code{MullerSchafer}.
+//'  
+//' * \code{secondaryTrial}: A \code{design} object for the secondary trial.
+//'
+//' @author Kaifeng Lu, \email{kaifenglu@@gmail.com}
+//'
+//' @references 
+//' Lu Chi, H. M. James Hung, and Sue-Jane Wang. 
+//' Modification of sample size in group sequential clinical trials.
+//' Biometrics 1999;55:853-857.
+//' 
+//' Hans-Helge Muller and Helmut Schafer. 
+//' Adaptive group sequential designs for clinical trials:
+//' Combining the advantages of adaptive and of
+//' classical group sequential approaches. 
+//' Biometrics 2001;57:886-891.
+//' 
+//' @seealso \code{\link{getDesign}}
+//' 
+//' @examples
+//'
+//' # original group sequential design with 90% power to detect delta = 6
+//' delta = 6
+//' sigma = 17
+//' n = 282
+//' (des1 = getDesign(IMax = n/(4*sigma^2), theta = delta, kMax = 3, 
+//'                   alpha = 0.05, typeAlphaSpending = "sfHSD", 
+//'                   parameterAlphaSpending = -4))
+//' 
+//' # interim look results
+//' L = 1
+//' n1 = n/3
+//' delta1 = 4.5
+//' sigma1 = 20
+//' zL = delta1/sqrt(4/n1*sigma1^2)
+//' 
+//' t = des1$byStageResults$informationRates
+//' 
+//' # conditional power for original design at estimated parameter value
+//' (des2 = adaptDesign(
+//'   betaNew = NA, INew = (n-n1)/(4*sigma1^2), 
+//'   L, zL, theta = delta1, 
+//'   kMax = 3, informationRates = t,
+//'   alpha = 0.05, typeAlphaSpending = "sfHSD", 
+//'   parameterAlphaSpending = -4))
+//' 
+//' # conditional power with sample size increase
+//' (des2 = adaptDesign(
+//'   betaNew = NA, INew = 420/(4*sigma1^2), 
+//'   L, zL, theta = delta1, 
+//'   kMax = 3, informationRates = t,
+//'   alpha = 0.05, typeAlphaSpending = "sfHSD", 
+//'   parameterAlphaSpending = -4))
+//' 
+//' # Muller & Schafer (2001) method to design the secondary trial: 
+//' # 3-look gamma(-2) spending with 84% power at delta = 4.5 and sigma = 20
+//' (des2 = adaptDesign(
+//'   betaNew = 0.16, INew = NA, 
+//'   L, zL, theta = delta1,
+//'   kMax = 3, informationRates = t,
+//'   alpha = 0.05, typeAlphaSpending = "sfHSD", 
+//'   parameterAlphaSpending = -4,
+//'   MullerSchafer = TRUE,
+//'   kNew = 3, typeAlphaSpendingNew = "sfHSD", 
+//'   parameterAlphaSpendingNew = -2))
+//'   
+//' # incremental sample size for sigma = 20
+//' (nNew = 4*sigma1^2*des2$secondaryTrial$overallResults$maxInformation)
+//'
+//' @export
+// [[Rcpp::export]]
+List adaptDesign(double betaNew = NA_REAL, 
+                 double INew = NA_REAL, 
+                 const int L = NA_INTEGER, 
+                 const double zL = NA_REAL, 
+                 const double theta = NA_REAL, 
+                 const double IMax = NA_REAL,
+                 const int kMax = NA_INTEGER, 
+                 const NumericVector& informationRates = NA_REAL,
+                 const LogicalVector& efficacyStopping = NA_LOGICAL,
+                 const LogicalVector& futilityStopping = NA_LOGICAL,
+                 const NumericVector& criticalValues = NA_REAL,
+                 const double alpha = 0.025,
+                 const String typeAlphaSpending = "sfOF",
+                 const double parameterAlphaSpending = NA_REAL,
+                 const NumericVector& userAlphaSpending = NA_REAL,
+                 const NumericVector& futilityBounds = NA_REAL,
+                 const String typeBetaSpending = "none",
+                 const double parameterBetaSpending = NA_REAL,
+                 const NumericVector& spendingTime = NA_REAL,
+                 const bool MullerSchafer = 0, 
+                 const int kNew = NA_INTEGER, 
+                 const NumericVector& informationRatesNew = NA_REAL, 
+                 const LogicalVector& efficacyStoppingNew = NA_LOGICAL, 
+                 const LogicalVector& futilityStoppingNew = NA_LOGICAL,
+                 const String typeAlphaSpendingNew = "sfOF", 
+                 const double parameterAlphaSpendingNew = NA_REAL, 
+                 const String typeBetaSpendingNew = "none", 
+                 const double parameterBetaSpendingNew = NA_REAL, 
+                 const NumericVector& userBetaSpendingNew = NA_REAL,
+                 const NumericVector& spendingTimeNew = NA_REAL) {
+  
+  NumericVector t = clone(informationRates);
+  LogicalVector es = clone(efficacyStopping);
+  LogicalVector fs = clone(futilityStopping);
+  NumericVector b = clone(criticalValues);
+  NumericVector a = clone(futilityBounds);
+  NumericVector st = clone(spendingTime);
+  
+  NumericVector tNew = clone(informationRatesNew);
+  LogicalVector esNew = clone(efficacyStoppingNew);
+  LogicalVector fsNew = clone(futilityStoppingNew);
+  NumericVector stNew = clone(spendingTimeNew);
+  
+  double alpha1 = alpha;
+  
+  std::string asf = typeAlphaSpending;
+  std::for_each(asf.begin(), asf.end(), [](char & c) {
+    c = std::tolower(c);
+  });
+  
+  double asfpar = parameterAlphaSpending;
+  
+  std::string bsf = typeBetaSpending;
+  std::for_each(bsf.begin(), bsf.end(), [](char & c) {
+    c = std::tolower(c);
+  });
+  
+  double bsfpar = parameterBetaSpending;
+  
+  std::string asfNew = typeAlphaSpendingNew;
+  std::for_each(asfNew.begin(), asfNew.end(), [](char & c) {
+    c = std::tolower(c);
+  });
+  
+  double asfparNew = parameterAlphaSpendingNew;
+  
+  std::string bsfNew = typeBetaSpendingNew;
+  std::for_each(bsfNew.begin(), bsfNew.end(), [](char & c) {
+    c = std::tolower(c);
+  });
+  
+  double bsfparNew = parameterBetaSpendingNew;
+  
+  if (R_isnancpp(betaNew) && R_isnancpp(INew)) {
+    stop("betaNew and INew cannot be both missing");
+  }
+  
+  if (!R_isnancpp(betaNew) && !R_isnancpp(INew)) {
+    stop("Only one of betaNew and INew should be provided");
+  }
+  
+  if (!R_isnancpp(betaNew) && betaNew < 0.0001 && betaNew >= 1) {
+    stop("betaNew must be greater than or equal to 0.0001 and less than 1");
+  }
+  
+  if (!R_isnancpp(INew) && INew <= 0) {
+    stop("INew must be positive");
+  }
+  
+  if (R_isnancpp(L)) {
+    stop("L must be provided");
+  }
+  
+  if (L < 1) {
+    stop("L must be a positive integer");
+  }
+  
+  if (R_isnancpp(zL)) {
+    stop("zL must be provided");
+  }
+  
+  if (R_isnancpp(theta)) {
+    stop("theta must be provided");
+  }
+  
+  if (R_isnancpp(kMax)) {
+    stop("kMax must be provided");
+  }
+  
+  if (kMax <= L) {
+    stop("kMax must be greater than L");
+  }
+  
+  if (is_false(any(is_na(informationRates)))) {
+    if (informationRates.size() != kMax) {
+      stop("Invalid length for informationRates");
+    } else if (informationRates[0] <= 0) {
+      stop("Elements of informationRates must be positive");
+    } else if (kMax > 1 && is_true(any(diff(informationRates) <= 0))) {
+      stop("Elements of informationRates must be increasing");
+    } else if (informationRates[kMax-1] != 1) {
+      stop("informationRates must end with 1");
+    }
+  } else {
+    IntegerVector tem = seq_len(kMax);
+    t = as<NumericVector>(tem)/(kMax+0.0);
+  }
+  
+  if (is_false(any(is_na(efficacyStopping)))) {
+    if (efficacyStopping.size() != kMax) {
+      stop("Invalid length for efficacyStopping");
+    } else if (efficacyStopping[kMax-1] != 1) {
+      stop("efficacyStopping must end with 1");
+    } else if (is_false(all((efficacyStopping == 1) | 
+      (efficacyStopping == 0)))) {
+      stop("Elements of efficacyStopping must be 1 or 0");
+    }
+  } else {
+    es = rep(1, kMax);
+  }
+  
+  if (is_false(any(is_na(futilityStopping)))) {
+    if (futilityStopping.size() != kMax) {
+      stop("Invalid length for futilityStopping");
+    } else if (futilityStopping[kMax-1] != 1) {
+      stop("futilityStopping must end with 1");
+    } else if (is_false(all((futilityStopping == 1) | 
+      (futilityStopping == 0)))) {
+      stop("Elements of futilityStopping must be 1 or 0");
+    }
+  } else {
+    fs = rep(1, kMax);
+  }
+  
+  if (is_false(any(is_na(criticalValues)))) {
+    if (criticalValues.size() != kMax) {
+      stop("Invalid length for criticalValues");
+    }
+    
+    NumericVector u(kMax), l(kMax, -6.0), theta0(kMax);
+    for (int i=0; i<kMax; i++) {
+      u[i] = criticalValues[i];
+      if (!es[i]) u[i] = 6.0;
+    }
+    
+    List probs = exitprobcpp(u, l, theta0, t);
+    alpha1 = sum(NumericVector(probs[0]));
+  }
+  
+  if (!R_isnancpp(alpha1)) {
+    if (alpha1 < 0.00001 || alpha1 >= 0.5) {
+      stop("alpha must lie in [0.00001, 0.5)");
+    }
+  } else {
+    stop("alpha must be provided for missing criticalValues");
+  }
+  
+  if (is_true(any(is_na(criticalValues))) && !(asf=="of" || asf=="p" ||
+      asf=="wt" || asf=="sfof" || asf=="sfp" ||
+      asf=="sfkd" || asf=="sfhsd" || asf=="user" || asf=="none")) {
+    stop("Invalid value for typeAlphaSpending");
+  }
+  
+  if ((asf=="wt" || asf=="sfkd" || asf=="sfhsd") && R_isnancpp(asfpar)) {
+    stop("Missing value for parameterAlphaSpending");
+  }
+  
+  if (asf=="sfkd" && asfpar <= 0) {
+    stop ("parameterAlphaSpending must be positive for sfKD");
+  }
+  
+  if (is_true(any(is_na(criticalValues))) && asf=="user") {
+    if (is_true(any(is_na(userAlphaSpending)))) {
+      stop("userAlphaSpending must be specified");
+    } else if (userAlphaSpending.size() < kMax) {
+      stop("Insufficient length of userAlphaSpending");
+    } else if (userAlphaSpending[0] < 0) {
+      stop("Elements of userAlphaSpending must be nonnegnative");
+    } else if (kMax > 1 && is_true(any(diff(userAlphaSpending) < 0))) {
+      stop("Elements of userAlphaSpending must be nondecreasing");
+    } else if (userAlphaSpending[kMax-1] != alpha) {
+      stop("userAlphaSpending must end with specified alpha");
+    }
+  }
+  
+  if (is_false(any(is_na(futilityBounds)))) {
+    if (!(futilityBounds.size() == kMax-1 ||
+        futilityBounds.size() == kMax)) {
+      stop("Invalid length for futilityBounds");
+    }
+  }
+  
+  if (is_false(any(is_na(criticalValues))) &&
+      is_false(any(is_na(futilityBounds)))) {
+    for (int i=0; i<kMax-1; i++) {
+      if (futilityBounds[i] > criticalValues[i]) {
+        stop("futilityBounds must lie below criticalValues");
+      }
+    }
+    
+    if (futilityBounds.size() == kMax &&
+        futilityBounds[kMax-1] != criticalValues[kMax-1]) {
+      stop("futilityBounds and criticalValues must meet at final analysis");
+    }
+  }
+  
+  if (is_true(any(is_na(futilityBounds))) && !(bsf=="sfof" || bsf=="sfp" ||
+      bsf=="sfkd" || bsf=="sfhsd" || bsf=="none")) {
+    stop("Invalid value for typeBetaSpending");
+  }
+  
+  if ((bsf=="sfkd" || bsf=="sfhsd") && R_isnancpp(bsfpar)) {
+    stop("Missing value for parameterBetaSpending");
+  }
+  
+  if (bsf=="sfkd" && bsfpar <= 0) {
+    stop ("parameterBetaSpending must be positive for sfKD");
+  }
+  
+  if (is_false(any(is_na(spendingTime)))) {
+    if (spendingTime.size() != kMax) {
+      stop("Invalid length for spendingTime");
+    } else if (spendingTime[0] <= 0) {
+      stop("Elements of spendingTime must be positive");
+    } else if (kMax > 1 && is_true(any(diff(spendingTime) <= 0))) {
+      stop("Elements of spendingTime must be increasing");
+    } else if (spendingTime[kMax-1] != 1) {
+      stop("spendingTime must end with 1");
+    }
+  } else {
+    st = clone(t);
+  }
+  
+  
+  if (MullerSchafer) {
+    if (R_isnancpp(kNew)) {
+      stop("kNew must be provided");
+    }
+    
+    if (is_false(any(is_na(informationRatesNew)))) {
+      if (informationRatesNew.size() != kNew) {
+        stop("Invalid length for informationRatesNew");
+      } else if (informationRatesNew[0] <= 0) {
+        stop("Elements of informationRatesNew must be positive");
+      } else if (kNew > 1 && is_true(any(diff(informationRatesNew) <= 0))) {
+        stop("Elements of informationRatesNew must be increasing");
+      } else if (informationRatesNew[kNew-1] != 1) {
+        stop("informationRatesNew must end with 1");
+      }
+    } else {
+      IntegerVector tem = seq_len(kNew);
+      tNew = as<NumericVector>(tem)/(kNew+0.0);
+    }
+    
+    if (is_false(any(is_na(efficacyStoppingNew)))) {
+      if (efficacyStoppingNew.size() != kNew) {
+        stop("Invalid length for efficacyStoppingNew");
+      } else if (efficacyStoppingNew[kNew-1] != 1) {
+        stop("efficacyStoppingNew must end with 1");
+      } else if (is_false(all((efficacyStoppingNew == 1) | 
+        (efficacyStoppingNew == 0)))) {
+        stop("Elements of efficacyStoppingNew must be 1 or 0");
+      }
+    } else {
+      esNew = rep(1, kNew);
+    }
+    
+    if (is_false(any(is_na(futilityStoppingNew)))) {
+      if (futilityStoppingNew.size() != kNew) {
+        stop("Invalid length for futilityStoppingNew");
+      } else if (futilityStoppingNew[kNew-1] != 1) {
+        stop("futilityStoppingNew must end with 1");
+      } else if (is_false(all((futilityStoppingNew == 1) | 
+        (futilityStoppingNew == 0)))) {
+        stop("Elements of futilityStoppingNew must be 1 or 0");
+      }
+    } else {
+      fsNew = rep(1, kNew);
+    }
+    
+    if (!(asfNew=="of" || asfNew=="p" || asfNew=="wt" || 
+        asfNew=="sfof" || asfNew=="sfp" ||
+        asfNew=="sfkd" || asfNew=="sfhsd" || asfNew=="none")) {
+      stop("Invalid value for typeAlphaSpendingNew");
+    }
+    
+    if ((asfNew=="wt" || asfNew=="sfkd" || asfNew=="sfhsd") && 
+        R_isnancpp(asfparNew)) {
+      stop("Missing value for parameterAlphaSpendingNew");
+    }
+    
+    if (asfNew=="sfkd" && asfparNew <= 0) {
+      stop ("parameterAlphaSpendingNew must be positive for sfKD");
+    }
+    
+    if (R_isnancpp(INew) && !(bsfNew=="sfof" || bsfNew=="sfp" || 
+        bsfNew=="sfkd" || bsfNew=="sfhsd" || 
+        bsfNew=="user" || bsfNew=="none")) {
+      stop("Invalid value for typeBetaSpendingNew");
+    } else if (!(bsfNew=="sfof" || bsfNew=="sfp" || bsfNew=="sfkd" || 
+      bsfNew=="sfhsd" || bsfNew=="none")) {
+      stop("Invalid value for typeBetaSpendingNew");
+    }
+    
+    if ((bsfNew=="sfkd" || bsfNew=="sfhsd") && R_isnancpp(bsfparNew)) {
+      stop("Missing value for parameterBetaSpendingNew");
+    }
+    
+    if (bsfNew=="sfkd" && bsfparNew <= 0) {
+      stop ("parameterBetaSpendingNew must be positive for sfKD");
+    }
+    
+    if (R_isnancpp(INew) && bsfNew=="user") {
+      if (is_true(any(is_na(userBetaSpendingNew)))) {
+        stop("userBetaSpendingNew must be specified");
+      } else if (userBetaSpendingNew.size() < kNew) {
+        stop("Insufficient length of userBetaSpendingNew");
+      } else if (userBetaSpendingNew[0] < 0) {
+        stop("Elements of userBetaSpendingNew must be nonnegnative");
+      } else if (kNew > 1 && is_true(any(diff(userBetaSpendingNew) < 0))) {
+        stop("Elements of userBetaSpendingNew must be nondecreasing");
+      } else if (userBetaSpendingNew[kNew] != betaNew) {
+        stop("userBetaSpendingNew must end with specified betaNew");
+      }
+    }
+    
+    if (is_false(any(is_na(spendingTimeNew)))) {
+      if (spendingTimeNew.size() != kNew) {
+        stop("Invalid length for spendingTimeNew");
+      } else if (spendingTimeNew[0] <= 0) {
+        stop("Elements of spendingTimeNew must be positive");
+      } else if (kNew > 1 && is_true(any(diff(spendingTimeNew) <= 0))) {
+        stop("Elements of spendingTimeNew must be increasing");
+      } else if (spendingTimeNew[kNew-1] != 1) {
+        stop("spendingTimeNew must end with 1");
+      }
+    } else {
+      stNew = clone(tNew);
+    }
+  }
+  
+  
+  // obtain critical values for the primary trial
+  if (is_true(any(is_na(criticalValues)))) {
+    b = getBoundcpp(kMax, t, alpha1, asf, asfpar, userAlphaSpending, st, es);
+  }
+  
+  // obtain futility bounds for the primary trial
+  if (kMax > 1) {
+    if (is_true(any(is_na(futilityBounds))) && bsf=="none") {
+      a = rep(-6.0, kMax);
+      a[kMax-1] = b[kMax-1];
+    } else if (is_false(any(is_na(futilityBounds))) && 
+      a.size() == kMax-1) {
+      a.push_back(b[kMax-1]);
+    }
+  } else {
+    if (is_true(any(is_na(futilityBounds)))) {
+      a = b[kMax-1];
+    }
+  }
+  
+  if (is_true(any(is_na(a)))) {
+    if (R_isnancpp(IMax)) {
+      stop("IMax must be provided");
+    }
+    
+    if (IMax <= 0) {
+      stop("IMax must be positive");
+    }
+    
+    NumericVector theta1(kMax, theta);
+    List out = getPower(alpha1, kMax, b, theta1, IMax*t, bsf, bsfpar, st, fs);
+    a = out[1];
+  }
+  
+  
+  List des1 = List::create(
+    _["L"] = L,
+    _["zL"] = zL,
+    _["theta"] = theta,
+    _["kMax"] = kMax,
+    _["informationRates"] = t,
+    _["efficacyBounds"] = b,
+    _["futilityBounds"] = a,
+    _["MullerSchafer"] = MullerSchafer);
+  
+  
+  List des2;
+  int k1 = kMax - L;
+  NumericVector t1(k1), r1(k1), b1(k1), a1(k1, -6.0), theta0(k1);
+  for (int l=0; l<k1; l++) {
+    t1[l] = (t[l+L] - t[L-1])/(1 - t[L-1]);
+    r1[l] = t[L-1]/t[l+L];
+    b1[l] = (b[l+L] - sqrt(r1[l])*zL)/sqrt(1 - r1[l]);
+    if (!es[l+L]) b1[l] = 6.0;
+  }
+  
+  if (!MullerSchafer) {
+    for (int l=0; l<k1; l++) {
+      a1[l] = (a[l+L] - sqrt(r1[l])*zL)/sqrt(1 - r1[l]);
+      if (!fs[l+L]) a1[l] = -6.0;
+    }
+    
+    IntegerVector idx = Range(L, kMax-1);
+    LogicalVector esNew = es[idx];
+    LogicalVector fsNew = fs[idx];
+    
+    des2 = getDesign(betaNew, INew, theta, k1, t1, esNew, fsNew, 
+                     b1, NA_REAL, typeAlphaSpendingNew, 
+                     parameterAlphaSpendingNew, 0,
+                     a1, typeBetaSpendingNew, parameterBetaSpendingNew, 
+                     userBetaSpendingNew, stNew);
+  } else {
+    List probs = exitprobcpp(b1, a1, theta0, t1);
+    double alphaNew = sum(NumericVector(probs[0]));
+    
+    if (!R_isnancpp(betaNew) && betaNew >= 1-alphaNew) {
+      stop("betaNew must be less than 1 minus conditional type I error");
+    }
+    
+    NumericVector b1New(kNew, NA_REAL), a1New(kNew, NA_REAL);
+    
+    des2 = getDesign(betaNew, INew, theta, kNew, tNew, esNew, fsNew, 
+                     b1New, alphaNew, typeAlphaSpendingNew, 
+                     parameterAlphaSpendingNew, 0,
+                     a1New, typeBetaSpendingNew, parameterBetaSpendingNew, 
+                     userBetaSpendingNew, stNew);
+  }
+  
+  List result = List::create(
+    _["primaryTrial"] = des1,
+    _["secondaryTrial"] = des2);
+  
+  result.attr("class") = "adaptDesign";
+  
+  return result;
+}
+
 
 //' @title Get the required number of events from hazard ratios
 //' @description Obtains the required number of events given the hazard 
@@ -4043,6 +4785,8 @@ List getDesign(const double beta = 0.2,
 //'   Defaults to 1 for rounding.
 //'
 //' @return The required number of events.
+//'
+//' @author Kaifeng Lu, \email{kaifenglu@@gmail.com}
 //'
 //' @examples
 //'
@@ -4092,7 +4836,7 @@ double getNeventsFromHazardRatio(
     stop("allocationRatioPlanned must be positive");
   }
   
-  List design = getDesign(beta, NA_REAL, kMax, informationRates, 
+  List design = getDesign(beta, NA_REAL, 1, kMax, informationRates, 
                           efficacyStopping, futilityStopping, 
                           criticalValues, alpha, typeAlphaSpending,
                           parameterAlphaSpending, userAlphaSpending, 
@@ -4161,7 +4905,17 @@ double getNeventsFromHazardRatio(
 //' @param rounding Whether to round up sample size and events. 
 //'   Defaults to 1 for sample size rounding.
 //' 
-//' @return A list of S3 class \code{lrpower}.
+//' @return A list of two components: 
+//' 
+//' * \code{resultsUnderH1}: An S3 class \code{lrpower} object under the 
+//' alternative hypothesis.
+//' 
+//' * \code{resultsUnderH0}: An S3 class \code{lrpower} object under the 
+//' null hypothesis.
+//'
+//' @author Kaifeng Lu, \email{kaifenglu@@gmail.com}
+//'
+//' @seealso \code{\link{lrpower}}
 //'
 //' @examples
 //' # Piecewise accrual, piecewise exponential survival, and 5% dropout by
@@ -4217,28 +4971,6 @@ double getNeventsFromHazardRatio(
 //'              gamma2 = -log(1-0.05)/12,
 //'              accrualDuration = 22,
 //'              followupTime = 18, fixedFollowup = FALSE)
-//'              
-//'
-//' # Example 4: Non-inferiority trial with fixed follow-up and 
-//' # superiority alternative
-//' 
-//' lrsamplesize(beta = 0.1, 
-//'              kMax = 3, 
-//'              alpha = 0.025,
-//'              typeAlphaSpending = "sfOF",
-//'              hazardRatioH0 = 1.1,
-//'              accrualTime = c(0, 6),
-//'              accrualIntensity = c(1000, 1500),
-//'              lambda1 = log(2)/48*0.95,
-//'              lambda2 = log(2)/48,
-//'              gamma1 = -log(1-0.08)/12,
-//'              gamma2 = -log(1-0.08)/12,
-//'              accrualDuration = NA,
-//'              followupTime = 18,
-//'              fixedFollowup = 1, 
-//'              typeOfComputation = "Schoenfeld")
-//'                    
-//' 
 //'
 //' @export
 // [[Rcpp::export]]
@@ -4303,7 +5035,6 @@ List lrsamplesize(const double beta = 0.2,
   int nintervals = piecewiseSurvivalTime.size();
   int nsi = nstrata*nintervals;
   
-  
   if (R_isnancpp(beta)) {
     stop("beta must be provided");
   }
@@ -4331,12 +5062,14 @@ List lrsamplesize(const double beta = 0.2,
     informationRates1 = as<NumericVector>(tem)/(kMax+0.0);
   }
   
-  
   if (is_false(any(is_na(efficacyStopping)))) {
     if (efficacyStopping.size() != kMax) {
       stop("Invalid length for efficacyStopping");
     } else if (efficacyStopping[kMax-1] != 1) {
       stop("efficacyStopping must end with 1");
+    } else if (is_false(all((efficacyStopping == 1) | 
+      (efficacyStopping == 0)))) {
+      stop("Elements of efficacyStopping must be 1 or 0");
     }
   } else {
     efficacyStopping1 = rep(1, kMax);
@@ -4347,6 +5080,9 @@ List lrsamplesize(const double beta = 0.2,
       stop("Invalid length for futilityStopping");
     } else if (futilityStopping[kMax-1] != 1) {
       stop("futilityStopping must end with 1");
+    } else if (is_false(all((futilityStopping == 1) | 
+      (futilityStopping == 0)))) {
+      stop("Elements of futilityStopping must be 1 or 0");
     }
   } else {
     futilityStopping1 = rep(1, kMax);
@@ -4367,11 +5103,11 @@ List lrsamplesize(const double beta = 0.2,
   if (is_true(any(is_na(criticalValues))) && !(asf=="of" || asf=="p" ||
       asf=="wt" || asf=="sfof" || asf=="sfp" ||
       asf=="sfkd" || asf=="sfhsd" || asf=="user" || asf=="none")) {
-    stop("Invalid type for alpha spending");
+    stop("Invalid value for typeAlphaSpending");
   }
   
   if ((asf=="wt" || asf=="sfkd" || asf=="sfhsd") && R_isnancpp(asfpar)) {
-    stop("Missing parameter for the alpha spending function");
+    stop("Missing value for parameterAlphaSpending");
   }
   
   if (asf=="sfkd" && asfpar <= 0) {
@@ -4415,11 +5151,11 @@ List lrsamplesize(const double beta = 0.2,
   
   if (is_true(any(is_na(futilityBounds))) && !(bsf=="sfof" || bsf=="sfp" ||
       bsf=="sfkd" || bsf=="sfhsd" || bsf=="user" || bsf=="none")) {
-    stop("Invalid type for beta spending");
+    stop("Invalid value for typeBetaSpending");
   }
   
   if ((bsf=="sfkd" || bsf=="sfhsd") && R_isnancpp(bsfpar)) {
-    stop("Missing parameter for the beta spending function");
+    stop("Missing value for parameterBetaSpending");
   }
   
   if (bsf=="sfkd" && bsfpar <= 0) {
@@ -4578,7 +5314,6 @@ List lrsamplesize(const double beta = 0.2,
     }
   }
   
-  
   if (interval.size() != 2) {
     stop("interval must have 2 elements");
   }
@@ -4590,7 +5325,6 @@ List lrsamplesize(const double beta = 0.2,
   if (interval[0] >= interval[1]) {
     stop("upper limit must be greater than lower limit for interval");
   }
-  
   
   bool missingCriticalValues = is_true(any(is_na(criticalValues)));
   bool missingFutilityBounds = is_true(any(is_na(futilityBounds)));
@@ -4623,7 +5357,7 @@ List lrsamplesize(const double beta = 0.2,
   }
   
   if (su == "schoenfeld") {
-    List design = getDesign(beta, NA_REAL, kMax, informationRates1, 
+    List design = getDesign(beta, NA_REAL, 1, kMax, informationRates1, 
                             efficacyStopping1, 
                             futilityStopping1, criticalValues1, alpha, 
                             asf, asfpar, userAlphaSpending, futilityBounds1, 
@@ -4680,7 +5414,6 @@ List lrsamplesize(const double beta = 0.2,
       accrualIntensity1 = aval*accrualIntensity;
     }
   } else {
-    
     auto f = [beta, kMax, informationRates1,
               efficacyStopping1, futilityStopping1,
               &criticalValues1, alpha, asf, asfpar, userAlphaSpending,
@@ -4718,7 +5451,6 @@ List lrsamplesize(const double beta = 0.2,
                     numSubintervals, spendingTime);
                 }
                 
-                
                 if (kMax > 1) {
                   if (missingFutilityBounds && bsf=="none") {
                     futilityBounds1 = rep(-6.0, kMax);
@@ -4749,7 +5481,6 @@ List lrsamplesize(const double beta = 0.2,
                             dur1, dur2, fixedFollowup,
                             rho1, rho2, numSubintervals, 1);
                 
-                
                 // obtain the timing of interim analysis
                 e0 = sum(NumericVector(lr[2]))*informationRates1;
                 time = caltime(e0, allocationRatioPlanned, 
@@ -4767,12 +5498,11 @@ List lrsamplesize(const double beta = 0.2,
                             piecewiseSurvivalTime, stratumFraction,
                             lambda1, lambda2, gamma1, gamma2,
                             dur1, dur2, fixedFollowup,
-                            rho1, rho2, numSubintervals, 0);
+                            rho1, rho2, numSubintervals, 2);
                 
-                NumericVector uscore = NumericVector(lr[8]);
-                vscore = NumericVector(lr[9]);
+                NumericVector uscore = NumericVector(lr[11]);
+                vscore = NumericVector(lr[12]);
                 theta = -uscore/vscore;
-                
                 
                 // information time
                 NumericVector t = vscore / (vscore[kMax - 1]);
@@ -4782,9 +5512,7 @@ List lrsamplesize(const double beta = 0.2,
                   st = clone(t);
                 }
                 
-                // compute the stagewise exit probabilities for efficacy and 
-                // futility
-                
+                // compute stagewise exit probabilities
                 if (!missingFutilityBounds || bsf=="none" || kMax==1) {
                   List probs = exitprobcpp(criticalValues1, futilityBounds1, 
                                            theta, vscore);
@@ -4792,7 +5520,7 @@ List lrsamplesize(const double beta = 0.2,
                   double overallReject = sum(pu);
                   return overallReject - (1-beta);
                 } else {
-                  // initialize futilityBounds to be updated
+                  // initialize futility bound to be updated
                   futilityBounds1 = NumericVector(kMax);
                   double epsilon;
                   
@@ -4815,14 +5543,11 @@ List lrsamplesize(const double beta = 0.2,
                       theta[0]*sqrt(vscore[0]);
                   }
                   
-                  
-                  // lambda expression for finding the futility bound at 
-                  // stage k
+                  // lambda expression for finding futility bound at stage k
                   auto g = [&k, &cumBetaSpent, criticalValues1, 
                             &futilityBounds1, theta, 
                             vscore](double aval)->double {
-                              NumericVector u(k+1);
-                              NumericVector l(k+1);
+                              NumericVector u(k+1), l(k+1);
                               for (int i=0; i<k; i++) {
                                 u[i] = criticalValues1[i];
                                 l[i] = futilityBounds1[i];
@@ -4836,7 +5561,6 @@ List lrsamplesize(const double beta = 0.2,
                               double cpl = sum(NumericVector(probs[1]));
                               return cpl - cumBetaSpent;
                             };
-                  
                   
                   for (k=1; k<kMax; k++) {
                     if (bsf == "user") {
@@ -4853,8 +5577,8 @@ List lrsamplesize(const double beta = 0.2,
                       if (g(-6.0) > 0) { // no beta spent at the current visit
                         futilityBounds1[k] = -6.0;
                       } else if (epsilon > 0) {
-                        futilityBounds1[k] = brent(g, -6.0, 
-                                                   criticalValues1[k], 1e-6);
+                        futilityBounds1[k] = brent(
+                          g, -6.0, criticalValues1[k], 1e-6);
                       } else if (k < kMax-1) {
                         return -1.0;
                       }
@@ -4867,7 +5591,6 @@ List lrsamplesize(const double beta = 0.2,
                 }
               };
     
-    
     if (unknown == "accrualDuration") {
       accrualDuration = brent(f, interval[0], interval[1], 0.0001);
     } else if (unknown == "followupTime") {
@@ -4876,9 +5599,7 @@ List lrsamplesize(const double beta = 0.2,
       double aval = brent(f, interval[0], interval[1], 0.0001);
       accrualIntensity1 = aval*accrualIntensity;
     }
-    
   }
-  
   
   futilityBounds1[kMax-1] = criticalValues1[kMax-1];
   
@@ -4938,7 +5659,6 @@ List lrsamplesize(const double beta = 0.2,
     } else {
       n = sum(NumericVector(lr[1]));
     }
-
   
     // round up the sample size
     NumericVector frac = NumericVector::create(
@@ -4962,7 +5682,7 @@ List lrsamplesize(const double beta = 0.2,
     } else {
       NumericVector ns(1);
       ns[0] = n;
-      u = getAccrualDuration(ns, accrualTime, accrualIntensity1);
+      u = getAccrualDurationFromN(ns, accrualTime, accrualIntensity1);
       accrualDuration = u[0];
     }
     
