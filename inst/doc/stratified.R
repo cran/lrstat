@@ -35,7 +35,7 @@ lrpower(kMax = 3,
 
 ## -----------------------------------------------------------------------------
 lrsim(kMax = 3, 
-      informationTime = c(0.333, 0.667, 1), 
+      informationRates = c(0.333, 0.667, 1), 
       criticalValues = c(3.710, 2.511, 1.993), 
       accrualIntensity = 12,
       stratumFraction = stratumFraction,

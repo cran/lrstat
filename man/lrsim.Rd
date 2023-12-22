@@ -6,7 +6,7 @@
 \usage{
 lrsim(
   kMax = NA_integer_,
-  informationTime = NA_real_,
+  informationRates = NA_real_,
   criticalValues = NA_real_,
   futilityBounds = NA_real_,
   hazardRatioH0 = 1,
@@ -35,11 +35,9 @@ lrsim(
 \arguments{
 \item{kMax}{The maximum number of stages.}
 
-\item{informationTime}{Information time in terms of variance of
-weighted log-rank test score statistic under the null hypothesis.
-Same as \code{informationRates} in terms of number of events for
-the conventional log-rank test. Use \code{caltime} and \code{lrstat}
-to derive the information time for weighted log-rank tests.
+\item{informationRates}{The information rates in terms of number
+of events for the conventional log-rank test and in terms of
+the actual information for weighted log-rank tests.
 Fixed prior to the trial. If left unspecified, it defaults to
 \code{plannedEvents / plannedEvents[kMax]} when \code{plannedEvents}
 is provided and to \code{plannedTime / plannedTime[kMax]} otherwise.}
@@ -216,7 +214,7 @@ trials based on weighted log-rank test.
 \examples{
 # Example 1: analyses based on number of events
 
-sim1 = lrsim(kMax = 2, informationTime = c(0.5, 1),
+sim1 = lrsim(kMax = 2, informationRates = c(0.5, 1),
              criticalValues = c(2.797, 1.977),
              accrualIntensity = 11,
              lambda1 = 0.018, lambda2 = 0.030,
@@ -238,7 +236,7 @@ head(sim1$rawdata)
 
 # Example 2: analyses based on calendar time have similar power
 
-sim2 = lrsim(kMax = 2, informationTime = c(0.5, 1),
+sim2 = lrsim(kMax = 2, informationRates = c(0.5, 1),
              criticalValues = c(2.797, 1.977),
              accrualIntensity = 11,
              lambda1 = 0.018, lambda2 = 0.030,

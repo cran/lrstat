@@ -12,7 +12,7 @@ lrstat(time=c(20, 25, 30, 35, 38.5), allocationRatioPlanned = 3,
        accrualDuration = 32, followupTime = 6.5, fixedFollowup = TRUE)
 
 ## -----------------------------------------------------------------------------
-lrsim(kMax = 3, informationTime = c(0.5, 0.75, 1), 
+lrsim(kMax = 3, informationRates = c(0.5, 0.75, 1), 
       criticalValues = c(6, 2.34, 2.012), 
       futilityBounds = c(0.282, -6), 
       allocation1 = 3, allocation2 = 1,
@@ -30,7 +30,7 @@ lrsim(kMax = 3, informationTime = c(0.5, 0.75, 1),
       seed = 12345)
 
 ## -----------------------------------------------------------------------------
-lrsim(kMax = 3, informationTime = c(0.5, 0.75, 1), 
+lrsim(kMax = 3, informationRates = c(0.5, 0.75, 1), 
       criticalValues = c(6, 2.34, 2.012), 
       futilityBounds = c(0.282, -6), 
       allocation1 = 3, allocation2 = 1,

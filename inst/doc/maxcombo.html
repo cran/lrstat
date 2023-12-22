@@ -484,7 +484,7 @@ analyses for each iteration, and then construct the maximum combo test
 statistic at the final analysis. Finally, we tally the rejections across
 iterations to estimate the power. The same seed should be used to
 produce identical simulated data.</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a>sim1 <span class="ot">=</span> <span class="fu">lrsim</span>(<span class="at">kMax =</span> <span class="dv">2</span>, <span class="at">informationTime =</span> <span class="fu">c</span>(<span class="fl">0.5</span>, <span class="dv">1</span>),</span>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a>sim1 <span class="ot">=</span> <span class="fu">lrsim</span>(<span class="at">kMax =</span> <span class="dv">2</span>, <span class="at">informationRates =</span> <span class="fu">c</span>(<span class="fl">0.5</span>, <span class="dv">1</span>),</span>
 <span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a>             <span class="at">criticalValues =</span> <span class="fu">c</span>(<span class="dv">6</span>, <span class="dv">6</span>),</span>
 <span id="cb13-3"><a href="#cb13-3" tabindex="-1"></a>             <span class="at">accrualIntensity =</span> <span class="dv">25</span>, </span>
 <span id="cb13-4"><a href="#cb13-4" tabindex="-1"></a>             <span class="at">piecewiseSurvivalTime =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">1.5</span>),</span>
@@ -495,7 +495,7 @@ produce identical simulated data.</p>
 <span id="cb13-9"><a href="#cb13-9" tabindex="-1"></a>             <span class="at">maxNumberOfIterations =</span> <span class="dv">1000</span>,</span>
 <span id="cb13-10"><a href="#cb13-10" tabindex="-1"></a>             <span class="at">seed =</span> <span class="dv">314159</span>)</span>
 <span id="cb13-11"><a href="#cb13-11" tabindex="-1"></a></span>
-<span id="cb13-12"><a href="#cb13-12" tabindex="-1"></a>sim2 <span class="ot">=</span> <span class="fu">lrsim</span>(<span class="at">kMax =</span> <span class="dv">2</span>, <span class="at">informationTime =</span> <span class="fu">c</span>(<span class="fl">0.5</span>, <span class="dv">1</span>),</span>
+<span id="cb13-12"><a href="#cb13-12" tabindex="-1"></a>sim2 <span class="ot">=</span> <span class="fu">lrsim</span>(<span class="at">kMax =</span> <span class="dv">2</span>, <span class="at">informationRates =</span> <span class="fu">c</span>(<span class="fl">0.5</span>, <span class="dv">1</span>),</span>
 <span id="cb13-13"><a href="#cb13-13" tabindex="-1"></a>             <span class="at">criticalValues =</span> <span class="fu">c</span>(<span class="dv">6</span>, <span class="dv">6</span>),</span>
 <span id="cb13-14"><a href="#cb13-14" tabindex="-1"></a>             <span class="at">accrualIntensity =</span> <span class="dv">25</span>,</span>
 <span id="cb13-15"><a href="#cb13-15" tabindex="-1"></a>             <span class="at">piecewiseSurvivalTime =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">1.5</span>),</span>

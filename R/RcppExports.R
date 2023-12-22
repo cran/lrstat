@@ -6,11 +6,9 @@
 #' trials based on weighted log-rank test.
 #'
 #' @inheritParams param_kMax
-#' @param informationTime Information time in terms of variance of
-#'   weighted log-rank test score statistic under the null hypothesis.
-#'   Same as \code{informationRates} in terms of number of events for
-#'   the conventional log-rank test. Use \code{caltime} and \code{lrstat}
-#'   to derive the information time for weighted log-rank tests.
+#' @param informationRates The information rates in terms of number 
+#'   of events for the conventional log-rank test and in terms of 
+#'   the actual information for weighted log-rank tests.   
 #'   Fixed prior to the trial. If left unspecified, it defaults to
 #'   \code{plannedEvents / plannedEvents[kMax]} when \code{plannedEvents} 
 #'   is provided and to \code{plannedTime / plannedTime[kMax]} otherwise.
@@ -183,7 +181,7 @@
 #' @examples
 #' # Example 1: analyses based on number of events
 #' 
-#' sim1 = lrsim(kMax = 2, informationTime = c(0.5, 1),
+#' sim1 = lrsim(kMax = 2, informationRates = c(0.5, 1),
 #'              criticalValues = c(2.797, 1.977),
 #'              accrualIntensity = 11,
 #'              lambda1 = 0.018, lambda2 = 0.030,
@@ -205,7 +203,7 @@
 #'
 #' # Example 2: analyses based on calendar time have similar power
 #'
-#' sim2 = lrsim(kMax = 2, informationTime = c(0.5, 1),
+#' sim2 = lrsim(kMax = 2, informationRates = c(0.5, 1),
 #'              criticalValues = c(2.797, 1.977),
 #'              accrualIntensity = 11,
 #'              lambda1 = 0.018, lambda2 = 0.030,
@@ -222,8 +220,8 @@
 #' head(sim2$sumdata)
 #' 
 #' @export
-lrsim <- function(kMax = NA_integer_, informationTime = NA_real_, criticalValues = NA_real_, futilityBounds = NA_real_, hazardRatioH0 = 1, allocation1 = 1L, allocation2 = 1L, accrualTime = 0L, accrualIntensity = NA_real_, piecewiseSurvivalTime = 0L, stratumFraction = 1L, lambda1 = NA_real_, lambda2 = NA_real_, gamma1 = 0L, gamma2 = 0L, accrualDuration = NA_real_, followupTime = NA_real_, fixedFollowup = 0L, rho1 = 0, rho2 = 0, plannedEvents = NA_integer_, plannedTime = NA_real_, maxNumberOfIterations = 1000L, maxNumberOfRawDatasetsPerStage = 0L, seed = NA_integer_) {
-    .Call(`_lrstat_lrsim`, kMax, informationTime, criticalValues, futilityBounds, hazardRatioH0, allocation1, allocation2, accrualTime, accrualIntensity, piecewiseSurvivalTime, stratumFraction, lambda1, lambda2, gamma1, gamma2, accrualDuration, followupTime, fixedFollowup, rho1, rho2, plannedEvents, plannedTime, maxNumberOfIterations, maxNumberOfRawDatasetsPerStage, seed)
+lrsim <- function(kMax = NA_integer_, informationRates = NA_real_, criticalValues = NA_real_, futilityBounds = NA_real_, hazardRatioH0 = 1, allocation1 = 1L, allocation2 = 1L, accrualTime = 0L, accrualIntensity = NA_real_, piecewiseSurvivalTime = 0L, stratumFraction = 1L, lambda1 = NA_real_, lambda2 = NA_real_, gamma1 = 0L, gamma2 = 0L, accrualDuration = NA_real_, followupTime = NA_real_, fixedFollowup = 0L, rho1 = 0, rho2 = 0, plannedEvents = NA_integer_, plannedTime = NA_real_, maxNumberOfIterations = 1000L, maxNumberOfRawDatasetsPerStage = 0L, seed = NA_integer_) {
+    .Call(`_lrstat_lrsim`, kMax, informationRates, criticalValues, futilityBounds, hazardRatioH0, allocation1, allocation2, accrualTime, accrualIntensity, piecewiseSurvivalTime, stratumFraction, lambda1, lambda2, gamma1, gamma2, accrualDuration, followupTime, fixedFollowup, rho1, rho2, plannedEvents, plannedTime, maxNumberOfIterations, maxNumberOfRawDatasetsPerStage, seed)
 }
 
 #' @title Log-rank test simulation for three arms
@@ -1609,20 +1607,15 @@ getDurationFromNevents <- function(nevents = NA_real_, allocationRatioPlanned = 
     .Call(`_lrstat_getDurationFromNevents`, nevents, allocationRatioPlanned, accrualTime, accrualIntensity, piecewiseSurvivalTime, stratumFraction, lambda1, lambda2, gamma1, gamma2, followupTime, fixedFollowup, npoints, interval)
 }
 
-getCriticalValues <- function(kMax = NA_integer_, informationRates = NA_real_, efficacyStopping = NA_integer_, alpha = 0.025, typeAlphaSpending = "sfOF", parameterAlphaSpending = NA_real_, userAlphaSpending = NA_real_, hazardRatioH0 = 1, allocationRatioPlanned = 1, accrualTime = 0L, accrualIntensity = 20L, piecewiseSurvivalTime = 0L, stratumFraction = 1L, lambda2 = 0.0533, gamma1 = 0L, gamma2 = 0L, accrualDuration = 11.6, followupTime = 18, fixedFollowup = 0L, rho1 = 0, rho2 = 0, numSubintervals = 300L, spendingTime = NA_real_) {
-    .Call(`_lrstat_getCriticalValues`, kMax, informationRates, efficacyStopping, alpha, typeAlphaSpending, parameterAlphaSpending, userAlphaSpending, hazardRatioH0, allocationRatioPlanned, accrualTime, accrualIntensity, piecewiseSurvivalTime, stratumFraction, lambda2, gamma1, gamma2, accrualDuration, followupTime, fixedFollowup, rho1, rho2, numSubintervals, spendingTime)
-}
-
-getCumAlphaSpent <- function(kMax = NA_integer_, informationRates = NA_real_, criticalValues = NA_real_, hazardRatioH0 = 1, allocationRatioPlanned = 1, accrualTime = 0L, accrualIntensity = 20L, piecewiseSurvivalTime = 0L, stratumFraction = 1L, lambda2 = 0.0533, gamma1 = 0L, gamma2 = 0L, accrualDuration = 11.6, followupTime = 18, fixedFollowup = 0L, rho1 = 0, rho2 = 0, numSubintervals = 300L) {
-    .Call(`_lrstat_getCumAlphaSpent`, kMax, informationRates, criticalValues, hazardRatioH0, allocationRatioPlanned, accrualTime, accrualIntensity, piecewiseSurvivalTime, stratumFraction, lambda2, gamma1, gamma2, accrualDuration, followupTime, fixedFollowup, rho1, rho2, numSubintervals)
-}
-
 #' @title Log-rank test power
 #' @description Estimates the power, stopping probabilities, and expected
 #' sample size in a two-group survival design.
 #'
 #' @inheritParams param_kMax
-#' @inheritParams param_informationRates
+#' @param informationRates The information rates in terms of number 
+#'   of events for the conventional log-rank test and in terms of 
+#'   the actual information for weighted log-rank tests. 
+#'   Defaults to \code{(1:kMax) / kMax} if left unspecified.
 #' @inheritParams param_efficacyStopping
 #' @inheritParams param_futilityStopping
 #' @inheritParams param_criticalValues
@@ -2112,19 +2105,11 @@ getDesign <- function(beta = NA_real_, IMax = NA_real_, theta = NA_real_, kMax =
 #' 
 #' t = des1$byStageResults$informationRates
 #' 
-#' # conditional power for original design at estimated parameter value
-#' (des2 = adaptDesign(
-#'   betaNew = NA, INew = (n-n1)/(4*sigma1^2), 
-#'   L, zL, theta = delta1, 
-#'   kMax = 3, informationRates = t,
-#'   alpha = 0.05, typeAlphaSpending = "sfHSD", 
-#'   parameterAlphaSpending = -4))
-#' 
 #' # conditional power with sample size increase
 #' (des2 = adaptDesign(
 #'   betaNew = NA, INew = 420/(4*sigma1^2), 
 #'   L, zL, theta = delta1, 
-#'   kMax = 3, informationRates = t,
+#'   IMax = n/(4*sigma1^2), kMax = 3, informationRates = t,
 #'   alpha = 0.05, typeAlphaSpending = "sfHSD", 
 #'   parameterAlphaSpending = -4))
 #' 
@@ -2133,7 +2118,7 @@ getDesign <- function(beta = NA_real_, IMax = NA_real_, theta = NA_real_, kMax =
 #' (des2 = adaptDesign(
 #'   betaNew = 0.16, INew = NA, 
 #'   L, zL, theta = delta1,
-#'   kMax = 3, informationRates = t,
+#'   IMax = n/(4*sigma1^2), kMax = 3, informationRates = t,
 #'   alpha = 0.05, typeAlphaSpending = "sfHSD", 
 #'   parameterAlphaSpending = -4,
 #'   MullerSchafer = TRUE,
@@ -2204,7 +2189,10 @@ getNeventsFromHazardRatio <- function(beta = 0.2, kMax = 1L, informationRates = 
 #'
 #' @param beta Type II error. Defaults to 0.2.
 #' @inheritParams param_kMax
-#' @inheritParams param_informationRates
+#' @param informationRates The information rates in terms of number 
+#'   of events for the conventional log-rank test and in terms of 
+#'   the actual information for weighted log-rank tests. 
+#'   Defaults to \code{(1:kMax) / kMax} if left unspecified.
 #' @inheritParams param_efficacyStopping
 #' @inheritParams param_futilityStopping
 #' @inheritParams param_criticalValues
@@ -2312,7 +2300,7 @@ getNeventsFromHazardRatio <- function(beta = 0.2, kMax = 1L, informationRates = 
 #'              followupTime = 18, fixedFollowup = FALSE)
 #'
 #' @export
-lrsamplesize <- function(beta = 0.2, kMax = 1L, informationRates = NA_real_, efficacyStopping = NA_integer_, futilityStopping = NA_integer_, criticalValues = NA_real_, alpha = 0.025, typeAlphaSpending = "sfOF", parameterAlphaSpending = NA_real_, userAlphaSpending = NA_real_, futilityBounds = NA_real_, typeBetaSpending = "none", parameterBetaSpending = NA_real_, userBetaSpending = NA_real_, hazardRatioH0 = 1, allocationRatioPlanned = 1, accrualTime = 0L, accrualIntensity = 20L, piecewiseSurvivalTime = 0L, stratumFraction = 1L, lambda1 = 0.0309, lambda2 = 0.0533, gamma1 = 0L, gamma2 = 0L, accrualDuration = NA_real_, followupTime = 18, fixedFollowup = 0L, rho1 = 0, rho2 = 0, numSubintervals = 300L, estimateHazardRatio = 1L, typeOfComputation = "direct", interval = as.numeric( c(0.001, 240)), spendingTime = NA_real_, rounding = 1L) {
+lrsamplesize <- function(beta = 0.2, kMax = 1L, informationRates = NA_real_, efficacyStopping = NA_integer_, futilityStopping = NA_integer_, criticalValues = NA_real_, alpha = 0.025, typeAlphaSpending = "sfOF", parameterAlphaSpending = NA_real_, userAlphaSpending = NA_real_, futilityBounds = NA_real_, typeBetaSpending = "none", parameterBetaSpending = NA_real_, userBetaSpending = NA_real_, hazardRatioH0 = 1, allocationRatioPlanned = 1, accrualTime = 0L, accrualIntensity = 20L, piecewiseSurvivalTime = 0L, stratumFraction = 1L, lambda1 = 0.0309, lambda2 = 0.0533, gamma1 = 0L, gamma2 = 0L, accrualDuration = NA_real_, followupTime = NA_real_, fixedFollowup = 0L, rho1 = 0, rho2 = 0, numSubintervals = 300L, estimateHazardRatio = 1L, typeOfComputation = "direct", interval = as.numeric( c(0.001, 240)), spendingTime = NA_real_, rounding = 1L) {
     .Call(`_lrstat_lrsamplesize`, beta, kMax, informationRates, efficacyStopping, futilityStopping, criticalValues, alpha, typeAlphaSpending, parameterAlphaSpending, userAlphaSpending, futilityBounds, typeBetaSpending, parameterBetaSpending, userBetaSpending, hazardRatioH0, allocationRatioPlanned, accrualTime, accrualIntensity, piecewiseSurvivalTime, stratumFraction, lambda1, lambda2, gamma1, gamma2, accrualDuration, followupTime, fixedFollowup, rho1, rho2, numSubintervals, estimateHazardRatio, typeOfComputation, interval, spendingTime, rounding)
 }
 
@@ -3033,6 +3021,10 @@ getADRCI <- function(L = NA_integer_, zL = NA_real_, IMax = NA_real_, kMax = NA_
 #' @export
 getCP <- function(INew = NA_real_, L = NA_integer_, zL = NA_real_, theta = NA_real_, IMax = NA_real_, kMax = NA_integer_, informationRates = NA_real_, efficacyStopping = NA_integer_, futilityStopping = NA_integer_, criticalValues = NA_real_, alpha = 0.025, typeAlphaSpending = "sfOF", parameterAlphaSpending = NA_real_, userAlphaSpending = NA_real_, futilityBounds = NA_real_, typeBetaSpending = "none", parameterBetaSpending = NA_real_, spendingTime = NA_real_, MullerSchafer = 0L, kNew = NA_integer_, informationRatesNew = NA_real_, efficacyStoppingNew = NA_integer_, futilityStoppingNew = NA_integer_, typeAlphaSpendingNew = "sfOF", parameterAlphaSpendingNew = NA_real_, typeBetaSpendingNew = "none", parameterBetaSpendingNew = NA_real_, spendingTimeNew = NA_real_) {
     .Call(`_lrstat_getCP`, INew, L, zL, theta, IMax, kMax, informationRates, efficacyStopping, futilityStopping, criticalValues, alpha, typeAlphaSpending, parameterAlphaSpending, userAlphaSpending, futilityBounds, typeBetaSpending, parameterBetaSpending, spendingTime, MullerSchafer, kNew, informationRatesNew, efficacyStoppingNew, futilityStoppingNew, typeAlphaSpendingNew, parameterAlphaSpendingNew, typeBetaSpendingNew, parameterBetaSpendingNew, spendingTimeNew)
+}
+
+ftrunccpp <- function(p, test, gamma) {
+    .Call(`_lrstat_ftrunccpp`, p, test, gamma)
 }
 
 set_seed <- function(seed) {

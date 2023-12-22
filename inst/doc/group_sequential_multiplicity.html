@@ -484,9 +484,9 @@ combined.</p>
 ## Overall power: 0.971, overall significance level (1-sided): 0.005        
 ## Maximum # events: 248, expected # events: 196.1                          
 ## Maximum # dropouts: 0, expected # dropouts: 0                            
-## Maximum # subjects: 423, expected # subjects: 423                        
-## Total study duration: 41.5, expected study duration: 34.8                
-## Accrual duration: 30.3, follow-up duration: 11.1, fixed follow-up: FALSE 
+## Maximum # subjects: 421, expected # subjects: 421                        
+## Total study duration: 41.6, expected study duration: 34.8                
+## Accrual duration: 30.2, follow-up duration: 11.4, fixed follow-up: FALSE 
 ##                                                                          
 ##                              Stage 1 Stage 2
 ## Information rate             0.750   1.000  
@@ -495,8 +495,8 @@ combined.</p>
 ## Cumulative alpha spent       0.0018  0.0050 
 ## Number of events             186.0   248.0  
 ## Number of dropouts           0.0     0.0    
-## Number of subjects           423.0   423.0  
-## Analysis time                33.4    41.5   
+## Number of subjects           421.0   421.0  
+## Analysis time                33.5    41.6   
 ## Efficacy boundary (HR-scale) 0.635   0.702  
 ## Efficacy boundary (p-scale)  0.0018  0.0043 
 ## Information                  41.33   55.11  
@@ -514,9 +514,9 @@ Arm C combined at Look 1 and Look 2, respectively.</p>
 <span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a>  <span class="at">lambda1 =</span> <span class="fu">log</span>(<span class="dv">2</span>)<span class="sc">/</span><span class="dv">50</span>, <span class="at">lambda2 =</span> <span class="fu">log</span>(<span class="dv">2</span>)<span class="sc">/</span><span class="dv">30</span>,</span>
 <span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a>  <span class="at">accrualDuration =</span> <span class="fl">30.143</span>, <span class="at">followupTime =</span> <span class="dv">100</span>,</span>
 <span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a>  <span class="at">predictTarget =</span> <span class="dv">1</span>))</span></code></pre></div>
-<pre><code>##       time subjects  nevents nevents1 nevents2 ndropouts ndropouts1 ndropouts2
-## 1 33.44355 420.0024  96.6643 54.71521 41.94909         0          0          0
-## 2 41.46301 420.0024 136.9521 78.41901 58.53314         0          0          0
+<pre><code>##       time subjects   nevents nevents1 nevents2 ndropouts ndropouts1 ndropouts2
+## 1 33.47009 420.0024  96.80728 54.79808  42.0092         0          0          0
+## 2 41.57342 420.0024 137.46802 78.72732  58.7407         0          0          0
 ##   nfmax nfmax1 nfmax2
 ## 1     0      0      0
 ## 2     0      0      0</code></pre>
@@ -536,7 +536,7 @@ Arm C combined at Look 1 and Look 2, respectively.</p>
 <span id="cb9-12"><a href="#cb9-12" tabindex="-1"></a>    <span class="at">typeOfComputation =</span> <span class="st">&quot;Schoenfeld&quot;</span>,</span>
 <span id="cb9-13"><a href="#cb9-13" tabindex="-1"></a>    <span class="at">rounding =</span> <span class="dv">0</span>)<span class="sc">$</span>resultsUnderH1</span>
 <span id="cb9-14"><a href="#cb9-14" tabindex="-1"></a>  lr<span class="sc">$</span>overallResults<span class="sc">$</span>numberOfEvents <span class="sc">-</span> d}, </span>
-<span id="cb9-15"><a href="#cb9-15" tabindex="-1"></a>  <span class="fu">c</span>(<span class="dv">137</span>,<span class="dv">300</span>))<span class="sc">$</span>root))</span></code></pre></div>
+<span id="cb9-15"><a href="#cb9-15" tabindex="-1"></a>  <span class="fu">c</span>(<span class="dv">138</span>,<span class="dv">300</span>))<span class="sc">$</span>root))</span></code></pre></div>
 <pre><code>## [1] 196</code></pre>
 <div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a>(<span class="at">studyDuration =</span> <span class="fu">caltime</span>(</span>
 <span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a>  <span class="at">nevents =</span> d_os, </span>
@@ -561,24 +561,24 @@ Arm C combined at Look 1 and Look 2, respectively.</p>
 <pre><code>##                                                                          
 ## Group-sequential design with 3 stages                                    
 ## Overall power: 0.901, overall significance level (1-sided): 0.02         
-## Maximum # events: 196, expected # events: 147.8                          
+## Maximum # events: 196, expected # events: 147.7                          
 ## Maximum # dropouts: 0, expected # dropouts: 0                            
 ## Maximum # subjects: 420, expected # subjects: 420                        
 ## Total study duration: 55.7, expected study duration: 44.6                
 ## Accrual duration: 30.1, follow-up duration: 25.6, fixed follow-up: FALSE 
 ##                                                                          
 ##                              Stage 1 Stage 2 Stage 3
-## Information rate             0.493   0.699   1.000  
-## Efficacy boundary (Z-scale)  2.832   2.605   2.099  
-## Cumulative rejection         0.321   0.597   0.901  
-## Cumulative alpha spent       0.0023  0.0057  0.0200 
-## Number of events             96.7    137.0   196.0  
+## Information rate             0.494   0.701   1.000  
+## Efficacy boundary (Z-scale)  2.831   2.600   2.100  
+## Cumulative rejection         0.322   0.601   0.901  
+## Cumulative alpha spent       0.0023  0.0058  0.0200 
+## Number of events             96.8    137.5   196.0  
 ## Number of dropouts           0.0     0.0     0.0    
 ## Number of subjects           420.0   420.0   420.0  
-## Analysis time                33.4    41.5    55.7   
-## Efficacy boundary (HR-scale) 0.543   0.624   0.728  
-## Efficacy boundary (p-scale)  0.0023  0.0046  0.0179 
-## Information                  21.48   30.43   43.56  
+## Analysis time                33.5    41.6    55.7   
+## Efficacy boundary (HR-scale) 0.543   0.625   0.728  
+## Efficacy boundary (p-scale)  0.0023  0.0047  0.0179 
+## Information                  21.51   30.55   43.56  
 ## HR                           0.600   0.600   0.600</code></pre>
 <p>Therefore, Look 3 is expected to take place at month 55.7. Based on
 the timing of the three looks, we obtain the expected number of events
@@ -591,8 +591,8 @@ for the other four comparisons:</p>
 <span id="cb15-6"><a href="#cb15-6" tabindex="-1"></a>  <span class="at">accrualDuration =</span> <span class="fl">30.143</span>, <span class="at">followupTime =</span> <span class="dv">1000</span>,</span>
 <span id="cb15-7"><a href="#cb15-7" tabindex="-1"></a>  <span class="at">predictTarget =</span> <span class="dv">1</span>))</span></code></pre></div>
 <pre><code>##       time subjects  nevents nevents1  nevents2 ndropouts ndropouts1 ndropouts2
-## 1 33.44358 420.0024 206.7956 127.5644  79.23122         0          0          0
-## 2 41.46304 420.0024 271.8408 170.0795 101.76138         0          0          0
+## 1 33.47012 420.0024 207.0536 127.7293  79.32431         0          0          0
+## 2 41.57345 420.0024 272.5777 170.5732 102.00448         0          0          0
 ## 3 55.72900 420.0024 341.7859 218.5591 123.22675         0          0          0
 ##   nfmax nfmax1 nfmax2
 ## 1     0      0      0
@@ -606,8 +606,8 @@ for the other four comparisons:</p>
 <span id="cb17-6"><a href="#cb17-6" tabindex="-1"></a>  <span class="at">accrualDuration =</span> <span class="fl">30.143</span>, <span class="at">followupTime =</span> <span class="dv">1000</span>,</span>
 <span id="cb17-7"><a href="#cb17-7" tabindex="-1"></a>  <span class="at">predictTarget =</span> <span class="dv">1</span>))</span></code></pre></div>
 <pre><code>##       time subjects  nevents  nevents1 nevents2 ndropouts ndropouts1 ndropouts2
-## 1 33.44358 420.0024 108.2079  66.25878 41.94915         0          0          0
-## 2 41.46304 420.0024 152.5236  93.99041 58.53320         0          0          0
+## 1 33.47012 420.0024 108.3663  66.35705 42.00925         0          0          0
+## 2 41.57345 420.0024 153.0867  94.34597 58.74076         0          0          0
 ## 3 55.72900 420.0024 216.1404 134.73124 81.40917         0          0          0
 ##   nfmax nfmax1 nfmax2
 ## 1     0      0      0
@@ -621,8 +621,8 @@ for the other four comparisons:</p>
 <span id="cb19-6"><a href="#cb19-6" tabindex="-1"></a>  <span class="at">accrualDuration =</span> <span class="fl">30.143</span>, <span class="at">followupTime =</span> <span class="dv">1000</span>,</span>
 <span id="cb19-7"><a href="#cb19-7" tabindex="-1"></a>  <span class="at">predictTarget =</span> <span class="dv">1</span>))</span></code></pre></div>
 <pre><code>##       time subjects  nevents nevents1 nevents2 ndropouts ndropouts1 ndropouts2
-## 1 33.44358 560.0032 233.9718 106.4074 127.5644         0          0          0
-## 2 41.46304 560.0032 315.2459 145.1664 170.0795         0          0          0
+## 1 33.47012 560.0032 234.2818 106.5525 127.7293         0          0          0
+## 2 41.57345 560.0032 316.2078 145.6346 170.5732         0          0          0
 ## 3 55.72900 560.0032 412.5407 193.9816 218.5591         0          0          0
 ##   nfmax nfmax1 nfmax2
 ## 1     0      0      0
@@ -636,8 +636,8 @@ for the other four comparisons:</p>
 <span id="cb21-6"><a href="#cb21-6" tabindex="-1"></a>  <span class="at">accrualDuration =</span> <span class="fl">30.143</span>, <span class="at">followupTime =</span> <span class="dv">1000</span>,</span>
 <span id="cb21-7"><a href="#cb21-7" tabindex="-1"></a>  <span class="at">predictTarget =</span> <span class="dv">1</span>))</span></code></pre></div>
 <pre><code>##       time subjects  nevents  nevents1  nevents2 ndropouts ndropouts1
-## 1 33.44358 560.0032 120.9741  54.71529  66.25878         0          0
-## 2 41.46304 560.0032 172.4095  78.41910  93.99041         0          0
+## 1 33.47012 560.0032 121.1552  54.79816  66.35705         0          0
+## 2 41.57345 560.0032 173.0734  78.72742  94.34597         0          0
 ## 3 55.72900 560.0032 249.3223 114.59105 134.73124         0          0
 ##   ndropouts2 nfmax nfmax1 nfmax2
 ## 1          0     0      0      0

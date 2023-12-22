@@ -62,7 +62,7 @@ for (j in 1:6) {
     typeOfComputation = "Schoenfeld",
     rounding = 0)$resultsUnderH1
   lr$overallResults$numberOfEvents - d}, 
-  c(137,300))$root))
+  c(138,300))$root))
 
 (studyDuration = caltime(
   nevents = d_os, 

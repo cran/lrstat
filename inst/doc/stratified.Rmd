@@ -70,7 +70,7 @@ lrpower(kMax = 3,
 Therefore, the overall power is about 88% for the stratified analysis. This is confirmed by the simulation below. 
 ```{r}
 lrsim(kMax = 3, 
-      informationTime = c(0.333, 0.667, 1), 
+      informationRates = c(0.333, 0.667, 1), 
       criticalValues = c(3.710, 2.511, 1.993), 
       accrualIntensity = 12,
       stratumFraction = stratumFraction,

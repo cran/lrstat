@@ -384,7 +384,7 @@ each followed-up for 6.5 month do not yield 32 events, in which case,
 the trial will stop and we allocate all remaining alpha to the final
 look. The simulation below demonstrates that the study has approximately
 88% under the alternative hypothesis.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="fu">lrsim</span>(<span class="at">kMax =</span> <span class="dv">3</span>, <span class="at">informationTime =</span> <span class="fu">c</span>(<span class="fl">0.5</span>, <span class="fl">0.75</span>, <span class="dv">1</span>), </span>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="fu">lrsim</span>(<span class="at">kMax =</span> <span class="dv">3</span>, <span class="at">informationRates =</span> <span class="fu">c</span>(<span class="fl">0.5</span>, <span class="fl">0.75</span>, <span class="dv">1</span>), </span>
 <span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>      <span class="at">criticalValues =</span> <span class="fu">c</span>(<span class="dv">6</span>, <span class="fl">2.34</span>, <span class="fl">2.012</span>), </span>
 <span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>      <span class="at">futilityBounds =</span> <span class="fu">c</span>(<span class="fl">0.282</span>, <span class="sc">-</span><span class="dv">6</span>), </span>
 <span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a>      <span class="at">allocation1 =</span> <span class="dv">3</span>, <span class="at">allocation2 =</span> <span class="dv">1</span>,</span>
@@ -418,7 +418,7 @@ look. The simulation below demonstrates that the study has approximately
 ## Analysis time        18.7    26.4    31.7</code></pre>
 <p>The simulation below shows that the probability of futility stopping
 under the null hypothesis is 65%.</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="fu">lrsim</span>(<span class="at">kMax =</span> <span class="dv">3</span>, <span class="at">informationTime =</span> <span class="fu">c</span>(<span class="fl">0.5</span>, <span class="fl">0.75</span>, <span class="dv">1</span>), </span>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="fu">lrsim</span>(<span class="at">kMax =</span> <span class="dv">3</span>, <span class="at">informationRates =</span> <span class="fu">c</span>(<span class="fl">0.5</span>, <span class="fl">0.75</span>, <span class="dv">1</span>), </span>
 <span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>      <span class="at">criticalValues =</span> <span class="fu">c</span>(<span class="dv">6</span>, <span class="fl">2.34</span>, <span class="fl">2.012</span>), </span>
 <span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>      <span class="at">futilityBounds =</span> <span class="fu">c</span>(<span class="fl">0.282</span>, <span class="sc">-</span><span class="dv">6</span>), </span>
 <span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a>      <span class="at">allocation1 =</span> <span class="dv">3</span>, <span class="at">allocation2 =</span> <span class="dv">1</span>,</span>
