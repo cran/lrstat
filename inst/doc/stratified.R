@@ -1,5 +1,11 @@
-## ----setup, include=FALSE-----------------------------------------------------
-knitr::opts_chunk$set(echo = TRUE)
+## ----include = FALSE----------------------------------------------------------
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+
+## ----setup--------------------------------------------------------------------
+library(lrstat)
 
 ## -----------------------------------------------------------------------------
 p1 = c(0.28, 0.13, 0.25, 0.34)
@@ -16,7 +22,6 @@ theta3 = c(1, 0.614, 0.159)
 lambda2 = 0.009211*exp(log(theta1) %x% log(theta2) %x% log(theta3))
 
 ## -----------------------------------------------------------------------------
-library(lrstat)
 caltime(nevents = 66, accrualDuration = 24, accrualIntensity = 12,
         stratumFraction = stratumFraction, 
         lambda1 = 0.4466*lambda2, lambda2 = lambda2, 

@@ -1,8 +1,13 @@
-## ----setup, include=FALSE-----------------------------------------------------
-knitr::opts_chunk$set(echo = TRUE)
+## ----include = FALSE----------------------------------------------------------
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+
+## ----setup--------------------------------------------------------------------
+library(lrstat)
 
 ## ----updategraph--------------------------------------------------------------
-library(lrstat)
 
 alpha = 0.025
 x = list(

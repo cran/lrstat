@@ -1,8 +1,13 @@
-## ----setup, include=FALSE-----------------------------------------------------
-knitr::opts_chunk$set(echo = TRUE)
+## ----include = FALSE----------------------------------------------------------
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+
+## ----setup--------------------------------------------------------------------
+library(lrstat)
 
 ## -----------------------------------------------------------------------------
-library(lrstat)
 (time = caltime(nevents=c(50, 99.9), accrualIntensity=25,
                 piecewiseSurvivalTime=c(0, 1.5), 
                 lambda1=c(0.25, 0.125), lambda2=c(0.25, 0.25), 

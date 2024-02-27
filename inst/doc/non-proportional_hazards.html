@@ -345,6 +345,7 @@ Non-Proportional Hazards</h1>
 
 
 
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(lrstat)</span></code></pre></div>
 <p>This R Markdown document illustrates the sample size calculation for
 a delayed effect model using the lrsamplesize function from lrstat and
 verifies the result using the simulation tool.</p>
@@ -359,9 +360,7 @@ rate is 5% for each treatment group.</p>
 <p>We would like to know the total number of events needed to achieve
 80% power for a two-stage group sequential trial with O’Brien-Fleming
 spending function and with the interim analysis to be conducted after
-observing 80% of the target total number of events. First we load the
-lrstat package:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(lrstat)</span></code></pre></div>
+observing 80% of the target total number of events.</p>
 <p>We use the lrsamplesize function to obtain the follow-up time and the
 target number of events.</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="fu">lrsamplesize</span>(<span class="at">beta =</span> <span class="fl">0.2</span>, <span class="at">kMax =</span> <span class="dv">2</span>, </span>
@@ -374,60 +373,62 @@ target number of events.</p>
 <span id="cb2-8"><a href="#cb2-8" tabindex="-1"></a>             <span class="at">lambda1 =</span> <span class="fu">c</span>(<span class="fu">log</span>(<span class="dv">2</span>)<span class="sc">/</span><span class="dv">13</span>, <span class="fl">0.58</span><span class="sc">*</span><span class="fu">log</span>(<span class="dv">2</span>)<span class="sc">/</span><span class="dv">13</span>),</span>
 <span id="cb2-9"><a href="#cb2-9" tabindex="-1"></a>             <span class="at">gamma1 =</span> <span class="sc">-</span><span class="fu">log</span>(<span class="dv">1</span><span class="fl">-0.05</span>)<span class="sc">/</span><span class="dv">12</span>, </span>
 <span id="cb2-10"><a href="#cb2-10" tabindex="-1"></a>             <span class="at">gamma2 =</span> <span class="sc">-</span><span class="fu">log</span>(<span class="dv">1</span><span class="fl">-0.05</span>)<span class="sc">/</span><span class="dv">12</span>,</span>
-<span id="cb2-11"><a href="#cb2-11" tabindex="-1"></a>             <span class="at">accrualDuration =</span> <span class="dv">22</span>, <span class="at">followupTime =</span> <span class="cn">NA</span>)<span class="sc">$</span>resultsUnderH1</span></code></pre></div>
-<pre><code>##                                                                        
-## Group-sequential design with 2 stages                                  
-## Overall power: 0.802, overall significance level (1-sided): 0.025      
-## Maximum # events: 316, expected # events: 287.4                        
-## Maximum # dropouts: 29.9, expected # dropouts: 26.9                    
-## Maximum # subjects: 468, expected # subjects: 468                      
-## Total study duration: 41.7, expected study duration: 37                
-## Accrual duration: 22, follow-up duration: 19.7, fixed follow-up: FALSE 
-##                                                                        
-##                              Stage 1 Stage 2
-## Information rate             0.801   1.000  
-## Efficacy boundary (Z-scale)  2.249   2.025  
-## Cumulative rejection         0.455   0.802  
-## Cumulative alpha spent       0.0122  0.0250 
-## Number of events             253.0   316.0  
-## Number of dropouts           23.2    29.9   
-## Number of subjects           468.0   468.0  
-## Analysis time                31.5    41.7   
-## Efficacy boundary (HR-scale) 0.752   0.795  
-## Efficacy boundary (p-scale)  0.0122  0.0214 
-## Information                  63.01   78.21  
-## HR                           0.764   0.723</code></pre>
-<p>Thus we need to observe 316 events with 468 subjects, and the maximum
-study duration is 41.7 months with an expected study duration of 37
+<span id="cb2-11"><a href="#cb2-11" tabindex="-1"></a>             <span class="at">accrualDuration =</span> <span class="dv">22</span>, <span class="at">followupTime =</span> <span class="cn">NA</span>)<span class="sc">$</span>resultsUnderH1</span>
+<span id="cb2-12"><a href="#cb2-12" tabindex="-1"></a><span class="co">#&gt;                                                                        </span></span>
+<span id="cb2-13"><a href="#cb2-13" tabindex="-1"></a><span class="co">#&gt; Group-sequential design with 2 stages for log-rank test                </span></span>
+<span id="cb2-14"><a href="#cb2-14" tabindex="-1"></a><span class="co">#&gt; Overall power: 0.802, overall significance level (1-sided): 0.025      </span></span>
+<span id="cb2-15"><a href="#cb2-15" tabindex="-1"></a><span class="co">#&gt; Maximum # events: 316, expected # events: 287.4                        </span></span>
+<span id="cb2-16"><a href="#cb2-16" tabindex="-1"></a><span class="co">#&gt; Maximum # dropouts: 29.9, expected # dropouts: 26.9                    </span></span>
+<span id="cb2-17"><a href="#cb2-17" tabindex="-1"></a><span class="co">#&gt; Maximum # subjects: 468, expected # subjects: 468                      </span></span>
+<span id="cb2-18"><a href="#cb2-18" tabindex="-1"></a><span class="co">#&gt; Maximum information: 78.21, expected information: 71.29                </span></span>
+<span id="cb2-19"><a href="#cb2-19" tabindex="-1"></a><span class="co">#&gt; Total study duration: 41.7, expected study duration: 37                </span></span>
+<span id="cb2-20"><a href="#cb2-20" tabindex="-1"></a><span class="co">#&gt; Accrual duration: 22, follow-up duration: 19.7, fixed follow-up: FALSE </span></span>
+<span id="cb2-21"><a href="#cb2-21" tabindex="-1"></a><span class="co">#&gt; Alpha spending: Lan-DeMets O&#39;Brien-Fleming, beta spending: None        </span></span>
+<span id="cb2-22"><a href="#cb2-22" tabindex="-1"></a><span class="co">#&gt;                                                                        </span></span>
+<span id="cb2-23"><a href="#cb2-23" tabindex="-1"></a><span class="co">#&gt;                        Stage 1 Stage 2</span></span>
+<span id="cb2-24"><a href="#cb2-24" tabindex="-1"></a><span class="co">#&gt; Information rate       0.801   1.000  </span></span>
+<span id="cb2-25"><a href="#cb2-25" tabindex="-1"></a><span class="co">#&gt; Efficacy boundary (Z)  2.249   2.025  </span></span>
+<span id="cb2-26"><a href="#cb2-26" tabindex="-1"></a><span class="co">#&gt; Cumulative rejection   0.4547  0.8023 </span></span>
+<span id="cb2-27"><a href="#cb2-27" tabindex="-1"></a><span class="co">#&gt; Cumulative alpha spent 0.0122  0.0250 </span></span>
+<span id="cb2-28"><a href="#cb2-28" tabindex="-1"></a><span class="co">#&gt; Number of events       253.0   316.0  </span></span>
+<span id="cb2-29"><a href="#cb2-29" tabindex="-1"></a><span class="co">#&gt; Number of dropouts     23.2    29.9   </span></span>
+<span id="cb2-30"><a href="#cb2-30" tabindex="-1"></a><span class="co">#&gt; Number of subjects     468.0   468.0  </span></span>
+<span id="cb2-31"><a href="#cb2-31" tabindex="-1"></a><span class="co">#&gt; Analysis time          31.5    41.7   </span></span>
+<span id="cb2-32"><a href="#cb2-32" tabindex="-1"></a><span class="co">#&gt; Efficacy boundary (HR) 0.752   0.795  </span></span>
+<span id="cb2-33"><a href="#cb2-33" tabindex="-1"></a><span class="co">#&gt; Efficacy boundary (p)  0.0122  0.0214 </span></span>
+<span id="cb2-34"><a href="#cb2-34" tabindex="-1"></a><span class="co">#&gt; Information            63.01   78.21  </span></span>
+<span id="cb2-35"><a href="#cb2-35" tabindex="-1"></a><span class="co">#&gt; HR                     0.764   0.723</span></span></code></pre></div>
+<p>Thus we need to observe 315 events with 468 subjects, and the maximum
+study duration is 41.5 months with an expected study duration of 37
 months.</p>
 <p>To verify this requirement, we resort to the lrsim function.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="fu">lrsim</span>(<span class="at">kMax =</span> <span class="dv">2</span>, <span class="at">criticalValues =</span> <span class="fu">c</span>(<span class="fl">2.250</span>, <span class="fl">2.025</span>), </span>
-<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>      <span class="at">accrualTime =</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">9</span>),</span>
-<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>      <span class="at">accrualIntensity =</span> <span class="fu">c</span>(<span class="dv">26</span><span class="sc">/</span><span class="dv">9</span><span class="sc">*</span><span class="fu">seq</span>(<span class="dv">1</span>, <span class="dv">9</span>), <span class="dv">26</span>),</span>
-<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a>      <span class="at">piecewiseSurvivalTime =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">6</span>),</span>
-<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a>      <span class="at">lambda2 =</span> <span class="fu">rep</span>(<span class="fu">log</span>(<span class="dv">2</span>)<span class="sc">/</span><span class="dv">13</span>, <span class="dv">2</span>),</span>
-<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a>      <span class="at">lambda1 =</span> <span class="fu">c</span>(<span class="fu">log</span>(<span class="dv">2</span>)<span class="sc">/</span><span class="dv">13</span>, <span class="fl">0.58</span><span class="sc">*</span><span class="fu">log</span>(<span class="dv">2</span>)<span class="sc">/</span><span class="dv">13</span>),</span>
-<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a>      <span class="at">gamma1 =</span> <span class="sc">-</span><span class="fu">log</span>(<span class="dv">1</span><span class="fl">-0.05</span>)<span class="sc">/</span><span class="dv">12</span>, </span>
-<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a>      <span class="at">gamma2 =</span> <span class="sc">-</span><span class="fu">log</span>(<span class="dv">1</span><span class="fl">-0.05</span>)<span class="sc">/</span><span class="dv">12</span>,</span>
-<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a>      <span class="at">accrualDuration =</span> <span class="dv">22</span>,</span>
-<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a>      <span class="at">plannedEvents =</span> <span class="fu">c</span>(<span class="dv">253</span>, <span class="dv">316</span>), </span>
-<span id="cb4-11"><a href="#cb4-11" tabindex="-1"></a>      <span class="at">maxNumberOfIterations =</span> <span class="dv">10000</span>, <span class="at">seed =</span> <span class="dv">314159</span>)</span></code></pre></div>
-<pre><code>##                                              
-## Group-sequential design with 2 stages        
-## Overall power: 0.8                           
-## Expected # events: 287.3                     
-## Expected # dropouts: 26.8                    
-## Expected # subjects: 468                     
-## Expected study duration: 36.9                
-## Accrual duration: 22, fixed follow-up: FALSE 
-##                                              
-##                      Stage 1 Stage 2
-## Cumulative rejection 0.456   0.800  
-## Cumulative futility  0.000   0.200  
-## Number of events     253.0   316.0  
-## Number of dropouts   23.2    29.9   
-## Number of subjects   468.0   468.0  
-## Analysis time        31.5    41.6</code></pre>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="fu">lrsim</span>(<span class="at">kMax =</span> <span class="dv">2</span>, <span class="at">criticalValues =</span> <span class="fu">c</span>(<span class="fl">2.250</span>, <span class="fl">2.025</span>), </span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a>      <span class="at">accrualTime =</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">9</span>),</span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a>      <span class="at">accrualIntensity =</span> <span class="fu">c</span>(<span class="dv">26</span><span class="sc">/</span><span class="dv">9</span><span class="sc">*</span><span class="fu">seq</span>(<span class="dv">1</span>, <span class="dv">9</span>), <span class="dv">26</span>),</span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a>      <span class="at">piecewiseSurvivalTime =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">6</span>),</span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a>      <span class="at">lambda2 =</span> <span class="fu">rep</span>(<span class="fu">log</span>(<span class="dv">2</span>)<span class="sc">/</span><span class="dv">13</span>, <span class="dv">2</span>),</span>
+<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a>      <span class="at">lambda1 =</span> <span class="fu">c</span>(<span class="fu">log</span>(<span class="dv">2</span>)<span class="sc">/</span><span class="dv">13</span>, <span class="fl">0.58</span><span class="sc">*</span><span class="fu">log</span>(<span class="dv">2</span>)<span class="sc">/</span><span class="dv">13</span>),</span>
+<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a>      <span class="at">gamma1 =</span> <span class="sc">-</span><span class="fu">log</span>(<span class="dv">1</span><span class="fl">-0.05</span>)<span class="sc">/</span><span class="dv">12</span>, </span>
+<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a>      <span class="at">gamma2 =</span> <span class="sc">-</span><span class="fu">log</span>(<span class="dv">1</span><span class="fl">-0.05</span>)<span class="sc">/</span><span class="dv">12</span>,</span>
+<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a>      <span class="at">accrualDuration =</span> <span class="dv">22</span>,</span>
+<span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a>      <span class="at">plannedEvents =</span> <span class="fu">c</span>(<span class="dv">252</span>, <span class="dv">315</span>), </span>
+<span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a>      <span class="at">maxNumberOfIterations =</span> <span class="dv">10000</span>, <span class="at">seed =</span> <span class="dv">314159</span>)</span>
+<span id="cb3-12"><a href="#cb3-12" tabindex="-1"></a><span class="co">#&gt;                                                         </span></span>
+<span id="cb3-13"><a href="#cb3-13" tabindex="-1"></a><span class="co">#&gt; Group-sequential design with 2 stages for log-rank test </span></span>
+<span id="cb3-14"><a href="#cb3-14" tabindex="-1"></a><span class="co">#&gt; Overall power: 0.797                                    </span></span>
+<span id="cb3-15"><a href="#cb3-15" tabindex="-1"></a><span class="co">#&gt; Expected # events: 286.6                                </span></span>
+<span id="cb3-16"><a href="#cb3-16" tabindex="-1"></a><span class="co">#&gt; Expected # dropouts: 26.7                               </span></span>
+<span id="cb3-17"><a href="#cb3-17" tabindex="-1"></a><span class="co">#&gt; Expected # subjects: 468                                </span></span>
+<span id="cb3-18"><a href="#cb3-18" tabindex="-1"></a><span class="co">#&gt; Expected study duration: 36.8                           </span></span>
+<span id="cb3-19"><a href="#cb3-19" tabindex="-1"></a><span class="co">#&gt; Accrual duration: 22, fixed follow-up: FALSE            </span></span>
+<span id="cb3-20"><a href="#cb3-20" tabindex="-1"></a><span class="co">#&gt;                                                         </span></span>
+<span id="cb3-21"><a href="#cb3-21" tabindex="-1"></a><span class="co">#&gt;                      Stage 1 Stage 2</span></span>
+<span id="cb3-22"><a href="#cb3-22" tabindex="-1"></a><span class="co">#&gt; Cumulative rejection 0.451   0.797  </span></span>
+<span id="cb3-23"><a href="#cb3-23" tabindex="-1"></a><span class="co">#&gt; Cumulative futility  0.000   0.203  </span></span>
+<span id="cb3-24"><a href="#cb3-24" tabindex="-1"></a><span class="co">#&gt; Number of events     252.0   315.0  </span></span>
+<span id="cb3-25"><a href="#cb3-25" tabindex="-1"></a><span class="co">#&gt; Number of dropouts   23.0    29.8   </span></span>
+<span id="cb3-26"><a href="#cb3-26" tabindex="-1"></a><span class="co">#&gt; Number of subjects   468.0   468.0  </span></span>
+<span id="cb3-27"><a href="#cb3-27" tabindex="-1"></a><span class="co">#&gt; Analysis time        31.3    41.4</span></span></code></pre></div>
 <p>The simulation results confirm the analytic calculations.</p>
 
 

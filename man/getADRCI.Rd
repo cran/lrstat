@@ -12,7 +12,7 @@ getADRCI(
   informationRates = NA_real_,
   efficacyStopping = NA_integer_,
   criticalValues = NA_real_,
-  alpha = 0.25,
+  alpha = 0.025,
   typeAlphaSpending = "sfOF",
   parameterAlphaSpending = NA_real_,
   spendingTime = NA_real_,
@@ -49,8 +49,8 @@ for efficacy stopping for the primary trial.}
 \item{alpha}{The significance level of the primary trial.
 Defaults to 0.025.}
 
-\item{typeAlphaSpending}{The type of alpha spending for the primary trial.
-One of the following:
+\item{typeAlphaSpending}{The type of alpha spending for the primary
+trial. One of the following:
 "OF" for O'Brien-Fleming boundaries,
 "P" for Pocock boundaries,
 "WT" for Wang & Tsiatis boundaries,
@@ -105,7 +105,7 @@ up to look \code{L2}. Defaults to missing, in which case, it is
 the same as \code{informationRatesNew}.}
 }
 \value{
-A list with the following components:
+A data frame with the following variables:
 \itemize{
 \item \code{pvalue}: Repeated p-value for rejecting the null hypothesis.
 \item \code{thetahat}: Point estimate of the parameter.
@@ -124,8 +124,8 @@ and repeated confidence interval for an adaptive group sequential trial.
 delta = 6
 sigma = 17
 n = 282
-(des1 = getDesign(IMax = n/(4*sigma^2), theta = delta, kMax = 3, 
-                  alpha = 0.05, typeAlphaSpending = "sfHSD", 
+(des1 = getDesign(IMax = n/(4*sigma^2), theta = delta, kMax = 3,
+                  alpha = 0.05, typeAlphaSpending = "sfHSD",
                   parameterAlphaSpending = -4))
 
 # interim look results
@@ -137,17 +137,17 @@ zL = delta1/sqrt(4/n1*sigma1^2)
 
 t = des1$byStageResults$informationRates
 
-# Muller & Schafer (2001) method to design the secondary trial: 
+# Muller & Schafer (2001) method to design the secondary trial:
 des2 = adaptDesign(
   betaNew = 0.2, L = L, zL = zL, theta = 5,
   kMax = 3, informationRates = t,
   alpha = 0.05, typeAlphaSpending = "sfHSD",
   parameterAlphaSpending = -4,
   MullerSchafer = TRUE,
-  kNew = 3, typeAlphaSpendingNew = "sfHSD", 
+  kNew = 3, typeAlphaSpendingNew = "sfHSD",
   parameterAlphaSpendingNew = -2)
 
-n2 = ceiling(des2$secondaryTrial$overallResults$maxInformation*4*20^2)
+n2 = ceiling(des2$secondaryTrial$overallResults$information*4*20^2)
 ns = round(n2*(1:3)/3)
 (des2 = adaptDesign(
   INew = n2/(4*20^2), L = L, zL = zL, theta = 5,
@@ -176,7 +176,7 @@ getADRCI(L = L, zL = zL,
          L2 = L2, zL2 = zL2,
          INew = n2/(4*sigma2^2),
          MullerSchafer = TRUE,
-         informationRatesNew = t2, 
+         informationRatesNew = t2,
          typeAlphaSpendingNew = "sfHSD",
          parameterAlphaSpendingNew = -2)
 

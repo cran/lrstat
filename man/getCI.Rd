@@ -55,7 +55,7 @@ Defaults to missing, in which case, it is the same as
 \code{informationRates}.}
 }
 \value{
-A list with the following components:
+A data frame with the following components:
 \itemize{
 \item \code{pvalue}: p-value for rejecting the null hypothesis.
 \item \code{thetahat}: Median unbiased point estimate of the parameter.
@@ -74,8 +74,8 @@ confidence interval after the end of a group sequential trial.
 delta = 6
 sigma = 17
 n = 282
-(des1 = getDesign(IMax = n/(4*sigma^2), theta = delta, kMax = 3, 
-                  alpha = 0.05, typeAlphaSpending = "sfHSD", 
+(des1 = getDesign(IMax = n/(4*sigma^2), theta = delta, kMax = 3,
+                  alpha = 0.05, typeAlphaSpending = "sfHSD",
                   parameterAlphaSpending = -4))
 
 # crossed the boundary at the second look
@@ -86,8 +86,8 @@ sigma1 = 20
 zL = delta1/sqrt(4/n1*sigma1^2)
 
 # confidence interval
-getCI(L = L, zL = zL, IMax = n/(4*sigma1^2), 
-      informationRates = c(1/3, 2/3), alpha = 0.05, 
+getCI(L = L, zL = zL, IMax = n/(4*sigma1^2),
+      informationRates = c(1/3, 2/3), alpha = 0.05,
       typeAlphaSpending = "sfHSD", parameterAlphaSpending = -4)
 
 }

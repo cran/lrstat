@@ -32,7 +32,8 @@ getCP(
   parameterAlphaSpendingNew = NA_real_,
   typeBetaSpendingNew = "none",
   parameterBetaSpendingNew = NA_real_,
-  spendingTimeNew = NA_real_
+  spendingTimeNew = NA_real_,
+  varianceRatio = 1
 )
 }
 \arguments{
@@ -155,6 +156,9 @@ and gamma for "sfHSD".}
 \item{spendingTimeNew}{The error spending time of the secondary trial.
 Defaults to missing, in which case, it is the same as
 \code{informationRatesNew}.}
+
+\item{varianceRatio}{The ratio of the variance under H0 to the variance
+under H1.}
 }
 \value{
 The conditional power given the interim results, parameter
@@ -163,29 +167,31 @@ values, and data-dependent design changes.
 \description{
 Obtains the conditional power for specified incremental
 information given the interim results, parameter values, and
-data-dependent changes in the error spending function and the
+data-dependent changes in the error spending function, as well as the
 number and spacing of interim looks.
 }
 \examples{
 
 # Conditional power calculation with delayed treatment effect
 
-# Two interim analyses have occurred with 179 and 266 events, respectively
-# The observed hazard ratio at the second interim look is 0.81
+# Two interim analyses have occurred with 179 and 266 events,
+# respectively. The observed hazard ratio at the second interim
+# look is 0.81.
 
 trialsdt = as.Date("2020-03-04")                       # trial start date
 iadt = c(as.Date("2022-02-01"), as.Date("2022-11-01")) # interim dates
 mo1 = as.numeric(iadt - trialsdt + 1)/30.4375          # interim months
 
-# Assume a piecewise Poisson enrollment process with a 8-month ramp-up and
-# 521 patients were enrolled after 17.94 months
+# Assume a piecewise Poisson enrollment process with a 8-month ramp-up
+# and 521 patients were enrolled after 17.94 months
 N = 521                   # total number of patients
 Ta = 17.94                # enrollment duration
 Ta1 = 8                   # assumed end of enrollment ramp-up
 enrate = N / (Ta - Ta1/2) # enrollment rate after ramp-up
 
-# Assume a median survival of 16.7 months for the control group, a 5-month
-# delay in treatment effect, and a hazard ratio of 0.7 after the delay
+# Assume a median survival of 16.7 months for the control group, a
+# 5-month delay in treatment effect, and a hazard ratio of 0.7 after
+# the delay
 lam1 = log(2)/16.7  # control group hazard of exponential distribution
 t1 = 5              # months of delay in treatment effect
 hr = 0.7            # hazard ratio after delay
@@ -198,7 +204,7 @@ gam = -log(1-0.05)/12  # hazard for dropout
 mo2 <- caltime(
   nevents = c(298, 335),
   allocationRatioPlanned = 1,
-  accrualTime = seq(0, Ta1), 
+  accrualTime = seq(0, Ta1),
   accrualIntensity = enrate*seq(1, Ta1+1)/(Ta1+1),
   piecewiseSurvivalTime = c(0, t1),
   lambda1 = c(lam1, lam2),
@@ -211,7 +217,7 @@ mo2 <- caltime(
 # expected number of events and average hazard ratios
 (lr1 <- lrstat(
   time = c(mo1, mo2),
-  accrualTime = seq(0, Ta1), 
+  accrualTime = seq(0, Ta1),
   accrualIntensity = enrate*seq(1, Ta1+1)/(Ta1+1),
   piecewiseSurvivalTime = c(0, t1),
   lambda1 = c(lam1, lam2),
@@ -225,14 +231,14 @@ mo2 <- caltime(
 
 hr2 = 0.81                    # observed hazard ratio at interim 2
 z2 = (-log(hr2))*sqrt(266/4)  # corresponding z-test statistic value
- 
+
 # expected mean of -log(HR) at the original looks and the new final look
 theta = -log(lr1$HR[c(1,2,3,4)])
 
 # conditional power with sample size increase
-getCP(INew = (335 - 266)/4, 
+getCP(INew = (335 - 266)/4,
       L = 2, zL = z2, theta = theta,
-      IMax = 298/4, kMax = 3, 
+      IMax = 298/4, kMax = 3,
       informationRates = c(179, 266, 298)/298,
       alpha = 0.025, typeAlphaSpending = "sfOF")
 
