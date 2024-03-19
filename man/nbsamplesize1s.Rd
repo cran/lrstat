@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{nbsamplesize1s}
 \alias{nbsamplesize1s}
-\title{One-sample negative binomial rate sample size}
+\title{Sample size for one-sample negative binomial rate}
 \usage{
 nbsamplesize1s(
   beta = 0.2,
@@ -19,12 +19,13 @@ nbsamplesize1s(
   typeBetaSpending = "none",
   parameterBetaSpending = NA_real_,
   userBetaSpending = NA_real_,
+  lambdaH0 = NA_real_,
   accrualTime = 0L,
-  accrualIntensity = 1500L,
+  accrualIntensity = NA_real_,
   piecewiseSurvivalTime = 0L,
-  kappa = 5,
-  lambdaH0 = 0.125,
-  lambda = 0.0875,
+  stratumFraction = 1L,
+  kappa = NA_real_,
+  lambda = NA_real_,
   gamma = 0L,
   accrualDuration = NA_real_,
   followupTime = NA_real_,
@@ -84,6 +85,9 @@ Corresponds to rho for "sfKD", and gamma for "sfHSD".}
 \item{userBetaSpending}{The user defined beta spending. Cumulative beta
 spent up to each stage.}
 
+\item{lambdaH0}{The rate parameter of the negative binomial distribution
+under the null hypothesis.}
+
 \item{accrualTime}{A vector that specifies the starting time of
 piecewise Poisson enrollment time intervals. Must start with 0, e.g.,
 \code{c(0, 3)} breaks the time axis into 2 accrual intervals:
@@ -98,19 +102,19 @@ piecewise exponential survival time intervals. Must start with 0, e.g.,
 [0, 6) and [6, Inf).
 Defaults to 0 for exponential distribution.}
 
+\item{stratumFraction}{A vector of stratum fractions that sum to 1.
+Defaults to 1 for no stratification.}
+
 \item{kappa}{The dispersion parameter (reciprocal of the shape parameter
 of the gamma mixing distribution) of the negative binomial
-distribution.}
-
-\item{lambdaH0}{The rate parameter of the negative binomial distribution
-under the null hypothesis.}
+distribution by stratum.}
 
 \item{lambda}{The rate parameter of the negative binomial distribution
-under the alternative hypothesis.}
+under the alternative hypothesis by stratum.}
 
 \item{gamma}{The hazard rate for exponential dropout or a vector of
-hazard rates for piecewise exponential dropout. Defaults to 0 for
-no dropout.}
+hazard rates for piecewise exponential dropout by stratum.
+Defaults to 0 for no dropout.}
 
 \item{accrualDuration}{Duration of the enrollment period.}
 
@@ -121,8 +125,7 @@ Defaults to 0 for variable follow-up.}
 
 \item{interval}{The interval to search for the solution of
 accrualDuration, followupDuration, or the proportionality constant
-of accrualIntensity. Defaults to \code{c(0.001, 240)}. Adjustment
-may be needed for non-monotone relationship with study power.}
+of accrualIntensity. Defaults to \code{c(0.001, 240)}.}
 
 \item{spendingTime}{A vector of length \code{kMax} for the error spending
 time at each analysis. Defaults to missing, in which case, it is the
@@ -154,8 +157,9 @@ rates in a one-group negative binomial design.
 nbsamplesize1s(beta = 0.2, kMax = 2,
                informationRates = c(0.5, 1),
                alpha = 0.025, typeAlphaSpending = "sfOF",
-               accrualIntensity = 500,
-               kappa = 5, lambdaH0 = 0.125, lambda = 0.0875,
+               lambdaH0 = 0.125, accrualIntensity = 500,
+               stratumFraction = c(0.2, 0.8),
+               kappa = c(3, 5), lambda = c(0.0875, 0.085),
                gamma = 0, accrualDuration = 1.25,
                followupTime = NA, fixedFollowup = FALSE)
 
@@ -165,7 +169,8 @@ nbsamplesize1s(beta = 0.2, kMax = 2,
 nbsamplesize1s(beta = 0.2, kMax = 2,
                informationRates = c(0.5, 1),
                alpha = 0.025, typeAlphaSpending = "sfOF",
-               kappa = 5, lambdaH0 = 0.125, lambda = 0.0875,
+               lambdaH0 = 0.125, accrualIntensity = 100,
+               kappa = 5, lambda = 0.0875,
                gamma = 0, accrualDuration = 1.25,
                followupTime = 2.25, fixedFollowup = FALSE)
 
@@ -176,8 +181,8 @@ nbsamplesize1s(beta = 0.2, kMax = 2,
 nbsamplesize1s(beta = 0.2, kMax = 2,
                informationRates = c(0.5, 1),
                alpha = 0.025, typeAlphaSpending = "sfOF",
-               accrualIntensity = 40,
-               kappa = 3, lambdaH0 = 8.4, lambda = 4.2,
+               lambdaH0 = 8.4, accrualIntensity = 40,
+               kappa = 3, lambda = 4.2,
                gamma = 0, accrualDuration = NA,
                followupTime = 0.5, fixedFollowup = TRUE)
 

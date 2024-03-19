@@ -21,7 +21,7 @@ getNeventsFromHazardRatio(
   userBetaSpending = NA_real_,
   spendingTime = NA_real_,
   hazardRatioH0 = 1,
-  hazardRatio = 0.5,
+  hazardRatio = NA_real_,
   allocationRatioPlanned = 1,
   rounding = 1L
 )

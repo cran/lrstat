@@ -85,7 +85,7 @@ time at each analysis. Defaults to missing, in which case, it is the
 same as \code{informationRates}.}
 
 \item{varianceRatio}{The ratio of the variance under H0 to the
-variance under H1. Defaults to 1.}
+variance under H1.}
 }
 \value{
 An S3 class \code{design} object with three components:

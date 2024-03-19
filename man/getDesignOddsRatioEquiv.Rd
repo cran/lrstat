@@ -103,6 +103,7 @@ under H20.
 \item \code{oddsRatioUpper}: The upper equivalence limit of odds ratio.
 \item \code{pi1}: The assumed probability for the active treatment group.
 \item \code{pi2}: The assumed probability for the control group.
+\item \code{oddsRatio}: The odds ratio.
 }
 \item \code{byStageResults}: A data frame containing the following variables:
 \itemize{

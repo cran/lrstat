@@ -46,7 +46,7 @@ Defaults to \code{(1:kMax) / kMax} if left unspecified.}
 for stopping for efficacy.}
 
 \item{alpha}{The significance level for each of the two one-sided
-tests. Defaults to 0.05.}
+tests, e.g., 0.05.}
 
 \item{typeAlphaSpending}{The type of alpha spending. One of the following:
 "OF" for O'Brien-Fleming boundaries, "P" for Pocock boundaries,
@@ -67,16 +67,16 @@ time at each analysis. Defaults to missing, in which case, it is the
 same as \code{informationRates}.}
 
 \item{varianceRatioH10}{The ratio of the variance under H10 to
-the variance under H1. Defaults to 1.}
+the variance under H1.}
 
 \item{varianceRatioH20}{The ratio of the variance under H20 to
-the variance under H1. Defaults to 1.}
+the variance under H1.}
 
 \item{varianceRatioH12}{The ratio of the variance under H10 to
-the variance under H20. Defaults to 1.}
+the variance under H20.}
 
 \item{varianceRatioH21}{The ratio of the variance under H20 to
-the variance under H10. Defaults to 1.}
+the variance under H10.}
 }
 \value{
 An S3 class \code{designEquiv} object with three components:

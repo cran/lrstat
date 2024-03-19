@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{nbstat}
 \alias{nbstat}
-\title{Number of events and information for negative binomial rate ratio}
+\title{Negative binomial rate ratio}
 \usage{
 nbstat(
   time = NA_real_,
@@ -11,6 +11,7 @@ nbstat(
   accrualTime = 0L,
   accrualIntensity = NA_real_,
   piecewiseSurvivalTime = 0L,
+  stratumFraction = 1L,
   kappa1 = NA_real_,
   kappa2 = NA_real_,
   lambda1 = NA_real_,
@@ -24,8 +25,7 @@ nbstat(
 )
 }
 \arguments{
-\item{time}{A vector of calendar times at which to calculate the number
-of events and the Wald test statistic.}
+\item{time}{A vector of calendar times for data cut.}
 
 \item{rateRatioH0}{Rate ratio under the null hypothesis.}
 
@@ -46,25 +46,32 @@ piecewise exponential survival time intervals. Must start with 0, e.g.,
 [0, 6) and [6, Inf).
 Defaults to 0 for exponential distribution.}
 
-\item{kappa1}{The dispersion parameter (reciprocal of the shape parameter
-of the gamma mixing distribution) for the active treatment group.}
+\item{stratumFraction}{A vector of stratum fractions that sum to 1.
+Defaults to 1 for no stratification.}
 
-\item{kappa2}{The dispersion parameter (reciprocal of the shape parameter
-of the gamma mixing distribution) for the control group.}
+\item{kappa1}{The dispersion parameter (reciprocal of the shape
+parameter of the gamma mixing distribution) for the active treatment
+group by stratum.}
+
+\item{kappa2}{The dispersion parameter (reciprocal of the shape
+parameter of the gamma mixing distribution) for the control group by
+stratum.}
 
 \item{lambda1}{The rate parameter of the negative binomial distribution
-for the active treatment group.}
+for the active treatment group by stratum.}
 
 \item{lambda2}{The rate parameter of the negative binomial distribution
-for the control group.}
+for the control group by stratum.}
 
-\item{gamma1}{The hazard rate for exponential dropout, or a vector of
-hazard rates for piecewise exponential dropout for the active
-treatment group. Defaults to 0 for no dropout.}
+\item{gamma1}{The hazard rate for exponential dropout, a vector of hazard
+rates for piecewise exponential dropout applicable for all strata, or a
+vector of hazard rates for dropout in each analysis time interval
+by stratum for the active treatment group.}
 
-\item{gamma2}{The hazard rate for exponential dropout, or a vector of
-hazard rates for piecewise exponential dropout for the control group.
-Defaults to 0 for no dropout.}
+\item{gamma2}{The hazard rate for exponential dropout, a vector of hazard
+rates for piecewise exponential dropout applicable for all strata, or a
+vector of hazard rates for dropout in each analysis time interval
+by stratum for the control group.}
 
 \item{accrualDuration}{Duration of the enrollment period.}
 
@@ -100,12 +107,12 @@ in the control group.
 \item \code{exposure}: The total exposure time.
 \item \code{exposure1}: The exposure time for the active treatment group.
 \item \code{exposure2}: The exposure time for the control group.
-\item \code{information1}: The Fisher information for the log rate
-parameter for the active treatment group.
-\item \code{information2}: The Fisher information for the log rate
-parameter for the control group.
 \item \code{rateRatio}: The rate ratio of the active treatment group
 versus the control group.
+\item \code{vlogRate1}: The variance for the log rate
+parameter for the active treatment group.
+\item \code{vlogRate2}: The variance for the log rate
+parameter for the control group.
 \item \code{vlogRR}: The variance of log rate ratio.
 \item \code{information}: The information of log rate ratio.
 \item \code{zlogRR}: The Z-statistic for log rate ratio.
@@ -118,16 +125,17 @@ with the following variables:
 of the event rate for the active treatment group.
 \item \code{lambda2H0}: The restricted maximum likelihood estimate
 of the event rate for the control group.
-\item \code{information1H0}: The Fisher information for the log rate
+\item \code{rateRatioH0}: The rate ratio under H0.
+\item \code{vlogRate1H0}: The variance for the log rate
 parameter for the active treatment group under H0.
-\item \code{information2H0}: The Fisher information for the log rate
+\item \code{vlogRate2H0}: The variance for the log rate
 parameter for the control group under H0.
 \item \code{vlogRRH0}: The variance of log rate ratio under H0.
 \item \code{informationH0}: The information of log rate ratio under H0.
-\item \code{zlogRRH0}: The Z-statistic for log rate ratio under H0.
+\item \code{zlogRRH0}: The Z-statistic for log rate ratio with variance
+evaluated under H0.
 \item \code{varianceRatio}: The ratio of the variance under H0 versus
 the variance under H1.
-\item \code{rateRatioH0}: The rate ratio under H0.
 \item \code{lambda1}: The true event rate for the active treatment group.
 \item \code{lambda2}: The true event rate for the control group.
 \item \code{rateRatio}: The true rate ratio.
@@ -136,8 +144,8 @@ the variance under H1.
 with the following variables:
 \itemize{
 \item \code{time}: The analysis time since trial start.
-\item \code{varianceRatio}: Equal to 1.
 \item \code{rateRatioH0}: The rate ratio under H0.
+\item \code{varianceRatio}: Equal to 1.
 \item \code{lambda1}: The true event rate for the active treatment group.
 \item \code{lambda2}: The true event rate for the control group.
 \item \code{rateRatio}: The true rate ratio.
@@ -147,8 +155,8 @@ with the following variables:
 \description{
 Obtains the number of subjects accrued, number of events,
 number of dropouts, number of subjects reaching the maximum
-follow-up, total exposure, and information for log rate in each group,
-rate ratio, variance, information, and Wald test statistic of
+follow-up, total exposure, and variance for log rate in each group,
+rate ratio, variance, and Wald test statistic of
 log rate ratio at given calendar times.
 }
 \details{
@@ -250,10 +258,11 @@ nbstat(time = c(1, 1.25, 2, 3, 4),
 
 nbstat(time = c(0.5, 1, 1.5, 2),
        accrualIntensity = 220/1.5,
+       stratumFraction = c(0.2, 0.8),
        kappa1 = 3,
        kappa2 = 3,
-       lambda1 = 0.5*8.4,
-       lambda2 = 8.4,
+       lambda1 = c(0.5*8.4, 0.6*10.5),
+       lambda2 = c(8.4, 10.5),
        gamma1 = 0,
        gamma2 = 0,
        accrualDuration = 1.5,

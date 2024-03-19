@@ -6873,7 +6873,7 @@ getDesignSlopeDiffMMRM <- function(
 #' \deqn{c(m) = 1 - \frac{3}{4m-1}.}
 #' Since \eqn{c(m) < 1}, Cohen's \eqn{d} overestimates the true effect size.
 #' \eqn{\delta = (\mu_1 - \mu_2)/\sigma.}
-#' Since \deqn{t = \sqrt{\tilde{n} d},} we have
+#' Since \deqn{t = \sqrt{\tilde{n}} d,} we have
 #' \deqn{g = \frac{c(m)}{\sqrt{\tilde{n}}} t,} where \eqn{t}
 #' has a noncentral \eqn{t} distribution with \eqn{m} degrees of freedom
 #' and noncentrality parameter \eqn{\sqrt{\tilde{n}} \delta}.

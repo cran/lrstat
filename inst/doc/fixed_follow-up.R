@@ -23,7 +23,7 @@ lrsim(kMax = 1, criticalValues = 1.96,
       accrualDuration = 39.2, followupTime = 6.5, 
       fixedFollowup = TRUE,  
       plannedEvents = 39, 
-      maxNumberOfIterations = 1000, seed = 12345)
+      maxNumberOfIterations = 10000, seed = 12345)
 
 lrsim(kMax = 1, criticalValues = 1.96,  
       allocation1 = 3, allocation2 = 1,
@@ -33,7 +33,7 @@ lrsim(kMax = 1, criticalValues = 1.96,
       accrualDuration = 25.2, followupTime = 6.5, 
       fixedFollowup = TRUE,  
       plannedEvents = 26, 
-      maxNumberOfIterations = 1000, seed = 12345)
+      maxNumberOfIterations = 10000, seed = 12345)
 
 ## -----------------------------------------------------------------------------
 lrsim(kMax = 1, criticalValues = 1.96,  

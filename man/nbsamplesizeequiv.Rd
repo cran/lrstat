@@ -17,12 +17,13 @@ nbsamplesizeequiv(
   rateRatioUpper = NA_real_,
   allocationRatioPlanned = 1,
   accrualTime = 0L,
-  accrualIntensity = 1500L,
+  accrualIntensity = NA_real_,
   piecewiseSurvivalTime = 0L,
-  kappa1 = 5,
-  kappa2 = 5,
-  lambda1 = 0.125,
-  lambda2 = 0.125,
+  stratumFraction = 1L,
+  kappa1 = NA_real_,
+  kappa2 = NA_real_,
+  lambda1 = NA_real_,
+  lambda2 = NA_real_,
   gamma1 = 0L,
   gamma2 = 0L,
   accrualDuration = NA_real_,
@@ -83,25 +84,31 @@ piecewise exponential survival time intervals. Must start with 0, e.g.,
 [0, 6) and [6, Inf).
 Defaults to 0 for exponential distribution.}
 
+\item{stratumFraction}{A vector of stratum fractions that sum to 1.
+Defaults to 1 for no stratification.}
+
 \item{kappa1}{The dispersion parameter (reciprocal of the shape parameter
-of the gamma mixing distribution) for the active treatment group.}
+of the gamma mixing distribution) for the active treatment group by
+stratum.}
 
 \item{kappa2}{The dispersion parameter (reciprocal of the shape parameter
-of the gamma mixing distribution) for the control group.}
+of the gamma mixing distribution) for the control group by stratum.}
 
 \item{lambda1}{The rate parameter of the negative binomial distribution
-for the active treatment group.}
+for the active treatment group by stratum.}
 
 \item{lambda2}{The rate parameter of the negative binomial distribution
-for the control group.}
+for the control group by stratum.}
 
-\item{gamma1}{The hazard rate for exponential dropout, or a vector of
-hazard rates for piecewise exponential dropout for the active
-treatment group. Defaults to 0 for no dropout.}
+\item{gamma1}{The hazard rate for exponential dropout, a vector of hazard
+rates for piecewise exponential dropout applicable for all strata, or a
+vector of hazard rates for dropout in each analysis time interval
+by stratum for the active treatment group.}
 
-\item{gamma2}{The hazard rate for exponential dropout, or a vector of
-hazard rates for piecewise exponential dropout for the control group.
-Defaults to 0 for no dropout.}
+\item{gamma2}{The hazard rate for exponential dropout, a vector of hazard
+rates for piecewise exponential dropout applicable for all strata, or a
+vector of hazard rates for dropout in each analysis time interval
+by stratum for the control group.}
 
 \item{accrualDuration}{Duration of the enrollment period.}
 
@@ -112,8 +119,7 @@ Defaults to 0 for variable follow-up.}
 
 \item{interval}{The interval to search for the solution of
 accrualDuration, followupDuration, or the proportionality constant
-of accrualIntensity. Defaults to \code{c(0.001, 240)}. Adjustment
-may be needed for non-monotone relationship with study power.}
+of accrualIntensity. Defaults to \code{c(0.001, 240)}.}
 
 \item{spendingTime}{A vector of length \code{kMax} for the error spending
 time at each analysis. Defaults to missing, in which case, it is the
@@ -139,9 +145,13 @@ nbsamplesizeequiv(beta = 0.1, kMax = 2, informationRates = c(0.5, 1),
                   alpha = 0.05, typeAlphaSpending = "sfOF",
                   rateRatioLower = 2/3, rateRatioUpper = 3/2,
                   accrualIntensity = 1956/1.25,
-                  kappa1 = 5, kappa2 = 5,
-                  lambda1 = 0.125, lambda2 = 0.125,
-                  gamma1 = 0, gamma2 = 0,
+                  stratumFraction = c(0.2, 0.8),
+                  kappa1 = c(3, 5),
+                  kappa2 = c(2, 3),
+                  lambda1 = c(0.125, 0.165),
+                  lambda2 = c(0.135, 0.175),
+                  gamma1 = -log(1-0.05),
+                  gamma2 = -log(1-0.10),
                   accrualDuration = 1.25,
                   followupTime = NA, fixedFollowup = FALSE,
                   nullVariance = 1)

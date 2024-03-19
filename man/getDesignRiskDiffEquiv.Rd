@@ -105,6 +105,7 @@ difference.
 difference.
 \item \code{pi1}: The assumed probability for the active treatment group.
 \item \code{pi2}: The assumed probability for the control group.
+\item \code{riskDiff}: The risk difference.
 }
 \item \code{byStageResults}: A data frame containing the following variables:
 \itemize{

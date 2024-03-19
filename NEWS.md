@@ -1,3 +1,21 @@
+# lrstat 0.2.4
+
+- update the check for pconfigs of getDesignLogistic to avoid an error on macOS
+- replace which_min with which_max in lrsim2e and lrsim2e3a
+- replace qromb with quad for numerical integration
+- use numerical integration for lrstat
+- rename kmest to kmstat and use numerical integration
+- add kmpower and kmsamplesize for power and sample size calculation for difference in milestone survival probability
+- add kmpower1s and kmsamplesize1s for power and sample size calculation for one-sample milestone survival probability
+- add rmst, covrmst, and rmstat for restricted mean survival time analysis
+- add rmpower and rmsamplesize for power and sample size calculation for difference in restricted mean survival time
+- add rmpower1s and rmsamplesize1s for power and sample size calculation for one-sample restricted mean survival time
+- update rmstat, rmpower, rmsamplesize, rmpower1s, and rmsamplesize1s to account for stratification
+- add lrpowerequiv and lrsamplesizeequiv for power and sample size calculation for equivalence in hazard ratio
+- add kmpowerequiv and kmsamplesizeequiv for power and sample size calculation for equivalence in milestone survival probability difference
+- add rmpowerequiv and rmsamplesizeequiv for power and sample size calculation for equivalence in restricted mean survival time difference
+
+
 # lrstat 0.2.3
 
 - issue a warning message when unequal spacing is used with O'Brien-Fleming, Pocock, or Wang-Tsiatis boundaries in getBound

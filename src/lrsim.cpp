@@ -312,7 +312,7 @@ List lrsim(const int kMax = NA_INTEGER,
       stop("informationRates must end with 1");
     }
   } else if (useEvents) {
-    informationRates1 = as<NumericVector>(plannedEvents)/
+    informationRates1 = NumericVector(plannedEvents)/
       (plannedEvents[kMax-1]+0.0);
   } else {
     informationRates1 = plannedTime/plannedTime[kMax-1];
@@ -880,7 +880,7 @@ List lrsim(const int kMax = NA_INTEGER,
                         u[nstages-1] = aval;
                         NumericVector l = rep(-6.0, nstages);
                         NumericVector theta = rep(0.0, nstages);
-                        NumericVector I = as<NumericVector>(obsEvents)[
+                        NumericVector I = NumericVector(obsEvents)[
                         Range(0,nstages-1)];
                         List p2 = exitprobcpp(u, l, theta, I);
                         return sum(NumericVector(p2[0])) - alpha;
@@ -3031,7 +3031,7 @@ List lrsim2e(const int kMax = NA_INTEGER,
       } else {
         if (analysisTime2[kMax-kMaxe1x-1] > analysisTime[kMaxe1x-1]) {
           // only OS looks that occur after the last PFS look contribute
-          int l = which_min(analysisTime2 > analysisTime[kMaxe1x-1]);
+          int l = which_max(analysisTime2 > analysisTime[kMaxe1x-1]);
           nstages = kMax-l;
           for (k=kMaxe1x; k<kMax-l; k++) {
             analysisTime[k] = analysisTime2[k-kMaxe1x+l];
@@ -4134,7 +4134,7 @@ List lrsim2e3a(const int kMax = NA_INTEGER,
   IntegerVector n1(nstrata), n2(nstrata), n3(nstrata);
   IntegerVector nt13(nstrata), nt23(nstrata), nt12(nstrata);
 
-  // original copy of n1 and n2 when looping over the endpoints
+  // original copy of n1, n2, and n3 when looping over the endpoints
   IntegerVector n1x(nstrata), n2x(nstrata), n3x(nstrata);
 
   // hazardRatioH0 adjusted at risk for calculating the log-rank statistic
@@ -4460,7 +4460,7 @@ List lrsim2e3a(const int kMax = NA_INTEGER,
       } else {
         if (analysisTime2[kMax-kMaxe1x-1] > analysisTime[kMaxe1x-1]) {
           // only OS looks that occur after the last PFS look contribute
-          int l = which_min(analysisTime2 > analysisTime[kMaxe1x-1]);
+          int l = which_max(analysisTime2 > analysisTime[kMaxe1x-1]);
           nstages = kMax-l;
           for (k=kMaxe1x; k<kMax-l; k++) {
             analysisTime[k] = analysisTime2[k-kMaxe1x+l];

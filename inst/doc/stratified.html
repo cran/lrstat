@@ -362,7 +362,8 @@ design. The stratum fractions are</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>p1 <span class="ot">=</span> <span class="fu">c</span>(<span class="fl">0.28</span>, <span class="fl">0.13</span>, <span class="fl">0.25</span>, <span class="fl">0.34</span>)</span>
 <span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>p2 <span class="ot">=</span> <span class="fu">c</span>(<span class="fl">0.28</span>, <span class="fl">0.72</span>)</span>
 <span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a>p3 <span class="ot">=</span> <span class="fu">c</span>(<span class="fl">0.43</span>, <span class="fl">0.37</span>, <span class="fl">0.2</span>)</span>
-<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a>stratumFraction <span class="ot">=</span> p1 <span class="sc">%x%</span> p2 <span class="sc">%x%</span> p3</span></code></pre></div>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a>stratumFraction <span class="ot">=</span> p1 <span class="sc">%x%</span> p2 <span class="sc">%x%</span> p3</span>
+<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a>stratumFraction <span class="ot">=</span> stratumFraction<span class="sc">/</span><span class="fu">sum</span>(stratumFraction)</span></code></pre></div>
 <p>Using the small cancer cell, age &lt;=50, and performance status
 score &lt;=50 as the reference stratum, the hazard ratios are</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a>theta1 <span class="ot">=</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="fl">2.127</span>, <span class="fl">0.528</span>, <span class="fl">0.413</span>)</span>
@@ -381,7 +382,7 @@ patients, and the target number of events of 66.</p>
 <span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>        <span class="at">stratumFraction =</span> stratumFraction, </span>
 <span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>        <span class="at">lambda1 =</span> <span class="fl">0.4466</span><span class="sc">*</span>lambda2, <span class="at">lambda2 =</span> lambda2, </span>
 <span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a>        <span class="at">followupTime =</span> <span class="dv">100</span>)</span>
-<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a><span class="co">#&gt; [1] 54.92197</span></span></code></pre></div>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a><span class="co">#&gt; [1] 54.92196</span></span></code></pre></div>
 <p>Therefore, the follow-up time for the last enrolled patient is 30.92
 months. Now we can evaluate the power using the lrpower function.</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="fu">lrpower</span>(<span class="at">kMax =</span> <span class="dv">3</span>, </span>
@@ -402,26 +403,27 @@ months. Now we can evaluate the power using the lrpower function.</p>
 <span id="cb6-16"><a href="#cb6-16" tabindex="-1"></a><span class="co">#&gt; Maximum information: 16.42, expected information: 13.41                </span></span>
 <span id="cb6-17"><a href="#cb6-17" tabindex="-1"></a><span class="co">#&gt; Total study duration: 54.9, expected study duration: 46.2              </span></span>
 <span id="cb6-18"><a href="#cb6-18" tabindex="-1"></a><span class="co">#&gt; Accrual duration: 24, follow-up duration: 30.9, fixed follow-up: FALSE </span></span>
-<span id="cb6-19"><a href="#cb6-19" tabindex="-1"></a><span class="co">#&gt; Alpha spending: Lan-DeMets O&#39;Brien-Fleming, beta spending: None        </span></span>
-<span id="cb6-20"><a href="#cb6-20" tabindex="-1"></a><span class="co">#&gt;                                                                        </span></span>
-<span id="cb6-21"><a href="#cb6-21" tabindex="-1"></a><span class="co">#&gt;                        Stage 1 Stage 2 Stage 3</span></span>
-<span id="cb6-22"><a href="#cb6-22" tabindex="-1"></a><span class="co">#&gt; Information rate       0.333   0.667   1.000  </span></span>
-<span id="cb6-23"><a href="#cb6-23" tabindex="-1"></a><span class="co">#&gt; Efficacy boundary (Z)  3.712   2.511   1.993  </span></span>
-<span id="cb6-24"><a href="#cb6-24" tabindex="-1"></a><span class="co">#&gt; Cumulative rejection   0.0284  0.5243  0.8820 </span></span>
-<span id="cb6-25"><a href="#cb6-25" tabindex="-1"></a><span class="co">#&gt; Cumulative alpha spent 0.0001  0.0061  0.0250 </span></span>
-<span id="cb6-26"><a href="#cb6-26" tabindex="-1"></a><span class="co">#&gt; Number of events       22.0    44.0    66.0   </span></span>
-<span id="cb6-27"><a href="#cb6-27" tabindex="-1"></a><span class="co">#&gt; Number of dropouts     0.0     0.0     0.0    </span></span>
-<span id="cb6-28"><a href="#cb6-28" tabindex="-1"></a><span class="co">#&gt; Number of subjects     288.0   288.0   288.0  </span></span>
-<span id="cb6-29"><a href="#cb6-29" tabindex="-1"></a><span class="co">#&gt; Analysis time          24.9    39.0    54.9   </span></span>
-<span id="cb6-30"><a href="#cb6-30" tabindex="-1"></a><span class="co">#&gt; Efficacy boundary (HR) 0.183   0.446   0.594  </span></span>
-<span id="cb6-31"><a href="#cb6-31" tabindex="-1"></a><span class="co">#&gt; Efficacy boundary (p)  0.0001  0.0060  0.0231 </span></span>
-<span id="cb6-32"><a href="#cb6-32" tabindex="-1"></a><span class="co">#&gt; Information            5.49    10.98   16.42  </span></span>
-<span id="cb6-33"><a href="#cb6-33" tabindex="-1"></a><span class="co">#&gt; HR                     0.447   0.447   0.447</span></span></code></pre></div>
+<span id="cb6-19"><a href="#cb6-19" tabindex="-1"></a><span class="co">#&gt; Allocation ratio: 1                                                    </span></span>
+<span id="cb6-20"><a href="#cb6-20" tabindex="-1"></a><span class="co">#&gt; Alpha spending: Lan-DeMets O&#39;Brien-Fleming, beta spending: None        </span></span>
+<span id="cb6-21"><a href="#cb6-21" tabindex="-1"></a><span class="co">#&gt;                                                                        </span></span>
+<span id="cb6-22"><a href="#cb6-22" tabindex="-1"></a><span class="co">#&gt;                        Stage 1 Stage 2 Stage 3</span></span>
+<span id="cb6-23"><a href="#cb6-23" tabindex="-1"></a><span class="co">#&gt; Information rate       0.333   0.667   1.000  </span></span>
+<span id="cb6-24"><a href="#cb6-24" tabindex="-1"></a><span class="co">#&gt; Efficacy boundary (Z)  3.712   2.511   1.993  </span></span>
+<span id="cb6-25"><a href="#cb6-25" tabindex="-1"></a><span class="co">#&gt; Cumulative rejection   0.0284  0.5247  0.8824 </span></span>
+<span id="cb6-26"><a href="#cb6-26" tabindex="-1"></a><span class="co">#&gt; Cumulative alpha spent 0.0001  0.0061  0.0250 </span></span>
+<span id="cb6-27"><a href="#cb6-27" tabindex="-1"></a><span class="co">#&gt; Number of events       22.0    44.0    66.0   </span></span>
+<span id="cb6-28"><a href="#cb6-28" tabindex="-1"></a><span class="co">#&gt; Number of dropouts     0.0     0.0     0.0    </span></span>
+<span id="cb6-29"><a href="#cb6-29" tabindex="-1"></a><span class="co">#&gt; Number of subjects     288.0   288.0   288.0  </span></span>
+<span id="cb6-30"><a href="#cb6-30" tabindex="-1"></a><span class="co">#&gt; Analysis time          24.9    39.0    54.9   </span></span>
+<span id="cb6-31"><a href="#cb6-31" tabindex="-1"></a><span class="co">#&gt; Efficacy boundary (HR) 0.183   0.446   0.594  </span></span>
+<span id="cb6-32"><a href="#cb6-32" tabindex="-1"></a><span class="co">#&gt; Efficacy boundary (p)  0.0001  0.0060  0.0231 </span></span>
+<span id="cb6-33"><a href="#cb6-33" tabindex="-1"></a><span class="co">#&gt; Information            5.49    10.98   16.42  </span></span>
+<span id="cb6-34"><a href="#cb6-34" tabindex="-1"></a><span class="co">#&gt; HR                     0.447   0.447   0.447</span></span></code></pre></div>
 <p>Therefore, the overall power is about 88% for the stratified
 analysis. This is confirmed by the simulation below.</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="fu">lrsim</span>(<span class="at">kMax =</span> <span class="dv">3</span>, </span>
 <span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>      <span class="at">informationRates =</span> <span class="fu">c</span>(<span class="fl">0.333</span>, <span class="fl">0.667</span>, <span class="dv">1</span>), </span>
-<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>      <span class="at">criticalValues =</span> <span class="fu">c</span>(<span class="fl">3.710</span>, <span class="fl">2.511</span>, <span class="fl">1.993</span>), </span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>      <span class="at">criticalValues =</span> <span class="fu">c</span>(<span class="fl">3.712</span>, <span class="fl">2.511</span>, <span class="fl">1.993</span>), </span>
 <span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a>      <span class="at">accrualIntensity =</span> <span class="dv">12</span>,</span>
 <span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a>      <span class="at">stratumFraction =</span> stratumFraction,</span>
 <span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a>      <span class="at">lambda1 =</span> <span class="fl">0.4466</span><span class="sc">*</span>lambda2, </span>

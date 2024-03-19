@@ -89,8 +89,7 @@ NULL
 
 #' Parameter Description: gamma
 #' @param gamma The hazard rate for exponential dropout, or a vector of
-#'   hazard rates for piecewise exponential dropout. Defaults to 0 for
-#'   no dropout.
+#'   hazard rates for piecewise exponential dropout.
 #' @name param_gamma
 #' @keywords internal
 NULL
@@ -98,7 +97,7 @@ NULL
 #' Parameter Description: gamma1
 #' @param gamma1 The hazard rate for exponential dropout, or a vector of
 #'   hazard rates for piecewise exponential dropout for the active
-#'   treatment group. Defaults to 0 for no dropout.
+#'   treatment group.
 #' @name param_gamma1
 #' @keywords internal
 NULL
@@ -106,7 +105,6 @@ NULL
 #' Parameter Description: gamma2
 #' @param gamma2 The hazard rate for exponential dropout, or a vector of
 #'   hazard rates for piecewise exponential dropout for the control group.
-#'   Defaults to 0 for no dropout.
 #' @name param_gamma2
 #' @keywords internal
 NULL

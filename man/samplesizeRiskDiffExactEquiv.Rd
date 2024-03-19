@@ -44,6 +44,7 @@ one-sided tests.
 \item \code{riskDiffUpper}: The upper equivalence limit of risk difference.
 \item \code{pi1}: The assumed probability for the active treatment group.
 \item \code{pi2}: The assumed probability for the control group.
+\item \code{riskDiff}: The risk difference.
 \item \code{allocationRatioPlanned}: Allocation ratio for the active
 treatment versus control.
 \item \code{zstatRiskDiffLower}: The efficacy boundaries on the

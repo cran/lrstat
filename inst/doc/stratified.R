@@ -12,6 +12,7 @@ p1 = c(0.28, 0.13, 0.25, 0.34)
 p2 = c(0.28, 0.72)
 p3 = c(0.43, 0.37, 0.2)
 stratumFraction = p1 %x% p2 %x% p3
+stratumFraction = stratumFraction/sum(stratumFraction)
 
 ## -----------------------------------------------------------------------------
 theta1 = c(1, 2.127, 0.528, 0.413)
@@ -41,7 +42,7 @@ lrpower(kMax = 3,
 ## -----------------------------------------------------------------------------
 lrsim(kMax = 3, 
       informationRates = c(0.333, 0.667, 1), 
-      criticalValues = c(3.710, 2.511, 1.993), 
+      criticalValues = c(3.712, 2.511, 1.993), 
       accrualIntensity = 12,
       stratumFraction = stratumFraction,
       lambda1 = 0.4466*lambda2, 

@@ -462,7 +462,7 @@ NumericMatrix fadjpsimcpp(const NumericMatrix& wgtmat,
 // [[Rcpp::export]]
 NumericVector repeatedPValuecpp(
     const int kMax = NA_INTEGER,
-    const String typeAlphaSpending = "sfOF",
+    const std::string typeAlphaSpending = "sfOF",
     const double parameterAlphaSpending = NA_REAL,
     const double maxInformation = 1,
     const NumericMatrix& p = NA_REAL,
@@ -828,7 +828,7 @@ IntegerVector fseqboncpp(
 
   int step;
   double alphastar, asfpar1;
-  String asf1;
+  std::string asf1;
   int K3, K4 = 0;
 
   NumericMatrix info1(m, k1), p1(m, k1), st1(m, k1), t1(m, k1), s1(m, k1);
@@ -935,7 +935,7 @@ IntegerVector fseqboncpp(
 
               LogicalVector x(k+1,1);
 
-              asf1 = Rcpp::String(asf(j));
+              asf1 = as<std::string>(asf(j));
               asfpar1 = asfpar(j);
 
               double alp = wx(j)*alpha;
@@ -997,7 +997,7 @@ IntegerVector fseqboncpp(
 // [[Rcpp::export]]
 NumericMatrix fstp2seqcpp(const NumericMatrix& p,
                           const NumericVector& gamma,
-                          const String test = "hochberg",
+                          const std::string test = "hochberg",
                           const bool retest = 1) {
 
   std::string test1 = test;
@@ -1153,7 +1153,7 @@ NumericMatrix fstdmixcpp(const NumericMatrix& p,
                          const LogicalMatrix& serial,
                          const LogicalMatrix& parallel,
                          const NumericVector& gamma,
-                         const String test = "hommel",
+                         const std::string test = "hommel",
                          const bool exhaust = 1) {
 
   std::string test1 = test;
@@ -1430,7 +1430,7 @@ NumericMatrix fmodmixcpp(const NumericMatrix& p,
                          const LogicalMatrix& serial,
                          const LogicalMatrix& parallel,
                          const NumericVector& gamma,
-                         const String test = "hommel",
+                         const std::string test = "hommel",
                          const bool exhaust = 1) {
 
   std::string test1 = test;
@@ -1809,7 +1809,7 @@ DataFrame getCI(const int L = NA_INTEGER,
                 const LogicalVector& efficacyStopping = NA_LOGICAL,
                 const NumericVector& criticalValues = NA_REAL,
                 const double alpha = 0.025,
-                const String typeAlphaSpending = "sfOF",
+                const std::string typeAlphaSpending = "sfOF",
                 const double parameterAlphaSpending = NA_REAL,
                 const NumericVector& spendingTime = NA_REAL) {
 
@@ -1928,7 +1928,7 @@ DataFrame getCI(const int L = NA_INTEGER,
   NumericVector interval(2);
   interval[0] = (zL - 6)/sqrt(I[L-1]);
   interval[1] = (zL + 6)/sqrt(I[L-1]);
-  double tol = 0.0001;
+  double tol = 1.0e-6;
 
   auto f = [L, zL, b, I](double theta)->double {
     return f_pvalue(theta, L, zL, b, I) - 0.5;
@@ -2038,7 +2038,7 @@ DataFrame getRCI(const int L = NA_INTEGER,
                  const LogicalVector& efficacyStopping = NA_LOGICAL,
                  const NumericVector& criticalValues = NA_REAL,
                  const double alpha = 0.025,
-                 const String typeAlphaSpending = "sfOF",
+                 const std::string typeAlphaSpending = "sfOF",
                  const double parameterAlphaSpending = NA_REAL,
                  const NumericVector& spendingTime = NA_REAL) {
 
@@ -2263,7 +2263,7 @@ List f_bwimage(const double theta,
       return sum(NumericVector(probs[0])) - astar;
     };
 
-    z1j = brent(f, -6, 6, 0.0001);
+    z1j = brent(f, -6.0, 6.0, 1.0e-6);
   }
 
   int J = L+j;
@@ -2466,7 +2466,7 @@ DataFrame getADCI(const int L = NA_INTEGER,
                   const LogicalVector& efficacyStopping = NA_LOGICAL,
                   const NumericVector& criticalValues = NA_REAL,
                   const double alpha = 0.25,
-                  const String typeAlphaSpending = "sfOF",
+                  const std::string typeAlphaSpending = "sfOF",
                   const double parameterAlphaSpending = NA_REAL,
                   const NumericVector& spendingTime = NA_REAL,
                   const int L2 = NA_INTEGER,
@@ -2475,7 +2475,7 @@ DataFrame getADCI(const int L = NA_INTEGER,
                   const bool MullerSchafer = 0,
                   const NumericVector& informationRatesNew = NA_REAL,
                   const LogicalVector& efficacyStoppingNew = NA_LOGICAL,
-                  const String typeAlphaSpendingNew = "sfOF",
+                  const std::string typeAlphaSpendingNew = "sfOF",
                   const double parameterAlphaSpendingNew = NA_REAL,
                   const NumericVector& spendingTimeNew = NA_REAL) {
 
@@ -2735,7 +2735,7 @@ DataFrame getADCI(const int L = NA_INTEGER,
   NumericVector interval(2);
   interval[0] = (zL - b[L-1])/sqrt(I[L-1]);
   interval[1] = (zL + b[L-1])/sqrt(I[L-1]);
-  double tol = 0.0001;
+  double tol = 1.0e-6;
 
   auto f = [K,L,zL,b,I,L2,zL2,b2,I2](double theta)->double {
     return f_bwpvalue(theta,K,L,zL,b,I,L2,zL2,b2,I2) - 0.5;
@@ -2917,7 +2917,7 @@ DataFrame getADRCI(const int L = NA_INTEGER,
                    const LogicalVector& efficacyStopping = NA_LOGICAL,
                    const NumericVector& criticalValues = NA_REAL,
                    const double alpha = 0.025,
-                   const String typeAlphaSpending = "sfOF",
+                   const std::string typeAlphaSpending = "sfOF",
                    const double parameterAlphaSpending = NA_REAL,
                    const NumericVector& spendingTime = NA_REAL,
                    const int L2 = NA_INTEGER,
@@ -2926,7 +2926,7 @@ DataFrame getADRCI(const int L = NA_INTEGER,
                    const bool MullerSchafer = 0,
                    const NumericVector& informationRatesNew = NA_REAL,
                    const LogicalVector& efficacyStoppingNew = NA_LOGICAL,
-                   const String typeAlphaSpendingNew = "sfOF",
+                   const std::string typeAlphaSpendingNew = "sfOF",
                    const double parameterAlphaSpendingNew = NA_REAL,
                    const NumericVector& spendingTimeNew = NA_REAL) {
 
@@ -3193,7 +3193,7 @@ DataFrame getADRCI(const int L = NA_INTEGER,
     NumericVector interval(2);
     interval[0] = (zL - b[L-1])/sqrt(I1);
     interval[1] = (zL + b[L-1])/sqrt(I1);
-    double tol = 0.0001;
+    double tol = 1.0e-6;
 
     // point estimate is the lower bound for alpha = 0.5
     NumericVector u = getBoundcpp(kMax, t, 0.5, asf, asfpar, 0, st, es);
@@ -3534,11 +3534,11 @@ double getCP(double INew = NA_REAL,
              const LogicalVector& futilityStopping = NA_LOGICAL,
              const NumericVector& criticalValues = NA_REAL,
              const double alpha = 0.025,
-             const String typeAlphaSpending = "sfOF",
+             const std::string typeAlphaSpending = "sfOF",
              const double parameterAlphaSpending = NA_REAL,
              const NumericVector& userAlphaSpending = NA_REAL,
              const NumericVector& futilityBounds = NA_REAL,
-             const String typeBetaSpending = "none",
+             const std::string typeBetaSpending = "none",
              const double parameterBetaSpending = NA_REAL,
              const NumericVector& spendingTime = NA_REAL,
              const bool MullerSchafer = 0,
@@ -3546,9 +3546,9 @@ double getCP(double INew = NA_REAL,
              const NumericVector& informationRatesNew = NA_REAL,
              const LogicalVector& efficacyStoppingNew = NA_LOGICAL,
              const LogicalVector& futilityStoppingNew = NA_LOGICAL,
-             const String typeAlphaSpendingNew = "sfOF",
+             const std::string typeAlphaSpendingNew = "sfOF",
              const double parameterAlphaSpendingNew = NA_REAL,
-             const String typeBetaSpendingNew = "none",
+             const std::string typeBetaSpendingNew = "none",
              const double parameterBetaSpendingNew = NA_REAL,
              const NumericVector& spendingTimeNew = NA_REAL,
              const double varianceRatio = 1) {
@@ -3984,7 +3984,7 @@ double getCP(double INew = NA_REAL,
 
 // [[Rcpp::export]]
 NumericMatrix ftrunccpp(const NumericMatrix& p,
-                        const String test,
+                        const std::string test,
                         const double gamma) {
   std::string test1 = test;
   std::for_each(test1.begin(), test1.end(), [](char & c) {
@@ -4744,7 +4744,7 @@ DataFrame samplesizeFisherExact(const double beta,
   double delta = asin(sqrt(pi1)) - asin(sqrt(pi2));
   double n0 = pow(R::qnorm(1-alpha, 0, 1, 1, 0) +
                   R::qnorm(1-beta, 0, 1, 1, 0), 2)*v1/pow(delta, 2);
-  double n1 = brent(f, 0.5*n0, 2*n0, 1e-4);
+  double n1 = brent(f, 0.5*n0, 2*n0, 1.0e-6);
 
   int n_lower = std::floor(n1), n_upper = std::ceil(10*n1), n;
 
@@ -4968,13 +4968,13 @@ List mnRiskDiffCI(const NumericVector& n1, const NumericVector& y1,
     return zstatRiskDiff(riskDiffH0, n1, y1, n2, y2) - b;
   };
 
-  double lower = brent(f1, -1.0, estimate, 1e-6);
+  double lower = brent(f1, -1.0, estimate, 1.0e-6);
 
   auto f2 = [n1, y1, n2, y2, b](double riskDiffH0) {
     return zstatRiskDiff(riskDiffH0, n1, y1, n2, y2) + b;
   };
 
-  double upper = brent(f2, estimate, 1.0, 1e-6);
+  double upper = brent(f2, estimate, 1.0, 1.0e-6);
 
   DataFrame data = DataFrame::create(
     _["n1"] = n1,
@@ -5184,7 +5184,7 @@ List mnRiskRatioCI(const NumericVector& n1, const NumericVector& y1,
       return zstatRiskRatio(riskRatioH0, n1, y1, n2, y2) + b;
     };
 
-    upper = brent(f2, 0.001, 1000, 1e-6);
+    upper = brent(f2, 0.001, 1000.0, 1.0e-6);
   } else if (is_true(all(y2 == 0))) {
     estimate = R_PosInf;
     upper = R_PosInf;
@@ -5193,7 +5193,7 @@ List mnRiskRatioCI(const NumericVector& n1, const NumericVector& y1,
       return zstatRiskRatio(riskRatioH0, n1, y1, n2, y2) - b;
     };
 
-    lower = brent(f1, 0.001, 1000, 1e-6);
+    lower = brent(f1, 0.001, 1000.0, 1.0e-6);
   } else {
     double p1 = 0, p2 = 0;
     for (i=0; i<k; i++) {
@@ -5207,13 +5207,13 @@ List mnRiskRatioCI(const NumericVector& n1, const NumericVector& y1,
       return zstatRiskRatio(riskRatioH0, n1, y1, n2, y2) - b;
     };
 
-    lower = brent(f1, 0.001, estimate, 1e-6);
+    lower = brent(f1, 0.001, estimate, 1.0e-6);
 
     auto f2 = [n1, y1, n2, y2, b](double riskRatioH0) {
       return zstatRiskRatio(riskRatioH0, n1, y1, n2, y2) + b;
     };
 
-    upper = brent(f2, estimate, 1000, 1e-6);
+    upper = brent(f2, estimate, 1000.0, 1.0e-6);
   }
 
   DataFrame data = DataFrame::create(
@@ -5425,7 +5425,7 @@ List mnOddsRatioCI(const NumericVector& n1, const NumericVector& y1,
       return zstatOddsRatio(oddsRatioH0, n1, y1, n2, y2) + b;
     };
 
-    upper = brent(f2, 0.001, 1000, 1e-6);
+    upper = brent(f2, 0.001, 1000.0, 1.0e-6);
   } else if (is_true(all(y2 == 0))) {
     estimate = R_PosInf;
     upper = R_PosInf;
@@ -5434,13 +5434,13 @@ List mnOddsRatioCI(const NumericVector& n1, const NumericVector& y1,
       return zstatOddsRatio(oddsRatioH0, n1, y1, n2, y2) - b;
     };
 
-    lower = brent(f1, 0.001, 1000, 1e-6);
+    lower = brent(f1, 0.001, 1000.0, 1.0e-6);
   } else {
-    auto f0 = [n1, y1, n2, y2, b](double oddsRatioH0) {
+    auto f0 = [n1, y1, n2, y2](double oddsRatioH0) {
       return zstatOddsRatio(oddsRatioH0, n1, y1, n2, y2);
     };
 
-    estimate = brent(f0, 0.001, 1000, 1e-6);
+    estimate = brent(f0, 0.001, 1000.0, 1.0e-6);
 
     auto f1 = [n1, y1, n2, y2, b](double oddsRatioH0) {
       return zstatOddsRatio(oddsRatioH0, n1, y1, n2, y2) - b;
@@ -5452,7 +5452,7 @@ List mnOddsRatioCI(const NumericVector& n1, const NumericVector& y1,
       return zstatOddsRatio(oddsRatioH0, n1, y1, n2, y2) + b;
     };
 
-    upper = brent(f2, estimate, 1000, 1e-6);
+    upper = brent(f2, estimate, 1000.0, 1.0e-6);
   }
 
   DataFrame data = DataFrame::create(
@@ -5655,13 +5655,13 @@ List mnRateDiffCI(const NumericVector& t1, const NumericVector& y1,
     return zstatRateDiff(rateDiffH0, t1, y1, t2, y2) - b;
   };
 
-  double lower = brent(f1, -1000, estimate, 1e-6);
+  double lower = brent(f1, -1000.0, estimate, 1.0e-6);
 
   auto f2 = [t1, y1, t2, y2, b](double rateDiffH0) {
     return zstatRateDiff(rateDiffH0, t1, y1, t2, y2) + b;
   };
 
-  double upper = brent(f2, estimate, 1000, 1e-6);
+  double upper = brent(f2, estimate, 1000.0, 1.0e-6);
 
   DataFrame data = DataFrame::create(
     _["t1"] = t1,
@@ -5855,7 +5855,7 @@ List mnRateRatioCI(const NumericVector& t1, const NumericVector& y1,
       return zstatRateRatio(rateRatioH0, t1, y1, t2, y2) + b;
     };
 
-    upper = brent(f2, 0.001, 1000, 1e-6);
+    upper = brent(f2, 0.001, 1000.0, 1.0e-6);
   } else if (is_true(all(y2 == 0))) {
     estimate = NA_REAL;
     upper = NA_REAL;
@@ -5864,7 +5864,7 @@ List mnRateRatioCI(const NumericVector& t1, const NumericVector& y1,
       return zstatRateRatio(rateRatioH0, t1, y1, t2, y2) - b;
     };
 
-    lower = brent(f1, 0.001, 1000, 1e-6);
+    lower = brent(f1, 0.001, 1000.0, 1.0e-6);
   } else {
     double r1=0, r2=0;
     for (i=0; i<k; i++) {
@@ -5877,13 +5877,13 @@ List mnRateRatioCI(const NumericVector& t1, const NumericVector& y1,
       return zstatRateRatio(rateRatioH0, t1, y1, t2, y2) - b;
     };
 
-    lower = brent(f1, 0.001, estimate, 1e-6);
+    lower = brent(f1, 0.001, estimate, 1.0e-6);
 
     auto f2 = [t1, y1, t2, y2, b](double rateRatioH0) {
       return zstatRateRatio(rateRatioH0, t1, y1, t2, y2) + b;
     };
 
-    upper = brent(f2, estimate, 1000, 1e-6);
+    upper = brent(f2, estimate, 1000.0, 1.0e-6);
   }
 
   DataFrame data = DataFrame::create(
@@ -6588,6 +6588,8 @@ DataFrame samplesizeRiskRatioExact(
 //'
 //' * \code{pi2}: The assumed probability for the control group.
 //'
+//' * \code{riskDiff}: The risk difference.
+//'
 //' * \code{allocationRatioPlanned}: Allocation ratio for the active
 //'   treatment versus control.
 //'
@@ -6849,6 +6851,7 @@ DataFrame powerRiskDiffExactEquiv(
     _["riskDiffUpper"] = riskDiffUpper,
     _["pi1"] = pi1,
     _["pi2"] = pi2,
+    _["riskDiff"] = pi1 - pi2,
     _["allocationRatioPlanned"] = allocationRatioPlanned,
     _["zstatRiskDiffLower"] = t1,
     _["zstatRiskDiffUpper"] = t2);
@@ -6889,6 +6892,8 @@ DataFrame powerRiskDiffExactEquiv(
 //' * \code{pi1}: The assumed probability for the active treatment group.
 //'
 //' * \code{pi2}: The assumed probability for the control group.
+//'
+//' * \code{riskDiff}: The risk difference.
 //'
 //' * \code{allocationRatioPlanned}: Allocation ratio for the active
 //'   treatment versus control.
@@ -7003,6 +7008,8 @@ DataFrame samplesizeRiskDiffExactEquiv(
 //' * \code{pi1}: The assumed probability for the active treatment group.
 //'
 //' * \code{pi2}: The assumed probability for the control group.
+//'
+//' * \code{riskRatio}: The risk ratio.
 //'
 //' * \code{allocationRatioPlanned}: Allocation ratio for the active
 //'   treatment versus control.
@@ -7262,6 +7269,7 @@ DataFrame powerRiskRatioExactEquiv(
     _["riskRatioUpper"] = riskRatioUpper,
     _["pi1"] = pi1,
     _["pi2"] = pi2,
+    _["riskRatio"] = pi1/pi2,
     _["allocationRatioPlanned"] = allocationRatioPlanned,
     _["zstatRiskRatioLower"] = t1,
     _["zstatRiskRatioUpper"] = t2);
@@ -7302,6 +7310,8 @@ DataFrame powerRiskRatioExactEquiv(
 //' * \code{pi1}: The assumed probability for the active treatment group.
 //'
 //' * \code{pi2}: The assumed probability for the control group.
+//'
+//' * \code{riskRatio}: The risk ratio.
 //'
 //' * \code{allocationRatioPlanned}: Allocation ratio for the active
 //'   treatment versus control.

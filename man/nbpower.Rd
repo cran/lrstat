@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{nbpower}
 \alias{nbpower}
-\title{Negative binomial rate ratio power}
+\title{Power for negative binomial rate ratio}
 \usage{
 nbpower(
   kMax = 1L,
@@ -20,16 +20,17 @@ nbpower(
   rateRatioH0 = 1,
   allocationRatioPlanned = 1,
   accrualTime = 0L,
-  accrualIntensity = 1500L,
+  accrualIntensity = NA_real_,
   piecewiseSurvivalTime = 0L,
-  kappa1 = 5,
-  kappa2 = 5,
-  lambda1 = 0.0875,
-  lambda2 = 0.125,
+  stratumFraction = 1L,
+  kappa1 = NA_real_,
+  kappa2 = NA_real_,
+  lambda1 = NA_real_,
+  lambda2 = NA_real_,
   gamma1 = 0L,
   gamma2 = 0L,
-  accrualDuration = 1.25,
-  followupTime = 2.75,
+  accrualDuration = NA_real_,
+  followupTime = NA_real_,
   fixedFollowup = 0L,
   spendingTime = NA_real_,
   studyDuration = NA_real_,
@@ -99,25 +100,32 @@ piecewise exponential survival time intervals. Must start with 0, e.g.,
 [0, 6) and [6, Inf).
 Defaults to 0 for exponential distribution.}
 
-\item{kappa1}{The dispersion parameter (reciprocal of the shape parameter
-of the gamma mixing distribution) for the active treatment group.}
+\item{stratumFraction}{A vector of stratum fractions that sum to 1.
+Defaults to 1 for no stratification.}
 
-\item{kappa2}{The dispersion parameter (reciprocal of the shape parameter
-of the gamma mixing distribution) for the control group.}
+\item{kappa1}{The dispersion parameter (reciprocal of the shape
+parameter of the gamma mixing distribution) for the active treatment
+group by stratum.}
+
+\item{kappa2}{The dispersion parameter (reciprocal of the shape
+parameter of the gamma mixing distribution) for the control group by
+stratum.}
 
 \item{lambda1}{The rate parameter of the negative binomial distribution
-for the active treatment group.}
+for the active treatment group by stratum.}
 
 \item{lambda2}{The rate parameter of the negative binomial distribution
-for the control group.}
+for the control group by stratum.}
 
-\item{gamma1}{The hazard rate for exponential dropout, or a vector of
-hazard rates for piecewise exponential dropout for the active
-treatment group. Defaults to 0 for no dropout.}
+\item{gamma1}{The hazard rate for exponential dropout, a vector of hazard
+rates for piecewise exponential dropout applicable for all strata, or a
+vector of hazard rates for dropout in each analysis time interval
+by stratum for the active treatment group.}
 
-\item{gamma2}{The hazard rate for exponential dropout, or a vector of
-hazard rates for piecewise exponential dropout for the control group.
-Defaults to 0 for no dropout.}
+\item{gamma2}{The hazard rate for exponential dropout, a vector of hazard
+rates for piecewise exponential dropout applicable for all strata, or a
+vector of hazard rates for dropout in each analysis time interval
+by stratum for the control group.}
 
 \item{accrualDuration}{Duration of the enrollment period.}
 
@@ -158,6 +166,9 @@ An S3 class \code{nbpower} object with 4 components:
 \item \code{expectedExposure}: The expected exposure.
 \item \code{expectedStudyDuration}: The expected study duration.
 \item \code{expectedInformation}: The expected information.
+\item \code{accrualDuration}: The accrual duration.
+\item \code{followupTime}: The follow-up duration.
+\item \code{fixedFollowup}: Whether a fixed follow-up design is used.
 \item \code{kMax}: The number of stages.
 \item \code{rateRatioH0}: The rate ratio under the null hypothesis.
 \item \code{rateRatio}: The rate ratio.
@@ -196,7 +207,6 @@ ratio scale.
 \code{accrualTime}, \code{accuralIntensity},
 \code{piecewiseSurvivalTime}, \code{kappa1}, \code{kappa2},
 \code{lambda1}, \code{lambda2}, \code{gamma1}, \code{gamma2},
-\code{accrualDuration}, \code{followupTime}, \code{fixedFollowup},
 \code{spendingTime}, and \code{nullVariance}.
 \item \code{byTreatmentCounts}: A list containing the following counts by
 treatment group:
@@ -243,8 +253,10 @@ Estimates the power for negative binomial rate ratio test.
 nbpower(kMax = 2, informationRates = c(0.5, 1),
         alpha = 0.025, typeAlphaSpending = "sfOF",
         accrualIntensity = 1956/1.25,
+        stratumFraction = c(0.2, 0.8),
         kappa1 = 5, kappa2 = 5,
-        lambda1 = 0.0875, lambda2 = 0.125,
+        lambda1 = c(0.7*0.125, 0.75*0.25),
+        lambda2 = c(0.125, 0.25),
         gamma1 = 0, gamma2 = 0,
         accrualDuration = 1.25,
         followupTime = 2.75, fixedFollowup = FALSE,

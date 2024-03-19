@@ -2143,6 +2143,8 @@ getDesignOddsRatio <- function(
 #'
 #'     - \code{pi2}: The assumed probability for the control group.
 #'
+#'     - \code{riskDiff}: The risk difference.
+#'
 #' * \code{byStageResults}: A data frame containing the following variables:
 #'
 #'     - \code{informationRates}: The information rates.
@@ -2404,6 +2406,7 @@ getDesignRiskDiffEquiv <- function(
   des$overallResults$riskDiffUpper = riskDiffUpper
   des$overallResults$pi1 = pi1
   des$overallResults$pi2 = pi2
+  des$overallResults$riskDiff = pi1 - pi2
   des$overallResults <-
     des$overallResults[, c("overallReject", "alpha",
                            "attainedAlphaH10", "attainedAlphaH20",
@@ -2416,7 +2419,7 @@ getDesignRiskDiffEquiv <- function(
                            "expectedNumberOfSubjectsH10",
                            "expectedNumberOfSubjectsH20",
                            "riskDiffLower", "riskDiffUpper",
-                           "pi1", "pi2")]
+                           "pi1", "pi2", "riskDiff")]
 
   des$byStageResults$efficacyRiskDiffLower =
     des$byStageResults$efficacyThetaLower
@@ -2524,6 +2527,8 @@ getDesignRiskDiffEquiv <- function(
 #'     - \code{pi1}: The assumed probability for the active treatment group.
 #'
 #'     - \code{pi2}: The assumed probability for the control group.
+#'
+#'     - \code{riskRatio}: The risk ratio.
 #'
 #' * \code{byStageResults}: A data frame containing the following variables:
 #'
@@ -2780,6 +2785,7 @@ getDesignRiskRatioEquiv <- function(
   des$overallResults$riskRatioUpper = riskRatioUpper
   des$overallResults$pi1 = pi1
   des$overallResults$pi2 = pi2
+  des$overallResults$riskRatio = pi1/pi2
   des$overallResults <-
     des$overallResults[, c("overallReject", "alpha",
                            "attainedAlphaH10", "attainedAlphaH20",
@@ -2792,7 +2798,7 @@ getDesignRiskRatioEquiv <- function(
                            "expectedNumberOfSubjectsH10",
                            "expectedNumberOfSubjectsH20",
                            "riskRatioLower", "riskRatioUpper",
-                           "pi1", "pi2")]
+                           "pi1", "pi2", "riskRatio")]
 
   des$byStageResults$efficacyRiskRatioLower =
     exp(des$byStageResults$efficacyThetaLower)
@@ -2900,6 +2906,8 @@ getDesignRiskRatioEquiv <- function(
 #'     - \code{pi1}: The assumed probability for the active treatment group.
 #'
 #'     - \code{pi2}: The assumed probability for the control group.
+#'
+#'     - \code{oddsRatio}: The odds ratio.
 #'
 #' * \code{byStageResults}: A data frame containing the following variables:
 #'
@@ -3148,6 +3156,7 @@ getDesignOddsRatioEquiv <- function(
   des$overallResults$oddsRatioUpper = oddsRatioUpper
   des$overallResults$pi1 = pi1
   des$overallResults$pi2 = pi2
+  des$overallResults$oddsRatio = pi1*(1-pi2)/((1-pi1)*pi2)
   des$overallResults <-
     des$overallResults[, c("overallReject", "alpha",
                            "attainedAlphaH10", "attainedAlphaH20",
@@ -3160,7 +3169,7 @@ getDesignOddsRatioEquiv <- function(
                            "expectedNumberOfSubjectsH10",
                            "expectedNumberOfSubjectsH20",
                            "oddsRatioLower", "oddsRatioUpper",
-                           "pi1", "pi2")]
+                           "pi1", "pi2", "oddsRatio")]
 
   des$byStageResults$efficacyOddsRatioLower =
     exp(des$byStageResults$efficacyThetaLower)
@@ -4887,7 +4896,7 @@ getDesignLogistic <- function(
 
     pconfigs = c(pconfigs, 1-sum(pconfigs))
   } else {
-    if (sum(pconfigs) != 1) {
+    if (abs(sum(pconfigs) - 1.0) > 1.0e-8) {
       stop("pconfigs should sum up to 1")
     }
   }
@@ -5636,6 +5645,8 @@ getDesignRiskRatioExact <- function(
 #'
 #' * \code{pi2}: The assumed probability for the control group.
 #'
+#' * \code{riskDiff}: The risk difference.
+#'
 #' * \code{allocationRatioPlanned}: Allocation ratio for the active
 #'   treatment versus control.
 #'
@@ -5770,6 +5781,8 @@ getDesignRiskDiffExactEquiv <- function(
 #' * \code{pi1}: The assumed probability for the active treatment group.
 #'
 #' * \code{pi2}: The assumed probability for the control group.
+#'
+#' * \code{riskRatio}: The risk ratio.
 #'
 #' * \code{allocationRatioPlanned}: Allocation ratio for the active
 #'   treatment versus control.

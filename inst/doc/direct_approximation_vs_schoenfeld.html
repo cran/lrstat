@@ -360,7 +360,7 @@ upper bound of the follow-up time for bracketed search:</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="fu">caltime</span>(<span class="at">nevents =</span> <span class="dv">40</span>, <span class="at">accrualDuration =</span> <span class="dv">12</span>, <span class="at">accrualIntensity =</span> <span class="dv">200</span><span class="sc">/</span><span class="dv">12</span>,</span>
 <span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>        <span class="at">lambda1 =</span> <span class="sc">-</span><span class="fu">log</span>(<span class="dv">1</span><span class="fl">-0.2</span>)<span class="sc">/</span><span class="dv">12</span>, <span class="at">lambda2 =</span> <span class="sc">-</span><span class="fu">log</span>(<span class="dv">1</span><span class="fl">-0.4</span>)<span class="sc">/</span><span class="dv">12</span>, </span>
 <span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a>        <span class="at">followupTime =</span> <span class="dv">100</span>)</span>
-<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a><span class="co">#&gt; [1] 13.63171</span></span></code></pre></div>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a><span class="co">#&gt; [1] 13.63169</span></span></code></pre></div>
 <p>Therefore the followup time for the last enrolled patient is 13.63 -
 12 = 1.63 months. Next we use the lrpower function to estimate the
 power.</p>
@@ -369,26 +369,27 @@ power.</p>
 <span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a>        <span class="at">lambda2 =</span> <span class="sc">-</span><span class="fu">log</span>(<span class="dv">1</span><span class="fl">-0.4</span>)<span class="sc">/</span><span class="dv">12</span>,  <span class="at">followupTime =</span> <span class="fl">1.63</span>)</span>
 <span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a><span class="co">#&gt;                                                                       </span></span>
 <span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a><span class="co">#&gt; Fixed design for log-rank test                                        </span></span>
-<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a><span class="co">#&gt; Overall power: 0.713, overall significance level (1-sided): 0.025     </span></span>
+<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a><span class="co">#&gt; Overall power: 0.714, overall significance level (1-sided): 0.025     </span></span>
 <span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a><span class="co">#&gt; Number of events: 40                                                  </span></span>
 <span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a><span class="co">#&gt; Number of dropouts: 0                                                 </span></span>
 <span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a><span class="co">#&gt; Number of subjects: 200                                               </span></span>
 <span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a><span class="co">#&gt; Information: 9.96                                                     </span></span>
 <span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a><span class="co">#&gt; Study duration: 13.6                                                  </span></span>
 <span id="cb3-12"><a href="#cb3-12" tabindex="-1"></a><span class="co">#&gt; Accrual duration: 12, follow-up duration: 1.6, fixed follow-up: FALSE </span></span>
-<span id="cb3-13"><a href="#cb3-13" tabindex="-1"></a><span class="co">#&gt;                                                                       </span></span>
-<span id="cb3-14"><a href="#cb3-14" tabindex="-1"></a><span class="co">#&gt;                              </span></span>
-<span id="cb3-15"><a href="#cb3-15" tabindex="-1"></a><span class="co">#&gt; Efficacy boundary (Z)  1.960 </span></span>
-<span id="cb3-16"><a href="#cb3-16" tabindex="-1"></a><span class="co">#&gt; Efficacy boundary (HR) 0.516 </span></span>
-<span id="cb3-17"><a href="#cb3-17" tabindex="-1"></a><span class="co">#&gt; Efficacy boundary (p)  0.0250</span></span>
-<span id="cb3-18"><a href="#cb3-18" tabindex="-1"></a><span class="co">#&gt; HR                     0.437</span></span></code></pre></div>
-<p>Therefore, the power is estimated to be 71.3%. In comparison, the
+<span id="cb3-13"><a href="#cb3-13" tabindex="-1"></a><span class="co">#&gt; Allocation ratio: 1                                                   </span></span>
+<span id="cb3-14"><a href="#cb3-14" tabindex="-1"></a><span class="co">#&gt;                                                                       </span></span>
+<span id="cb3-15"><a href="#cb3-15" tabindex="-1"></a><span class="co">#&gt;                              </span></span>
+<span id="cb3-16"><a href="#cb3-16" tabindex="-1"></a><span class="co">#&gt; Efficacy boundary (Z)  1.960 </span></span>
+<span id="cb3-17"><a href="#cb3-17" tabindex="-1"></a><span class="co">#&gt; Efficacy boundary (HR) 0.516 </span></span>
+<span id="cb3-18"><a href="#cb3-18" tabindex="-1"></a><span class="co">#&gt; Efficacy boundary (p)  0.0250</span></span>
+<span id="cb3-19"><a href="#cb3-19" tabindex="-1"></a><span class="co">#&gt; HR                     0.437</span></span></code></pre></div>
+<p>Therefore, the power is estimated to be 71.4%. In comparison, the
 Schoenfeld formula yields a power of 74.5%.</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a>hazardRatio <span class="ot">=</span> <span class="fu">log</span>(<span class="dv">1</span><span class="fl">-0.2</span>)<span class="sc">/</span><span class="fu">log</span>(<span class="dv">1</span><span class="fl">-0.4</span>)</span>
 <span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a><span class="fu">pnorm</span>(<span class="fu">abs</span>(<span class="fu">log</span>(hazardRatio))<span class="sc">*</span><span class="fu">sqrt</span>(<span class="dv">40</span><span class="sc">/</span><span class="dv">4</span>) <span class="sc">-</span> <span class="fu">qnorm</span>(<span class="fl">0.975</span>))</span>
 <span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a><span class="co">#&gt; [1] 0.7450763</span></span></code></pre></div>
 <p>To see which method yields a more accurate power estimate, we run a
-lrsim function, which reports a power of 71.2% with 10000
+lrsim function, which reports a power of 72.2% with 10000
 replications.</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="fu">lrsim</span>(<span class="at">kMax =</span> <span class="dv">1</span>, <span class="at">criticalValues =</span> <span class="fl">1.96</span>, </span>
 <span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>      <span class="at">accrualIntensity =</span> <span class="dv">200</span><span class="sc">/</span><span class="dv">12</span>, </span>

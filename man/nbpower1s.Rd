@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{nbpower1s}
 \alias{nbpower1s}
-\title{One-sample negative binomial rate power}
+\title{Power for one-sample negative binomial rate}
 \usage{
 nbpower1s(
   kMax = 1L,
@@ -17,15 +17,16 @@ nbpower1s(
   futilityBounds = NA_real_,
   typeBetaSpending = "none",
   parameterBetaSpending = NA_real_,
+  lambdaH0 = NA_real_,
   accrualTime = 0L,
-  accrualIntensity = 1500L,
+  accrualIntensity = NA_real_,
   piecewiseSurvivalTime = 0L,
-  kappa = 5,
-  lambdaH0 = 0.125,
-  lambda = 0.0875,
+  stratumFraction = 1L,
+  kappa = NA_real_,
+  lambda = NA_real_,
   gamma = 0L,
-  accrualDuration = 1.25,
-  followupTime = 2.75,
+  accrualDuration = NA_real_,
+  followupTime = NA_real_,
   fixedFollowup = 0L,
   spendingTime = NA_real_,
   studyDuration = NA_real_
@@ -75,6 +76,9 @@ early futility stopping. Defaults to "none".}
 \item{parameterBetaSpending}{The parameter value for the beta spending.
 Corresponds to rho for "sfKD", and gamma for "sfHSD".}
 
+\item{lambdaH0}{The rate parameter of the negative binomial distribution
+under the null hypothesis.}
+
 \item{accrualTime}{A vector that specifies the starting time of
 piecewise Poisson enrollment time intervals. Must start with 0, e.g.,
 \code{c(0, 3)} breaks the time axis into 2 accrual intervals:
@@ -89,19 +93,19 @@ piecewise exponential survival time intervals. Must start with 0, e.g.,
 [0, 6) and [6, Inf).
 Defaults to 0 for exponential distribution.}
 
+\item{stratumFraction}{A vector of stratum fractions that sum to 1.
+Defaults to 1 for no stratification.}
+
 \item{kappa}{The dispersion parameter (reciprocal of the shape parameter
 of the gamma mixing distribution) of the negative binomial
-distribution.}
-
-\item{lambdaH0}{The rate parameter of the negative binomial distribution
-under the null hypothesis.}
+distribution by stratum.}
 
 \item{lambda}{The rate parameter of the negative binomial distribution
-under the alternative hypothesis.}
+under the alternative hypothesis by stratum.}
 
 \item{gamma}{The hazard rate for exponential dropout or a vector of
-hazard rates for piecewise exponential dropout. Defaults to 0 for
-no dropout.}
+hazard rates for piecewise exponential dropout by stratum.
+Defaults to 0 for no dropout.}
 
 \item{accrualDuration}{Duration of the enrollment period.}
 
@@ -139,7 +143,14 @@ An S3 class \code{nbpower1s} object with 3 components:
 \item \code{expectedExposure}: The expected exposure.
 \item \code{expectedStudyDuration}: The expected study duration.
 \item \code{expectedInformation}: The expected information.
+\item \code{accrualDuration}: The accrual duration.
+\item \code{followupTime}: The follow-up duration.
+\item \code{fixedFollowup}: Whether a fixed follow-up design is used.
 \item \code{kMax}: The number of stages.
+\item \code{lambdaH0}: The rate parameter of the negative binomial
+distribution under the null hypothesis.
+\item \code{lambda}: The overall rate parameter of the negative binomial
+distribution under the alternative hypothesis.
 }
 \item \code{byStageResults}: A data frame containing the following variables:
 \itemize{
@@ -171,8 +182,7 @@ stopping.
 \code{userAlphaSpending}, \code{typeBetaSpending},
 \code{parameterBetaSpending}, \code{accrualTime},
 \code{accuralIntensity}, \code{piecewiseSurvivalTime},
-\code{kappa}, \code{lambdaH0}, \code{lambda}, \code{gamma},
-\code{accrualDuration}, \code{followupTime}, \code{fixedFollowup},
+\code{stratumFraction}, \code{kappa}, \code{lambda}, \code{gamma},
 and \code{spendingTime}.
 }
 }
@@ -185,8 +195,9 @@ sample size in a one-group negative binomial design.
 
 nbpower1s(kMax = 2, informationRates = c(0.5, 1),
           alpha = 0.025, typeAlphaSpending = "sfOF",
-          accrualIntensity = 500,
-          kappa = 5, lambdaH0 = 0.125, lambda = 0.0875,
+          lambdaH0 = 0.125, accrualIntensity = 500,
+          stratumFraction = c(0.2, 0.8),
+          kappa = c(3, 5), lambda = c(0.0875, 0.085),
           gamma = 0, accrualDuration = 1.25,
           followupTime = 2.75, fixedFollowup = FALSE)
 
@@ -194,8 +205,8 @@ nbpower1s(kMax = 2, informationRates = c(0.5, 1),
 
 nbpower1s(kMax = 2, informationRates = c(0.5, 1),
           alpha = 0.025, typeAlphaSpending = "sfOF",
-          accrualIntensity = 40,
-          kappa = 3, lambdaH0 = 8.4, lambda = 0.5*8.4,
+          lambdaH0 = 8.4, accrualIntensity = 40,
+          kappa = 3, lambda = 0.5*8.4,
           gamma = 0, accrualDuration = 1.5,
           followupTime = 0.5, fixedFollowup = TRUE)
 
