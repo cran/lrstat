@@ -44,8 +44,6 @@ components:
 \item \code{piH0}: The prevalence of each category under the null hypothesis.
 \item \code{pi}: The prevalence of each category.
 \item \code{effectsize}: The effect size for the chi-square test.
-\item \code{calculationTarget}: The calculation target, \code{beta} or
-\code{n}.
 \item \code{rounding}: Whether to round up sample size.
 }
 }

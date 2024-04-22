@@ -48,8 +48,6 @@ treatment versus control.
 score test statistic for risk difference.
 \item \code{pi2star}: The response probability in the control group
 at which the critical value of the test statistic is attained.
-\item \code{calculationTarget}: The calculation target, \code{beta} or
-\code{n}.
 }
 }
 \description{

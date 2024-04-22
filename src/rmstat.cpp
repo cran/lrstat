@@ -61,7 +61,7 @@ double rmst(const double t1 = 0,
 
   // identify the time interval containing the specified analysis time
   NumericVector time = NumericVector::create(t1, t2);
-  IntegerVector m = pmax(findInterval2(time, t), 1) - 1;
+  IntegerVector m = findInterval3(time, t) - 1;
 
   double s1, s2, ch = 0.0, aval = 0.0;
   for (int j=0; j<=m[0]-1; j++) {
@@ -118,8 +118,7 @@ void f_rm(double *x, int n, void *ex) {
                  param->lambda);
   }
 
-  IntegerVector j = pmax(findInterval2(u0, param->piecewiseSurvivalTime),
-                         1) - 1;
+  IntegerVector j = findInterval3(u0, param->piecewiseSurvivalTime) - 1;
   NumericVector lambda = param->lambda[j];
   NumericVector p = patrisk(u0, param->piecewiseSurvivalTime, param->lambda,
                             param->gamma);
@@ -333,7 +332,7 @@ NumericVector covrmst(const double t2 = NA_REAL,
 //'
 //' * \code{rmst2}: The restricted mean survival time for the control group.
 //'
-//' * \code{rmstDiff}: The difference in restricted mean survival time,
+//' * \code{rmstDiff}: The difference in restricted mean survival times,
 //'   i.e., \code{rmst1 - rmst2}.
 //'
 //' * \code{vrmst1}: The variance for \code{rmst1}.
@@ -495,9 +494,9 @@ DataFrame rmstat1(const double time = NA_REAL,
 }
 
 
-//' @title Stratified difference in restricted mean survival time
+//' @title Stratified difference in restricted mean survival times
 //' @description Obtains the stratified restricted mean survival times
-//' and difference in restricted mean survival time at given calendar
+//' and difference in restricted mean survival times at given calendar
 //' times.
 //'
 //' @param time A vector of calendar times at which to calculate the
@@ -531,7 +530,7 @@ DataFrame rmstat1(const double time = NA_REAL,
 //'
 //' * \code{rmst2}: The restricted mean survival time for the control group.
 //'
-//' * \code{rmstDiff}: The difference in restricted mean survival time,
+//' * \code{rmstDiff}: The difference in restricted mean survival times,
 //'   i.e., \code{rmst1 - rmst2}.
 //'
 //' * \code{vrmst1}: The variance for \code{rmst1}.
@@ -783,10 +782,9 @@ DataFrame rmstat(const NumericVector& time = NA_REAL,
 }
 
 
-
-//' @title Power for difference in restricted mean survival time
+//' @title Power for difference in restricted mean survival times
 //' @description Estimates the power for testing the difference in
-//' restricted mean survival time in a two-sample survival design.
+//' restricted mean survival times in a two-sample survival design.
 //'
 //' @inheritParams param_kMax
 //' @param informationRates The information rates.
@@ -807,7 +805,7 @@ DataFrame rmstat(const NumericVector& time = NA_REAL,
 //' @inheritParams param_parameterBetaSpending
 //' @param milestone The milestone time at which to calculate the
 //'   restricted mean survival time.
-//' @param rmstDiffH0 The difference in restricted mean survival time
+//' @param rmstDiffH0 The difference in restricted mean survival times
 //'   under the null hypothesis. Defaults to 0 for superiority test.
 //' @inheritParams param_allocationRatioPlanned
 //' @inheritParams param_accrualTime
@@ -867,7 +865,7 @@ DataFrame rmstat(const NumericVector& time = NA_REAL,
 //'     - \code{milestone}: The milestone time relative to randomization.
 //'
 //'     - \code{rmstDiffH0}: The difference in restricted mean survival
-//'       time under the null hypothesis.
+//'       times under the null hypothesis.
 //'
 //'     - \code{rmst1}: The restricted mean survival time for the
 //'       treatment group.
@@ -875,7 +873,7 @@ DataFrame rmstat(const NumericVector& time = NA_REAL,
 //'     - \code{rmst2}: The restricted mean survival time for the
 //'       control group.
 //'
-//'     - \code{rmstDiff}: The difference in restricted mean survival time,
+//'     - \code{rmstDiff}: The difference in restricted mean survival times,
 //'       equal to \code{rmst1 - rmst2}.
 //'
 //' * \code{byStageResults}: A data frame containing the following variables:
@@ -1491,7 +1489,7 @@ List rmpower(const int kMax = 1,
 }
 
 
-//' @title Sample size for difference in restricted mean survival time
+//' @title Sample size for difference in restricted mean survival times
 //' @description Obtains the needed accrual duration given power,
 //' accrual intensity, and follow-up time, the needed follow-up time
 //' given power, accrual intensity, and accrual duration, or the needed
@@ -1515,7 +1513,7 @@ List rmpower(const int kMax = 1,
 //' @inheritParams param_userBetaSpending
 //' @param milestone The milestone time at which to calculate the
 //'   restricted mean survival time.
-//' @param rmstDiffH0 The difference in restricted mean survival time
+//' @param rmstDiffH0 The difference in restricted mean survival times
 //'   under the null hypothesis. Defaults to 0 for superiority test.
 //' @inheritParams param_allocationRatioPlanned
 //' @inheritParams param_accrualTime
@@ -2238,7 +2236,7 @@ List rmsamplesize(const double beta = 0.2,
 
   // obtain results under H0 by matching the maximum information
   // first find the hazard rate for the treatment group that yields
-  // the specified difference in restricted mean survival time under H0
+  // the specified difference in restricted mean survival times under H0
   auto frmst = [milestone, piecewiseSurvivalTime, stratumFraction,
                 nintervals, nstrata, l1, lambda2x, rmst2,
                 rmstDiffH0](double aval)-> double {
@@ -5231,3 +5229,1288 @@ List rmsamplesizeequiv(const double beta = 0.2,
 
   return result;
 }
+
+
+//' @title Estimate of restricted mean survival time
+//' @description Obtains the estimate of restricted means survival time
+//' for each stratum.
+//'
+//' @param data The input data frame that contains the following variables:
+//'
+//'   * \code{rep}: The replication for by-group processing.
+//'
+//'   * \code{stratum}: The stratum.
+//'
+//'   * \code{time}: The possibly right-censored survival time.
+//'
+//'   * \code{event}: The event indicator.
+//'
+//' @param rep The name of the replication variable in the input data.
+//' @param stratum The name of the stratum variable in the input data.
+//' @param time The name of the time variable in the input data.
+//' @param event The name of the event variable in the input data.
+//' @param milestone The milestone time at which to calculate the
+//'   restricted mean survival time.
+//' @param confint The level of the two-sided confidence interval for
+//'   the survival probabilities. Defaults to 0.95.
+//' @param biascorrection Whether to apply bias correction for the
+//'   variance estimate. Defaults to no bias correction.
+//'
+//' @return A data frame with the following variables:
+//'
+//' * \code{rep}: The replication.
+//'
+//' * \code{stratum}: The stratum variable.
+//'
+//' * \code{size}: The number of subjects in the stratum.
+//'
+//' * \code{milestone}: The milestone time relative to randomization.
+//'
+//' * \code{rmst}: The estimate of restricted mean survival time.
+//'
+//' * \code{stderr}: The standard error of the estimated rmst.
+//'
+//' * \code{lower}: The lower bound of confidence interval if requested.
+//'
+//' * \code{upper}: The upper bound of confidence interval if requested.
+//'
+//' * \code{confint}: The level of confidence interval if requested.
+//'
+//' * \code{biascorrection}: Whether to apply bias correction for the
+//'   variance estimate.
+//'
+//' @author Kaifeng Lu, \email{kaifenglu@@gmail.com}
+//'
+//' @examples
+//'
+//' rmest(data = survival::aml, stratum = "x",
+//'       time = "time", event = "status", milestone = 24)
+//'
+//' @export
+// [[Rcpp::export]]
+DataFrame rmest(const DataFrame data,
+                const std::string rep = "rep",
+                const std::string stratum = "stratum",
+                const std::string time = "time",
+                const std::string event = "event",
+                const double milestone = NA_REAL,
+                const double confint = 0.95,
+                const bool biascorrection = 0) {
+
+  int h, i, j, k, n = data.nrows();
+
+  bool has_rep = hasVariable(data, rep);
+  bool has_stratum = hasVariable(data, stratum);
+  bool has_time = hasVariable(data, time);
+  bool has_event = hasVariable(data, event);
+
+  if (!has_time) {
+    stop("data must contain the time variable");
+  }
+
+  if (!has_event) {
+    stop("data must contain the event variable");
+  }
+
+  NumericVector timen = data[time];
+  NumericVector eventn = data[event];
+
+  if (is_true(any(timen <= 0))) {
+    stop("time must be positive for each subject");
+  }
+
+  if (is_true(any((eventn != 1) & (eventn != 0)))) {
+    stop("event must be 1 or 0 for each subject");
+  }
+
+
+  // create the numeric rep variable
+  IntegerVector repn(n);
+  IntegerVector repwn;
+  CharacterVector repwc;
+  if (!has_rep) {
+    repn.fill(1);
+  } else {
+    if (TYPEOF(data[rep]) == INTSXP) {
+      IntegerVector repv = data[rep];
+      IntegerVector repw(n);
+
+      // sort the rep variable
+      IntegerVector order = seq(0, n-1);
+      std::sort(order.begin(), order.end(), [&](int i, int j) {
+        return repv[i] < repv[j];
+      });
+
+      repw = repv[order];
+
+      // identify the locations of the unique values
+      IntegerVector idx(1,0);
+      for (i=1; i<n; i++) {
+        if (repw[i] != repw[i-1]) {
+          idx.push_back(i);
+        }
+      }
+
+      repwn = repw[idx]; // unique numeric values
+
+      // code the rep variable
+      for (i=0; i<n; i++) {
+        for (j=0; j<idx.size(); j++) {
+          if (repv[i] == repwn[j]) {
+            repn[i] = j+1;
+            break;
+          }
+        }
+      }
+    } else if (TYPEOF(data[rep]) == STRSXP) {
+      CharacterVector repv = data[rep];
+      CharacterVector repw(n);
+
+      // sort the rep variable
+      IntegerVector order = seq(0, n-1);
+      std::sort(order.begin(), order.end(), [&](int i, int j) {
+        return repv[i] < repv[j];
+      });
+
+      repw = repv[order];
+
+      // identify the locations of the unique values
+      IntegerVector idx(1,0);
+      for (i=1; i<n; i++) {
+        if (repw[i] != repw[i-1]) {
+          idx.push_back(i);
+        }
+      }
+
+      repwc = repw[idx]; // unique character values
+
+      // code the rep variable
+      for (i=0; i<n; i++) {
+        for (j=0; j<idx.size(); j++) {
+          if (repv[i] == repwc[j]) {
+            repn[i] = j+1;
+            break;
+          }
+        }
+      }
+    } else {
+      stop("incorrect type for the replication variable in the input data");
+    }
+  }
+
+
+  // create the numeric stratum variable
+  IntegerVector stratumn(n);
+  IntegerVector stratumwn;
+  CharacterVector stratumwc;
+  if (!has_stratum) {
+    stratumn.fill(1);
+  } else {
+    if (TYPEOF(data[stratum]) == INTSXP) {
+      IntegerVector stratumv = data[stratum];
+      IntegerVector stratumw(n);
+
+      // sort the stratum variable
+      IntegerVector order = seq(0, n-1);
+      std::sort(order.begin(), order.end(), [&](int i, int j) {
+        return stratumv[i] < stratumv[j];
+      });
+
+      stratumw = stratumv[order];
+
+      // identify the locations of the unique values
+      IntegerVector idx(1,0);
+      for (i=1; i<n; i++) {
+        if (stratumw[i] != stratumw[i-1]) {
+          idx.push_back(i);
+        }
+      }
+
+      stratumwn = stratumw[idx]; // unique numeric values
+
+      // code the stratum variable
+      for (i=0; i<n; i++) {
+        for (j=0; j<idx.size(); j++) {
+          if (stratumv[i] == stratumwn[j]) {
+            stratumn[i] = j+1;
+            break;
+          }
+        }
+      }
+    } else if (TYPEOF(data[stratum]) == STRSXP) {
+      CharacterVector stratumv = data[stratum];
+      CharacterVector stratumw(n);
+
+      // sort the stratum variable
+      IntegerVector order = seq(0, n-1);
+      std::sort(order.begin(), order.end(), [&](int i, int j) {
+        return stratumv[i] < stratumv[j];
+      });
+
+      stratumw = stratumv[order];
+
+      // identify the locations of the unique values
+      IntegerVector idx(1,0);
+      for (i=1; i<n; i++) {
+        if (stratumw[i] != stratumw[i-1]) {
+          idx.push_back(i);
+        }
+      }
+
+      stratumwc = stratumw[idx]; // unique character values
+
+      // code the stratum variable
+      for (i=0; i<n; i++) {
+        for (j=0; j<idx.size(); j++) {
+          if (stratumv[i] == stratumwc[j]) {
+            stratumn[i] = j+1;
+            break;
+          }
+        }
+      }
+    } else {
+      stop("incorrect type for the stratum variable in the input data");
+    }
+  }
+
+
+  if (R_isnancpp(milestone)) {
+    stop("milestone must be provided");
+  }
+
+  if (milestone <= 0) {
+    stop("milestone must be positive");
+  }
+
+  if (confint <= 0 || confint >= 1) {
+    stop("confint must lie between 0 and 1");
+  }
+
+
+  // sort the data by rep
+  IntegerVector order = seq(0, n-1);
+  std::sort(order.begin(), order.end(), [&](int i, int j) {
+    return repn[i] < repn[j];
+  });
+
+  repn = repn[order];
+  stratumn = stratumn[order];
+  timen = timen[order];
+  eventn = eventn[order];
+
+  // identify the locations of the unique values of rep
+  IntegerVector idx(1,0);
+  for (i=1; i<n; i++) {
+    if (repn[i] != repn[i-1]) {
+      idx.push_back(i);
+    }
+  }
+
+  int nreps = idx.size();
+  idx.push_back(n);
+
+  IntegerVector rep0(n, NA_INTEGER);
+  IntegerVector stratum0(n), size0(n);
+  NumericVector rmst0(n), stderr0(n);
+  NumericVector lower0(n), upper0(n);
+
+  double z = R::qnorm((1.0 + confint)/2.0, 0, 1, 1, 0);
+
+  bool noerr = 1;
+  int index = 0;
+  for (h=0; h<nreps; h++) {
+    IntegerVector q1 = Range(idx[h], idx[h+1]-1);
+    int n1 = q1.size();
+
+    IntegerVector stratum1 = stratumn[q1];
+    NumericVector time1 = timen[q1];
+    NumericVector event1 = eventn[q1];
+
+    // sort by stratum, time, and event with event in descending order
+    IntegerVector order1 = seq(0, n1-1);
+    std::sort(order1.begin(), order1.end(), [&](int i, int j) {
+      return (stratum1[i] < stratum1[j]) ||
+        ((stratum1[i] == stratum1[j]) && (time1[i] < time1[j])) ||
+        ((stratum1[i] == stratum1[j]) && (time1[i] == time1[j]) &&
+        (event1[i] > event1[j]));
+    });
+
+    stratum1 = stratum1[order1];
+    time1 = time1[order1];
+    event1 = event1[order1];
+
+    // identify the locations of the unique values of stratum
+    IntegerVector idx1(1,0);
+    for (i=1; i<n1; i++) {
+      if (stratum1[i] != stratum1[i-1]) {
+        idx1.push_back(i);
+      }
+    }
+
+    int nstrata = idx1.size();
+    idx1.push_back(n1);
+
+    for (i=0; i<nstrata; i++) {
+      IntegerVector q2 = Range(idx1[i], idx1[i+1]-1);
+      NumericVector time2 = time1[q2];
+      NumericVector event2 = event1[q2];
+      int n2 = q2.size();
+
+      if (milestone > max(time2)) {
+        std::string reperr;
+        if (!has_rep) {
+          reperr = "";
+        } else if (TYPEOF(data[rep]) == INTSXP) {
+          reperr = " " + rep + " = " + std::to_string(repwn[repn[idx[h]]-1]);
+        } else {
+          reperr = " " + rep + " = " + repwc[repn[idx[h]]-1];
+        }
+
+        std::string stratumerr;
+        if (!has_stratum) {
+          stratumerr = "";
+        } else if (TYPEOF(data[stratum]) == INTSXP) {
+          stratumerr = " " + stratum + " = " +
+            std::to_string(stratumwn[stratum1[idx1[i]]-1]);
+        } else {
+          stratumerr = " " + stratum + " = " +
+            stratumwc[stratum1[idx1[i]]-1];
+        }
+
+        std::string str1 = "The milestone is larger than";
+        std::string str2 = "the largest observed time";
+        std::string errmsg = str1 + " " + str2;
+        if (!reperr.empty() || !stratumerr.empty()) {
+          errmsg = errmsg + ":" + reperr + stratumerr;
+        }
+
+        if (noerr) {
+          Rcout << errmsg << "\n";
+          Rcout << "Additional warning messages are suppressed" << "\n";
+          noerr = 0;
+        }
+
+        continue;
+      }
+
+      NumericVector time0(n2, NA_REAL);
+      NumericVector nrisk0(n2), nevent0(n2), surv0(n2);
+      int index1 = 0;
+
+      double t, nrisk, nevent, surv = 1.0;
+      bool cache = 0;
+      for (j=0; j<n2; j++) {
+        if (((j == 0) && (event2[j] == 1)) ||
+            ((j >= 1) && (event2[j] == 1) && (time2[j] > time2[j-1]))) {
+          // new event
+          // add the info for the previous event
+          if (cache) {
+            surv = surv*(1.0 - nevent/nrisk);
+
+            time0[index1] = t;
+            nrisk0[index1] = nrisk;
+            nevent0[index1] = nevent;
+            surv0[index1] = surv;
+
+            index1++;
+          }
+
+          // update the buffer for the current event time
+          t = time2[j];
+          nrisk = n2-j;
+          nevent = 1;
+
+          cache = 1;
+        } else if ((j >= 1) && (event2[j] == 1) && (event2[j-1] == 1) &&
+          (time2[j] == time2[j-1])) { // tied event
+          nevent = nevent + 1;
+        } else if ((j >= 1) && (event2[j] == 0) && (event2[j-1] == 1)) {
+          // new censoring
+          // add the info for the previous event
+          surv = surv*(1.0 - nevent/nrisk);
+
+          time0[index1] = t;
+          nrisk0[index1] = nrisk;
+          nevent0[index1] = nevent;
+          surv0[index1] = surv;
+
+          index1++;
+
+          // empty the cache for the current event time
+          cache = 0;
+        }
+      }
+
+      // add the info for the last event
+      if (cache) {
+        surv = surv*(1.0 - nevent/nrisk);
+
+        time0[index1] = t;
+        nrisk0[index1] = nrisk;
+        nevent0[index1] = nevent;
+        surv0[index1] = surv;
+
+        index1++;
+      }
+
+      // only keep nonmissing records
+      int N;
+      LogicalVector sub = !is_na(time0);
+      if (is_false(any(sub))) { // no event
+        N = 0;
+        time0 = NumericVector::create(0.0);
+        nrisk0 = NumericVector::create(n2);
+        nevent0 = NumericVector::create(0.0);
+        surv0 = NumericVector::create(1.0);
+      } else { // at least 1 event
+        time0 = time0[sub];
+        nrisk0 = nrisk0[sub];
+        nevent0 = nevent0[sub];
+        surv0 = surv0[sub];
+
+        // locate the latest event time before milestone
+        NumericVector milestone1(1, milestone);
+        N = findInterval3(milestone1, time0)[0];
+
+        // prepend time zero information
+        time0.push_front(0.0);
+        nrisk0.push_front(n2);
+        nevent0.push_front(0.0);
+        surv0.push_front(1.0);
+      }
+
+      // replace the last time of interest with milestone
+      if (N == time0.size() - 1) {
+        time0.push_back(milestone);
+      } else {
+        time0[N+1] = milestone;
+      }
+
+      // calculate the partial sum of the trapezoid integration
+      NumericVector rmstx(N+1);
+      rmstx[0] = surv0[0]*(time0[1] - time0[0]);
+      for (k=1; k<=N; k++) {
+        rmstx[k] = rmstx[k-1] + surv0[k]*(time0[k+1] - time0[k]);
+      }
+
+      // calculate rmst and its variance
+      double u = rmstx[N];
+      double v = 0.0;
+      for (k=1; k<=N; k++) {
+        // rmst from the kth event time to milestone
+        double a = u - rmstx[k-1];
+        // do not add variance if the largest observed time is an event time
+        if (nrisk0[k] > nevent0[k]) {
+          v += nevent0[k]*a*a/(nrisk0[k]*(nrisk0[k] - nevent0[k]));
+        }
+      }
+
+      // apply bias correction if requested
+      if (biascorrection) {
+        double m1 = 0;
+        for (k=1; k<=N; k++) {
+          m1 += nevent0[k];
+        }
+
+        if (m1 <= 1.0) {
+          std::string reperr;
+          if (!has_rep) {
+            reperr = "";
+          } else if (TYPEOF(data[rep]) == INTSXP) {
+            reperr = " " + rep + " = " + std::to_string(repwn[repn[idx[h]]-1]);
+          } else {
+            reperr = " " + rep + " = " + repwc[repn[idx[h]]-1];
+          }
+
+          std::string stratumerr;
+          if (!has_stratum) {
+            stratumerr = "";
+          } else if (TYPEOF(data[stratum]) == INTSXP) {
+            stratumerr = " " + stratum + " = " +
+              std::to_string(stratumwn[stratum1[idx1[i]]-1]);
+          } else {
+            stratumerr = " " + stratum + " = " +
+              stratumwc[stratum1[idx1[i]]-1];
+          }
+
+          std::string str1 = "Bias correction is not done due to no or";
+          std::string str2 = "only 1 event before the milestone time:";
+          std::string errmsg = str1 + " " + str2;
+          if (!reperr.empty() || !stratumerr.empty()) {
+            errmsg = errmsg + ":" + reperr + stratumerr;
+          }
+
+          if (noerr) {
+            Rcout << errmsg << "\n";
+            Rcout << "Additional warning messages are suppressed" << "\n";
+            noerr = 0;
+          }
+        } else {
+          v = m1/(m1 - 1.0)*v;
+        }
+      }
+
+      rep0[index] = repn[idx[h]];
+      stratum0[index] = stratum1[idx1[i]];
+      size0[index] = n2;
+      rmst0[index] = u;
+      stderr0[index] = sqrt(v);
+      lower0[index] = u - z*stderr0[index];
+      upper0[index] = u + z*stderr0[index];
+
+      index++;
+    }
+  }
+
+  // only keep nonmissing records
+  LogicalVector sub = !is_na(rep0);
+  if (is_false(any(sub))) {
+    stop("no replication enables valid inference");
+  }
+
+  rep0 = rep0[sub];
+  stratum0 = stratum0[sub];
+  size0 = size0[sub];
+  rmst0 = rmst0[sub];
+  stderr0 = stderr0[sub];
+  lower0 = lower0[sub];
+  upper0 = upper0[sub];
+
+
+  DataFrame result;
+
+  if (!has_rep) {
+    if (!has_stratum) {
+      result = DataFrame::create(
+        _[rep] = rep0,
+        _[stratum] = stratum0,
+        _["size"] = size0,
+        _["milestone"] = milestone,
+        _["rmst"] = rmst0,
+        _["stderr"] = stderr0,
+        _["lower"] = lower0,
+        _["upper"] = upper0,
+        _["confint"] = confint,
+        _["biascorrection"] = biascorrection);
+    } else if (TYPEOF(data[stratum]) == INTSXP) {
+      IntegerVector stratum0n = stratumwn[stratum0-1];
+
+      result = DataFrame::create(
+        _[rep] = rep0,
+        _[stratum] = stratum0n,
+        _["size"] = size0,
+        _["milestone"] = milestone,
+        _["rmst"] = rmst0,
+        _["stderr"] = stderr0,
+        _["lower"] = lower0,
+        _["upper"] = upper0,
+        _["confint"] = confint,
+        _["biascorrection"] = biascorrection);
+    } else if (TYPEOF(data[stratum]) == STRSXP) {
+      CharacterVector stratum0c = stratumwc[stratum0-1];
+
+      result = DataFrame::create(
+        _[rep] = rep0,
+        _[stratum] = stratum0c,
+        _["size"] = size0,
+        _["milestone"] = milestone,
+        _["rmst"] = rmst0,
+        _["stderr"] = stderr0,
+        _["lower"] = lower0,
+        _["upper"] = upper0,
+        _["confint"] = confint,
+        _["biascorrection"] = biascorrection);
+    }
+  } else if (TYPEOF(data[rep]) == INTSXP) {
+    IntegerVector rep0n = repwn[rep0-1];
+
+    if (!has_stratum) {
+      result = DataFrame::create(
+        _[rep] = rep0n,
+        _[stratum] = stratum0,
+        _["size"] = size0,
+        _["milestone"] = milestone,
+        _["rmst"] = rmst0,
+        _["stderr"] = stderr0,
+        _["lower"] = lower0,
+        _["upper"] = upper0,
+        _["confint"] = confint,
+        _["biascorrection"] = biascorrection);
+    } else if (TYPEOF(data[stratum]) == INTSXP) {
+      IntegerVector stratum0n = stratumwn[stratum0-1];
+
+      result = DataFrame::create(
+        _[rep] = rep0n,
+        _[stratum] = stratum0n,
+        _["size"] = size0,
+        _["milestone"] = milestone,
+        _["rmst"] = rmst0,
+        _["stderr"] = stderr0,
+        _["lower"] = lower0,
+        _["upper"] = upper0,
+        _["confint"] = confint,
+        _["biascorrection"] = biascorrection);
+    } else if (TYPEOF(data[stratum]) == STRSXP) {
+      CharacterVector stratum0c = stratumwc[stratum0-1];
+
+      result = DataFrame::create(
+        _[rep] = rep0n,
+        _[stratum] = stratum0c,
+        _["size"] = size0,
+        _["milestone"] = milestone,
+        _["rmst"] = rmst0,
+        _["stderr"] = stderr0,
+        _["lower"] = lower0,
+        _["upper"] = upper0,
+        _["confint"] = confint,
+        _["biascorrection"] = biascorrection);
+    }
+  } else if (TYPEOF(data[rep]) == STRSXP) {
+    CharacterVector rep0c = repwc[rep0-1];
+
+    if (!has_stratum) {
+      result = DataFrame::create(
+        _[rep] = rep0c,
+        _[stratum] = stratum0,
+        _["size"] = size0,
+        _["milestone"] = milestone,
+        _["rmst"] = rmst0,
+        _["stderr"] = stderr0,
+        _["lower"] = lower0,
+        _["upper"] = upper0,
+        _["confint"] = confint,
+        _["biascorrection"] = biascorrection);
+    } else if (TYPEOF(data[stratum]) == INTSXP) {
+      IntegerVector stratum0n = stratumwn[stratum0-1];
+
+      result = DataFrame::create(
+        _[rep] = rep0c,
+        _[stratum] = stratum0n,
+        _["size"] = size0,
+        _["milestone"] = milestone,
+        _["rmst"] = rmst0,
+        _["stderr"] = stderr0,
+        _["lower"] = lower0,
+        _["upper"] = upper0,
+        _["confint"] = confint,
+        _["biascorrection"] = biascorrection);
+    } else if (TYPEOF(data[stratum]) == STRSXP) {
+      CharacterVector stratum0c = stratumwc[stratum0-1];
+
+      result = DataFrame::create(
+        _[rep] = rep0c,
+        _[stratum] = stratum0c,
+        _["size"] = size0,
+        _["milestone"] = milestone,
+        _["rmst"] = rmst0,
+        _["stderr"] = stderr0,
+        _["lower"] = lower0,
+        _["upper"] = upper0,
+        _["confint"] = confint,
+        _["biascorrection"] = biascorrection);
+    }
+  }
+
+  return result;
+}
+
+
+//' @title Estimate of restricted mean survival time difference
+//' @description Obtains the estimate of restricted mean survival time
+//' difference between two treatment groups.
+//'
+//' @param data The input data frame that contains the following variables:
+//'
+//'   * \code{rep}: The replication for by-group processing.
+//'
+//'   * \code{stratum}: The stratum.
+//'
+//'   * \code{treat}: The treatment.
+//'
+//'   * \code{time}: The possibly right-censored survival time.
+//'
+//'   * \code{event}: The event indicator.
+//'
+//' @param rep The name of the replication variable in the input data.
+//' @param stratum The name of the stratum variable in the input data.
+//' @param treat The name of the treatment variable in the input data.
+//' @param time The name of the time variable in the input data.
+//' @param event The name of the event variable in the input data.
+//' @param milestone The milestone time at which to calculate the
+//'   restricted mean survival time.
+//' @param rmstDiffH0 The difference in restricted mean survival times
+//'   under the null hypothesis. Defaults to 0 for superiority test.
+//' @param confint The level of the two-sided confidence interval for
+//'   the difference in restricted mean survival times. Defaults to 0.95.
+//' @param biascorrection Whether to apply bias correction for the
+//'   variance estimate of individual restricted mean survival times.
+//'   Defaults to no bias correction.
+//'
+//' @return A data frame with the following variables:
+//'
+//' * \code{rep}: The replication number.
+//'
+//' * \code{milestone}: The milestone time relative to randomization.
+//'
+//' * \code{rmstDiffH0}: The difference in restricted mean survival times
+//'   under the null hypothesis.
+//'
+//' * \code{rmst1}: The estimated restricted mean survival time for
+//'   the treatment group.
+//'
+//' * \code{rmst2}: The estimated restricted mean survival time for
+//'   the control group.
+//'
+//' * \code{rmstDiff}: The estimated difference in restricted mean
+//'   survival times.
+//'
+//' * \code{vrmst1}: The variance for rmst1.
+//'
+//' * \code{vrmst2}: The variance for rmst2.
+//'
+//' * \code{vrmstDiff}: The variance for rmstDiff.
+//'
+//' * \code{rmstDiffZ}: The Z-statistic value.
+//'
+//' * \code{rmstDiffPValue}: The one-sided p-value.
+//'
+//' * \code{lower}: The lower bound of confidence interval.
+//'
+//' * \code{upper}: The upper bound of confidence interval.
+//'
+//' * \code{confint}: The level of confidence interval.
+//'
+//' * \code{biascorrection}: Whether to apply bias correction for the
+//'   variance estimate of individual restricted mean survival times.
+//'
+//' @author Kaifeng Lu, \email{kaifenglu@@gmail.com}
+//'
+//' @examples
+//'
+//' df <- rmdiff(data = rawdata, rep = "iterationNumber",
+//'              stratum = "stratum", treat = "treatmentGroup",
+//'              time = "timeUnderObservation", event = "event",
+//'              milestone = 12)
+//' head(df)
+//'
+//' @export
+// [[Rcpp::export]]
+DataFrame rmdiff(const DataFrame data,
+                 const std::string rep = "rep",
+                 const std::string stratum = "stratum",
+                 const std::string treat = "treat",
+                 const std::string time = "time",
+                 const std::string event = "event",
+                 const double milestone = NA_REAL,
+                 const double rmstDiffH0 = 0,
+                 const double confint = 0.95,
+                 const bool biascorrection = 0) {
+
+  int h, i, j, n = data.nrows();
+
+  bool has_rep = hasVariable(data, rep);
+  bool has_stratum = hasVariable(data, stratum);
+  bool has_treat = hasVariable(data, treat);
+  bool has_time = hasVariable(data, time);
+  bool has_event = hasVariable(data, event);
+
+  if (!has_treat) {
+    stop("data must contain the treat variable");
+  }
+
+  if (!has_time) {
+    stop("data must contain the time variable");
+  }
+
+  if (!has_event) {
+    stop("data must contain the event variable");
+  }
+
+
+  // create the numeric treatment variable
+  IntegerVector treatn(n);
+  IntegerVector treatwn;
+  CharacterVector treatwc;
+  if (TYPEOF(data[treat]) == LGLSXP) {
+    LogicalVector treatv = data[treat];
+    treatn = 2 - treatv;
+    treatwn = IntegerVector::create(1,0);
+  } else if (TYPEOF(data[treat]) == INTSXP) {
+    IntegerVector treatv = data[treat];
+    IntegerVector treatw(n);
+
+    // sort the treatment variable
+    IntegerVector order = seq(0, n-1);
+    std::sort(order.begin(), order.end(), [&](int i, int j) {
+      return treatv[i] < treatv[j];
+    });
+
+    treatw = treatv[order];
+
+    // identify the locations of the unique values
+    IntegerVector idx(1,0);
+    for (i=1; i<n; i++) {
+      if (treatw[i] != treatw[i-1]) {
+        idx.push_back(i);
+      }
+    }
+
+    treatwn = treatw[idx];
+
+    // check whether there are only two treatment values
+    if (idx.size() != 2) {
+      stop("treat must have two and only two distinct values");
+    }
+
+    // code the treatment variable
+    for (i=0; i<n; i++) {
+      treatn[i] = treatv[i] == treatw[idx[0]] ? 1 : 2;
+    }
+  } else if (TYPEOF(data[treat]) == STRSXP) {
+    CharacterVector treatv = data[treat];
+    CharacterVector treatw(n);
+
+    // sort the treatment variable
+    IntegerVector order = seq(0, n-1);
+    std::sort(order.begin(), order.end(), [&](int i, int j) {
+      return treatv[i] < treatv[j];
+    });
+
+    treatw = treatv[order];
+
+    // identify the locations of the unique values
+    IntegerVector idx(1,0);
+    for (i=1; i<n; i++) {
+      if (treatw[i] != treatw[i-1]) {
+        idx.push_back(i);
+      }
+    }
+
+    treatwc = treatw[idx];
+
+    // check whether there are only two treatment values
+    if (idx.size() != 2) {
+      stop("treat must have two and only two distinct values");
+    }
+
+    // code the treatment variable
+    for (i=0; i<n; i++) {
+      treatn[i] = treatv[i] == treatw[idx[0]] ? 1 : 2;
+    }
+  } else {
+    stop("incorrect type for the treatment variable in the input data");
+  }
+
+
+  NumericVector timen = data[time];
+  NumericVector eventn = data[event];
+
+  if (is_true(any(timen <= 0))) {
+    stop("time must be positive for each subject");
+  }
+
+  if (is_true(any((eventn != 1) & (eventn != 0)))) {
+    stop("event must be 1 or 0 for each subject");
+  }
+
+
+  // create the numeric rep variable
+  IntegerVector repn(n);
+  IntegerVector repwn;
+  CharacterVector repwc;
+  if (!has_rep) {
+    repn.fill(1);
+  } else {
+    if (TYPEOF(data[rep]) == INTSXP) {
+      IntegerVector repv = data[rep];
+      IntegerVector repw(n);
+
+      // sort the rep variable
+      IntegerVector order = seq(0, n-1);
+      std::sort(order.begin(), order.end(), [&](int i, int j) {
+        return repv[i] < repv[j];
+      });
+
+      repw = repv[order];
+
+      // identify the locations of the unique values
+      IntegerVector idx(1,0);
+      for (i=1; i<n; i++) {
+        if (repw[i] != repw[i-1]) {
+          idx.push_back(i);
+        }
+      }
+
+      repwn = repw[idx]; // unique numeric values
+
+      // code the rep variable
+      for (i=0; i<n; i++) {
+        for (j=0; j<idx.size(); j++) {
+          if (repv[i] == repwn[j]) {
+            repn[i] = j+1;
+            break;
+          }
+        }
+      }
+    } else if (TYPEOF(data[rep]) == STRSXP) {
+      CharacterVector repv = data[rep];
+      CharacterVector repw(n);
+
+      // sort the rep variable
+      IntegerVector order = seq(0, n-1);
+      std::sort(order.begin(), order.end(), [&](int i, int j) {
+        return repv[i] < repv[j];
+      });
+
+      repw = repv[order];
+
+      // identify the locations of the unique values
+      IntegerVector idx(1,0);
+      for (i=1; i<n; i++) {
+        if (repw[i] != repw[i-1]) {
+          idx.push_back(i);
+        }
+      }
+
+      repwc = repw[idx]; // unique character values
+
+      // code the rep variable
+      for (i=0; i<n; i++) {
+        for (j=0; j<idx.size(); j++) {
+          if (repv[i] == repwc[j]) {
+            repn[i] = j+1;
+            break;
+          }
+        }
+      }
+    } else {
+      stop("incorrect type for the replication variable in the input data");
+    }
+  }
+
+
+  // create the numeric stratum variable
+  IntegerVector stratumn(n);
+  IntegerVector stratumwn;
+  CharacterVector stratumwc;
+  if (!has_stratum) {
+    stratumn.fill(1);
+  } else {
+    if (TYPEOF(data[stratum]) == INTSXP) {
+      IntegerVector stratumv = data[stratum];
+      IntegerVector stratumw(n);
+
+      // sort the stratum variable
+      IntegerVector order = seq(0, n-1);
+      std::sort(order.begin(), order.end(), [&](int i, int j) {
+        return stratumv[i] < stratumv[j];
+      });
+
+      stratumw = stratumv[order];
+
+      // identify the locations of the unique values
+      IntegerVector idx(1,0);
+      for (i=1; i<n; i++) {
+        if (stratumw[i] != stratumw[i-1]) {
+          idx.push_back(i);
+        }
+      }
+
+      stratumwn = stratumw[idx]; // unique numeric values
+
+      // code the stratum variable
+      for (i=0; i<n; i++) {
+        for (j=0; j<idx.size(); j++) {
+          if (stratumv[i] == stratumwn[j]) {
+            stratumn[i] = j+1;
+            break;
+          }
+        }
+      }
+    } else if (TYPEOF(data[stratum]) == STRSXP) {
+      CharacterVector stratumv = data[stratum];
+      CharacterVector stratumw(n);
+
+      // sort the stratum variable
+      IntegerVector order = seq(0, n-1);
+      std::sort(order.begin(), order.end(), [&](int i, int j) {
+        return stratumv[i] < stratumv[j];
+      });
+
+      stratumw = stratumv[order];
+
+      // identify the locations of the unique values
+      IntegerVector idx(1,0);
+      for (i=1; i<n; i++) {
+        if (stratumw[i] != stratumw[i-1]) {
+          idx.push_back(i);
+        }
+      }
+
+      stratumwc = stratumw[idx]; // unique character values
+
+      // code the stratum variable
+      for (i=0; i<n; i++) {
+        for (j=0; j<idx.size(); j++) {
+          if (stratumv[i] == stratumwc[j]) {
+            stratumn[i] = j+1;
+            break;
+          }
+        }
+      }
+    } else {
+      stop("incorrect type for the stratum variable in the input data");
+    }
+  }
+
+
+  if (R_isnancpp(milestone)) {
+    stop("milestone must be provided");
+  }
+
+  if (milestone <= 0) {
+    stop("milestone must be positive");
+  }
+
+  if (confint <= 0 || confint >= 1) {
+    stop("confint must lie between 0 and 1");
+  }
+
+
+  // sort the data by rep
+  IntegerVector order = seq(0, n-1);
+  std::sort(order.begin(), order.end(), [&](int i, int j) {
+    return repn[i] < repn[j];
+  });
+
+  repn = repn[order];
+  stratumn = stratumn[order];
+  treatn = treatn[order];
+  timen = timen[order];
+  eventn = eventn[order];
+
+  // identify the locations of the unique values of rep
+  IntegerVector idx(1,0);
+  for (i=1; i<n; i++) {
+    if (repn[i] != repn[i-1]) {
+      idx.push_back(i);
+    }
+  }
+
+  int nreps = idx.size();
+  idx.push_back(n);
+
+  IntegerVector rep0(nreps, NA_INTEGER);
+  NumericVector rmst10(nreps), rmst20(nreps), rmstDiff0(nreps);
+  NumericVector vrmst10(nreps), vrmst20(nreps), vrmstDiff0(nreps);
+  NumericVector rmstDiffZ0(nreps), rmstDiffPValue0(nreps);
+  NumericVector lower0(nreps), upper0(nreps);
+
+  double z = R::qnorm((1.0 + confint)/2.0, 0, 1, 1, 0);
+
+  bool noerr = 1;
+  int index = 0;
+  for (h=0; h<nreps; h++) {
+    bool skip = 0;
+    IntegerVector q1 = Range(idx[h], idx[h+1]-1);
+
+    IntegerVector stratum1 = stratumn[q1];
+    IntegerVector treat1 = treatn[q1];
+    NumericVector time1 = timen[q1];
+    NumericVector event1 = eventn[q1];
+
+    DataFrame dfin = DataFrame::create(
+      _["stratum"] = stratum1,
+      _["treat"] = treat1,
+      _["time"] = time1,
+      _["event"] = event1);
+
+    DataFrame dfout = rmest(dfin, "stratum", "treat", "time", "event",
+                            milestone, 0.95, biascorrection);
+
+    IntegerVector stratum2 = dfout["stratum"];
+    IntegerVector treat2 = dfout["treat"];
+    IntegerVector treatsize = dfout["size"];
+    NumericVector rmstime2 = dfout["rmst"];
+    NumericVector stderr2 = dfout["stderr"];
+    int n2 = stratum2.size();
+
+    // identify the locations of the unique values of stratum
+    IntegerVector idx2(1,0);
+    for (i=1; i<n2; i++) {
+      if (stratum2[i] != stratum2[i-1]) {
+        idx2.push_back(i);
+      }
+    }
+
+    int nstrata = idx2.size();
+    idx2.push_back(n2);
+
+    IntegerVector m(nstrata, 0); // number of subjects in each stratum
+    for (i=0; i<nstrata; i++) {
+      int j1 = idx2[i], j2 = idx2[i+1] - 1;
+      if ((treat2[j1] != 1) || (treat2[j2] != 2)) {
+        std::string reperr;
+        if (!has_rep) {
+          reperr = "";
+        } else if (TYPEOF(data[rep]) == INTSXP) {
+          reperr = " " + rep + " = " + std::to_string(repwn[repn[idx[h]]-1]);
+        } else {
+          reperr = " " + rep + " = " + repwc[repn[idx[h]]-1];
+        }
+
+        std::string stratumerr;
+        if (!has_stratum) {
+          stratumerr = "";
+        } else if (TYPEOF(data[stratum]) == INTSXP) {
+          stratumerr = " " + stratum + " = " +
+            std::to_string(stratumwn[stratum2[j1]-1]);
+        } else {
+          stratumerr = " " + stratum + " = " + stratumwc[stratum2[j1]-1];
+        }
+
+        int k = treat2[j1] != 1 ? 0 : 1;
+        std::string treaterr;
+        if ((TYPEOF(data[treat]) == LGLSXP) ||
+            (TYPEOF(data[treat]) == INTSXP)) {
+          treaterr = " " + treat + " = " + std::to_string(treatwn[k]);
+        } else {
+          treaterr = " " + treat + " = " + treatwc[k];
+        }
+
+        std::string str1 = "The data set does not contain";
+        std::string errmsg = str1 + treaterr;
+        if (!reperr.empty() || !stratumerr.empty()) {
+          errmsg = errmsg + ":" + reperr + stratumerr;
+        }
+
+        if (noerr) {
+          Rcout << errmsg << "\n";
+          Rcout << "Additional warning messages are suppressed" << "\n";
+          noerr = 0;
+        }
+
+        skip = 1;
+        break;
+      }
+
+      m[i] += treatsize[j1] + treatsize[j2];
+    }
+
+    // skip the replication if there is a stratum without both treatments
+    if (skip) continue;
+
+    double M = sum(m);
+    NumericVector p(nstrata);
+
+    double rmst1 = 0.0, rmst2 = 0.0, vrmst1 = 0.0, vrmst2 = 0.0;
+    for (i=0; i<nstrata; i++) {
+      p[i] = m[i]/M; // fraction of subjects in the stratum
+      IntegerVector q = Range(idx2[i], idx2[i+1]-1);
+      NumericVector rmst = rmstime2[q];
+      NumericVector stderrx = stderr2[q];
+      NumericVector vrmst = stderrx*stderrx;
+
+      rmst1 += p[i]*rmst[0];
+      rmst2 += p[i]*rmst[1];
+      vrmst1 += pow(p[i],2)*vrmst[0];
+      vrmst2 += pow(p[i],2)*vrmst[1];
+    }
+
+    rep0[index] = repn[idx[h]];
+    rmst10[index] = rmst1;
+    rmst20[index] = rmst2;
+    vrmst10[index] = vrmst1;
+    vrmst20[index] = vrmst2;
+    rmstDiff0[index] = rmst1 - rmst2;
+    vrmstDiff0[index] = vrmst1 + vrmst2;
+    double sermstDiff = sqrt(vrmstDiff0[index]);
+    rmstDiffZ0[index] = (rmstDiff0[index] - rmstDiffH0)/sermstDiff;
+    rmstDiffPValue0[index] = 1.0 - R::pnorm(rmstDiffZ0[index], 0, 1, 1, 0);
+    lower0[index] = rmstDiff0[index] - z*sermstDiff;
+    upper0[index] = rmstDiff0[index] + z*sermstDiff;
+
+    index++;
+  }
+
+  // only keep nonmissing records
+  LogicalVector sub = !is_na(rep0);
+  if (is_false(any(sub))) {
+    stop("no replication enables valid inference");
+  }
+
+  rep0 = rep0[sub];
+  rmst10 = rmst10[sub];
+  rmst20 = rmst20[sub];
+  rmstDiff0 = rmstDiff0[sub];
+  vrmst10 = vrmst10[sub];
+  vrmst20 = vrmst20[sub];
+  vrmstDiff0 = vrmstDiff0[sub];
+  rmstDiffZ0 = rmstDiffZ0[sub];
+  rmstDiffPValue0 = rmstDiffPValue0[sub];
+  lower0 = lower0[sub];
+  upper0 = upper0[sub];
+
+
+  DataFrame result;
+
+  if (!has_rep) {
+    result = DataFrame::create(
+      _[rep] = rep0,
+      _["milestone"] = milestone,
+      _["rmstDiffH0"] = rmstDiffH0,
+      _["rmst1"] = rmst10,
+      _["rmst2"] = rmst20,
+      _["rmstDiff"] = rmstDiff0,
+      _["vrmst1"] = vrmst10,
+      _["vrmst2"] = vrmst20,
+      _["vrmstDiff"] = vrmstDiff0,
+      _["rmstDiffZ"] = rmstDiffZ0,
+      _["rmstDiffPValue"] = rmstDiffPValue0,
+      _["lower"] = lower0,
+      _["upper"] = upper0,
+      _["confint"] = confint,
+      _["biascorrection"] = biascorrection);
+  } else if (TYPEOF(data[rep]) == INTSXP) {
+    IntegerVector rep0n = repwn[rep0-1];
+
+    result = DataFrame::create(
+      _[rep] = rep0n,
+      _["milestone"] = milestone,
+      _["rmstDiffH0"] = rmstDiffH0,
+      _["rmst1"] = rmst10,
+      _["rmst2"] = rmst20,
+      _["rmstDiff"] = rmstDiff0,
+      _["vrmst1"] = vrmst10,
+      _["vrmst2"] = vrmst20,
+      _["vrmstDiff"] = vrmstDiff0,
+      _["rmstDiffZ"] = rmstDiffZ0,
+      _["rmstDiffPValue"] = rmstDiffPValue0,
+      _["lower"] = lower0,
+      _["upper"] = upper0,
+      _["confint"] = confint,
+      _["biascorrection"] = biascorrection);
+  } else if (TYPEOF(data[rep]) == STRSXP) {
+    CharacterVector rep0c = repwc[rep0-1];
+
+    result = DataFrame::create(
+      _[rep] = rep0c,
+      _["milestone"] = milestone,
+      _["rmstDiffH0"] = rmstDiffH0,
+      _["rmst1"] = rmst10,
+      _["rmst2"] = rmst20,
+      _["rmstDiff"] = rmstDiff0,
+      _["vrmst1"] = vrmst10,
+      _["vrmst2"] = vrmst20,
+      _["vrmstDiff"] = vrmstDiff0,
+      _["rmstDiffZ"] = rmstDiffZ0,
+      _["rmstDiffPValue"] = rmstDiffPValue0,
+      _["lower"] = lower0,
+      _["upper"] = upper0,
+      _["confint"] = confint,
+      _["biascorrection"] = biascorrection);
+  }
+
+  return result;
+}
+

@@ -10,7 +10,8 @@ powerRiskRatioExact(
   pi1 = NA_real_,
   pi2 = NA_real_,
   allocationRatioPlanned = 1,
-  alpha = 0.025
+  alpha = 0.025,
+  calculateAttainedAlpha = 1L
 )
 }
 \arguments{
@@ -27,12 +28,15 @@ Defaults to 1.}
 versus control. Defaults to 1 for equal randomization.}
 
 \item{alpha}{The one-sided significance level. Defaults to 0.025.}
+
+\item{calculateAttainedAlpha}{Whether to calculate the attained alpha.}
 }
 \value{
 A data frame with the following variables:
 \itemize{
 \item \code{alpha}: The specified one-sided significance level.
-\item \code{attainedAlpha}: The attained one-sided significance level.
+\item \code{attainedAlpha}: The attained one-sided significance level if
+requested.
 \item \code{power}: The power.
 \item \code{n}: The sample size.
 \item \code{riskRatioH0}: The risk ratio under the null hypothesis.

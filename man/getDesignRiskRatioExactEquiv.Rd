@@ -56,8 +56,6 @@ lower equivalence limit.
 \item \code{zstatRiskRatioUpper}: The efficacy boundaries on the
 z-test statistic scale for the one-sided null hypothesis on the
 upper equivalence limit.
-\item \code{calculationTarget}: The calculation target, \code{beta} or
-\code{n}.
 }
 }
 \description{

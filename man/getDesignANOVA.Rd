@@ -48,8 +48,6 @@ there is no difference among the treatment groups.
 \item \code{means}: The treatment group means.
 \item \code{stDev}: The common standard deviation.
 \item \code{effectsize}: The effect size.
-\item \code{calculationTarget}: The calculation target, \code{beta} or
-\code{n}.
 \item \code{allocationRatioPlanned}: Allocation ratio for the treatment
 groups.
 \item \code{rounding}: Whether to round up sample size.

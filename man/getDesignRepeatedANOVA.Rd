@@ -46,8 +46,6 @@ there is no difference among the treatment groups.
 \item \code{stDev}: The total standard deviation.
 \item \code{corr}: The correlation among the repeated measures.
 \item \code{effectsize}: The effect size.
-\item \code{calculationTarget}: The calculation target, \code{beta} or
-\code{n}.
 \item \code{rounding}: Whether to round up sample size.
 }
 }
@@ -64,7 +62,7 @@ denotes the subject random effect, \eqn{b_i \sim N(0, \sigma_b^2),}
 and \eqn{e_{ij} \sim N(0, \sigma_e^2)} denotes the within-subject
 residual. If we set \eqn{\beta_k = 0}, then \eqn{\alpha} is the
 mean of the last treatment (control), and \eqn{\beta_j} is the
-difference in mean between the \eqn{j}th treatment and the control
+difference in means between the \eqn{j}th treatment and the control
 for \eqn{j=1,\ldots,k-1}.
 
 The repeated measures have a compound symmetry covariance structure.

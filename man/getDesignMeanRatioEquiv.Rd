@@ -129,8 +129,6 @@ upper equivalence limit.
 spending.
 \item \code{userAlphaSpending}: The user defined alpha spending.
 \item \code{spendingTime}: The error spending time at each analysis.
-\item \code{calculationTarget}: The calculation target, \code{beta} or
-\code{n}.
 \item \code{allocationRatioPlanned}: Allocation ratio for the active
 treatment versus control.
 \item \code{normalApproximation}: The type of computation of the p-values.

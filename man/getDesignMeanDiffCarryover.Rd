@@ -89,8 +89,6 @@ accounting for carryover effects. This is equal to
 \item \code{releff_carry}: The relative efficiency of the design
 for estimating carryover effects. This is equal to
 \code{v_direct_only/v_carry}.
-\item \code{calculationTarget}: The calculation target, \code{beta} or
-\code{n}.
 \item \code{allocationRatioPlanned}: Allocation ratio for the sequences.
 \item \code{normalApproximation}: The type of computation of the p-values.
 If \code{TRUE}, the variance is assumed to be known, otherwise

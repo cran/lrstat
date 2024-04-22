@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{rmpower}
 \alias{rmpower}
-\title{Power for difference in restricted mean survival time}
+\title{Power for difference in restricted mean survival times}
 \usage{
 rmpower(
   kMax = 1L,
@@ -68,7 +68,8 @@ spent up to each stage.}
 
 \item{futilityBounds}{Lower boundaries on the z-test statistic scale
 for stopping for futility at stages 1, ..., \code{kMax-1}. Defaults to
-\code{rep(-6, kMax-1)} if left unspecified.}
+\code{rep(-6, kMax-1)} if left unspecified. The futility bounds are
+non-binding for the calculation of critical values.}
 
 \item{typeBetaSpending}{The type of beta spending. One of the following:
 "sfOF" for O'Brien-Fleming type spending function, "sfP" for Pocock
@@ -82,7 +83,7 @@ Corresponds to rho for "sfKD", and gamma for "sfHSD".}
 \item{milestone}{The milestone time at which to calculate the
 restricted mean survival time.}
 
-\item{rmstDiffH0}{The difference in restricted mean survival time
+\item{rmstDiffH0}{The difference in restricted mean survival times
 under the null hypothesis. Defaults to 0 for superiority test.}
 
 \item{allocationRatioPlanned}{Allocation ratio for the active treatment
@@ -161,12 +162,12 @@ fixed design).
 \item \code{kMax}: The number of stages.
 \item \code{milestone}: The milestone time relative to randomization.
 \item \code{rmstDiffH0}: The difference in restricted mean survival
-time under the null hypothesis.
+times under the null hypothesis.
 \item \code{rmst1}: The restricted mean survival time for the
 treatment group.
 \item \code{rmst2}: The restricted mean survival time for the
 control group.
-\item \code{rmstDiff}: The difference in restricted mean survival time,
+\item \code{rmstDiff}: The difference in restricted mean survival times,
 equal to \code{rmst1 - rmst2}.
 }
 \item \code{byStageResults}: A data frame containing the following variables:
@@ -205,7 +206,7 @@ and \code{spendingTime}.
 }
 \description{
 Estimates the power for testing the difference in
-restricted mean survival time in a two-sample survival design.
+restricted mean survival times in a two-sample survival design.
 }
 \examples{
 # Piecewise accrual, piecewise exponential survival, and 5\% dropout by

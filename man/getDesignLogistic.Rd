@@ -65,8 +65,6 @@ covariates.
 \item \code{responseprob}: The response probability in the full model when
 all predictor variables are equal to their means.
 \item \code{effectsize}: The effect size for the chi-square test.
-\item \code{calculationTarget}: The calculation target, \code{beta} or
-\code{n}.
 \item \code{rounding}: Whether to round up sample size.
 }
 }

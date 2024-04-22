@@ -2,32 +2,47 @@
 % Please edit documentation in R/getDesignMeans.R
 \name{getDesignSlopeDiffMMRM}
 \alias{getDesignSlopeDiffMMRM}
-\title{Power and sample for two-sample slope difference
+\title{Group sequential design for two-sample slope difference
 from the MMRM model}
 \usage{
 getDesignSlopeDiffMMRM(
   beta = NA_real_,
-  n = NA_real_,
   slopeDiffH0 = 0,
   slopeDiff = 0.5,
   stDev = 1,
   stDevIntercept = 1,
   stDevSlope = 1,
   corrInterceptSlope = 0.5,
-  k = NA_integer_,
-  t = NA_real_,
-  cumdrop1 = rep(0, k),
-  cumdrop2 = NA_real_,
+  w = NA_real_,
+  N = NA_real_,
+  accrualTime = 0,
+  accrualIntensity = NA_real_,
+  piecewiseSurvivalTime = 0,
+  gamma1 = 0,
+  gamma2 = 0,
+  accrualDuration = NA_real_,
+  followupTime = NA_real_,
   allocationRatioPlanned = 1,
   normalApproximation = TRUE,
   rounding = TRUE,
-  alpha = 0.025
+  kMax = 1L,
+  informationRates = NA_real_,
+  efficacyStopping = NA_integer_,
+  futilityStopping = NA_integer_,
+  criticalValues = NA_real_,
+  alpha = 0.025,
+  typeAlphaSpending = "sfOF",
+  parameterAlphaSpending = NA_real_,
+  userAlphaSpending = NA_real_,
+  futilityBounds = NA_real_,
+  typeBetaSpending = "none",
+  parameterBetaSpending = NA_real_,
+  userBetaSpending = NA_real_,
+  spendingTime = NA_real_
 )
 }
 \arguments{
 \item{beta}{The type II error.}
-
-\item{n}{The total sample size.}
 
 \item{slopeDiffH0}{The slope difference under the null hypothesis.
 Defaults to 0.}
@@ -44,61 +59,205 @@ hypothesis.}
 \item{corrInterceptSlope}{The correlation between the random
 intercept and random slope.}
 
-\item{k}{The number of time points including the baseline.}
+\item{w}{The number of time units per measurement visit in a period.}
 
-\item{t}{The time points. It should have \code{k} elements,
-start with 0 corresponding to the baseline time point, and
-be increasing.}
+\item{N}{The number of measurement visits in a period.}
 
-\item{cumdrop1}{The cumulative dropout rate at the given
-time points for the active treatment group.}
+\item{accrualTime}{A vector that specifies the starting time of
+piecewise Poisson enrollment time intervals. Must start with 0, e.g.,
+\code{c(0, 3)} breaks the time axis into 2 accrual intervals:
+[0, 3) and [3, Inf).}
 
-\item{cumdrop2}{The cumulative dropout rate at the given
-time points for the control group. If missing, it will be set
-equal to the cumulative dropout rate for the active treatment group.}
+\item{accrualIntensity}{A vector of accrual intensities. One for
+each accrual time interval.}
 
-\item{allocationRatioPlanned}{Allocation ratio for the active
-treatment versus control. Defaults to 1 for equal randomization.}
+\item{piecewiseSurvivalTime}{A vector that specifies the starting time of
+piecewise exponential survival time intervals. Must start with 0, e.g.,
+\code{c(0, 6)} breaks the time axis into 2 event intervals:
+[0, 6) and [6, Inf).
+Defaults to 0 for exponential distribution.}
+
+\item{gamma1}{The hazard rate for exponential dropout, or a vector of
+hazard rates for piecewise exponential dropout for the active
+treatment group.}
+
+\item{gamma2}{The hazard rate for exponential dropout, or a vector of
+hazard rates for piecewise exponential dropout for the control group.}
+
+\item{accrualDuration}{Duration of the enrollment period.}
+
+\item{followupTime}{Follow-up time for the last enrolled subject.}
+
+\item{allocationRatioPlanned}{Allocation ratio for the active treatment
+versus control. Defaults to 1 for equal randomization.}
 
 \item{normalApproximation}{The type of computation of the p-values.
 If \code{TRUE}, the variance is assumed to be known, otherwise
-the calculations are performed with the t distribution.}
+the calculations are performed with the t distribution. The
+degrees of freedom for the t-distribution for testing the slope
+difference is calculated using the containment method, and
+is equal to the total number of observations minus two times
+the total number of subjects. The exact calculation using the
+t distribution is only implemented for the fixed design.}
 
 \item{rounding}{Whether to round up sample size. Defaults to 1 for
 sample size rounding.}
 
-\item{alpha}{The one-sided significance level. Defaults to 0.025.}
+\item{kMax}{The maximum number of stages.}
+
+\item{informationRates}{The information rates. Defaults to
+\code{(1:kMax) / kMax} if left unspecified.}
+
+\item{efficacyStopping}{Indicators of whether efficacy stopping is allowed
+at each stage. Defaults to true if left unspecified.}
+
+\item{futilityStopping}{Indicators of whether futility stopping is allowed
+at each stage. Defaults to true if left unspecified.}
+
+\item{criticalValues}{Upper boundaries on the z-test statistic scale
+for stopping for efficacy.}
+
+\item{alpha}{The significance level. Defaults to 0.025.}
+
+\item{typeAlphaSpending}{The type of alpha spending. One of the following:
+"OF" for O'Brien-Fleming boundaries, "P" for Pocock boundaries,
+"WT" for Wang & Tsiatis boundaries, "sfOF" for O'Brien-Fleming type
+spending function, "sfP" for Pocock type spending function,
+"sfKD" for Kim & DeMets spending function, "sfHSD" for Hwang,
+Shi & DeCani spending function, "user" for user defined spending,
+and "none" for no early efficacy stopping. Defaults to "sfOF".}
+
+\item{parameterAlphaSpending}{The parameter value for the alpha spending.
+Corresponds to Delta for "WT", rho for "sfKD", and gamma for "sfHSD".}
+
+\item{userAlphaSpending}{The user defined alpha spending. Cumulative alpha
+spent up to each stage.}
+
+\item{futilityBounds}{Lower boundaries on the z-test statistic scale
+for stopping for futility at stages 1, ..., \code{kMax-1}. Defaults to
+\code{rep(-6, kMax-1)} if left unspecified. The futility bounds are
+non-binding for the calculation of critical values.}
+
+\item{typeBetaSpending}{The type of beta spending. One of the following:
+"sfOF" for O'Brien-Fleming type spending function, "sfP" for Pocock type
+spending function, "sfKD" for Kim & DeMets spending function,
+"sfHSD" for Hwang, Shi & DeCani spending function, "user" for
+user defined spending, and "none" for no early futility stopping.
+Defaults to "none".}
+
+\item{parameterBetaSpending}{The parameter value for the beta spending.
+Corresponds to rho for "sfKD", and gamma for "sfHSD".}
+
+\item{userBetaSpending}{The user defined beta spending. Cumulative beta
+spent up to each stage.}
+
+\item{spendingTime}{A vector of length \code{kMax} for the error spending
+time at each analysis. Defaults to missing, in which case, it is the
+same as \code{informationRates}.}
 }
 \value{
-An S3 class \code{designSlopeDiffMMRM} object with the following
+An S3 class \code{designSlopeDiffMMRM} object with three
 components:
 \itemize{
-\item \code{power}: The power to reject the null hypothesis.
-\item \code{alpha}: The one-sided significance level.
+\item \code{overallResults}: A data frame containing the following variables:
+\itemize{
+\item \code{overallReject}: The overall rejection probability.
+\item \code{alpha}: The overall significance level.
+\item \code{attainedAlpha}: The attained significance level, which is
+different from the overall significance level in the presence of
+futility stopping.
+\item \code{kMax}: The number of stages.
+\item \code{theta}: The parameter value.
+\item \code{information}: The maximum information.
+\item \code{expectedInformationH1}: The expected information under H1.
+\item \code{expectedInformationH0}: The expected information under H0.
+\item \code{drift}: The drift parameter, equal to
+\code{theta*sqrt(information)}.
+\item \code{inflationFactor}: The inflation factor (relative to the
+fixed design).
 \item \code{numberOfSubjects}: The maximum number of subjects.
-\item \code{slopeDiffH0}: The slope difference under the null hypothesis.
-\item \code{slopeDiff}: The slope difference under the alternative
-hypothesis.
-\item \code{stDev}: The standard deviation of the residual.
-\item \code{stDevIntercept}: The standard deviation of the random
-intercept.
-\item \code{stDevSlope}: The standard deviation of the random slope.
-\item \code{corrInterceptSlope}: The correlation between the random
-intercept and random slope.
-\item \code{k}: The number of time points including the baseline.
-\item \code{t}: The time points.
-\item \code{cumdrop1}: The cumulative dropout rate at the given
-time points for the active treatment group.
-\item \code{cumdrop2}: The cumulative dropout rate at the given
-time points for the control group.
-\item \code{calculationTarget}: The calculation target, \code{beta} or
-\code{n}.
-\item \code{allocationRatioPlanned}: Allocation ratio for the active
+\item \code{studyDuration}: The maximum study duration.
+\item \code{expectedNumberOfSubjectsH1}: The expected number of subjects
+under H1.
+\item \code{expectedNumberOfSubjectsH0}: The expected number of subjects
+under H0.
+\item \code{expectedStudyDurationH1}: The expected study duration
+under H1.
+\item \code{expectedStudyDurationH0}: The expected study duration
+under H0.
+\item \code{accrualDuration}: The accrual duration.
+\item \code{followupTime}: The follow-up time.
+\item \code{fixedFollowup}: Whether a fixed follow-up design is used.
+\item \code{slopeDiffH0}: The slope difference under H0.
+\item \code{slopeDiff}: The slope difference under H1.
+}
+\item \code{byStageResults}: A data frame containing the following variables:
+\itemize{
+\item \code{informationRates}: The information rates.
+\item \code{efficacyBounds}: The efficacy boundaries on the Z-scale.
+\item \code{futilityBounds}: The futility boundaries on the Z-scale.
+\item \code{rejectPerStage}: The probability for efficacy stopping.
+\item \code{futilityPerStage}: The probability for futility stopping.
+\item \code{cumulativeRejection}: The cumulative probability for efficacy
+stopping.
+\item \code{cumulativeFutility}: The cumulative probability for futility
+stopping.
+\item \code{cumulativeAlphaSpent}: The cumulative alpha spent.
+\item \code{efficacyP}: The efficacy boundaries on the p-value scale.
+\item \code{futilityP}: The futility boundaries on the p-value scale.
+\item \code{information}: The cumulative information.
+\item \code{efficacyStopping}: Whether to allow efficacy stopping.
+\item \code{futilityStopping}: Whether to allow futility stopping.
+\item \code{rejectPerStageH0}: The probability for efficacy stopping
+under H0.
+\item \code{futilityPerStageH0}: The probability for futility stopping
+under H0.
+\item \code{cumulativeRejectionH0}: The cumulative probability for
+efficacy stopping under H0.
+\item \code{cumulativeFutilityH0}: The cumulative probability for futility
+stopping under H0.
+\item \code{efficacySlopeDiff}: The efficacy boundaries on the slope
+difference scale.
+\item \code{futilitySlopeDiff}: The futility boundaries on the slope
+difference scale.
+\item \code{numberOfSubjects}: The number of subjects.
+\item \code{analysisTime}: The average time since trial start.
+}
+\item \code{settings}: A list containing the following input parameters:
+\itemize{
+\item \code{typeAlphaSpending}: The type of alpha spending.
+\item \code{parameterAlphaSpending}: The parameter value for alpha
+spending.
+\item \code{userAlphaSpending}: The user defined alpha spending.
+\item \code{typeBetaSpending}: The type of beta spending.
+\item \code{parameterBetaSpending}: The parameter value for beta spending.
+\item \code{userBetaSpending}: The user defined beta spending.
+\item \code{spendingTime}: The error spending time at each analysis.
+\item \code{allocationRatioPlanned}: The allocation ratio for the active
 treatment versus control.
+\item \code{accrualTime}: A vector that specifies the starting time of
+piecewise Poisson enrollment time intervals.
+\item \code{accrualIntensity}: A vector of accrual intensities.
+One for each accrual time interval.
+\item \code{piecewiseSurvivalTime}: A vector that specifies the
+starting time of piecewise exponential survival time intervals.
+\item \code{gamma1}: The hazard rate for exponential dropout or
+a vector of hazard rates for piecewise exponential dropout
+for the active treatment group.
+\item \code{gamma2}: The hazard rate for exponential dropout or
+a vector of hazard rates for piecewise exponential dropout
+for the control group.
+\item \code{w}: The number of time units per measurement visit in a
+period.
+\item \code{N}: The number of measurement visits in a period.
+\item \code{stdDev}: The standard deviation of the residual.
+\item \code{G}: The covariance matrix for the random intercept and
+random slope.
 \item \code{normalApproximation}: The type of computation of the p-values.
 If \code{TRUE}, the variance is assumed to be known, otherwise
 the calculations are performed with the t distribution.
 \item \code{rounding}: Whether to round up sample size.
+}
 }
 }
 \description{
@@ -114,7 +273,7 @@ We use the following random-effects model to compare two slopes:
 \item \eqn{\alpha}: overall intercept common across treatment groups
 due to randomization
 \item \eqn{\beta}: slope for the control group
-\item \eqn{\gamma}: difference in slope between the active treatment and
+\item \eqn{\gamma}: difference in slopes between the active treatment and
 control groups
 \item \eqn{x_i}: treatment indicator for subject \eqn{i},
 1 for the active treatment and 0 for the control
@@ -127,18 +286,32 @@ for subject \eqn{i}, \eqn{Var(a_i) = \sigma_a^2},
 }
 
 By accounting for randomization, we improve the efficiency for
-estimating the difference in slope. We also allow for non-equal
+estimating the difference in slopes. We also allow for non-equal
 spacing of the time points and missing data due to dropouts.
 }
 \examples{
 
 (design1 <- getDesignSlopeDiffMMRM(
-  beta = 0.1, n = NA, slopeDiff = -1,
-  stDev = 4, stDevIntercept = 10,
-  stDevSlope = 6, corrInterceptSlope = 0.5,
-  k = 7, t = seq(0, 6),
-  normalApproximation = TRUE, alpha = 0.025))
+  beta = 0.2, slopeDiff = log(1.15)/52,
+  stDev = sqrt(.182),
+  stDevIntercept = sqrt(.238960),
+  stDevSlope = sqrt(.000057),
+  corrInterceptSlope = .003688/sqrt(.238960*.000057),
+  w = 8,
+  N = 10000,
+  accrualIntensity = 15,
+  gamma1 = 1/(4.48*52),
+  gamma2 = 1/(4.48*52),
+  accrualDuration = NA,
+  followupTime = 8,
+  alpha = 0.025))
 
+}
+\references{
+Daniel O. Scharfstein, Anastasios A. Tsiatis, and James M. Robins.
+Semiparametric efficiency and its implication on the
+design and analysis of group-sequential studies.
+Journal of the American Statistical Association 1997; 92:1342-1350.
 }
 \author{
 Kaifeng Lu, \email{kaifenglu@gmail.com}

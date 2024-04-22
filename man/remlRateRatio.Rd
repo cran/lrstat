@@ -5,7 +5,13 @@
 \title{REML estimates of individual rates with specified rate
 ratio}
 \usage{
-remlRateRatio(rateRatioH0, t1, y1, t2, y2)
+remlRateRatio(
+  rateRatioH0 = 1,
+  t1 = NA_real_,
+  y1 = NA_real_,
+  t2 = NA_real_,
+  y2 = NA_real_
+)
 }
 \arguments{
 \item{rateRatioH0}{The specified rate ratio.}

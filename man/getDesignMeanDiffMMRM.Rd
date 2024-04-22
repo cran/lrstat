@@ -2,29 +2,44 @@
 % Please edit documentation in R/getDesignMeans.R
 \name{getDesignMeanDiffMMRM}
 \alias{getDesignMeanDiffMMRM}
-\title{Power and sample size for two-sample mean difference
-at the last time point from the MMRM model}
+\title{Group sequential design for two-sample mean difference from the
+MMRM model}
 \usage{
 getDesignMeanDiffMMRM(
   beta = NA_real_,
-  n = NA_real_,
   meanDiffH0 = 0,
   meanDiff = 0.5,
   k = 1,
+  t = NA_real_,
   covar1 = diag(k),
   covar2 = NA_real_,
-  cumdrop1 = rep(0, k),
-  cumdrop2 = NA_real_,
+  accrualTime = 0,
+  accrualIntensity = NA_real_,
+  piecewiseSurvivalTime = 0,
+  gamma1 = 0,
+  gamma2 = 0,
+  accrualDuration = NA_real_,
   allocationRatioPlanned = 1,
-  normalApproximation = FALSE,
+  normalApproximation = TRUE,
   rounding = TRUE,
-  alpha = 0.025
+  kMax = 1L,
+  informationRates = NA_real_,
+  efficacyStopping = NA_integer_,
+  futilityStopping = NA_integer_,
+  criticalValues = NA_real_,
+  alpha = 0.025,
+  typeAlphaSpending = "sfOF",
+  parameterAlphaSpending = NA_real_,
+  userAlphaSpending = NA_real_,
+  futilityBounds = NA_real_,
+  typeBetaSpending = "none",
+  parameterBetaSpending = NA_real_,
+  userBetaSpending = NA_real_,
+  spendingTime = NA_real_
 )
 }
 \arguments{
 \item{beta}{The type II error.}
-
-\item{n}{The total sample size.}
 
 \item{meanDiffH0}{The mean difference at the last time point
 under the null hypothesis. Defaults to 0.}
@@ -34,6 +49,8 @@ under the alternative hypothesis.}
 
 \item{k}{The number of postbaseline time points.}
 
+\item{t}{The postbaseline time points.}
+
 \item{covar1}{The covariance matrix for the repeated measures
 given baseline for the active treatment group.}
 
@@ -41,12 +58,28 @@ given baseline for the active treatment group.}
 given baseline for the control group. If missing, it will be
 set equal to the covariance matrix for the active treatment group.}
 
-\item{cumdrop1}{The cumulative dropout rate at the postbaseline
-time points for the active treatment group.}
+\item{accrualTime}{A vector that specifies the starting time of
+piecewise Poisson enrollment time intervals. Must start with 0, e.g.,
+\code{c(0, 3)} breaks the time axis into 2 accrual intervals:
+[0, 3) and [3, Inf).}
 
-\item{cumdrop2}{The cumulative dropout rate at the postbaseline
-time points for the control group. If missing, it will be set
-equal to the cumulative dropout rate for the active treatment group.}
+\item{accrualIntensity}{A vector of accrual intensities. One for
+each accrual time interval.}
+
+\item{piecewiseSurvivalTime}{A vector that specifies the starting time of
+piecewise exponential survival time intervals. Must start with 0, e.g.,
+\code{c(0, 6)} breaks the time axis into 2 event intervals:
+[0, 6) and [6, Inf).
+Defaults to 0 for exponential distribution.}
+
+\item{gamma1}{The hazard rate for exponential dropout, or a vector of
+hazard rates for piecewise exponential dropout for the active
+treatment group.}
+
+\item{gamma2}{The hazard rate for exponential dropout, or a vector of
+hazard rates for piecewise exponential dropout for the control group.}
+
+\item{accrualDuration}{Duration of the enrollment period.}
 
 \item{allocationRatioPlanned}{Allocation ratio for the active treatment
 versus control. Defaults to 1 for equal randomization.}
@@ -55,44 +88,167 @@ versus control. Defaults to 1 for equal randomization.}
 If \code{TRUE}, the variance is assumed to be known, otherwise
 the calculations are performed with the t distribution. The
 degrees of freedom for the t-distribution is the total effective
-sample size minus 2.}
+sample size minus 2.  The exact calculation using the t distribution
+is only implemented for the fixed design.}
 
 \item{rounding}{Whether to round up sample size. Defaults to 1 for
 sample size rounding.}
 
-\item{alpha}{The one-sided significance level. Defaults to 0.025.}
+\item{kMax}{The maximum number of stages.}
+
+\item{informationRates}{The information rates. Defaults to
+\code{(1:kMax) / kMax} if left unspecified.}
+
+\item{efficacyStopping}{Indicators of whether efficacy stopping is allowed
+at each stage. Defaults to true if left unspecified.}
+
+\item{futilityStopping}{Indicators of whether futility stopping is allowed
+at each stage. Defaults to true if left unspecified.}
+
+\item{criticalValues}{Upper boundaries on the z-test statistic scale
+for stopping for efficacy.}
+
+\item{alpha}{The significance level. Defaults to 0.025.}
+
+\item{typeAlphaSpending}{The type of alpha spending. One of the following:
+"OF" for O'Brien-Fleming boundaries, "P" for Pocock boundaries,
+"WT" for Wang & Tsiatis boundaries, "sfOF" for O'Brien-Fleming type
+spending function, "sfP" for Pocock type spending function,
+"sfKD" for Kim & DeMets spending function, "sfHSD" for Hwang,
+Shi & DeCani spending function, "user" for user defined spending,
+and "none" for no early efficacy stopping. Defaults to "sfOF".}
+
+\item{parameterAlphaSpending}{The parameter value for the alpha spending.
+Corresponds to Delta for "WT", rho for "sfKD", and gamma for "sfHSD".}
+
+\item{userAlphaSpending}{The user defined alpha spending. Cumulative alpha
+spent up to each stage.}
+
+\item{futilityBounds}{Lower boundaries on the z-test statistic scale
+for stopping for futility at stages 1, ..., \code{kMax-1}. Defaults to
+\code{rep(-6, kMax-1)} if left unspecified. The futility bounds are
+non-binding for the calculation of critical values.}
+
+\item{typeBetaSpending}{The type of beta spending. One of the following:
+"sfOF" for O'Brien-Fleming type spending function, "sfP" for Pocock type
+spending function, "sfKD" for Kim & DeMets spending function,
+"sfHSD" for Hwang, Shi & DeCani spending function, "user" for
+user defined spending, and "none" for no early futility stopping.
+Defaults to "none".}
+
+\item{parameterBetaSpending}{The parameter value for the beta spending.
+Corresponds to rho for "sfKD", and gamma for "sfHSD".}
+
+\item{userBetaSpending}{The user defined beta spending. Cumulative beta
+spent up to each stage.}
+
+\item{spendingTime}{A vector of length \code{kMax} for the error spending
+time at each analysis. Defaults to missing, in which case, it is the
+same as \code{informationRates}.}
 }
 \value{
-An S3 class \code{designMeanDiffMMRM} object with the
-following components:
+An S3 class \code{designMeanDiffMMRM} object with three
+components:
 \itemize{
-\item \code{power}: The power to reject the null hypothesis.
-\item \code{alpha}: The one-sided significance level.
+\item \code{overallResults}: A data frame containing the following variables:
+\itemize{
+\item \code{overallReject}: The overall rejection probability.
+\item \code{alpha}: The overall significance level.
+\item \code{attainedAlpha}: The attained significance level, which is
+different from the overall significance level in the presence of
+futility stopping.
+\item \code{kMax}: The number of stages.
+\item \code{theta}: The parameter value.
+\item \code{information}: The maximum information.
+\item \code{expectedInformationH1}: The expected information under H1.
+\item \code{expectedInformationH0}: The expected information under H0.
+\item \code{drift}: The drift parameter, equal to
+\code{theta*sqrt(information)}.
+\item \code{inflationFactor}: The inflation factor (relative to the
+fixed design).
 \item \code{numberOfSubjects}: The maximum number of subjects.
-\item \code{meanDiffH0}: The mean difference under the null hypothesis.
-\item \code{meanDiff}: The mean difference under the alternative
-hypothesis.
+\item \code{studyDuration}: The maximum study duration.
+\item \code{expectedNumberOfSubjectsH1}: The expected number of subjects
+under H1.
+\item \code{expectedNumberOfSubjectsH0}: The expected number of subjects
+under H0.
+\item \code{expectedStudyDurationH1}: The expected study duration
+under H1.
+\item \code{expectedStudyDurationH0}: The expected study duration
+under H0.
+\item \code{accrualDuration}: The accrual duration.
+\item \code{followupTime}: The follow-up time.
+\item \code{fixedFollowup}: Whether a fixed follow-up design is used.
+\item \code{meanDiffH0}: The mean difference under H0.
+\item \code{meanDiff}: The mean difference under H1.
+}
+\item \code{byStageResults}: A data frame containing the following variables:
+\itemize{
+\item \code{informationRates}: The information rates.
+\item \code{efficacyBounds}: The efficacy boundaries on the Z-scale.
+\item \code{futilityBounds}: The futility boundaries on the Z-scale.
+\item \code{rejectPerStage}: The probability for efficacy stopping.
+\item \code{futilityPerStage}: The probability for futility stopping.
+\item \code{cumulativeRejection}: The cumulative probability for efficacy
+stopping.
+\item \code{cumulativeFutility}: The cumulative probability for futility
+stopping.
+\item \code{cumulativeAlphaSpent}: The cumulative alpha spent.
+\item \code{efficacyP}: The efficacy boundaries on the p-value scale.
+\item \code{futilityP}: The futility boundaries on the p-value scale.
+\item \code{information}: The cumulative information.
+\item \code{efficacyStopping}: Whether to allow efficacy stopping.
+\item \code{futilityStopping}: Whether to allow futility stopping.
+\item \code{rejectPerStageH0}: The probability for efficacy stopping
+under H0.
+\item \code{futilityPerStageH0}: The probability for futility stopping
+under H0.
+\item \code{cumulativeRejectionH0}: The cumulative probability for
+efficacy stopping under H0.
+\item \code{cumulativeFutilityH0}: The cumulative probability for futility
+stopping under H0.
+\item \code{efficacyMeanDiff}: The efficacy boundaries on the mean
+difference scale.
+\item \code{futilityMeanDiff}: The futility boundaries on the mean
+difference scale.
+\item \code{numberOfSubjects}: The number of subjects.
+\item \code{analysisTime}: The average time since trial start.
+}
+\item \code{settings}: A list containing the following input parameters:
+\itemize{
+\item \code{typeAlphaSpending}: The type of alpha spending.
+\item \code{parameterAlphaSpending}: The parameter value for alpha
+spending.
+\item \code{userAlphaSpending}: The user defined alpha spending.
+\item \code{typeBetaSpending}: The type of beta spending.
+\item \code{parameterBetaSpending}: The parameter value for beta spending.
+\item \code{userBetaSpending}: The user defined beta spending.
+\item \code{spendingTime}: The error spending time at each analysis.
+\item \code{allocationRatioPlanned}: The allocation ratio for the active
+treatment versus control.
+\item \code{accrualTime}: A vector that specifies the starting time of
+piecewise Poisson enrollment time intervals.
+\item \code{accrualIntensity}: A vector of accrual intensities.
+One for each accrual time interval.
+\item \code{piecewiseSurvivalTime}: A vector that specifies the
+starting time of piecewise exponential survival time intervals.
+\item \code{gamma1}: The hazard rate for exponential dropout or
+a vector of hazard rates for piecewise exponential dropout
+for the active treatment group.
+\item \code{gamma2}: The hazard rate for exponential dropout or
+a vector of hazard rates for piecewise exponential dropout
+for the control group.
 \item \code{k}: The number of postbaseline time points.
+\item \code{t}: The postbaseline time points.
 \item \code{covar1}: The covariance matrix for the repeated measures
 given baseline for the active treatment group.
 \item \code{covar2}: The covariance matrix for the repeated measures
 given baseline for the control group.
-\item \code{cumdrop1}: The cumulative dropout rate at the postbaseline
-time points for the active treatment group.
-\item \code{cumdrop2}: The cumulative dropout rate at the postbaseline
-time points for the control group.
-\item \code{inflation1}: The variance inflation factor for the active
-treatment group.
-\item \code{inflation2}: The variance inflation factor for the
-control group.
-\item \code{calculationTarget}: The calculation target, \code{beta} or
-\code{n}.
-\item \code{allocationRatioPlanned}: Allocation ratio for the active
-treatment versus control.
 \item \code{normalApproximation}: The type of computation of the p-values.
 If \code{TRUE}, the variance is assumed to be known, otherwise
 the calculations are performed with the t distribution.
 \item \code{rounding}: Whether to round up sample size.
+}
 }
 }
 \description{
@@ -104,27 +260,25 @@ for repeated measures (MMRM) model.
 
 # function to generate the AR(1) correlation matrix
 ar1_cor <- function(n, corr) {
-  exponent <- abs(matrix(1:n - 1, n, n, byrow = TRUE) - (1:n - 1))
+  exponent <- abs(matrix((1:n) - 1, n, n, byrow = TRUE) - ((1:n) - 1))
   corr^exponent
 }
 
-# function to generate the cumulative dropout rate
-exp_drop <- function(n, dropprob) {
-  1 - (1 - dropprob)^((1:n)/n)
-}
-
-(design1 <- getDesignMeanDiffMMRM(
+(design1 = getDesignMeanDiffMMRM(
   beta = 0.2,
-  n = NA_real_,
   meanDiffH0 = 0,
   meanDiff = 0.5,
   k = 4,
+  t = c(1,2,3,4),
   covar1 = ar1_cor(4, 0.7),
-  cumdrop1 = exp_drop(4, 0.10),
+  accrualIntensity = 10,
+  gamma1 = 0.02634013,
+  gamma2 = 0.02634013,
+  accrualDuration = NA,
   allocationRatioPlanned = 1,
-  normalApproximation = FALSE,
-  rounding = TRUE,
-  alpha = 0.025))
+  kMax = 3,
+  alpha = 0.025,
+  typeAlphaSpending = "sfOF"))
 
 }
 \author{

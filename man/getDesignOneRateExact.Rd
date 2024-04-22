@@ -39,8 +39,6 @@ A data frame containing the following variables:
 \item \code{r}: The critical value of the number of events for rejecting
 the null hypothesis. Reject H0 if \code{Y >= r} for upper-tailed
 test, and reject H0 if \code{Y <= r} for lower-tailed test.
-\item \code{calculationTarget}: The calculation target, \code{beta} or
-\code{n}.
 }
 }
 \description{

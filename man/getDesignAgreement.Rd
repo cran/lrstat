@@ -54,8 +54,6 @@ following components:
 variance of estimated kappa under H0.
 \item \code{pi}: The cell probabilities that maximize the
 variance of estimated kappa under H1.
-\item \code{calculationTarget}: The calculation target, \code{beta} or
-\code{n}.
 \item \code{rounding}: Whether to round up sample size.
 }
 }

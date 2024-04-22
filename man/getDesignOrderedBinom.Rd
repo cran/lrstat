@@ -47,8 +47,6 @@ components:
 \item \code{pi}: The response probabilities for the treatment groups.
 \item \code{w}: The scores assigned to the treatment groups.
 \item \code{trendstat}: The Cochran-Armitage trend test statistic.
-\item \code{calculationTarget}: The calculation target, \code{beta} or
-\code{n}.
 \item \code{allocationRatioPlanned}: Allocation ratio for the treatment
 groups.
 \item \code{rounding}: Whether to round up sample size.

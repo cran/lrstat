@@ -2,7 +2,7 @@
 % Please edit documentation in R/getDesignProportions.R
 \name{getDesignTwoMultinom}
 \alias{getDesignTwoMultinom}
-\title{Power and sample for difference in two-sample multinomial response}
+\title{Power and sample for difference in two-sample multinomial responses}
 \usage{
 getDesignTwoMultinom(
   beta = NA_real_,
@@ -47,8 +47,6 @@ components:
 \item \code{pi1}: The prevalence of each category for the treatment group.
 \item \code{pi2}: The prevalence of each category for the control group.
 \item \code{effectsize}: The effect size for the chi-square test.
-\item \code{calculationTarget}: The calculation target, \code{beta} or
-\code{n}.
 \item \code{allocationRatioPlanned}: Allocation ratio for the active treatment
 versus control.
 \item \code{rounding}: Whether to round up sample size.
@@ -56,7 +54,7 @@ versus control.
 }
 \description{
 Obtains the power given sample size or obtains the sample
-size given power for difference in two-sample multinomial response.
+size given power for difference in two-sample multinomial responses.
 }
 \examples{
 

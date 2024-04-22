@@ -47,8 +47,6 @@ following components:
 \item \code{ncats}: The number of categories of the multinomial response.
 \item \code{pi}: The response probabilities for the treatment groups.
 \item \code{effectsize}: The effect size for the chi-square test.
-\item \code{calculationTarget}: The calculation target, \code{beta} or
-\code{n}.
 \item \code{allocationRatioPlanned}: Allocation ratio for the treatment
 groups.
 \item \code{rounding}: Whether to round up sample size.

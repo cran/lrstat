@@ -82,7 +82,8 @@ spent up to each stage.}
 
 \item{futilityBounds}{Lower boundaries on the z-test statistic scale
 for stopping for futility at stages 1, ..., \code{kMax-1}. Defaults to
-\code{rep(-6, kMax-1)} if left unspecified.}
+\code{rep(-6, kMax-1)} if left unspecified. The futility bounds are
+non-binding for the calculation of critical values.}
 
 \item{typeBetaSpending}{The type of beta spending. One of the following:
 "sfOF" for O'Brien-Fleming type spending function, "sfP" for Pocock type
@@ -172,8 +173,6 @@ spending.
 \item \code{spendingTime}: The error spending time at each analysis.
 \item \code{varianceRatio}: The ratio of the variance under H0 to
 the variance under H1.
-\item \code{calculationTarget}: The calculation target, \code{beta} or
-\code{n}.
 \item \code{nullVariance}: Whether to use the variance under the null or
 the empirical variance under the alternative.
 \item \code{allocationRatioPlanned}: Allocation ratio for the active

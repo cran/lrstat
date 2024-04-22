@@ -49,8 +49,6 @@ components:
 \item \code{pi2}: The prevalence of each category for the control group.
 \item \code{meanscore1}: The mean midrank score for the treatment group.
 \item \code{meanscore2}: The mean midrank score for the control group.
-\item \code{calculationTarget}: The calculation target, \code{beta} or
-\code{n}.
 \item \code{allocationRatioPlanned}: Allocation ratio for the active treatment
 versus control.
 \item \code{rounding}: Whether to round up sample size.

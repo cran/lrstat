@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{kmsamplesize}
 \alias{kmsamplesize}
-\title{Sample size for difference in milestone survival probability}
+\title{Sample size for difference in milestone survival probabilities}
 \usage{
 kmsamplesize(
   beta = 0.2,
@@ -73,7 +73,8 @@ spent up to each stage.}
 
 \item{futilityBounds}{Lower boundaries on the z-test statistic scale
 for stopping for futility at stages 1, ..., \code{kMax-1}. Defaults to
-\code{rep(-6, kMax-1)} if left unspecified.}
+\code{rep(-6, kMax-1)} if left unspecified. The futility bounds are
+non-binding for the calculation of critical values.}
 
 \item{typeBetaSpending}{The type of beta spending. One of the following:
 "sfOF" for O'Brien-Fleming type spending function, "sfP" for Pocock type
@@ -91,7 +92,7 @@ spent up to each stage.}
 \item{milestone}{The milestone time at which to calculate the survival
 probability.}
 
-\item{survDiffH0}{The difference in milestone survival probability
+\item{survDiffH0}{The difference in milestone survival probabilities
 under the null hypothesis. Defaults to 0 for superiority test.}
 
 \item{allocationRatioPlanned}{Allocation ratio for the active treatment

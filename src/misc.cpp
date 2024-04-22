@@ -2238,7 +2238,7 @@ List f_bwimage(const double theta,
   }
 
   NumericVector astars(1, astar);
-  IntegerVector js = findInterval2(astars, p);
+  IntegerVector js = findInterval3(astars, p);
   int j = js[0];
 
   // find the z-test statistic value yielding the rejection probability
@@ -4159,7 +4159,7 @@ DataFrame simon2stage(
   double z1 = R::qnorm(1-alpha, 0, 1, 1, 0);
   double z2 = R::qnorm(1-beta, 0, 1, 1, 0);
   int n_min = std::floor(p*(1-p)*pow((z1 + z2)/(pi - piH0), 2));
-  int n_max1 = std::ceil(1.5*n_min);
+  int n_max1 = std::ceil(2.0*n_min);
 
   int n_lower = std::floor(0.5*n_min);
   int n_upper = std::min(n_max, n_max1);
@@ -4805,14 +4805,16 @@ DataFrame samplesizeFisherExact(const double beta,
 //' @export
 //'
 // [[Rcpp::export]]
-NumericVector remlRiskDiff(const double riskDiffH0,
-                           const double n1, const double y1,
-                           const double n2, const double y2) {
+NumericVector remlRiskDiff(const double riskDiffH0 = 0.0,
+                           const double n1 = NA_REAL,
+                           const double y1 = NA_REAL,
+                           const double n2 = NA_REAL,
+                           const double y2 = NA_REAL) {
   double n = n1 + n2;
   double y = y1 + y2;
 
   double p1, p2;
-  if (fabs(riskDiffH0) < 1e-8) {
+  if (fabs(riskDiffH0) < 1.0e-8) {
     p1 = y/n;
     p2 = p1;
   } else {
@@ -4835,9 +4837,11 @@ NumericVector remlRiskDiff(const double riskDiffH0,
 
 
 // [[Rcpp::export]]
-DataFrame remlRiskDiff2(const double riskDiffH0,
-                        const NumericVector& n1, const NumericVector& y1,
-                        const NumericVector& n2, const NumericVector& y2) {
+DataFrame remlRiskDiff2(const double riskDiffH0 = 0.0,
+                        const NumericVector& n1 = NA_REAL,
+                        const NumericVector& y1 = NA_REAL,
+                        const NumericVector& n2 = NA_REAL,
+                        const NumericVector& y2 = NA_REAL) {
   int k = n1.size();
   NumericVector p1(k), p2(k);
   for (int i=0; i<k; i++) {
@@ -4850,10 +4854,39 @@ DataFrame remlRiskDiff2(const double riskDiffH0,
 }
 
 
-// [[Rcpp::export]]
-double zstatRiskDiff(const double riskDiffH0,
-                     const NumericVector& n1, const NumericVector& y1,
-                     const NumericVector& n2, const NumericVector& y2) {
+//' @title Miettinen-Nurminen score test statistic for two-sample risk
+//' difference
+//' @description Obtains the Miettinen-Nurminen score test statistic
+//' for two-sample risk difference possibly with stratification.
+//'
+//' @param riskDiffH0 The risk difference under the null hypothesis.
+//'   Defaults to 0.
+//' @param n1 The sample size for the active treatment group.
+//' @param y1 The number of responses for the active treatment group.
+//' @param n2 The sample size for the control group.
+//' @param y2 The number of responses for the control group.
+//'
+//' @details
+//' The Mantel-Haenszel sample size weights are used for stratified
+//' samples.
+//'
+//' @return The value of the score test statistic.
+//'
+//' @author Kaifeng Lu, \email{kaifenglu@@gmail.com}
+//'
+//' @examples
+//'
+//' zstatRiskDiff(riskDiffH0 = 0, n1 = c(10,10), y1 = c(4,3),
+//'               n2 = c(20,10), y2 = c(2,0))
+//'
+//' @export
+//'
+ // [[Rcpp::export]]
+double zstatRiskDiff(const double riskDiffH0 = 0.0,
+                     const NumericVector& n1 = NA_REAL,
+                     const NumericVector& y1 = NA_REAL,
+                     const NumericVector& n2 = NA_REAL,
+                     const NumericVector& y2 = NA_REAL) {
   List mr = remlRiskDiff2(riskDiffH0, n1, y1, n2, y2);
   NumericVector p1 = as<NumericVector>(mr["p1"]);
   NumericVector p2 = as<NumericVector>(mr["p2"]);
@@ -4865,7 +4898,7 @@ double zstatRiskDiff(const double riskDiffH0,
     w[i] = n1[i]*n2[i]/n[i];
     md[i] = y1[i]/n1[i] - y2[i]/n2[i] - riskDiffH0;
     mv[i] = p1[i]*(1-p1[i])/n1[i] + p2[i]*(1-p2[i])/n2[i];
-    mv[i] = std::max(mv[i]*n[i]/(n[i]-1.0), 1e-8);
+    mv[i] = std::max(mv[i]*n[i]/(n[i]-1.0), 1.0e-8);
   }
 
   w = w/sum(w);
@@ -5022,14 +5055,16 @@ List mnRiskDiffCI(const NumericVector& n1, const NumericVector& y1,
 //' @export
 //'
 // [[Rcpp::export]]
-NumericVector remlRiskRatio(const double riskRatioH0,
-                            const double n1, const double y1,
-                            const double n2, const double y2) {
+NumericVector remlRiskRatio(const double riskRatioH0 = 1.0,
+                            const double n1 = NA_REAL,
+                            const double y1 = NA_REAL,
+                            const double n2 = NA_REAL,
+                            const double y2 = NA_REAL) {
   double n = n1 + n2;
   double y = y1 + y2;
 
   double p1, p2;
-  if (fabs(riskRatioH0 - 1) < 1e-8) {
+  if (fabs(riskRatioH0 - 1) < 1.0e-8) {
     p1 = y/n;
     p2 = p1;
   } else {
@@ -5046,9 +5081,11 @@ NumericVector remlRiskRatio(const double riskRatioH0,
 
 
 // [[Rcpp::export]]
-DataFrame remlRiskRatio2(const double riskRatioH0,
-                         const NumericVector& n1, const NumericVector& y1,
-                         const NumericVector& n2, const NumericVector& y2) {
+DataFrame remlRiskRatio2(const double riskRatioH0 = 1.0,
+                         const NumericVector& n1 = NA_REAL,
+                         const NumericVector& y1 = NA_REAL,
+                         const NumericVector& n2 = NA_REAL,
+                         const NumericVector& y2 = NA_REAL) {
   int k = n1.size();
   NumericVector p1(k), p2(k);
   for (int i=0; i<k; i++) {
@@ -5061,10 +5098,38 @@ DataFrame remlRiskRatio2(const double riskRatioH0,
 }
 
 
+//' @title Miettinen-Nurminen score test statistic for two-sample risk ratio
+//' @description Obtains the Miettinen-Nurminen score test statistic for
+//' two-sample risk ratio possibly with stratification.
+//'
+//' @param riskRatioH0 The risk ratio under the null hypothesis.
+//'   Defaults to 1.
+//' @param n1 The sample size for the active treatment group.
+//' @param y1 The number of responses for the active treatment group.
+//' @param n2 The sample size for the control group.
+//' @param y2 The number of responses for the control group.
+//'
+//' @details
+//' The Mantel-Haenszel sample size weights are used for stratified
+//' samples.
+//'
+//' @return The value of the score test statistic.
+//'
+//' @author Kaifeng Lu, \email{kaifenglu@@gmail.com}
+//'
+//' @examples
+//'
+//' zstatRiskRatio(riskRatioH0 = 1, n1 = c(10,10), y1 = c(4,3),
+//'                n2 = c(20,10), y2 = c(2,0))
+//'
+//' @export
+//'
 // [[Rcpp::export]]
-double zstatRiskRatio(const double riskRatioH0,
-                      const NumericVector& n1, const NumericVector& y1,
-                      const NumericVector& n2, const NumericVector& y2) {
+double zstatRiskRatio(const double riskRatioH0 = 1.0,
+                      const NumericVector& n1 = NA_REAL,
+                      const NumericVector& y1 = NA_REAL,
+                      const NumericVector& n2 = NA_REAL,
+                      const NumericVector& y2 = NA_REAL) {
   List mr = remlRiskRatio2(riskRatioH0, n1, y1, n2, y2);
   NumericVector p1 = as<NumericVector>(mr["p1"]);
   NumericVector p2 = as<NumericVector>(mr["p2"]);
@@ -5076,7 +5141,7 @@ double zstatRiskRatio(const double riskRatioH0,
     w[i] = n1[i]*n2[i]/n[i];
     md[i] = y1[i]/n1[i] - y2[i]/n2[i]*riskRatioH0;
     mv[i] = p1[i]*(1-p1[i])/n1[i] + pow(riskRatioH0,2)*p2[i]*(1-p2[i])/n2[i];
-    mv[i] = std::max(mv[i]*n[i]/(n[i]-1.0), 1e-8);
+    mv[i] = std::max(mv[i]*n[i]/(n[i]-1.0), 1.0e-8);
   }
 
   w = w/sum(w);
@@ -5262,14 +5327,16 @@ List mnRiskRatioCI(const NumericVector& n1, const NumericVector& y1,
 //' @export
 //'
 // [[Rcpp::export]]
-NumericVector remlOddsRatio(const double oddsRatioH0,
-                            const double n1, const double y1,
-                            const double n2, const double y2) {
+NumericVector remlOddsRatio(const double oddsRatioH0 = 1.0,
+                            const double n1 = NA_REAL,
+                            const double y1 = NA_REAL,
+                            const double n2 = NA_REAL,
+                            const double y2 = NA_REAL) {
   double n = n1 + n2;
   double y = y1 + y2;
 
   double p1, p2;
-  if (fabs(oddsRatioH0 - 1) < 1e-8) {
+  if (fabs(oddsRatioH0 - 1) < 1.0e-8) {
     p1 = y/n;
     p2 = p1;
   } else {
@@ -5285,9 +5352,11 @@ NumericVector remlOddsRatio(const double oddsRatioH0,
 
 
 // [[Rcpp::export]]
-DataFrame remlOddsRatio2(const double oddsRatioH0,
-                         const NumericVector& n1, const NumericVector& y1,
-                         const NumericVector& n2, const NumericVector& y2) {
+DataFrame remlOddsRatio2(const double oddsRatioH0 = 1.0,
+                         const NumericVector& n1 = NA_REAL,
+                         const NumericVector& y1 = NA_REAL,
+                         const NumericVector& n2 = NA_REAL,
+                         const NumericVector& y2 = NA_REAL) {
   int k = n1.size();
   NumericVector p1(k), p2(k);
   for (int i=0; i<k; i++) {
@@ -5300,10 +5369,38 @@ DataFrame remlOddsRatio2(const double oddsRatioH0,
 }
 
 
+//' @title Miettinen-Nurminen score test statistic for two-sample odds ratio
+//' @description Obtains the Miettinen-Nurminen score test statistic for
+//' two-sample odds ratio possibly with stratification.
+//'
+//' @param oddsRatioH0 The odds ratio under the null hypothesis.
+//'   Defaults to 1.
+//' @param n1 The sample size for the active treatment group.
+//' @param y1 The number of responses for the active treatment group.
+//' @param n2 The sample size for the control group.
+//' @param y2 The number of responses for the control group.
+//'
+//' @details
+//' The Mantel-Haenszel sample size weights are used for stratified
+//' samples.
+//'
+//' @return The value of the score test statistic.
+//'
+//' @author Kaifeng Lu, \email{kaifenglu@@gmail.com}
+//'
+//' @examples
+//'
+//' zstatOddsRatio(oddsRatioH0 = 1, n1 = c(10,10), y1 = c(4,3),
+//'                n2 = c(20,10), y2 = c(2,0))
+//'
+//' @export
+//'
 // [[Rcpp::export]]
-double zstatOddsRatio(const double oddsRatioH0,
-                      const NumericVector& n1, const NumericVector& y1,
-                      const NumericVector& n2, const NumericVector& y2) {
+double zstatOddsRatio(const double oddsRatioH0 = 1.0,
+                      const NumericVector& n1 = NA_REAL,
+                      const NumericVector& y1 = NA_REAL,
+                      const NumericVector& n2 = NA_REAL,
+                      const NumericVector& y2 = NA_REAL) {
   List mr = remlOddsRatio2(oddsRatioH0, n1, y1, n2, y2);
   NumericVector p1 = as<NumericVector>(mr["p1"]);
   NumericVector p2 = as<NumericVector>(mr["p2"]);
@@ -5316,7 +5413,7 @@ double zstatOddsRatio(const double oddsRatioH0,
     md[i] = (y1[i]/n1[i] - p1[i])/(p1[i]*(1-p1[i])) -
       (y2[i]/n2[i] - p2[i])/(p2[i]*(1-p2[i]));
     mv[i] = 1/(n1[i]*p1[i]*(1-p1[i])) + 1/(n2[i]*p2[i]*(1-p2[i]));
-    mv[i] = std::max(mv[i]*n[i]/(n[i]-1.0), 1e-8);
+    mv[i] = std::max(mv[i]*n[i]/(n[i]-1.0), 1.0e-8);
   }
 
   w = w/sum(w);
@@ -5501,14 +5598,16 @@ List mnOddsRatioCI(const NumericVector& n1, const NumericVector& y1,
 //' @export
 //'
 // [[Rcpp::export]]
-NumericVector remlRateDiff(const double rateDiffH0,
-                           const double t1, const double y1,
-                           const double t2, const double y2) {
+NumericVector remlRateDiff(const double rateDiffH0 = 0.0,
+                           const double t1 = NA_REAL,
+                           const double y1 = NA_REAL,
+                           const double t2 = NA_REAL,
+                           const double y2 = NA_REAL) {
   double t = t1 + t2;
   double y = y1 + y2;
 
   double r1, r2;
-  if (fabs(rateDiffH0) < 1e-8) {
+  if (fabs(rateDiffH0) < 1.0e-8) {
     r1 = y/t;
     r2 = r1;
   } else {
@@ -5525,9 +5624,11 @@ NumericVector remlRateDiff(const double rateDiffH0,
 
 
 // [[Rcpp::export]]
-DataFrame remlRateDiff2(const double rateDiffH0,
-                        const NumericVector& t1, const NumericVector& y1,
-                        const NumericVector& t2, const NumericVector& y2) {
+DataFrame remlRateDiff2(const double rateDiffH0 = 0.0,
+                        const NumericVector& t1 = NA_REAL,
+                        const NumericVector& y1 = NA_REAL,
+                        const NumericVector& t2 = NA_REAL,
+                        const NumericVector& y2 = NA_REAL) {
   int k = t1.size();
   NumericVector r1(k), r2(k);
   for (int i=0; i<k; i++) {
@@ -5540,10 +5641,38 @@ DataFrame remlRateDiff2(const double rateDiffH0,
 }
 
 
+//' @title Miettinen-Nurminen score test statistic for two-sample rate
+//' difference
+//' @description Obtains the Miettinen-Nurminen score test statistic for
+//' two-sample rate difference possibly with stratification.
+//'
+//' @param rateDiffH0 The rate difference under the null hypothesis.
+//'   Defaults to 0.
+//' @param t1 The exposure for the active treatment group.
+//' @param y1 The number of events for the active treatment group.
+//' @param t2 The exposure for the control group.
+//' @param y2 The number of events for the control group.
+//'
+//' @details
+//' The Mantel-Haenszel weights are used for stratified samples.
+//'
+//' @return The value of the score test statistic.
+//'
+//' @author Kaifeng Lu, \email{kaifenglu@@gmail.com}
+//'
+//' @examples
+//'
+//' zstatRateDiff(rateDiffH0 = 0, t1 = c(10,10), y1 = c(4,3),
+//'               t2 = c(20,10), y2 = c(2,0))
+//'
+//' @export
+//'
 // [[Rcpp::export]]
-double zstatRateDiff(const double rateDiffH0,
-                     const NumericVector& t1, const NumericVector& y1,
-                     const NumericVector& t2, const NumericVector& y2) {
+double zstatRateDiff(const double rateDiffH0 = 0.0,
+                     const NumericVector& t1 = NA_REAL,
+                     const NumericVector& y1 = NA_REAL,
+                     const NumericVector& t2 = NA_REAL,
+                     const NumericVector& y2 = NA_REAL) {
   List mr = remlRateDiff2(rateDiffH0, t1, y1, t2, y2);
   NumericVector r1 = as<NumericVector>(mr["r1"]);
   NumericVector r2 = as<NumericVector>(mr["r2"]);
@@ -5555,7 +5684,7 @@ double zstatRateDiff(const double rateDiffH0,
     w[i] = t1[i]*t2[i]/t[i];
     md[i] = y1[i]/t1[i] - y2[i]/t2[i] - rateDiffH0;
     mv[i] = r1[i]/t1[i] + r2[i]/t2[i];
-    mv[i] = std::max(mv[i], 1e-8);
+    mv[i] = std::max(mv[i], 1.0e-8);
   }
 
   w = w/sum(w);
@@ -5709,9 +5838,11 @@ List mnRateDiffCI(const NumericVector& t1, const NumericVector& y1,
 //' @export
 //'
 // [[Rcpp::export]]
-NumericVector remlRateRatio(const double rateRatioH0,
-                            const double t1, const double y1,
-                            const double t2, const double y2) {
+NumericVector remlRateRatio(const double rateRatioH0 = 1.0,
+                            const double t1 = NA_REAL,
+                            const double y1 = NA_REAL,
+                            const double t2 = NA_REAL,
+                            const double y2 = NA_REAL) {
   double r2 = (y1 + y2)/(t1*rateRatioH0 + t2);
   double r1 = r2*rateRatioH0;
 
@@ -5720,9 +5851,11 @@ NumericVector remlRateRatio(const double rateRatioH0,
 
 
 // [[Rcpp::export]]
-DataFrame remlRateRatio2(const double rateRatioH0,
-                         const NumericVector& t1, const NumericVector& y1,
-                         const NumericVector& t2, const NumericVector& y2) {
+DataFrame remlRateRatio2(const double rateRatioH0 = 1.0,
+                         const NumericVector& t1 = NA_REAL,
+                         const NumericVector& y1 = NA_REAL,
+                         const NumericVector& t2 = NA_REAL,
+                         const NumericVector& y2 = NA_REAL) {
   int k = t1.size();
   NumericVector r1(k), r2(k);
   for (int i=0; i<k; i++) {
@@ -5735,10 +5868,37 @@ DataFrame remlRateRatio2(const double rateRatioH0,
 }
 
 
+//' @title Miettinen-Nurminen score test statistic for two-sample rate ratio
+//' @description Obtains the Miettinen-Nurminen score test statistic for
+//' two-sample rate ratio possibly with stratification.
+//'
+//' @param rateRatioH0 The rate ratio under the null hypothesis.
+//'   Defaults to 1.
+//' @param t1 The exposure for the active treatment group.
+//' @param y1 The number of events for the active treatment group.
+//' @param t2 The exposure for the control group.
+//' @param y2 The number of events for the control group.
+//'
+//' @details
+//' The Mantel-Haenszel weights are used for stratified samples.
+//'
+//' @return The value of the score test statistic.
+//'
+//' @author Kaifeng Lu, \email{kaifenglu@@gmail.com}
+//'
+//' @examples
+//'
+//' zstatRateRatio(rateRatioH0 = 1, t1 = c(10,10), y1 = c(4,3),
+//'                t2 = c(20,10), y2 = c(2,0))
+//'
+//' @export
+//'
 // [[Rcpp::export]]
-double zstatRateRatio(const double rateRatioH0,
-                      const NumericVector& t1, const NumericVector& y1,
-                      const NumericVector& t2, const NumericVector& y2) {
+double zstatRateRatio(const double rateRatioH0 = 1.0,
+                      const NumericVector& t1 = NA_REAL,
+                      const NumericVector& y1 = NA_REAL,
+                      const NumericVector& t2 = NA_REAL,
+                      const NumericVector& y2 = NA_REAL) {
   List mr = remlRateRatio2(rateRatioH0, t1, y1, t2, y2);
   NumericVector r1 = as<NumericVector>(mr["r1"]);
   NumericVector r2 = as<NumericVector>(mr["r2"]);
@@ -5752,7 +5912,7 @@ double zstatRateRatio(const double rateRatioH0,
   for (i=0; i<k; i++) {
     md[i] = y1[i]/t1[i] - (y2[i]/t2[i])*rateRatioH0;
     mv[i] = r1[i]/t1[i] + pow(rateRatioH0,2)*r2[i]/t2[i];
-    mv[i] = std::max(mv[i], 1e-8);
+    mv[i] = std::max(mv[i], 1.0e-8);
   }
 
   return sum(w*md)/sqrt(sum(pow(w,2)*mv));
@@ -5921,12 +6081,14 @@ List mnRateRatioCI(const NumericVector& t1, const NumericVector& y1,
 //' @param allocationRatioPlanned Allocation ratio for the active treatment
 //'   versus control. Defaults to 1 for equal randomization.
 //' @param alpha The one-sided significance level. Defaults to 0.025.
+//' @param calculateAttainedAlpha Whether to calculate the attained alpha.
 //'
 //' @return A data frame with the following variables:
 //'
 //' * \code{alpha}: The specified one-sided significance level.
 //'
-//' * \code{attainedAlpha}: The attained one-sided significance level.
+//' * \code{attainedAlpha}: The attained one-sided significance level if
+//'   requested.
 //'
 //' * \code{power}: The power.
 //'
@@ -5963,7 +6125,8 @@ DataFrame powerRiskDiffExact(
     const double pi1 = NA_REAL,
     const double pi2 = NA_REAL,
     const double allocationRatioPlanned = 1,
-    const double alpha = 0.025) {
+    const double alpha = 0.025,
+    const bool calculateAttainedAlpha = 1) {
 
   double r = allocationRatioPlanned/(1 + allocationRatioPlanned);
   int n1 = std::round(n*r);
@@ -5981,7 +6144,7 @@ DataFrame powerRiskDiffExact(
       double p1 = a[0], p2 = a[1];
       double p1hat = y1/(n1+0.0), p2hat = y2/(n2+0.0);
       double md = p1hat - p2hat - riskDiffH0;
-      double mv = std::max(p1*(1-p1)/n1 + p2*(1-p2)/n2, 1e-8);
+      double mv = std::max(p1*(1-p1)/n1 + p2*(1-p2)/n2, 1.0e-8);
       T[i++] = md/sqrt(mv);
     }
   }
@@ -6027,6 +6190,7 @@ DataFrame powerRiskDiffExact(
               }
 
               NumericVector qsorted = q[order];
+              double aval;
 
               if (directionUpper) { // reject H0 if T >= t
                 double s = 0;
@@ -6040,9 +6204,9 @@ DataFrame powerRiskDiffExact(
 
                 // backtrack to obtain the critical value of T
                 if (i == k1-1) {
-                  return Tunique[k1-1] + 1; // impossible to reject H0
+                  aval = Tunique[k1-1] + 1; // impossible to reject H0
                 } else {
-                  return Tunique[i+1];
+                  aval = Tunique[i+1];
                 }
               } else { // reject H0 if T <= t
                 double s = 0;
@@ -6056,34 +6220,34 @@ DataFrame powerRiskDiffExact(
 
                 // backtrack to obtain the critical value of T
                 if (i == 0) {
-                  return Tunique[0] - 1; // impossible to reject H0
+                  aval = Tunique[0] - 1; // impossible to reject H0
                 } else {
-                  return Tunique[i-1];
+                  aval = Tunique[i-1];
                 }
               }
+
+              return directionUpper ? -aval : aval;
             };
 
   // find the critical value independent of pi2
   double pi2lower = std::max(0.0, -riskDiffH0);
   double pi2upper = std::min(1.0, 1-riskDiffH0);
 
-  int K = 500;
+  int K = 100;
   NumericVector a(K), b(K);
+  double delta = (pi2upper - pi2lower)/K;
+  double tol = 1.0e-6;
   for (i=0; i<K; i++) {
-    a[i] = R::runif(pi2lower, pi2upper);
-    b[i] = f(a[i]);
+    double lower = pi2lower + i*delta;
+    double upper = lower + delta;
+    NumericVector out = mini(f, lower, upper, tol);
+    a[i] = out[0];
+    b[i] = out[1];
   }
 
-  double pi2star, t;
-  if (directionUpper) {
-    i = which_max(b);
-    pi2star = a[i];
-    t = b[i];
-  } else {
-    i = which_min(b);
-    pi2star = a[i];
-    t = b[i];
-  }
+  i = which_min(b);
+  double pi2star = a[i];
+  double t = directionUpper ? -b[i] : b[i];
 
   // calculate attained alpha and power
   auto g = [n1, n2, x1, x2, T, t,
@@ -6106,20 +6270,66 @@ DataFrame powerRiskDiffExact(
               return preject;
             };
 
-  double attainedAlpha = g(pi2star + riskDiffH0, pi2star);
   double power = g(pi1, pi2);
 
-  DataFrame result = DataFrame::create(
-    _["alpha"] = alpha,
-    _["attainedAlpha"] = attainedAlpha,
-    _["power"] = power,
-    _["n"] = n,
-    _["riskDiffH0"] = riskDiffH0,
-    _["pi1"] = pi1,
-    _["pi2"] = pi2,
-    _["allocationRatioPlanned"] = allocationRatioPlanned,
-    _["zstatRiskDiffBound"] = t,
-    _["pi2star"] = pi2star);
+  DataFrame result;
+
+  if (calculateAttainedAlpha) {
+    auto h = [n1, n2, x1, x2, T, t, directionUpper,
+              riskDiffH0](double p2)->double {
+                double p1 = p2 + riskDiffH0;
+                NumericVector q1 = dbinom(x1, n1, p1, 0);
+                NumericVector q2 = dbinom(x2, n2, p2, 0);
+
+                double preject = 0;
+                int i = 0;
+                for (int y1=0; y1<=n1; y1++) {
+                  for (int y2=0; y2<=n2; y2++) {
+                    if ((directionUpper && (T[i] >= t)) ||
+                        ((!directionUpper) && (T[i] <= t))) {
+                      preject += q1[y1]*q2[y2];
+                    }
+                    i++;
+                  }
+                }
+
+                return -preject;
+    };
+
+    for (i=0; i<K; i++) {
+      double lower = pi2lower + i*delta;
+      double upper = lower + delta;
+      NumericVector out = mini(h, lower, upper, tol);
+      a[i] = out[0];
+      b[i] = out[1];
+    }
+
+    i = which_min(b);
+    double attainedAlpha = -b[i];
+
+    result = DataFrame::create(
+      _["alpha"] = alpha,
+      _["attainedAlpha"] = attainedAlpha,
+      _["power"] = power,
+      _["n"] = n,
+      _["riskDiffH0"] = riskDiffH0,
+      _["pi1"] = pi1,
+      _["pi2"] = pi2,
+      _["allocationRatioPlanned"] = allocationRatioPlanned,
+      _["zstatRiskDiffBound"] = t,
+      _["pi2star"] = pi2star);
+  } else {
+    result = DataFrame::create(
+      _["alpha"] = alpha,
+      _["power"] = power,
+      _["n"] = n,
+      _["riskDiffH0"] = riskDiffH0,
+      _["pi1"] = pi1,
+      _["pi2"] = pi2,
+      _["allocationRatioPlanned"] = allocationRatioPlanned,
+      _["zstatRiskDiffBound"] = t,
+      _["pi2star"] = pi2star);
+  }
 
   return result;
 }
@@ -6197,16 +6407,16 @@ DataFrame samplesizeRiskDiffExact(
 
   DataFrame a, b;
   a = powerRiskDiffExact(n0, riskDiffH0, pi1, pi2,
-                         allocationRatioPlanned, alpha);
+                         allocationRatioPlanned, alpha, 0);
 
   while (as<double>(a["power"]) >= 1-beta) {
     a = powerRiskDiffExact(--n_lower, riskDiffH0, pi1, pi2,
-                           allocationRatioPlanned, alpha);
+                           allocationRatioPlanned, alpha, 0);
   }
 
   for (n=n_lower+1; n<=n_upper; n++) {
     a = powerRiskDiffExact(n, riskDiffH0, pi1, pi2,
-                           allocationRatioPlanned, alpha);
+                           allocationRatioPlanned, alpha, 0);
 
     // ensure that the power exceeds 1-beta for the next 10 sample sizes
     if (as<double>(a["power"]) >= 1-beta) {
@@ -6214,7 +6424,7 @@ DataFrame samplesizeRiskDiffExact(
       bool okay = 1;
       for (i=1; i<=10; i++) {
         b = powerRiskDiffExact(n+i, riskDiffH0, pi1, pi2,
-                               allocationRatioPlanned, alpha);
+                               allocationRatioPlanned, alpha, 0);
         if (as<double>(b["power"]) < 1-beta) {
           okay = 0;
           break;
@@ -6228,6 +6438,10 @@ DataFrame samplesizeRiskDiffExact(
       }
     }
   }
+
+  // calculate attained alpha;
+  a = powerRiskDiffExact(n, riskDiffH0, pi1, pi2,
+                         allocationRatioPlanned, alpha, 1);
 
   return a;
 }
@@ -6245,12 +6459,14 @@ DataFrame samplesizeRiskDiffExact(
 //' @param allocationRatioPlanned Allocation ratio for the active treatment
 //'   versus control. Defaults to 1 for equal randomization.
 //' @param alpha The one-sided significance level. Defaults to 0.025.
+//' @param calculateAttainedAlpha Whether to calculate the attained alpha.
 //'
 //' @return A data frame with the following variables:
 //'
 //' * \code{alpha}: The specified one-sided significance level.
 //'
-//' * \code{attainedAlpha}: The attained one-sided significance level.
+//' * \code{attainedAlpha}: The attained one-sided significance level if
+//'   requested.
 //'
 //' * \code{power}: The power.
 //'
@@ -6287,7 +6503,8 @@ DataFrame powerRiskRatioExact(
     const double pi1 = NA_REAL,
     const double pi2 = NA_REAL,
     const double allocationRatioPlanned = 1,
-    const double alpha = 0.025) {
+    const double alpha = 0.025,
+    const bool calculateAttainedAlpha = 1) {
 
   double r = allocationRatioPlanned/(1 + allocationRatioPlanned);
   int n1 = std::round(n*r);
@@ -6306,7 +6523,7 @@ DataFrame powerRiskRatioExact(
       double p1hat = y1/(n1+0.0), p2hat = y2/(n2+0.0);
       double md = p1hat - p2hat*riskRatioH0;
       double mv = std::max(p1*(1-p1)/n1 +
-                           pow(riskRatioH0,2)*p2*(1-p2)/n2, 1e-8);
+                           pow(riskRatioH0,2)*p2*(1-p2)/n2, 1.0e-8);
       T[i++] = md/sqrt(mv);
     }
   }
@@ -6352,6 +6569,7 @@ DataFrame powerRiskRatioExact(
               }
 
               NumericVector qsorted = q[order];
+              double aval;
 
               if (directionUpper) { // reject H0 if T >= t
                 double s = 0;
@@ -6365,9 +6583,9 @@ DataFrame powerRiskRatioExact(
 
                 // backtrack to obtain the critical value of T
                 if (i == k1-1) {
-                  return Tunique[k1-1] + 1; // impossible to reject H0
+                  aval = Tunique[k1-1] + 1; // impossible to reject H0
                 } else {
-                  return Tunique[i+1];
+                  aval = Tunique[i+1];
                 }
               } else { // reject H0 if T <= t
                 double s = 0;
@@ -6381,31 +6599,34 @@ DataFrame powerRiskRatioExact(
 
                 // backtrack to obtain the critical value of T
                 if (i == 0) {
-                  return Tunique[0] - 1; // impossible to reject H0
+                  aval = Tunique[0] - 1; // impossible to reject H0
                 } else {
-                  return Tunique[i-1];
+                  aval = Tunique[i-1];
                 }
               }
+
+              return directionUpper ? -aval : aval;
             };
 
   // find the critical value independent of pi2
-  int K = 500;
+  double pi2lower = 0;
+  double pi2upper = std::min(1.0, 1/riskRatioH0);
+
+  int K = 100;
   NumericVector a(K), b(K);
+  double delta = (pi2upper - pi2lower)/K;
+  double tol = 1.0e-6;
   for (i=0; i<K; i++) {
-    a[i] = R::runif(0, std::min(1.0, 1/riskRatioH0));
-    b[i] = f(a[i]);
+    double lower = pi2lower + i*delta;
+    double upper = lower + delta;
+    NumericVector out = mini(f, lower, upper, tol);
+    a[i] = out[0];
+    b[i] = out[1];
   }
 
-  double pi2star, t;
-  if (directionUpper) {
-    i = which_max(b);
-    pi2star = a[i];
-    t = b[i];
-  } else {
-    i = which_min(b);
-    pi2star = a[i];
-    t = b[i];
-  }
+  i = which_min(b);
+  double pi2star = a[i];
+  double t = directionUpper ? -b[i] : b[i];
 
   // calculate attained alpha and power
   auto g = [n1, n2, x1, x2, T, t,
@@ -6428,20 +6649,66 @@ DataFrame powerRiskRatioExact(
               return preject;
             };
 
-  double attainedAlpha  = g(pi2star*riskRatioH0, pi2star);
   double power = g(pi1, pi2);
 
-  DataFrame result = DataFrame::create(
-    _["alpha"] = alpha,
-    _["attainedAlpha"] = attainedAlpha,
-    _["power"] = power,
-    _["n"] = n,
-    _["riskRatioH0"] = riskRatioH0,
-    _["pi1"] = pi1,
-    _["pi2"] = pi2,
-    _["allocationRatioPlanned"] = allocationRatioPlanned,
-    _["zstatRiskRatioBound"] = t,
-    _["pi2star"] = pi2star);
+  DataFrame result;
+
+  if (calculateAttainedAlpha) {
+    auto h = [n1, n2, x1, x2, T, t, directionUpper,
+              riskRatioH0](double p2)->double {
+                double p1 = p2*riskRatioH0;
+                NumericVector q1 = dbinom(x1, n1, p1, 0);
+                NumericVector q2 = dbinom(x2, n2, p2, 0);
+
+                double preject = 0;
+                int i = 0;
+                for (int y1=0; y1<=n1; y1++) {
+                  for (int y2=0; y2<=n2; y2++) {
+                    if ((directionUpper && (T[i] >= t)) ||
+                        ((!directionUpper) && (T[i] <= t))) {
+                      preject += q1[y1]*q2[y2];
+                    }
+                    i++;
+                  }
+                }
+
+                return -preject;
+              };
+
+    for (i=0; i<K; i++) {
+      double lower = pi2lower + i*delta;
+      double upper = lower + delta;
+      NumericVector out = mini(h, lower, upper, tol);
+      a[i] = out[0];
+      b[i] = out[1];
+    }
+
+    i = which_min(b);
+    double attainedAlpha = -b[i];
+
+    result = DataFrame::create(
+      _["alpha"] = alpha,
+      _["attainedAlpha"] = attainedAlpha,
+      _["power"] = power,
+      _["n"] = n,
+      _["riskRatioH0"] = riskRatioH0,
+      _["pi1"] = pi1,
+      _["pi2"] = pi2,
+      _["allocationRatioPlanned"] = allocationRatioPlanned,
+      _["zstatRiskRatioBound"] = t,
+      _["pi2star"] = pi2star);
+  } else {
+    result = DataFrame::create(
+      _["alpha"] = alpha,
+      _["power"] = power,
+      _["n"] = n,
+      _["riskRatioH0"] = riskRatioH0,
+      _["pi1"] = pi1,
+      _["pi2"] = pi2,
+      _["allocationRatioPlanned"] = allocationRatioPlanned,
+      _["zstatRiskRatioBound"] = t,
+      _["pi2star"] = pi2star);
+  }
 
   return result;
 }
@@ -6519,16 +6786,16 @@ DataFrame samplesizeRiskRatioExact(
 
   DataFrame a, b;
   a = powerRiskRatioExact(n0, riskRatioH0, pi1, pi2,
-                          allocationRatioPlanned, alpha);
+                          allocationRatioPlanned, alpha, 0);
 
   while (as<double>(a["power"]) >= 1-beta) {
     a = powerRiskRatioExact(--n_lower, riskRatioH0, pi1, pi2,
-                            allocationRatioPlanned, alpha);
+                            allocationRatioPlanned, alpha, 0);
   }
 
   for (n=n_lower+1; n<=n_upper; n++) {
     a = powerRiskRatioExact(n, riskRatioH0, pi1, pi2,
-                            allocationRatioPlanned, alpha);
+                            allocationRatioPlanned, alpha, 0);
 
     // ensure that the power exceeds 1-beta for the next 10 sample sizes
     if (as<double>(a["power"]) >= 1-beta) {
@@ -6536,7 +6803,7 @@ DataFrame samplesizeRiskRatioExact(
       bool okay = 1;
       for (i=1; i<=10; i++) {
         b = powerRiskRatioExact(n+i, riskRatioH0, pi1, pi2,
-                                allocationRatioPlanned, alpha);
+                                allocationRatioPlanned, alpha, 0);
         if (as<double>(b["power"]) < 1-beta) {
           okay = 0;
           break;
@@ -6550,6 +6817,9 @@ DataFrame samplesizeRiskRatioExact(
       }
     }
   }
+
+  a = powerRiskRatioExact(n, riskRatioH0, pi1, pi2,
+                          allocationRatioPlanned, alpha, 1);
 
   return a;
 }
@@ -6569,12 +6839,18 @@ DataFrame samplesizeRiskRatioExact(
 //'   versus control. Defaults to 1 for equal randomization.
 //' @param alpha The significance level for each of the two one-sided
 //'   tests. Defaults to 0.05.
+//' @param calculateAttainedAlpha Whether to calculate the attained alpha.
+//'
 //' @return A data frame with the following variables:
 //'
 //' * \code{alpha}: The specified significance level for each of the two
 //'   one-sided tests.
 //'
-//' * \code{attainedAlpha}: The attained significance level.
+//' * \code{attainedAlphaH10}: The attained significance level under H10
+//'   if requested.
+//'
+//' * \code{attainedAlphaH20}: The attained significance level under H20
+//'   if requested.
 //'
 //' * \code{power}: The power.
 //'
@@ -6620,7 +6896,8 @@ DataFrame powerRiskDiffExactEquiv(
     const double pi1 = NA_REAL,
     const double pi2 = NA_REAL,
     const double allocationRatioPlanned = 1,
-    const double alpha = 0.05) {
+    const double alpha = 0.05,
+    const bool calculateAttainedAlpha = 1) {
 
   double r = allocationRatioPlanned/(1 + allocationRatioPlanned);
   int n1 = std::round(n*r);
@@ -6638,7 +6915,7 @@ DataFrame powerRiskDiffExactEquiv(
       double p1 = a[0], p2 = a[1];
       double p1hat = y1/(n1+0.0), p2hat = y2/(n2+0.0);
       double md = p1hat - p2hat - riskDiffLower;
-      double mv = std::max(p1*(1-p1)/n1 + p2*(1-p2)/n2, 1e-8);
+      double mv = std::max(p1*(1-p1)/n1 + p2*(1-p2)/n2, 1.0e-8);
       T1[i++] = md/sqrt(mv);
     }
   }
@@ -6681,6 +6958,7 @@ DataFrame powerRiskDiffExactEquiv(
                }
 
                NumericVector qsorted = q[order1];
+               double aval;
 
                double s = 0;
                l = k-1;  // flattened index
@@ -6693,23 +6971,32 @@ DataFrame powerRiskDiffExactEquiv(
 
                // backtrack to obtain the critical value of T1
                if (i == k1-1) {
-                 return T1unique[k1-1] + 1; // impossible to reject H10
+                 aval = T1unique[k1-1] + 1; // impossible to reject H10
                } else {
-                 return T1unique[i+1];
+                 aval = T1unique[i+1];
                }
+
+               return -aval;
              };
 
   // find the critical value for testing H10 independent of pi2
   double pi2lower1 = std::max(0.0, -riskDiffLower);
   double pi2upper1 = std::min(1.0, 1-riskDiffLower);
 
-  int K = 500;
+  int K = 100;
   NumericVector a1(K), b1(K);
+  double delta1 = (pi2upper1 - pi2lower1)/K;
+  double tol = 1.0e-6;
   for (i=0; i<K; i++) {
-    a1[i] = R::runif(pi2lower1, pi2upper1);
-    b1[i] = f1(a1[i]);
+    double lower = pi2lower1 + i*delta1;
+    double upper = lower + delta1;
+    NumericVector out = mini(f1, lower, upper, tol);
+    a1[i] = out[0];
+    b1[i] = out[1];
   }
-  double t1 = max(b1);
+
+  i = which_min(b1);
+  double t1 = -b1[i];
 
 
   // The set of values for the test statistic for the upper limit
@@ -6721,7 +7008,7 @@ DataFrame powerRiskDiffExactEquiv(
       double p1 = a[0], p2 = a[1];
       double p1hat = y1/(n1+0.0), p2hat = y2/(n2+0.0);
       double md = p1hat - p2hat - riskDiffUpper;
-      double mv = std::max(p1*(1-p1)/n1 + p2*(1-p2)/n2, 1e-8);
+      double mv = std::max(p1*(1-p1)/n1 + p2*(1-p2)/n2, 1.0e-8);
       T2[i++] = md/sqrt(mv);
     }
   }
@@ -6773,6 +7060,7 @@ DataFrame powerRiskDiffExactEquiv(
                  }
 
                  NumericVector qsorted = q[order2];
+                 double aval;
 
                  double s = 0;
                  l = 0;
@@ -6785,19 +7073,27 @@ DataFrame powerRiskDiffExactEquiv(
 
                  // backtrack to obtain the critical value of T2
                  if (i == 0) {
-                   return T2unique[0] - 1; // impossible to reject H20
+                   aval = T2unique[0] - 1; // impossible to reject H20
                  } else {
-                   return T2unique[i-1];
+                   aval = T2unique[i-1];
                  }
+
+                 return aval;
                };
 
     // find the critical value independent of pi2
     NumericVector b2(K);
+    double delta2 = (pi2upper2 - pi2lower2)/K;
     for (i=0; i<K; i++) {
-      a2[i] = R::runif(pi2lower2, pi2upper2);
-      b2[i] = f2(a2[i]);
+      double lower = pi2lower2 + i*delta2;
+      double upper = lower + delta2;
+      NumericVector out = mini(f2, lower, upper, tol);
+      a2[i] = out[0];
+      b2[i] = out[1];
     }
-    t2 = min(b2);
+
+    i = which_min(b2);
+    t2 = b2[i];
   }
 
 
@@ -6820,41 +7116,91 @@ DataFrame powerRiskDiffExactEquiv(
     return preject;
   };
 
-  NumericVector alpha1(K);
-  for (i=0; i<K; i++) {
-    alpha1[i] = g(a1[i] + riskDiffLower, a1[i]);
-  }
-  double attainedAlpha1 = max(alpha1);
-
-  double attainedAlpha;
-  if (riskDiffLower == -riskDiffUpper) {
-    attainedAlpha = attainedAlpha1;
-  } else {
-    NumericVector alpha2(K);
-    for (i=0; i<K; i++) {
-      alpha2[i] = g(a2[i] + riskDiffUpper, a2[i]);
-    }
-    double attainedAlpha2 = max(alpha2);
-
-    attainedAlpha = std::max(attainedAlpha1, attainedAlpha2);
-  }
-
   double power = g(pi1, pi2);
 
+  DataFrame result;
 
-  DataFrame result = DataFrame::create(
-    _["alpha"] = alpha,
-    _["attainedAlpha"] = attainedAlpha,
-    _["power"] = power,
-    _["n"] = n,
-    _["riskDiffLower"] = riskDiffLower,
-    _["riskDiffUpper"] = riskDiffUpper,
-    _["pi1"] = pi1,
-    _["pi2"] = pi2,
-    _["riskDiff"] = pi1 - pi2,
-    _["allocationRatioPlanned"] = allocationRatioPlanned,
-    _["zstatRiskDiffLower"] = t1,
-    _["zstatRiskDiffUpper"] = t2);
+  if (calculateAttainedAlpha) {
+    double riskDiffH0;
+
+    auto h = [n1, n2, x1, x2, T1, T2, t1, t2,
+              &riskDiffH0](double p2)->double {
+                double p1 = p2 + riskDiffH0;
+                NumericVector q1 = dbinom(x1, n1, p1, 0);
+                NumericVector q2 = dbinom(x2, n2, p2, 0);
+
+                double preject = 0;
+                int i = 0;
+                for (int y1=0; y1<=n1; y1++) {
+                  for (int y2=0; y2<=n2; y2++) {
+                    if ((T1[i] >= t1) && (T2[i] <= t2)) {
+                      preject += q1[y1]*q2[y2];
+                    }
+                    i++;
+                  }
+                }
+
+                return -preject;
+              };
+
+    riskDiffH0 = riskDiffLower;
+    for (i=0; i<K; i++) {
+      double lower = pi2lower1 + i*delta1;
+      double upper = lower + delta1;
+      NumericVector out = mini(h, lower, upper, tol);
+      b1[i] = out[1];
+    }
+
+    i = which_min(b1);
+    double attainedAlphaH10 = -b1[i];
+
+    double attainedAlphaH20;
+    if (riskDiffLower == -riskDiffUpper) {
+      attainedAlphaH20 = attainedAlphaH10;
+    } else {
+      NumericVector b2(K);
+      double delta2 = (pi2upper2 - pi2lower2)/K;
+
+      riskDiffH0 = riskDiffUpper;
+      for (i=0; i<K; i++) {
+        double lower = pi2lower2 + i*delta2;
+        double upper = lower + delta2;
+        NumericVector out = mini(h, lower, upper, tol);
+        b2[i] = out[1];
+      }
+
+      i = which_min(b2);
+      attainedAlphaH20 = -b2[i];
+    }
+
+    result = DataFrame::create(
+      _["alpha"] = alpha,
+      _["attainedAlphaH10"] = attainedAlphaH10,
+      _["attainedAlphaH20"] = attainedAlphaH20,
+      _["power"] = power,
+      _["n"] = n,
+      _["riskDiffLower"] = riskDiffLower,
+      _["riskDiffUpper"] = riskDiffUpper,
+      _["pi1"] = pi1,
+      _["pi2"] = pi2,
+      _["riskDiff"] = pi1 - pi2,
+      _["allocationRatioPlanned"] = allocationRatioPlanned,
+      _["zstatRiskDiffLower"] = t1,
+      _["zstatRiskDiffUpper"] = t2);
+  } else {
+    result = DataFrame::create(
+      _["alpha"] = alpha,
+      _["power"] = power,
+      _["n"] = n,
+      _["riskDiffLower"] = riskDiffLower,
+      _["riskDiffUpper"] = riskDiffUpper,
+      _["pi1"] = pi1,
+      _["pi2"] = pi2,
+      _["riskDiff"] = pi1 - pi2,
+      _["allocationRatioPlanned"] = allocationRatioPlanned,
+      _["zstatRiskDiffLower"] = t1,
+      _["zstatRiskDiffUpper"] = t2);
+  }
 
   return result;
 }
@@ -6940,16 +7286,16 @@ DataFrame samplesizeRiskDiffExactEquiv(
 
   DataFrame a, b;
   a = powerRiskDiffExactEquiv(n0, riskDiffLower, riskDiffUpper,
-                              pi1, pi2, allocationRatioPlanned, alpha);
+                              pi1, pi2, allocationRatioPlanned, alpha, 0);
 
   while (as<double>(a["power"]) >= 1-beta) {
     a = powerRiskDiffExactEquiv(--n_lower, riskDiffLower, riskDiffUpper,
-                                pi1, pi2, allocationRatioPlanned, alpha);
+                                pi1, pi2, allocationRatioPlanned, alpha, 0);
   }
 
   for (n=n_lower+1; n<=n_upper; n++) {
     a = powerRiskDiffExactEquiv(n, riskDiffLower, riskDiffUpper,
-                                pi1, pi2, allocationRatioPlanned, alpha);
+                                pi1, pi2, allocationRatioPlanned, alpha, 0);
 
     // ensure that the power exceeds 1-beta for the next 5 sample sizes
     if (as<double>(a["power"]) >= 1-beta) {
@@ -6957,7 +7303,7 @@ DataFrame samplesizeRiskDiffExactEquiv(
       bool okay = 1;
       for (i=1; i<=5; i++) {
         b = powerRiskDiffExactEquiv(n+i, riskDiffLower, riskDiffUpper,
-                                    pi1, pi2, allocationRatioPlanned, alpha);
+                                    pi1, pi2, allocationRatioPlanned, alpha, 0);
         if (as<double>(b["power"]) < 1-beta) {
           okay = 0;
           break;
@@ -6971,6 +7317,9 @@ DataFrame samplesizeRiskDiffExactEquiv(
       }
     }
   }
+
+  a = powerRiskDiffExactEquiv(n, riskDiffLower, riskDiffUpper,
+                              pi1, pi2, allocationRatioPlanned, alpha, 1);
 
   return a;
 }
@@ -6990,12 +7339,18 @@ DataFrame samplesizeRiskDiffExactEquiv(
 //'   versus control. Defaults to 1 for equal randomization.
 //' @param alpha The significance level for each of the two one-sided
 //'   tests. Defaults to 0.05.
+//' @param calculateAttainedAlpha Whether to calculate the attained alpha.
+//'
 //' @return A data frame with the following variables:
 //'
 //' * \code{alpha}: The specified significance level for each of the two
 //'   one-sided tests.
 //'
-//' * \code{attainedAlpha}: The attained significance level.
+//' * \code{attainedAlphaH10}: The attained significance level under H10
+//'   if requested.
+//'
+//' * \code{attainedAlphaH20}: The attained significance level under H20
+//'   if requested.
 //'
 //' * \code{power}: The power.
 //'
@@ -7041,7 +7396,8 @@ DataFrame powerRiskRatioExactEquiv(
     const double pi1 = NA_REAL,
     const double pi2 = NA_REAL,
     const double allocationRatioPlanned = 1,
-    const double alpha = 0.05) {
+    const double alpha = 0.05,
+    const bool calculateAttainedAlpha = 1) {
 
   double r = allocationRatioPlanned/(1 + allocationRatioPlanned);
   int n1 = std::round(n*r);
@@ -7060,7 +7416,7 @@ DataFrame powerRiskRatioExactEquiv(
       double p1hat = y1/(n1+0.0), p2hat = y2/(n2+0.0);
       double md = p1hat - p2hat*riskRatioLower;
       double mv = std::max(p1*(1-p1)/n1 +
-                           pow(riskRatioLower,2)*p2*(1-p2)/n2, 1e-8);
+                           pow(riskRatioLower,2)*p2*(1-p2)/n2, 1.0e-8);
       T1[i++] = md/sqrt(mv);
     }
   }
@@ -7103,6 +7459,7 @@ DataFrame powerRiskRatioExactEquiv(
                }
 
                NumericVector qsorted = q[order1];
+               double aval;
 
                double s = 0;
                l = k-1;  // flattened index
@@ -7115,20 +7472,32 @@ DataFrame powerRiskRatioExactEquiv(
 
                // backtrack to obtain the critical value of T1
                if (i == k1-1) {
-                 return T1unique[k1-1] + 1; // impossible to reject H10
+                 aval = T1unique[k1-1] + 1; // impossible to reject H10
                } else {
-                 return T1unique[i+1];
+                 aval = T1unique[i+1];
                }
+
+               return -aval;
              };
 
   // find the critical value for testing H10 independent of pi2
-  int K = 500;
+  double pi2lower1 = 0;
+  double pi2upper1 = std::min(1.0, 1/riskRatioLower);
+
+  int K = 100;
   NumericVector a1(K), b1(K);
+  double delta1 = (pi2upper1 - pi2lower1)/K;
+  double tol = 1.0e-6;
   for (i=0; i<K; i++) {
-    a1[i] = R::runif(0, std::min(1.0, 1/riskRatioLower));
-    b1[i] = f1(a1[i]);
+    double lower = pi2lower1 + i*delta1;
+    double upper = lower + delta1;
+    NumericVector out = mini(f1, lower, upper, tol);
+    a1[i] = out[0];
+    b1[i] = out[1];
   }
-  double t1 = max(b1);
+
+  i = which_min(b1);
+  double t1 = -b1[i];
 
 
   // The set of values for the test statistic for the upper limit
@@ -7141,16 +7510,18 @@ DataFrame powerRiskRatioExactEquiv(
       double p1hat = y1/(n1+0.0), p2hat = y2/(n2+0.0);
       double md = p1hat - p2hat*riskRatioUpper;
       double mv = std::max(p1*(1-p1)/n1 +
-                           pow(riskRatioUpper,2)*p2*(1-p2)/n2, 1e-8);
+                           pow(riskRatioUpper,2)*p2*(1-p2)/n2, 1.0e-8);
       T2[i++] = md/sqrt(mv);
     }
   }
 
   // find the critical value independent of pi2
+  double pi2lower2 = 0;
+  double pi2upper2 =  std::min(1.0, 1/riskRatioUpper);
   double t2;
   NumericVector a2(K);
 
-  if (fabs(riskRatioLower*riskRatioUpper - 1) < 1e-8) {
+  if (fabs(riskRatioLower*riskRatioUpper - 1) < 1.0e-8) {
     t2 = -t1;
   } else {
     // sort T2 in ascending order
@@ -7211,11 +7582,17 @@ DataFrame powerRiskRatioExactEquiv(
 
     // find the critical value independent of pi2
     NumericVector b2(K);
+    double delta2 = (pi2upper2 - pi2lower2)/K;
     for (i=0; i<K; i++) {
-      a2[i] = R::runif(0, std::min(1.0, 1/riskRatioUpper));
-      b2[i] = f2(a2[i]);
+      double lower = pi2lower2 + i*delta2;
+      double upper = lower + delta2;
+      NumericVector out = mini(f2, lower, upper, tol);
+      a2[i] = out[0];
+      b2[i] = out[1];
     }
-    t2 = min(b2);
+
+    i = which_min(b2);
+    t2 = b2[i];
   }
 
 
@@ -7238,41 +7615,91 @@ DataFrame powerRiskRatioExactEquiv(
     return preject;
   };
 
-  NumericVector alpha1(K);
-  for (i=0; i<K; i++) {
-    alpha1[i] = g(a1[i]*riskRatioLower, a1[i]);
-  }
-  double attainedAlpha1 = max(alpha1);
-
-  double attainedAlpha;
-  if (fabs(riskRatioLower*riskRatioUpper - 1) < 1e-8) {
-    attainedAlpha = attainedAlpha1;
-  } else {
-    NumericVector alpha2(K);
-    for (i=0; i<K; i++) {
-      alpha2[i] = g(a2[i]*riskRatioUpper, a2[i]);
-    }
-    double attainedAlpha2 = max(alpha2);
-
-    attainedAlpha = std::max(attainedAlpha1, attainedAlpha2);
-  }
-
   double power = g(pi1, pi2);
 
+  DataFrame result;
 
-  DataFrame result = DataFrame::create(
-    _["alpha"] = alpha,
-    _["attainedAlpha"] = attainedAlpha,
-    _["power"] = power,
-    _["n"] = n,
-    _["riskRatioLower"] = riskRatioLower,
-    _["riskRatioUpper"] = riskRatioUpper,
-    _["pi1"] = pi1,
-    _["pi2"] = pi2,
-    _["riskRatio"] = pi1/pi2,
-    _["allocationRatioPlanned"] = allocationRatioPlanned,
-    _["zstatRiskRatioLower"] = t1,
-    _["zstatRiskRatioUpper"] = t2);
+  if (calculateAttainedAlpha) {
+    double riskRatioH0;
+
+    auto h = [n1, n2, x1, x2, T1, T2, t1, t2,
+              &riskRatioH0](double p2)->double {
+                double p1 = p2*riskRatioH0;
+                NumericVector q1 = dbinom(x1, n1, p1, 0);
+                NumericVector q2 = dbinom(x2, n2, p2, 0);
+
+                double preject = 0;
+                int i = 0;
+                for (int y1=0; y1<=n1; y1++) {
+                  for (int y2=0; y2<=n2; y2++) {
+                    if ((T1[i] >= t1) && (T2[i] <= t2)) {
+                      preject += q1[y1]*q2[y2];
+                    }
+                    i++;
+                  }
+                }
+
+                return -preject;
+              };
+
+    riskRatioH0 = riskRatioLower;
+    for (i=0; i<K; i++) {
+      double lower = pi2lower1 + i*delta1;
+      double upper = lower + delta1;
+      NumericVector out = mini(h, lower, upper, tol);
+      b1[i] = out[1];
+    }
+
+    i = which_min(b1);
+    double attainedAlphaH10 = -b1[i];
+
+    double attainedAlphaH20;
+    if (fabs(riskRatioLower*riskRatioUpper - 1) < 1.0e-8) {
+      attainedAlphaH20 = attainedAlphaH10;
+    } else {
+      NumericVector b2(K);
+      double delta2 = (pi2upper2 - pi2lower2)/K;
+
+      riskRatioH0 = riskRatioUpper;
+      for (i=0; i<K; i++) {
+        double lower = pi2lower2 + i*delta2;
+        double upper = lower + delta2;
+        NumericVector out = mini(h, lower, upper, tol);
+        b2[i] = out[1];
+      }
+
+      i = which_min(b2);
+      attainedAlphaH20 = -b2[i];
+    }
+
+    result = DataFrame::create(
+      _["alpha"] = alpha,
+      _["attainedAlphaH10"] = attainedAlphaH10,
+      _["attainedAlphaH20"] = attainedAlphaH20,
+      _["power"] = power,
+      _["n"] = n,
+      _["riskRatioLower"] = riskRatioLower,
+      _["riskRatioUpper"] = riskRatioUpper,
+      _["pi1"] = pi1,
+      _["pi2"] = pi2,
+      _["riskRatio"] = pi1/pi2,
+      _["allocationRatioPlanned"] = allocationRatioPlanned,
+      _["zstatRiskRatioLower"] = t1,
+      _["zstatRiskRatioUpper"] = t2);
+  } else {
+    result = DataFrame::create(
+      _["alpha"] = alpha,
+      _["power"] = power,
+      _["n"] = n,
+      _["riskRatioLower"] = riskRatioLower,
+      _["riskRatioUpper"] = riskRatioUpper,
+      _["pi1"] = pi1,
+      _["pi2"] = pi2,
+      _["riskRatio"] = pi1/pi2,
+      _["allocationRatioPlanned"] = allocationRatioPlanned,
+      _["zstatRiskRatioLower"] = t1,
+      _["zstatRiskRatioUpper"] = t2);
+  }
 
   return result;
 }
@@ -7358,16 +7785,16 @@ DataFrame samplesizeRiskRatioExactEquiv(
 
   DataFrame a, b;
   a = powerRiskRatioExactEquiv(n0, riskRatioLower, riskRatioUpper,
-                               pi1, pi2, allocationRatioPlanned, alpha);
+                               pi1, pi2, allocationRatioPlanned, alpha, 0);
 
   while (as<double>(a["power"]) >= 1-beta) {
     a = powerRiskRatioExactEquiv(--n_lower, riskRatioLower, riskRatioUpper,
-                                 pi1, pi2, allocationRatioPlanned, alpha);
+                                 pi1, pi2, allocationRatioPlanned, alpha, 0);
   }
 
   for (n=n_lower+1; n<=n_upper; n++) {
     a = powerRiskRatioExactEquiv(n, riskRatioLower, riskRatioUpper,
-                                 pi1, pi2, allocationRatioPlanned, alpha);
+                                 pi1, pi2, allocationRatioPlanned, alpha, 0);
 
     // ensure that the power exceeds 1-beta for the next 5 sample sizes
     if (as<double>(a["power"]) >= 1-beta) {
@@ -7376,7 +7803,7 @@ DataFrame samplesizeRiskRatioExactEquiv(
       for (i=1; i<=5; i++) {
         b = powerRiskRatioExactEquiv(n+i, riskRatioLower, riskRatioUpper,
                                      pi1, pi2, allocationRatioPlanned,
-                                     alpha);
+                                     alpha, 0);
         if (as<double>(b["power"]) < 1-beta) {
           okay = 0;
           break;
@@ -7391,7 +7818,390 @@ DataFrame samplesizeRiskRatioExactEquiv(
     }
   }
 
+  a = powerRiskRatioExactEquiv(n, riskRatioLower, riskRatioUpper,
+                               pi1, pi2, allocationRatioPlanned, alpha, 1);
+
   return a;
+}
+
+
+
+//' @title P-value for exact unconditional test of risk difference
+//' @description Obtains the p-value for exact unconditional
+//' test of risk difference.
+//'
+//' @param riskDiffH0 The risk difference under the null hypothesis.
+//'   Defaults to 0.
+//' @param directionUpper Whether larger values represent better
+//'   responses.
+//' @param n1 The sample size for the active treatment group.
+//' @param y1 The number of responses for the active treatment group.
+//' @param n2 The sample size for the control group.
+//' @param y2 The number of responses for the control group.
+//'
+//' @return A data frame containing the following variables:
+//'
+//' * \code{riskDiffH0}: The risk difference under the null hypothesis.
+//'
+//' * \code{directionUpper}: Whether larger values represent better
+//'   responses.
+//'
+//' * \code{riskDiff}: The observed risk difference.
+//'
+//' * \code{zstat}: The observed value of the Z test statistic.
+//'
+//' * \code{pvalue}: The one-sided p-value for the unconditional exact test.
+//'
+//' * \code{pi2star}: The value of pi2 that yields the p-value.
+//'
+//' @author Kaifeng Lu, \email{kaifenglu@@gmail.com}
+//'
+//' @examples
+//'
+//' riskDiffExactPValue(riskDiffH0 = 0, directionUpper = 1,
+//'                     n1 = 68, y1 = 2, n2 = 65, y2 = 1)
+//'
+//' @export
+// [[Rcpp::export]]
+DataFrame riskDiffExactPValue(
+    const double riskDiffH0 = 0,
+    bool directionUpper = 1,
+    const int n1 = NA_REAL,
+    const int y1 = NA_REAL,
+    const int n2 = NA_REAL,
+    const int y2 = NA_REAL) {
+
+  int i, k = (n1+1)*(n2+1);
+
+  // The set of values for the test statistic
+  NumericVector T(k);
+  i = 0;
+  for (int x1=0; x1<=n1; x1++) {
+    for (int x2=0; x2<=n2; x2++) {
+      NumericVector a = remlRiskDiff(riskDiffH0, n1, x1, n2, x2);
+      double p1 = a[0], p2 = a[1];
+      double p1hat = x1/(n1+0.0), p2hat = x2/(n2+0.0);
+      double md = p1hat - p2hat - riskDiffH0;
+      double mv = std::max(p1*(1-p1)/n1 + p2*(1-p2)/n2, 1.0e-8);
+      T[i++] = md/sqrt(mv);
+    }
+  }
+
+  double Tobs = T[y1*(n2+1)+y2];
+  double riskDiff = y1/(n1+0.0) - y2/(n2+0.0);
+
+  IntegerVector x1 = seq(0, n1);
+  IntegerVector x2 = seq(0, n2);
+
+  auto f = [n1, n2, x1, x2, riskDiffH0, directionUpper,
+            T, k, Tobs](double p2)->double {
+              NumericVector q1 = dbinom(x1, n1, p2 + riskDiffH0, 0);
+              NumericVector q2 = dbinom(x2, n2, p2, 0);
+              NumericVector q(k);
+
+              int i = 0;
+              for (int y1=0; y1<=n1; y1++) {
+                for (int y2=0; y2<=n2; y2++) {
+                  q[i++] = q1[y1]*q2[y2];
+                }
+              }
+
+              double s = 0.0;
+              for (i=0; i<k; i++) {
+                if ((2*directionUpper - 1)*(T[i] - Tobs) >= 0.0) {
+                  s += q[i];
+                }
+              }
+
+              return -s;
+            };
+
+
+  double pi2lower = std::max(0.0, -riskDiffH0);
+  double pi2upper = std::min(1.0, 1-riskDiffH0);
+
+  int K = 100;
+  NumericVector a(K), b(K);
+  double delta = (pi2upper - pi2lower)/K;
+  double tol = 1.0e-6;
+  for (i=0; i<K; i++) {
+    double lower = pi2lower + i*delta;
+    double upper = lower + delta;
+    NumericVector out = mini(f, lower, upper, tol);
+    a[i] = out[0];
+    b[i] = out[1];
+  }
+
+  i = which_min(b);
+  double pi2star = a[i];
+  double pvalue = -b[i];
+
+  DataFrame result = DataFrame::create(
+    _["riskDiffH0"] = riskDiffH0,
+    _["directionUpper"] = directionUpper,
+    _["riskDiff"] = riskDiff,
+    _["zstat"] = Tobs,
+    _["pvalue"] = pvalue,
+    _["pi2star"] = pi2star);
+
+  return result;
+}
+
+
+
+//' @title Exact unconditional confidence interval for risk difference
+//' @description Obtains the exact unconditional confidence interval for
+//' risk difference based on the standardized score statistic.
+//'
+//' @param n1 The sample size for the active treatment group.
+//' @param y1 The number of responses for the active treatment group.
+//' @param n2 The sample size for the control group.
+//' @param y2 The number of responses for the control group.
+//' @param cilevel The confidence interval level.
+//'
+//' @return A data frame containing the following variables:
+//'
+//' * \code{scale}: The scale of treatment effect.
+//'
+//' * \code{estimate}: The point estimate.
+//'
+//' * \code{lower}: The lower limit of the confidence interval.
+//'
+//' * \code{upper}: The upper limit of the confidence interval.
+//'
+//' * \code{cilevel}: The confidence interval level.
+//'
+//' @author Kaifeng Lu, \email{kaifenglu@@gmail.com}
+//'
+//' @examples
+//'
+//' riskDiffExactCI(n1 = 68, y1 = 2, n2 = 65, y2 = 1, cilevel = 0.95)
+//'
+//' @export
+// [[Rcpp::export]]
+DataFrame riskDiffExactCI(
+    const int n1 = NA_REAL,
+    const int y1 = NA_REAL,
+    const int n2 = NA_REAL,
+    const int y2 = NA_REAL,
+    const double cilevel = 0.95) {
+
+  double estimate = y1/(n1+0.0) - y2/(n2+0.0);
+  double alpha = 1.0 - cilevel; // two-sided alpha
+
+  auto f1 = [n1, y1, n2, y2, alpha](double riskDiff)->double {
+    DataFrame df = riskDiffExactPValue(riskDiff, 1, n1, y1, n2, y2);
+    double pvalue = df["pvalue"];
+    return pvalue - alpha/2;
+  };
+
+  auto f2 = [n1, y1, n2, y2, alpha](double riskDiff)->double {
+    DataFrame df = riskDiffExactPValue(riskDiff, 0, n1, y1, n2, y2);
+    double pvalue = df["pvalue"];
+    return pvalue - alpha/2;
+  };
+
+  double lower = brent(f1, -1.0, estimate, 1.0e-6);
+  double upper = brent(f2, estimate, 1.0, 1.0e-6);
+
+  DataFrame result = DataFrame::create(
+    _["scale"] = "risk difference",
+    _["estimate"] = estimate,
+    _["lower"] = lower,
+    _["upper"] = upper,
+    _["cilevel"] = cilevel);
+
+  return result;
+}
+
+
+
+//' @title P-value for exact unconditional test of risk ratio
+//' @description Obtains the p-value for exact unconditional
+//' test of risk ratio.
+//'
+//' @param riskRatioH0 The risk ratio under the null hypothesis.
+//'   Defaults to 1.
+//' @param directionUpper Whether larger values represent better
+//'   responses.
+//' @param n1 The sample size for the active treatment group.
+//' @param y1 The number of responses for the active treatment group.
+//' @param n2 The sample size for the control group.
+//' @param y2 The number of responses for the control group.
+//'
+//' @return A data frame containing the following variables:
+//'
+//' * \code{riskRatioH0}: The risk ratio under the null hypothesis.
+//'
+//' * \code{directionUpper}: Whether larger values represent better
+//'   responses.
+//'
+//' * \code{riskRatio}: The observed risk ratio.
+//'
+//' * \code{zstat}: The observed value of the Z test statistic.
+//'
+//' * \code{pvalue}: The one-sided p-value for the unconditional exact test.
+//'
+//' * \code{pi2star}: The value of pi2 that yields the p-value.
+//'
+//' @author Kaifeng Lu, \email{kaifenglu@@gmail.com}
+//'
+//' @examples
+//'
+//' riskRatioExactPValue(riskRatioH0 = 1, directionUpper = 1,
+//'                      n1 = 68, y1 = 2, n2 = 65, y2 = 1)
+//'
+//' @export
+// [[Rcpp::export]]
+DataFrame riskRatioExactPValue(
+    const double riskRatioH0 = 1,
+    bool directionUpper = 1,
+    const int n1 = NA_REAL,
+    const int y1 = NA_REAL,
+    const int n2 = NA_REAL,
+    const int y2 = NA_REAL) {
+
+  int i, k = (n1+1)*(n2+1);
+
+  // The set of values for the test statistic
+  NumericVector T(k);
+  i = 0;
+  for (int x1=0; x1<=n1; x1++) {
+    for (int x2=0; x2<=n2; x2++) {
+      NumericVector a = remlRiskRatio(riskRatioH0, n1, x1, n2, x2);
+      double p1 = a[0], p2 = a[1];
+      double p1hat = x1/(n1+0.0), p2hat = x2/(n2+0.0);
+      double md = p1hat - p2hat*riskRatioH0;
+      double mv = std::max(p1*(1-p1)/n1 +
+                           pow(riskRatioH0, 2)*p2*(1-p2)/n2, 1.0e-8);
+      T[i++] = md/sqrt(mv);
+    }
+  }
+
+  double Tobs = T[y1*(n2+1)+y2];
+  double riskRatio = y2 > 0 ? (y1/(n1+0.0)) / (y2/(n2+0.0)) : R_PosInf;
+
+  IntegerVector x1 = seq(0, n1);
+  IntegerVector x2 = seq(0, n2);
+
+  auto f = [n1, n2, x1, x2, riskRatioH0, directionUpper,
+            T, k, Tobs](double p2)->double {
+              NumericVector q1 = dbinom(x1, n1, p2*riskRatioH0, 0);
+              NumericVector q2 = dbinom(x2, n2, p2, 0);
+              NumericVector q(k);
+
+              int i = 0;
+              for (int y1=0; y1<=n1; y1++) {
+                for (int y2=0; y2<=n2; y2++) {
+                  q[i++] = q1[y1]*q2[y2];
+                }
+              }
+
+              double s = 0.0;
+              for (i=0; i<k; i++) {
+                if ((2*directionUpper - 1)*(T[i] - Tobs) >= 0.0) {
+                  s += q[i];
+                }
+              }
+
+              return -s;
+            };
+
+
+  double pi2lower = 0.0;
+  double pi2upper = std::min(1.0, 1.0/riskRatioH0);
+
+  int K = 100;
+  NumericVector a(K), b(K);
+  double delta = (pi2upper - pi2lower)/K;
+  double tol = 1.0e-6;
+  for (i=0; i<K; i++) {
+    double lower = pi2lower + i*delta;
+    double upper = lower + delta;
+    NumericVector out = mini(f, lower, upper, tol);
+    a[i] = out[0];
+    b[i] = out[1];
+  }
+
+  i = which_min(b);
+  double pi2star = a[i];
+  double pvalue = -b[i];
+
+  DataFrame result = DataFrame::create(
+    _["riskRatioH0"] = riskRatioH0,
+    _["directionUpper"] = directionUpper,
+    _["riskRatio"] = riskRatio,
+    _["zstat"] = Tobs,
+    _["pvalue"] = pvalue,
+    _["pi2star"] = pi2star);
+
+  return result;
+}
+
+
+//' @title Exact unconditional confidence interval for risk ratio
+//' @description Obtains the exact unconditional confidence interval for
+//' risk ratio based on the standardized score statistic.
+//'
+//' @param n1 The sample size for the active treatment group.
+//' @param y1 The number of responses for the active treatment group.
+//' @param n2 The sample size for the control group.
+//' @param y2 The number of responses for the control group.
+//' @param cilevel The confidence interval level.
+//'
+//' @return A data frame containing the following variables:
+//'
+//' * \code{scale}: The scale of treatment effect.
+//'
+//' * \code{estimate}: The point estimate.
+//'
+//' * \code{lower}: The lower limit of the confidence interval.
+//'
+//' * \code{upper}: The upper limit of the confidence interval.
+//'
+//' * \code{cilevel}: The confidence interval level.
+//'
+//' @author Kaifeng Lu, \email{kaifenglu@@gmail.com}
+//'
+//' @examples
+//'
+//' riskRatioExactCI(n1 = 68, y1 = 2, n2 = 65, y2 = 1, cilevel = 0.95)
+//'
+//' @export
+// [[Rcpp::export]]
+DataFrame riskRatioExactCI(
+    const int n1 = NA_REAL,
+    const int y1 = NA_REAL,
+    const int n2 = NA_REAL,
+    const int y2 = NA_REAL,
+    const double cilevel = 0.95) {
+
+  double estimate = y2 > 0 ? (y1/(n1+0.0)) / (y2/(n2+0.0)) : R_PosInf;
+  double alpha = 1.0 - cilevel; // two-sided alpha
+
+  auto f1 = [n1, y1, n2, y2, alpha](double riskRatio)->double {
+    DataFrame df = riskRatioExactPValue(riskRatio, 1, n1, y1, n2, y2);
+    double pvalue = df["pvalue"];
+    return pvalue - alpha/2;
+  };
+
+  auto f2 = [n1, y1, n2, y2, alpha](double riskRatio)->double {
+    DataFrame df = riskRatioExactPValue(riskRatio, 0, n1, y1, n2, y2);
+    double pvalue = df["pvalue"];
+    return pvalue - alpha/2;
+  };
+
+  double lower = brent(f1, 0.001, estimate, 1.0e-6);
+  double upper = brent(f2, estimate, 1000.0, 1.0e-6);
+
+  DataFrame result = DataFrame::create(
+    _["scale"] = "risk difference",
+    _["estimate"] = estimate,
+    _["lower"] = lower,
+    _["upper"] = upper,
+    _["cilevel"] = cilevel);
+
+  return result;
 }
 
 

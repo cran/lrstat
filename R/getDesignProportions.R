@@ -142,9 +142,6 @@
 #'
 #'     - \code{spendingTime}: The error spending time at each analysis.
 #'
-#'     - \code{calculationTarget}: The calculation target, \code{beta} or
-#'       \code{n}.
-#'
 #'     - \code{normalApproximation}: The type of computation of the p-values.
 #'       If \code{TRUE}, the variance is assumed to be known, otherwise
 #'       the calculations are performed with the binomial distribution.
@@ -396,7 +393,6 @@ getDesignOneProportion <- function(
   des$byStageResults$numberOfSubjects =
     des$byStageResults$informationRates*n
 
-  des$settings$calculationTarget = ifelse(is.na(beta), "beta", "n")
   des$settings$normalApproximation = normalApproximation
   des$settings$rounding = rounding
 
@@ -552,9 +548,6 @@ getDesignOneProportion <- function(
 #'
 #'     - \code{varianceRatio}: The ratio of the variance under H0 to the
 #'       variance under H1.
-#'
-#'     - \code{calculationTarget}: The calculation target, \code{beta} or
-#'       \code{n}.
 #'
 #'     - \code{rounding}: Whether to round up sample size.
 #'
@@ -713,7 +706,6 @@ getDesignPairedPropMcNemar <- function(
   des$byStageResults$numberOfSubjects =
     des$byStageResults$informationRates*n
 
-  des$settings$calculationTarget = ifelse(is.na(beta), "beta", "n")
   des$settings$nullVariance = nullVariance
   des$settings$rounding = rounding
 
@@ -870,9 +862,6 @@ getDesignPairedPropMcNemar <- function(
 #'
 #'     - \code{varianceRatio}: The ratio of the variance under H0 to
 #'       the variance under H1.
-#'
-#'     - \code{calculationTarget}: The calculation target, \code{beta} or
-#'       \code{n}.
 #'
 #'     - \code{nullVariance}: Whether to use the variance under the null or
 #'       the empirical variance under the alternative.
@@ -1049,7 +1038,6 @@ getDesignRiskDiff <- function(
   des$byStageResults$numberOfSubjects =
     des$byStageResults$informationRates*n
 
-  des$settings$calculationTarget = ifelse(is.na(beta), "beta", "n")
   des$settings$nullVariance = nullVariance
   des$settings$varianceRatio = varianceRatio
   des$settings$allocationRatioPlanned = allocationRatioPlanned
@@ -1207,9 +1195,6 @@ getDesignRiskDiff <- function(
 #'
 #'     - \code{varianceRatio}: The ratio of the variance under H0 to
 #'       the variance under H1.
-#'
-#'     - \code{calculationTarget}: The calculation target, \code{beta} or
-#'       \code{n}.
 #'
 #'     - \code{nullVariance}: Whether to use the variance under the null or
 #'       the empirical variance under the alternative.
@@ -1384,7 +1369,6 @@ getDesignRiskRatio <- function(
   des$byStageResults$numberOfSubjects =
     des$byStageResults$informationRates*n
 
-  des$settings$calculationTarget = ifelse(is.na(beta), "beta", "n")
   des$settings$nullVariance = nullVariance
   des$settings$allocationRatioPlanned = allocationRatioPlanned
   des$settings$rounding = rounding
@@ -1543,9 +1527,6 @@ getDesignRiskRatio <- function(
 #'
 #'     - \code{varianceRatio}: The ratio of the variance under H0 to
 #'       the variance under H1.
-#'
-#'     - \code{calculationTarget}: The calculation target, \code{beta} or
-#'       \code{n}.
 #'
 #'     - \code{nullVariance}: Whether to use the variance under the null or
 #'       the empirical variance under the alternative.
@@ -1721,7 +1702,6 @@ getDesignRiskRatioFM <- function(
   des$byStageResults$numberOfSubjects =
     des$byStageResults$informationRates*n
 
-  des$settings$calculationTarget = ifelse(is.na(beta), "beta", "n")
   des$settings$nullVariance = nullVariance
   des$settings$allocationRatioPlanned = allocationRatioPlanned
   des$settings$rounding = rounding
@@ -1878,9 +1858,6 @@ getDesignRiskRatioFM <- function(
 #'
 #'     - \code{varianceRatio}: The ratio of the variance under H0 to
 #'       the variance under H1.
-#'
-#'     - \code{calculationTarget}: The calculation target, \code{beta} or
-#'       \code{n}.
 #'
 #'     - \code{nullVariance}: Whether to use the variance under the null
 #'       or the empirical variance under the alternative.
@@ -2056,7 +2033,6 @@ getDesignOddsRatio <- function(
   des$byStageResults$numberOfSubjects =
     des$byStageResults$informationRates*n
 
-  des$settings$calculationTarget = ifelse(is.na(beta), "beta", "n")
   des$settings$nullVariance = nullVariance
   des$settings$allocationRatioPlanned = allocationRatioPlanned
   des$settings$rounding = rounding
@@ -2191,9 +2167,6 @@ getDesignOddsRatio <- function(
 #'     - \code{userAlphaSpending}: The user defined alpha spending.
 #'
 #'     - \code{spendingTime}: The error spending time at each analysis.
-#'
-#'     - \code{calculationTarget}: The calculation target, \code{beta} or
-#'       \code{n}.
 #'
 #'     - \code{nullVariance}: Whether to use the variance under the null or
 #'       the empirical variance under the alternative.
@@ -2439,11 +2412,10 @@ getDesignRiskDiffEquiv <- function(
   des$settings$nullVariance = nullVariance
   des$settings$allocationRatioPlanned = allocationRatioPlanned
   des$settings$rounding = rounding
-  des$settings$calculationTarget = ifelse(is.na(beta), "beta", "n")
   des$settings <-
     des$settings[c("typeAlphaSpending", "parameterAlphaSpending",
                    "userAlphaSpending", "spendingTime",
-                   "calculationTarget", "nullVariance",
+                   "nullVariance",
                    "varianceRatioH10", "varianceRatioH20",
                    "varianceRatioH12", "varianceRatioH21",
                    "allocationRatioPlanned", "rounding")]
@@ -2576,9 +2548,6 @@ getDesignRiskDiffEquiv <- function(
 #'     - \code{userAlphaSpending}: The user defined alpha spending.
 #'
 #'     - \code{spendingTime}: The error spending time at each analysis.
-#'
-#'     - \code{calculationTarget}: The calculation target, \code{beta} or
-#'       \code{n}.
 #'
 #'     - \code{nullVariance}: Whether to use the variance under the null or
 #'       the empirical variance under the alternative.
@@ -2818,11 +2787,10 @@ getDesignRiskRatioEquiv <- function(
   des$settings$nullVariance = nullVariance
   des$settings$allocationRatioPlanned = allocationRatioPlanned
   des$settings$rounding = rounding
-  des$settings$calculationTarget = ifelse(is.na(beta), "beta", "n")
   des$settings <-
     des$settings[c("typeAlphaSpending", "parameterAlphaSpending",
                    "userAlphaSpending", "spendingTime",
-                   "calculationTarget", "nullVariance",
+                   "nullVariance",
                    "varianceRatioH10", "varianceRatioH20",
                    "varianceRatioH12", "varianceRatioH21",
                    "allocationRatioPlanned", "rounding")]
@@ -2955,9 +2923,6 @@ getDesignRiskRatioEquiv <- function(
 #'     - \code{userAlphaSpending}: The user defined alpha spending.
 #'
 #'     - \code{spendingTime}: The error spending time at each analysis.
-#'
-#'     - \code{calculationTarget}: The calculation target, \code{beta} or
-#'       \code{n}.
 #'
 #'     - \code{nullVariance}: Whether to use the variance under the null
 #'       or the empirical variance under the alternative.
@@ -3189,11 +3154,10 @@ getDesignOddsRatioEquiv <- function(
   des$settings$nullVariance = nullVariance
   des$settings$allocationRatioPlanned = allocationRatioPlanned
   des$settings$rounding = rounding
-  des$settings$calculationTarget = ifelse(is.na(beta), "beta", "n")
   des$settings <-
     des$settings[c("typeAlphaSpending", "parameterAlphaSpending",
                    "userAlphaSpending", "spendingTime",
-                   "calculationTarget", "nullVariance",
+                   "nullVariance",
                    "varianceRatioH10", "varianceRatioH20",
                    "varianceRatioH12", "varianceRatioH21",
                    "allocationRatioPlanned", "rounding")]
@@ -3227,9 +3191,6 @@ getDesignOddsRatioEquiv <- function(
 #' * \code{pi1}: The assumed probability for the active treatment group.
 #'
 #' * \code{pi2}: The assumed probability for the control group.
-#'
-#' * \code{calculationTarget}: The calculation target, \code{beta} or
-#'   \code{n}.
 #'
 #' * \code{allocationRatioPlanned}: Allocation ratio for the active
 #'   treatment versus control.
@@ -3287,8 +3248,6 @@ getDesignFisherExact <- function(
   } else { # sample size calculation
     a = samplesizeFisherExact(beta, pi1, pi2, allocationRatioPlanned, alpha)
   }
-
-  a$calculationTarget = ifelse(is.na(beta), "beta", "n")
 
   a
 }
@@ -3688,9 +3647,6 @@ BOINTable <- function(
 #'
 #' * \code{effectsize}: The effect size for the chi-square test.
 #'
-#' * \code{calculationTarget}: The calculation target, \code{beta} or
-#'   \code{n}.
-#'
 #' * \code{rounding}: Whether to round up sample size.
 #'
 #' @author Kaifeng Lu, \email{kaifenglu@@gmail.com}
@@ -3808,7 +3764,6 @@ getDesignOneMultinom <- function(
   des = list(power = power, alpha = alpha, n = n,
              ncats = ncats, piH0 = piH0, pi = pi,
              effectsize = tau,
-             calculationTarget = ifelse(is.na(beta), "beta", "n"),
              rounding = rounding)
 
   attr(des, "class") = "designOneMultinom"
@@ -3817,9 +3772,9 @@ getDesignOneMultinom <- function(
 }
 
 
-#' @title Power and sample for difference in two-sample multinomial response
+#' @title Power and sample for difference in two-sample multinomial responses
 #' @description Obtains the power given sample size or obtains the sample
-#' size given power for difference in two-sample multinomial response.
+#' size given power for difference in two-sample multinomial responses.
 #'
 #' @param beta The type II error.
 #' @param n The total sample size.
@@ -3850,9 +3805,6 @@ getDesignOneMultinom <- function(
 #' * \code{pi2}: The prevalence of each category for the control group.
 #'
 #' * \code{effectsize}: The effect size for the chi-square test.
-#'
-#' * \code{calculationTarget}: The calculation target, \code{beta} or
-#'   \code{n}.
 #'
 #' * \code{allocationRatioPlanned}: Allocation ratio for the active treatment
 #'   versus control.
@@ -3982,7 +3934,6 @@ getDesignTwoMultinom <- function(
   des = list(power = power, alpha = alpha, n = n,
              ncats = ncats, pi1 = pi1, pi2 = pi2,
              effectsize = tau,
-             calculationTarget = ifelse(is.na(beta), "beta", "n"),
              allocationRatioPlanned = allocationRatioPlanned,
              rounding = rounding)
 
@@ -4028,9 +3979,6 @@ getDesignTwoMultinom <- function(
 #' * \code{meanscore1}: The mean midrank score for the treatment group.
 #'
 #' * \code{meanscore2}: The mean midrank score for the control group.
-#'
-#' * \code{calculationTarget}: The calculation target, \code{beta} or
-#'   \code{n}.
 #'
 #' * \code{allocationRatioPlanned}: Allocation ratio for the active treatment
 #'   versus control.
@@ -4167,7 +4115,6 @@ getDesignTwoOrdinal <- function(
   des = list(power = power, alpha = alpha, n = n,
              ncats = ncats, pi1 = pi1, pi2 = pi2,
              meanscore1 = n*sum(w*pi1), meanscore2 = n*sum(w*pi2),
-             calculationTarget = ifelse(is.na(beta), "beta", "n"),
              allocationRatioPlanned = allocationRatioPlanned,
              rounding = rounding)
 
@@ -4211,9 +4158,6 @@ getDesignTwoOrdinal <- function(
 #' * \code{w}: The scores assigned to the treatment groups.
 #'
 #' * \code{trendstat}: The Cochran-Armitage trend test statistic.
-#'
-#' * \code{calculationTarget}: The calculation target, \code{beta} or
-#'   \code{n}.
 #'
 #' * \code{allocationRatioPlanned}: Allocation ratio for the treatment
 #'   groups.
@@ -4330,7 +4274,6 @@ getDesignOrderedBinom <- function(
   des = list(power = power, alpha = alpha, n = n,
              ngroups = ngroups, pi = pi, w = w,
              trendstat = n*sum(r*(w-wbar)*pi),
-             calculationTarget = ifelse(is.na(beta), "beta", "n"),
              allocationRatioPlanned = allocationRatioPlanned,
              rounding = rounding)
 
@@ -4368,9 +4311,6 @@ getDesignOrderedBinom <- function(
 #' * \code{pi}: The response probabilities for the treatment groups.
 #'
 #' * \code{effectsize}: The effect size for the chi-square test.
-#'
-#' * \code{calculationTarget}: The calculation target, \code{beta} or
-#'   \code{n}.
 #'
 #' * \code{allocationRatioPlanned}: Allocation ratio for the treatment
 #'   groups.
@@ -4478,7 +4418,6 @@ getDesignUnorderedBinom <- function(
   des = list(power = power, alpha = alpha, n = n,
              ngroups = ngroups, pi = pi,
              effectsize = tau,
-             calculationTarget = ifelse(is.na(beta), "beta", "n"),
              allocationRatioPlanned = allocationRatioPlanned,
              rounding = rounding)
 
@@ -4522,9 +4461,6 @@ getDesignUnorderedBinom <- function(
 #' * \code{pi}: The response probabilities for the treatment groups.
 #'
 #' * \code{effectsize}: The effect size for the chi-square test.
-#'
-#' * \code{calculationTarget}: The calculation target, \code{beta} or
-#'   \code{n}.
 #'
 #' * \code{allocationRatioPlanned}: Allocation ratio for the treatment
 #'   groups.
@@ -4665,7 +4601,6 @@ getDesignUnorderedMultinom <- function(
   des = list(power = power, alpha = alpha, n = n,
              ngroups = ngroups, ncats = ncats,
              pi = pi, effectsize = tau,
-             calculationTarget = ifelse(is.na(beta), "beta", "n"),
              allocationRatioPlanned = allocationRatioPlanned,
              rounding = rounding)
 
@@ -4763,9 +4698,6 @@ getDesignUnorderedMultinom <- function(
 #'   all predictor variables are equal to their means.
 #'
 #' * \code{effectsize}: The effect size for the chi-square test.
-#'
-#' * \code{calculationTarget}: The calculation target, \code{beta} or
-#'   \code{n}.
 #'
 #' * \code{rounding}: Whether to round up sample size.
 #'
@@ -4969,7 +4901,6 @@ getDesignLogistic <- function(
              x = x, pconfigs = pconfigs, corr = corr,
              oddsratios = oddsratios,
              responseprob = responseprob, effectsize = tau,
-             calculationTarget = ifelse(is.na(beta), "beta", "n"),
              rounding = rounding)
 
   attr(des, "class") = "designLogistic"
@@ -5056,9 +4987,6 @@ getDesignLogistic <- function(
 #'
 #' * \code{pi}: The cell probabilities that maximize the
 #'   variance of estimated kappa under H1.
-#'
-#' * \code{calculationTarget}: The calculation target, \code{beta} or
-#'   \code{n}.
 #'
 #' * \code{rounding}: Whether to round up sample size.
 #'
@@ -5266,7 +5194,6 @@ getDesignAgreement <- function(
   des = list(power = power, alpha = alpha, n = n,
              ncats = ncats, kappaH0 = kappaH0, kappa = kappa,
              p1 = p1, p2 = p2, piH0 = piH0, pi = pi,
-             calculationTarget = ifelse(is.na(beta), "beta", "n"),
              rounding = rounding)
 
   attr(des, "class") = "designAgreement"
@@ -5305,9 +5232,6 @@ getDesignAgreement <- function(
 #' * \code{r}: The critical value of the number of events for rejecting
 #'   the null hypothesis. Reject H0 if \code{Y >= r} for upper-tailed
 #'   test, and reject H0 if \code{Y <= r} for lower-tailed test.
-#'
-#' * \code{calculationTarget}: The calculation target, \code{beta} or
-#'   \code{n}.
 #'
 #' @author Kaifeng Lu, \email{kaifenglu@@gmail.com}
 #'
@@ -5371,8 +5295,6 @@ getDesignOneRateExact <- function(
     des = samplesizeOneRateExact(beta, lambdaH0, lambda, D, alpha)
   }
 
-  des$calculationTarget = ifelse(is.na(beta), "beta", "n")
-
   des
 }
 
@@ -5416,9 +5338,6 @@ getDesignOneRateExact <- function(
 #'
 #' * \code{pi2star}: The response probability in the control group
 #'   at which the critical value of the test statistic is attained.
-#'
-#' * \code{calculationTarget}: The calculation target, \code{beta} or
-#'   \code{n}.
 #'
 #' @author Kaifeng Lu, \email{kaifenglu@@gmail.com}
 #'
@@ -5490,8 +5409,6 @@ getDesignRiskDiffExact <- function(
                                 allocationRatioPlanned, alpha)
   }
 
-  a$calculationTarget = ifelse(is.na(beta), "beta", "n")
-
   a
 }
 
@@ -5535,9 +5452,6 @@ getDesignRiskDiffExact <- function(
 #'
 #' * \code{pi2star}: The response probability in the control group
 #'   at which the critical value of the test statistic is attained.
-#'
-#' * \code{calculationTarget}: The calculation target, \code{beta} or
-#'   \code{n}.
 #'
 #' @author Kaifeng Lu, \email{kaifenglu@@gmail.com}
 #'
@@ -5604,8 +5518,6 @@ getDesignRiskRatioExact <- function(
                                  allocationRatioPlanned, alpha)
   }
 
-  a$calculationTarget = ifelse(is.na(beta), "beta", "n")
-
   a
 }
 
@@ -5657,9 +5569,6 @@ getDesignRiskRatioExact <- function(
 #' * \code{zstatRiskDiffUpper}: The efficacy boundaries on the
 #'   z-test statistic scale for the one-sided null hypothesis on the
 #'   upper equivalence limit.
-#'
-#' * \code{calculationTarget}: The calculation target, \code{beta} or
-#'   \code{n}.
 #'
 #' @author Kaifeng Lu, \email{kaifenglu@@gmail.com}
 #'
@@ -5741,8 +5650,6 @@ getDesignRiskDiffExactEquiv <- function(
                                      pi1, pi2, allocationRatioPlanned, alpha)
   }
 
-  a$calculationTarget = ifelse(is.na(beta), "beta", "n")
-
   a
 }
 
@@ -5794,9 +5701,6 @@ getDesignRiskDiffExactEquiv <- function(
 #' * \code{zstatRiskRatioUpper}: The efficacy boundaries on the
 #'   z-test statistic scale for the one-sided null hypothesis on the
 #'   upper equivalence limit.
-#'
-#' * \code{calculationTarget}: The calculation target, \code{beta} or
-#'   \code{n}.
 #'
 #' @author Kaifeng Lu, \email{kaifenglu@@gmail.com}
 #'
@@ -5874,8 +5778,6 @@ getDesignRiskRatioExactEquiv <- function(
                                       pi1, pi2, allocationRatioPlanned,
                                       alpha)
   }
-
-  a$calculationTarget = ifelse(is.na(beta), "beta", "n")
 
   a
 }

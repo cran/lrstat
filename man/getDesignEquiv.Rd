@@ -137,8 +137,6 @@ the variance under H1.
 the variance under H20.
 \item \code{varianceRatioH21}: The ratio of the variance under H20 to
 the variance under H10.
-\item \code{calculationTarget}: The calculation target, \code{beta} or
-\code{IMax}.
 }
 }
 }

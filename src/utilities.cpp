@@ -37,7 +37,7 @@ IntegerVector which(const LogicalVector& vector) {
 //' @description The implementation of \code{findInterval()} in R from
 //' Advanced R by Hadley Wickham. Given a vector of non-decreasing
 //' breakpoints in v, find the interval containing each element of x; i.e.,
-//' if \code{i <- findInterval2(x,v)}, for each index \code{j} in \code{x},
+//' if \code{i <- findInterval3(x,v)}, for each index \code{j} in \code{x},
 //' \code{v[i[j]] <= x[j] < v[i[j] + 1]}, where \code{v[0] := -Inf},
 //' \code{v[N+1] := +Inf}, and \code{N = length(v)}.
 //'
@@ -53,11 +53,11 @@ IntegerVector which(const LogicalVector& vector) {
 //' @examples
 //' x <- 2:18
 //' v <- c(5, 10, 15) # create two bins [5,10) and [10,15)
-//' cbind(x, findInterval2(x, v))
+//' cbind(x, findInterval3(x, v))
 //'
 //' @export
 // [[Rcpp::export]]
-IntegerVector findInterval2(NumericVector x, NumericVector v) {
+IntegerVector findInterval3(NumericVector x, NumericVector v) {
   IntegerVector out(x.size());
 
   NumericVector::iterator it, pos;
@@ -452,7 +452,9 @@ List exitprobcpp(const NumericVector& b,
 NumericVector ptpwexpcpp(const NumericVector& q,
                          const NumericVector& piecewiseSurvivalTime,
                          const NumericVector& lambda,
-                         const double lowerBound) {
+                         const double lowerBound,
+                         const bool lowertail,
+                         const bool logp) {
   int n = q.size();
   NumericVector p(n);
   for (int h=0; h<n; h++) {
@@ -460,7 +462,7 @@ NumericVector ptpwexpcpp(const NumericVector& q,
       p[h] = 0;
     } else {
       NumericVector y = NumericVector::create(lowerBound, q[h]);
-      IntegerVector i = findInterval2(y, piecewiseSurvivalTime);
+      IntegerVector i = findInterval3(y, piecewiseSurvivalTime);
       double v;
       if (i[0] == i[1]) {
         v = lambda[i[0]-1]*(q[h] - lowerBound);
@@ -476,6 +478,9 @@ NumericVector ptpwexpcpp(const NumericVector& q,
     }
   }
 
+  if (!lowertail) p = 1.0 - p;
+  if (logp) p = log(p);
+
   return p;
 }
 
@@ -484,12 +489,17 @@ NumericVector ptpwexpcpp(const NumericVector& q,
 double qtpwexpcpp1(const double p,
                    const NumericVector& piecewiseSurvivalTime,
                    const NumericVector& lambda,
-                   const double lowerBound) {
+                   const double lowerBound,
+                   const bool lowertail,
+                   const bool logp) {
   int j, j1, m = piecewiseSurvivalTime.size();
-  double q, v, v1;
+  double q, u = p, v, v1;
 
   // cumulative hazard from lowerBound until the quantile
-  v1 = -log(1 - p);
+  if (logp) u = exp(p);
+  if (!lowertail) u = 1.0 - u;
+
+  v1 = -log(1.0 - u);
 
   // identify the time interval containing the lowerBound
   for (j=0; j<m; j++) {
@@ -529,11 +539,14 @@ double qtpwexpcpp1(const double p,
 NumericVector qtpwexpcpp(const NumericVector& p,
                          const NumericVector& piecewiseSurvivalTime,
                          const NumericVector& lambda,
-                         const double lowerBound) {
+                         const double lowerBound,
+                         const bool lowertail,
+                         const bool logp) {
   int n = p.size();
   NumericVector q(n);
   for (int h=0; h<n; h++) {
-    q[h] = qtpwexpcpp1(p[h], piecewiseSurvivalTime, lambda, lowerBound);
+    q[h] = qtpwexpcpp1(p[h], piecewiseSurvivalTime, lambda, lowerBound,
+                       lowertail, logp);
   }
 
   return q;
@@ -550,7 +563,7 @@ NumericVector rtpwexpcpp(const int n,
     p[i] = R::runif(0,1);
   }
 
-  return qtpwexpcpp(p, piecewiseSurvivalTime, lambda, lowerBound);
+  return qtpwexpcpp(p, piecewiseSurvivalTime, lambda, lowerBound, 1, 0);
 }
 
 
@@ -958,6 +971,94 @@ double intnorm(const std::function<double(double)>& f,
 }
 
 
+
+#define CGOLD 0.3819660
+#define ZEPS 1.0e-10
+#define SHFT(a,b,c,d) (a)=(b);(b)=(c);(c)=(d);
+
+//' @title Brent's method for minimization
+//' @description Using Brent's method, find the abscissa of the minimum of a
+//' function known to lie between x1 and x2. Program based on the book -
+//' Numerical Recipes in C The Art of Scientific Computing - Second Edition,
+//' by William H. Press, Saul A. Teukolsky, William T. Vetterling, and
+//' Brian P. Flannery. It mimics the optimize() function in R.
+//'
+//' @param f Name of the univariate objective function.
+//' @param x1 One end of the interval bracket.
+//' @param x2 The other end of the interval bracket.
+//' @param tol The tolerance limit for stopping the iteration.
+//'
+//' @return The abscissa x between x1 and x2 such that f(x) = min f(u).
+//'
+//' @author Kaifeng Lu, \email{kaifenglu@@gmail.com}
+//'
+//' @examples
+//' mini(sin, 0, 2, 0.0001)
+//' @export
+//'
+// [[Rcpp::plugins(cpp11)]]
+NumericVector mini(const std::function<double(double)>& f,
+                   double x1, double x2, double tol) {
+  int iter;
+  double a,b,etemp,fu,fv,fw,fx,p,q,r,tol1,tol2,u,v,w,x,xm;
+  double d=0.0, e=0.0;
+
+  a=x1; b=x2;
+  x=w=v=a+CGOLD*(b-a);
+  fw=fv=fx=f(x);
+  for (iter=0;iter<ITMAX;iter++) {
+    xm=0.5*(a+b);
+    tol2=2.0*(tol1=tol*fabs(x)+ZEPS);
+    if (fabs(x-xm) <= (tol2-0.5*(b-a))) {
+      return NumericVector::create(x,fx);
+    }
+    if (fabs(e) > tol1) {
+      r=(x-w)*(fx-fv);
+      q=(x-v)*(fx-fw);
+      p=(x-v)*q-(x-w)*r;
+      q=2.0*(q-r);
+      if (q > 0.0) p = -p;
+      q=fabs(q);
+      etemp=e;
+      e=d;
+      // if the new step size is at least half of the step before last, or
+      // if the new point is outside of (a,b) (to the left or to the right)
+      if (fabs(p) >= fabs(0.5*q*etemp) || p <= q*(a-x) || p >= q*(b-x)) {
+        d=CGOLD*(e=(x >= xm ? a-x : b-x));
+      } else{
+        d=p/q; // new step size
+        u=x+d; // new point
+        if (u-a < tol2 || b-u < tol2) {
+          d = SIGN(tol1, xm-x);
+        }
+      }
+    } else {
+      d=CGOLD*(e=(x >= xm ? a-x : b-x));
+    }
+    u=(fabs(d) >= tol1 ? x+d : x+SIGN(tol1,d));
+    fu=f(u);
+    if (fu <= fx) {
+      if (u >= x) a=x; else b=x;
+      SHFT(v,w,x,u);
+      SHFT(fv,fw,fx,fu);
+    } else {
+      if (u < x) a=u; else b=u;
+      if (fu <= fw || w == x) {
+        v=w;
+        w=u;
+        fv=fw;
+        fw=fu;
+      } else if (fu <= fv || v == x || v == w) {
+        v=u;
+        fv=fu;
+      }
+    }
+  }
+  stop("Too many iterations in mini");
+  return NumericVector::create(x, fx); // Never get here
+}
+
+
 NumericVector quad(integr_fn f, void *ex, double lower, double upper,
                    double tol) {
   double epsabs=tol, epsrel=tol, value, abserr;
@@ -1036,7 +1137,7 @@ NumericVector accrual(const NumericVector& time = NA_REAL,
   NumericVector t = pmax(pmin(time, accrualDuration), 0.0);
 
   // identify the time interval containing t
-  IntegerVector m = pmax(findInterval2(t, accrualTime), 1);
+  IntegerVector m = pmax(findInterval3(t, accrualTime), 1);
 
   // sum up patients enrolled in each interval up to t
   for (i=0; i<k; i++) {
@@ -1084,7 +1185,7 @@ NumericVector getAccrualDurationFromN(
     p[j+1] = p[j] + accrualIntensity[j]*(accrualTime[j+1] - accrualTime[j]);
   }
 
-  IntegerVector m = findInterval2(nsubjects, p);
+  IntegerVector m = findInterval3(nsubjects, p);
 
   for (i=0; i<I; i++) {
     j = m[i] - 1;
@@ -1129,7 +1230,7 @@ NumericVector patrisk(const NumericVector& time = NA_REAL,
                       const NumericVector& gamma = 0) {
 
   // identify the time interval containing the specified analysis time
-  IntegerVector m = pmax(findInterval2(time, piecewiseSurvivalTime), 1);
+  IntegerVector m = pmax(findInterval3(time, piecewiseSurvivalTime), 1);
 
   int i, j, k = time.size(), J = lambda.size();
 
@@ -1193,7 +1294,7 @@ NumericVector pevent(const NumericVector& time = NA_REAL,
                      const NumericVector& gamma = 0) {
 
   // identify the time interval containing the specified analysis time
-  IntegerVector m = pmax(findInterval2(time, piecewiseSurvivalTime), 1);
+  IntegerVector m = pmax(findInterval3(time, piecewiseSurvivalTime), 1);
 
   int i, j, k = time.size(), J = lambda.size();
 
@@ -1332,7 +1433,7 @@ double pd(const double t1 = NA_REAL,
 
   // identify the analysis time intervals containing t1 and t2
   NumericVector t12 = NumericVector::create(t1, t2);
-  IntegerVector j12 = pmax(findInterval2(t12, piecewiseSurvivalTime), 1) - 1;
+  IntegerVector j12 = pmax(findInterval3(t12, piecewiseSurvivalTime), 1) - 1;
 
   NumericVector t = piecewiseSurvivalTime;
 
@@ -1406,7 +1507,7 @@ NumericVector ad(const NumericVector& time = NA_REAL,
 
   // identify the accrual time intervals containing u1 and u2
   NumericVector u12 = NumericVector::create(u1, u2);
-  IntegerVector j12 = pmax(findInterval2(u12, accrualTime), 1) - 1;
+  IntegerVector j12 = pmax(findInterval3(u12, accrualTime), 1) - 1;
 
   NumericVector u = accrualTime;
 
@@ -1813,9 +1914,6 @@ NumericMatrix nevent2(const NumericVector& time = NA_REAL,
 //'
 //'     - \code{varianceRatio}: The ratio of the variance under H0
 //'       to the variance under H1.
-//'
-//'     - \code{calculationTarget}: The calculation target, \code{beta} or
-//'       \code{IMax}.
 //'
 //' @author Kaifeng Lu, \email{kaifenglu@@gmail.com}
 //'
@@ -2342,8 +2440,7 @@ List getDesign(const double beta = NA_REAL,
     _["parameterBetaSpending"] = parameterBetaSpending,
     _["userBetaSpending"] = userBetaSpending,
     _["spendingTime"] = spendingTime,
-    _["varianceRatio"] = varianceRatio,
-    _["calculationTarget"] = unknown);
+    _["varianceRatio"] = varianceRatio);
 
   List result = List::create(
     _["byStageResults"] = byStageResults,
@@ -2603,9 +2700,6 @@ List getDesign(const double beta = NA_REAL,
 //'
 //'     - \code{varianceRatioH21}: The ratio of the variance under H20 to
 //'       the variance under H10.
-//'
-//'     - \code{calculationTarget}: The calculation target, \code{beta} or
-//'       \code{IMax}.
 //'
 //' @author Kaifeng Lu, \email{kaifenglu@@gmail.com}
 //'
@@ -3056,8 +3150,7 @@ List getDesignEquiv(const double beta = NA_REAL,
     _["varianceRatioH10"] = varianceRatioH10,
     _["varianceRatioH20"] = varianceRatioH20,
     _["varianceRatioH12"] = varianceRatioH12,
-    _["varianceRatioH21"] = varianceRatioH21,
-    _["calculationTarget"] = unknown);
+    _["varianceRatioH21"] = varianceRatioH21);
 
   List result = List::create(
     _["byStageResults"] = byStageResults,
@@ -3770,4 +3863,13 @@ List adaptDesign(double betaNew = NA_REAL,
 }
 
 
-
+// [[Rcpp::export]]
+bool hasVariable(DataFrame df, std::string varName) {
+  CharacterVector names = df.names();
+  for (int i = 0; i < names.size(); i++) {
+    if (names[i] == varName) {
+      return true;
+    }
+  }
+  return false;
+}

@@ -5,7 +5,13 @@
 \title{REML estimates of individual proportions with specified risk
 ratio}
 \usage{
-remlRiskRatio(riskRatioH0, n1, y1, n2, y2)
+remlRiskRatio(
+  riskRatioH0 = 1,
+  n1 = NA_real_,
+  y1 = NA_real_,
+  n2 = NA_real_,
+  y2 = NA_real_
+)
 }
 \arguments{
 \item{riskRatioH0}{The specified risk ratio.}

@@ -80,7 +80,7 @@ A data frame containing the following variables:
 \item \code{rmst1}: The restricted mean survival time for the treatment
 group.
 \item \code{rmst2}: The restricted mean survival time for the control group.
-\item \code{rmstDiff}: The difference in restricted mean survival time,
+\item \code{rmstDiff}: The difference in restricted mean survival times,
 i.e., \code{rmst1 - rmst2}.
 \item \code{vrmst1}: The variance for \code{rmst1}.
 \item \code{vrmst2}: The variance for \code{rmst2}.

@@ -35,8 +35,6 @@ A data frame with the following variables:
 \item \code{n}: The sample size.
 \item \code{pi1}: The assumed probability for the active treatment group.
 \item \code{pi2}: The assumed probability for the control group.
-\item \code{calculationTarget}: The calculation target, \code{beta} or
-\code{n}.
 \item \code{allocationRatioPlanned}: Allocation ratio for the active
 treatment versus control.
 }

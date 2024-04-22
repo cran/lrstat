@@ -12,7 +12,8 @@ powerRiskDiffExactEquiv(
   pi1 = NA_real_,
   pi2 = NA_real_,
   allocationRatioPlanned = 1,
-  alpha = 0.05
+  alpha = 0.05,
+  calculateAttainedAlpha = 1L
 )
 }
 \arguments{
@@ -31,13 +32,18 @@ versus control. Defaults to 1 for equal randomization.}
 
 \item{alpha}{The significance level for each of the two one-sided
 tests. Defaults to 0.05.}
+
+\item{calculateAttainedAlpha}{Whether to calculate the attained alpha.}
 }
 \value{
 A data frame with the following variables:
 \itemize{
 \item \code{alpha}: The specified significance level for each of the two
 one-sided tests.
-\item \code{attainedAlpha}: The attained significance level.
+\item \code{attainedAlphaH10}: The attained significance level under H10
+if requested.
+\item \code{attainedAlphaH20}: The attained significance level under H20
+if requested.
 \item \code{power}: The power.
 \item \code{n}: The sample size.
 \item \code{riskDiffLower}: The lower equivalence limit of risk difference.

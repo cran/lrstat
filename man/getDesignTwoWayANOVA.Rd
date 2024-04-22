@@ -47,8 +47,6 @@ components:
 \item \code{effectsizeB}: The effect size for Factor B.
 \item \code{effectsizeAB}: The effect size for Factor A and Factor B
 interaction.
-\item \code{calculationTarget}: The calculation target, \code{beta} or
-\code{n}.
 \item \code{rounding}: Whether to round up sample size.
 \item \code{powerdf}: The data frame containing the power and sample size
 results. It has the following variables:

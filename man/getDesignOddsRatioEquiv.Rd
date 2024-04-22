@@ -137,8 +137,6 @@ each of the two one-sided tests.
 spending.
 \item \code{userAlphaSpending}: The user defined alpha spending.
 \item \code{spendingTime}: The error spending time at each analysis.
-\item \code{calculationTarget}: The calculation target, \code{beta} or
-\code{n}.
 \item \code{nullVariance}: Whether to use the variance under the null
 or the empirical variance under the alternative.
 \item \code{varianceRatioH10}: The ratio of the variance under H10 to

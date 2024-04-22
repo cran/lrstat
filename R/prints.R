@@ -4618,39 +4618,235 @@ print.designWilcoxon <- function(x, ...) {
 #'
 #' @export
 print.designMeanDiffMMRM <- function(x, ...) {
-  str1 = paste("Two-sample mean difference",
-               "at the last time point from the MMRM model")
+  a = x$overallResults
+  s = x$byStageResults
+  z = x$settings
+  kMax = a$kMax
+
+  if (kMax>1) {
+    str1 = paste0("Group-sequential design with ", kMax, " stages")
+  } else {
+    str1 = "Fixed design"
+  }
+
+  str1 <- paste(str1, "for two-sample mean difference",
+                "from the MMRM model")
 
   str2 <- paste0("Mean difference under H0: ",
-                 round(x$meanDiffH0, 3), ", ",
+                 round(a$meanDiffH0, 3), ", ",
                  "mean difference under H1: ",
-                 round(x$meanDiff, 3))
+                 round(a$meanDiff, 3))
 
   str3 <- paste0("Standard deviation for treatment: ",
-                 round(sqrt(x$covar1[x$k,x$k]), 3), ", ",
+                 round(sqrt(z$covar1[z$k,z$k]), 3), ", ",
                  "standard deviation for control: ",
-                 round(sqrt(x$covar2[x$k,x$k]), 3))
+                 round(sqrt(z$covar2[z$k,z$k]), 3))
 
-  str4 <- paste0("Power: ", round(x$power, 3), ", ",
-                 "alpha (1-sided): ", round(x$alpha, 4))
+  str4 <- paste0("Overall power: ",
+                 round(a$overallReject, 3), ", ",
+                 "overall alpha (1-sided): ",
+                 round(a$alpha, 4))
 
-  str5 <- paste0("Variance inflation for treatment: ",
-                 round(x$inflation1, 3), ", ",
-                 "variance inflation for control: ",
-                 round(x$inflation2, 3))
+  if (z$typeBetaSpending != 'none' ||
+      (kMax > 1 && any(s$futilityBounds[1:(kMax-1)] > -6))) {
+    str4 <- paste0(str4, ", ",
+                   "attained alpha: ", round(a$attainedAlpha, 4))
+  }
 
-  str6 <- paste0("Number of subjects: ",
-                 round(x$numberOfSubjects, 1))
+  str5 <- paste0("Drift parameter: ", round(a$drift, 3), ", ",
+                 "inflation factor: ", round(a$inflationFactor, 3))
 
-  str7 <- paste0("Allocation ratio: ",
-                 round(x$allocationRatioPlanned), ", ",
-                 "test statistic: ",
-                 ifelse(x$normalApproximation, "z-test", "t-test"))
+  if (kMax>1) {
+    str6 <- paste0("Maximum information: ",
+                   round(a$information, 2), ", ",
+                   "expected under H1: ",
+                   round(a$expectedInformationH1, 2), ", ",
+                   "expected under H0: ",
+                   round(a$expectedInformationH0, 2))
 
-  df = data.frame(x = rep("", 7))
-  colnames(df) = NULL
-  rownames(df) = c(str1, str2, str3, str4, str5, str6, str7)
+    str7 <- paste0("Maximum # subjects: ",
+                   round(a$numberOfSubjects, 1), ", ",
+                   "expected under H1: ",
+                   round(a$expectedNumberOfSubjectsH1, 1), ", ",
+                   "expected under H0: ",
+                   round(a$expectedNumberOfSubjectsH0, 1))
 
+    str8 <- paste0("Total study duration: ",
+                   round(a$studyDuration, 1), ", ",
+                   "expected under H1: ",
+                   round(a$expectedStudyDurationH1, 1), ", ",
+                   "expected under H0: ",
+                   round(a$expectedStudyDurationH0, 1))
+  } else {
+    str6 <- paste0("Information: ",
+                   round(a$information, 2))
+
+    str7 <- paste0("Number of subjects: ",
+                   round(a$numberOfSubjects, 1))
+
+    str8 <- paste0("Study duration: ",
+                   round(a$studyDuration, 1))
+  }
+
+  str9 <- paste0("Accrual duration: ",
+                 round(a$accrualDuration, 1), ", ",
+                 "follow-up duration: ",
+                 round(a$followupTime, 1), ", ",
+                 "fixed follow-up: ", a$fixedFollowup)
+
+  str10 <- paste0("Allocation ratio: ",
+                  round(z$allocationRatioPlanned, 3))
+
+  if (kMax > 1) {
+    asf = tolower(z$typeAlphaSpending)
+    asfpar = z$parameterAlphaSpending
+    asfuser = z$userAlphaSpending
+
+    bsf = tolower(z$typeBetaSpending)
+    bsfpar = z$parameterBetaSpending
+    bsfuser = z$userBetaSpending
+
+    if (asf == "of") {
+      str11 = paste0("Alpha spending: O'Brien-Fleming")
+    } else if (asf == "p") {
+      str11 = paste0("Alpha spending: Pocock")
+    } else if (asf == "wt") {
+      str11 = paste0("Alpha spending: Wang-Tsiatis(Delta = ", asfpar, ")")
+    } else if (asf == "sfof") {
+      str11 = paste0("Alpha spending: Lan-DeMets O'Brien-Fleming")
+    } else if (asf == "sfp") {
+      str11 = paste0("Alpha spending: Lan-DeMets Pocock")
+    } else if (asf == "sfkd") {
+      str11 = paste0("Alpha spending: KD(rho = ", asfpar, ")")
+    } else if (asf == "sfhsd") {
+      str11 = paste0("Alpha spending: HSD(gamma = ", asfpar, ")")
+    } else if (asf == "user") {
+      str11 = paste0("Alpha spending: User defined(",
+                    paste(asfuser, collapse = " "), ")")
+    } else {
+      str11 = "Alpha spending: None"
+    }
+
+    if (bsf == "of") {
+      str12 = paste0("beta spending: O'Brien-Fleming")
+    } else if (bsf == "p") {
+      str12 = paste0("beta spending: Pocock")
+    } else if (bsf == "wt") {
+      str12 = paste0("beta spending: Wang-Tsiatis(Delta = ", bsfpar, ")")
+    } else if (bsf == "sfof") {
+      str12 = paste0("beta spending: Lan-DeMets O'Brien-Fleming")
+    } else if (bsf == "sfp") {
+      str12 = paste0("beta spending: Lan-DeMets Pocock")
+    } else if (bsf == "sfkd") {
+      str12 = paste0("beta spending: KD(rho = ", bsfpar, ")")
+    } else if (bsf == "sfhsd") {
+      str12 = paste0("beta spending: HSD(gamma = ", bsfpar, ")")
+    } else if (bsf == "user") {
+      str12 = paste0("beta spending: User defined(",
+                    paste(bsfuser, collapse = ","), ")")
+    } else {
+      str12 = "beta spending: None"
+    }
+
+    if (!any(is.na(z$spendingTime)) &&
+        !all.equal(z$spendingTime, s$informationRates)) {
+      str13 = paste0("Spending time: ",
+                     paste(z$spendingTime, collapse = ","), ")")
+      df1 = data.frame(x = rep("", 13))
+      colnames(df1) = NULL
+      rownames(df1) = c(str1, str2, str3, str4, str5, str6, str7, str8,
+                        str9, str10, paste(str11, str12, sep = ", "),
+                        str13, "")
+    } else {
+      df1 = data.frame(x = rep("", 12))
+      colnames(df1) = NULL
+      rownames(df1) = c(str1, str2, str3, str4, str5, str6, str7, str8,
+                        str9, str10, paste(str11, str12, sep = ", "),
+                        "")
+    }
+  } else {
+    df1 = data.frame(x = rep("", 11))
+    colnames(df1) = NULL
+    rownames(df1) = c(str1, str2, str3, str4, str5, str6, str7, str8,
+                      str9, str10, "")
+  }
+
+  if (kMax>1) {
+    b <- s[, c("informationRates", "efficacyBounds", "futilityBounds",
+               "cumulativeRejection", "cumulativeFutility",
+               "cumulativeAlphaSpent", "numberOfSubjects",
+               "efficacyMeanDiff", "futilityMeanDiff",
+               "efficacyP", "futilityP", "information",
+               "cumulativeRejectionH0", "cumulativeFutilityH0")]
+
+    # format number of digits after decimal for each column
+    j1 <- 7
+    j2 <- 12
+    j3 <- c(1,2,3,4,8,9,14)
+    j4 <- c(5,6,10,11,13)
+
+    b[j1] <- lapply(b[j1], formatC, format = "f", digits = 1)
+    b[j2] <- lapply(b[j2], formatC, format = "f", digits = 2)
+    b[j3] <- lapply(b[j3], formatC, format = "f", digits = 3)
+    b[j4] <- lapply(b[j4], formatC, format = "f", digits = 4)
+
+    if (z$typeBetaSpending != 'none' ||
+        (kMax > 1 && any(s$futilityBounds[1:(kMax-1)] > -6))) {
+      df = t(b)
+      rownames(df) = c("Information rate",
+                       "Efficacy boundary (Z)",
+                       "Futility boundary (Z)",
+                       "Cumulative rejection",
+                       "Cumulative futility",
+                       "Cumulative alpha spent",
+                       "Number of subjects",
+                       "Efficacy boundary (mean diff)",
+                       "Futility boundary (mean diff)",
+                       "Efficacy boundary (p)",
+                       "Futility boundary (p)",
+                       "Information",
+                       "Cumulative rejection under H0",
+                       "Cumulative futility under H0")
+
+    } else {
+      df = t(b[,c(1,2,4,6,7,8,10,12)])
+      rownames(df) = c("Information rate",
+                       "Efficacy boundary (Z)",
+                       "Cumulative rejection",
+                       "Cumulative alpha spent",
+                       "Number of subjects",
+                       "Efficacy boundary (mean diff)",
+                       "Efficacy boundary (p)",
+                       "Information")
+    }
+
+    colnames(df) <- paste("Stage", seq_len(ncol(df)), sep=" ")
+  } else {
+    b <- s[, c("efficacyBounds", "efficacyMeanDiff", "efficacyP")]
+
+    # format number of digits after decimal for each column
+    j3 <- c(1,2)
+    j4 <- 3
+
+    b[j3] <- lapply(b[j3], formatC, format = "f", digits = 3)
+    b[j4] <- lapply(b[j4], formatC, format = "f", digits = 4)
+
+    df = t(b)
+
+    if (z$normalApproximation) {
+      rownames(df) = c("Efficacy boundary (Z)",
+                       "Efficacy boundary (mean diff)",
+                       "Efficacy boundary (p)")
+    } else {
+      rownames(df) = c("Efficacy boundary (t)",
+                       "Efficacy boundary (mean diff)",
+                       "Efficacy boundary (p)")
+    }
+
+    colnames(df) <- NA
+  }
+
+  print(df1, ..., na.print = "" , quote = FALSE )
   print(df, ..., na.print = "" , quote = FALSE )
   invisible(x)
 }
@@ -5339,38 +5535,240 @@ print.designSlopeDiff <- function(x, ...) {
 #'
 #' @export
 print.designSlopeDiffMMRM <- function(x, ...) {
-  str1 = paste("Two-sample slope difference from the MMRM model")
+  a = x$overallResults
+  s = x$byStageResults
+  z = x$settings
+  kMax = a$kMax
+
+  if (kMax>1) {
+    str1 = paste0("Group-sequential design with ", kMax, " stages")
+  } else {
+    str1 = "Fixed design"
+  }
+
+  str1 <- paste(str1, "for two-sample slope difference",
+                "from the MMRM model")
 
   str2 <- paste0("Slope difference under H0: ",
-                 round(x$slopeDiffH0, 3), ", ",
+                 round(a$slopeDiffH0, 3), ", ",
                  "slope difference under H1: ",
-                 round(x$slopeDiff, 3))
+                 round(a$slopeDiff, 3))
 
   str3 <- paste0("Standard deviation of within-subject residual: ",
-                 round(x$stDev, 3))
+                 round(z$stDev, 3))
 
   str4 <- paste0("Standard deviation of random intercept: ",
-                 round(x$stDevIntercept, 3), ", ",
+                 round(sqrt(z$G[1,1]), 3), ", ",
                  "of random slope: ",
-                 round(x$stDevSlope, 3), ", ",
+                 round(sqrt(z$G[2,2]), 3), ", ",
                  "correlation: ",
-                 round(x$corrInterceptSlope, 3))
+                 round(z$G[1,2]/sqrt(z$G[1,1]*z$G[2,2]), 3))
 
-  str5 <- paste0("Power: ", round(x$power, 3), ", ",
-                 "alpha (1-sided): ", round(x$alpha, 4))
+  str5 <- paste0("Overall power: ",
+                 round(a$overallReject, 3), ", ",
+                 "overall alpha (1-sided): ",
+                 round(a$alpha, 4))
 
-  str6 <- paste0("Number of subjects: ",
-                 round(x$numberOfSubjects, 1))
+  if (z$typeBetaSpending != 'none' ||
+      (kMax > 1 && any(s$futilityBounds[1:(kMax-1)] > -6))) {
+    str5 <- paste0(str5, ", ",
+                   "attained alpha: ", round(a$attainedAlpha, 4))
+  }
 
-  str7 <- paste0("Allocation ratio: ",
-                 round(x$allocationRatioPlanned), ", ",
-                 "test statistic: ",
-                 ifelse(x$normalApproximation, "z-test", "t-test"))
+  str6 <- paste0("Drift parameter: ", round(a$drift, 3), ", ",
+                 "inflation factor: ", round(a$inflationFactor, 3))
 
-  df = data.frame(x = rep("", 7))
-  colnames(df) = NULL
-  rownames(df) = c(str1, str2, str3, str4, str5, str6, str7)
+  if (kMax>1) {
+    str7 <- paste0("Maximum information: ",
+                   round(a$information, 2), ", ",
+                   "expected under H1: ",
+                   round(a$expectedInformationH1, 2), ", ",
+                   "expected under H0: ",
+                   round(a$expectedInformationH0, 2))
 
+    str8 <- paste0("Maximum # subjects: ",
+                   round(a$numberOfSubjects, 1), ", ",
+                   "expected under H1: ",
+                   round(a$expectedNumberOfSubjectsH1, 1), ", ",
+                   "expected under H0: ",
+                   round(a$expectedNumberOfSubjectsH0, 1))
+
+    str9 <- paste0("Total study duration: ",
+                   round(a$studyDuration, 1), ", ",
+                   "expected under H1: ",
+                   round(a$expectedStudyDurationH1, 1), ", ",
+                   "expected under H0: ",
+                   round(a$expectedStudyDurationH0, 1))
+  } else {
+    str7 <- paste0("Information: ",
+                   round(a$information, 2))
+
+    str8 <- paste0("Number of subjects: ",
+                   round(a$numberOfSubjects, 1))
+
+    str9 <- paste0("Study duration: ",
+                   round(a$studyDuration, 1))
+  }
+
+  str10 <- paste0("Accrual duration: ",
+                  round(a$accrualDuration, 1), ", ",
+                  "follow-up duration: ",
+                  round(a$followupTime, 1), ", ",
+                  "fixed follow-up: ", a$fixedFollowup)
+
+  str11 <- paste0("Allocation ratio: ",
+                  round(z$allocationRatioPlanned, 3))
+
+  if (kMax > 1) {
+    asf = tolower(z$typeAlphaSpending)
+    asfpar = z$parameterAlphaSpending
+    asfuser = z$userAlphaSpending
+
+    bsf = tolower(z$typeBetaSpending)
+    bsfpar = z$parameterBetaSpending
+    bsfuser = z$userBetaSpending
+
+    if (asf == "of") {
+      str12 = paste0("Alpha spending: O'Brien-Fleming")
+    } else if (asf == "p") {
+      str12 = paste0("Alpha spending: Pocock")
+    } else if (asf == "wt") {
+      str12 = paste0("Alpha spending: Wang-Tsiatis(Delta = ", asfpar, ")")
+    } else if (asf == "sfof") {
+      str12 = paste0("Alpha spending: Lan-DeMets O'Brien-Fleming")
+    } else if (asf == "sfp") {
+      str12 = paste0("Alpha spending: Lan-DeMets Pocock")
+    } else if (asf == "sfkd") {
+      str12 = paste0("Alpha spending: KD(rho = ", asfpar, ")")
+    } else if (asf == "sfhsd") {
+      str12 = paste0("Alpha spending: HSD(gamma = ", asfpar, ")")
+    } else if (asf == "user") {
+      str12 = paste0("Alpha spending: User defined(",
+                    paste(asfuser, collapse = " "), ")")
+    } else {
+      str12 = "Alpha spending: None"
+    }
+
+    if (bsf == "of") {
+      str13 = paste0("beta spending: O'Brien-Fleming")
+    } else if (bsf == "p") {
+      str13 = paste0("beta spending: Pocock")
+    } else if (bsf == "wt") {
+      str13 = paste0("beta spending: Wang-Tsiatis(Delta = ", bsfpar, ")")
+    } else if (bsf == "sfof") {
+      str13 = paste0("beta spending: Lan-DeMets O'Brien-Fleming")
+    } else if (bsf == "sfp") {
+      str13 = paste0("beta spending: Lan-DeMets Pocock")
+    } else if (bsf == "sfkd") {
+      str13 = paste0("beta spending: KD(rho = ", bsfpar, ")")
+    } else if (bsf == "sfhsd") {
+      str13 = paste0("beta spending: HSD(gamma = ", bsfpar, ")")
+    } else if (bsf == "user") {
+      str13 = paste0("beta spending: User defined(",
+                     paste(bsfuser, collapse = ","), ")")
+    } else {
+      str13 = "beta spending: None"
+    }
+
+    if (!any(is.na(z$spendingTime)) &&
+        !all.equal(z$spendingTime, s$informationRates)) {
+      str14 = paste0("Spending time: ",
+                     paste(z$spendingTime, collapse = ","), ")")
+      df1 = data.frame(x = rep("", 14))
+      colnames(df1) = NULL
+      rownames(df1) = c(str1, str2, str3, str4, str5, str6, str7, str8,
+                        str9, str10, str11, paste(str12, str13, sep = ", "),
+                        str14, "")
+    } else {
+      df1 = data.frame(x = rep("", 13))
+      colnames(df1) = NULL
+      rownames(df1) = c(str1, str2, str3, str4, str5, str6, str7, str8,
+                        str9, str10, str11, paste(str12, str13, sep = ", "),
+                        "")
+    }
+  } else {
+    df1 = data.frame(x = rep("", 12))
+    colnames(df1) = NULL
+    rownames(df1) = c(str1, str2, str3, str4, str5, str6, str7, str8,
+                      str9, str10, str11, "")
+  }
+
+  if (kMax>1) {
+    b <- s[, c("informationRates", "efficacyBounds", "futilityBounds",
+               "cumulativeRejection", "cumulativeFutility",
+               "cumulativeAlphaSpent", "numberOfSubjects",
+               "efficacySlopeDiff", "futilitySlopeDiff",
+               "efficacyP", "futilityP", "information",
+               "cumulativeRejectionH0", "cumulativeFutilityH0")]
+
+    # format number of digits after decimal for each column
+    j1 <- 7
+    j2 <- 12
+    j3 <- c(1,2,3,4,8,9,14)
+    j4 <- c(5,6,10,11,13)
+
+    b[j1] <- lapply(b[j1], formatC, format = "f", digits = 1)
+    b[j2] <- lapply(b[j2], formatC, format = "f", digits = 2)
+    b[j3] <- lapply(b[j3], formatC, format = "f", digits = 3)
+    b[j4] <- lapply(b[j4], formatC, format = "f", digits = 4)
+
+    if (z$typeBetaSpending != 'none' ||
+        (kMax > 1 && any(s$futilityBounds[1:(kMax-1)] > -6))) {
+      df = t(b)
+      rownames(df) = c("Information rate",
+                       "Efficacy boundary (Z)",
+                       "Futility boundary (Z)",
+                       "Cumulative rejection",
+                       "Cumulative futility",
+                       "Cumulative alpha spent",
+                       "Number of subjects",
+                       "Efficacy boundary (slope diff)",
+                       "Futility boundary (slope diff)",
+                       "Efficacy boundary (p)",
+                       "Futility boundary (p)",
+                       "Information",
+                       "Cumulative rejection under H0",
+                       "Cumulative futility under H0")
+
+    } else {
+      df = t(b[,c(1,2,4,6,7,8,10,12)])
+      rownames(df) = c("Information rate",
+                       "Efficacy boundary (Z)",
+                       "Cumulative rejection",
+                       "Cumulative alpha spent",
+                       "Number of subjects",
+                       "Efficacy boundary (slope diff)",
+                       "Efficacy boundary (p)",
+                       "Information")
+    }
+
+    colnames(df) <- paste("Stage", seq_len(ncol(df)), sep=" ")
+  } else {
+    b <- s[, c("efficacyBounds", "efficacySlopeDiff", "efficacyP")]
+
+    # format number of digits after decimal for each column
+    j3 <- c(1,2)
+    j4 <- 3
+
+    b[j3] <- lapply(b[j3], formatC, format = "f", digits = 3)
+    b[j4] <- lapply(b[j4], formatC, format = "f", digits = 4)
+
+    df = t(b)
+
+    if (z$normalApproximation) {
+      rownames(df) = c("Efficacy boundary (Z)",
+                       "Efficacy boundary (slope diff)",
+                       "Efficacy boundary (p)")
+    } else {
+      rownames(df) = c("Efficacy boundary (t)",
+                       "Efficacy boundary (slope diff)",
+                       "Efficacy boundary (p)")
+    }
+
+    colnames(df) <- NA
+  }
+
+  print(df1, ..., na.print = "" , quote = FALSE )
   print(df, ..., na.print = "" , quote = FALSE )
   invisible(x)
 }

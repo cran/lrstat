@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{rmstat}
 \alias{rmstat}
-\title{Stratified difference in restricted mean survival time}
+\title{Stratified difference in restricted mean survival times}
 \usage{
 rmstat(
   time = NA_real_,
@@ -81,7 +81,7 @@ mean survival time.
 \item \code{rmst1}: The restricted mean survival time for the treatment
 group.
 \item \code{rmst2}: The restricted mean survival time for the control group.
-\item \code{rmstDiff}: The difference in restricted mean survival time,
+\item \code{rmstDiff}: The difference in restricted mean survival times,
 i.e., \code{rmst1 - rmst2}.
 \item \code{vrmst1}: The variance for \code{rmst1}.
 \item \code{vrmst2}: The variance for \code{rmst2}.
@@ -94,7 +94,7 @@ i.e., \code{rmst1 - rmst2}.
 }
 \description{
 Obtains the stratified restricted mean survival times
-and difference in restricted mean survival time at given calendar
+and difference in restricted mean survival times at given calendar
 times.
 }
 \examples{

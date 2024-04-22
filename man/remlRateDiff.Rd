@@ -5,7 +5,13 @@
 \title{REML estimates of individual rates with specified rate
 difference}
 \usage{
-remlRateDiff(rateDiffH0, t1, y1, t2, y2)
+remlRateDiff(
+  rateDiffH0 = 0,
+  t1 = NA_real_,
+  y1 = NA_real_,
+  t2 = NA_real_,
+  y2 = NA_real_
+)
 }
 \arguments{
 \item{rateDiffH0}{The specified rate difference.}

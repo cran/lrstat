@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{kmstat}
 \alias{kmstat}
-\title{Stratified difference in milestone survival probability}
+\title{Stratified difference in milestone survival probabilities}
 \usage{
 kmstat(
   time = NA_real_,
@@ -92,7 +92,8 @@ i.e., \code{surv1 - surv2}.
 }
 \description{
 Obtains the stratified milestone survival probabilities
-and difference in milestone survival at given calendar times.
+and difference in milestone survival probabilities at given
+calendar times.
 }
 \examples{
 # Piecewise accrual, piecewise exponential survivals, and 5\% dropout by

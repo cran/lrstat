@@ -12,7 +12,7 @@ NumericVector stl_sort(const NumericVector& x);
 
 IntegerVector which(const LogicalVector& vector);
 
-IntegerVector findInterval2(NumericVector x,
+IntegerVector findInterval3(NumericVector x,
                             NumericVector breaks);
 
 double brent(const std::function<double(double)>& f,
@@ -31,17 +31,23 @@ List exitprobcpp(const NumericVector& b,
 NumericVector ptpwexpcpp(const NumericVector& q,
                          const NumericVector& piecewiseSurvivalTime,
                          const NumericVector& lambda,
-                         const double lowerBound);
+                         const double lowerBound,
+                         const bool lowertail,
+                         const bool logp);
 
 double qtpwexpcpp1(const double p,
                    const NumericVector& piecewiseSurvivalTime,
                    const NumericVector& lambda,
-                   const double lowerBound);
+                   const double lowerBound,
+                   const bool lowertail,
+                   const bool logp);
 
 NumericVector qtpwexpcpp(const NumericVector& p,
                          const NumericVector& piecewiseSurvivalTime,
                          const NumericVector& lambda,
-                         const double lowerBound);
+                         const double lowerBound,
+                         const bool lowertail,
+                         const bool logp);
 
 NumericVector rtpwexpcpp(const int n,
                          const NumericVector& piecewiseSurvivalTime,
@@ -70,6 +76,9 @@ List getPower(const double alpha,
 
 double intnorm(const std::function<double(double)>& f,
                double mu, double sigma, double a, double b);
+
+NumericVector mini(const std::function<double(double)>& f,
+                   double x1, double x2, double tol);
 
 NumericVector quad(integr_fn f, void *ex, double lower, double upper,
                    double tol);
@@ -224,5 +233,7 @@ List adaptDesign(double betaNew,
                  const NumericVector& userBetaSpendingNew,
                  const NumericVector& spendingTimeNew,
                  const double varianceRatio);
+
+bool hasVariable(DataFrame df, std::string varName);
 
 #endif // __UTILITIES__
