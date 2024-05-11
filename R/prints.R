@@ -47,12 +47,12 @@ print.design <- function(x, ...) {
                    round(a$expectedInformationH0, 2))
 
     asf = tolower(x$settings$typeAlphaSpending)
-    asfpar = x$settings$parameterAlphaSpending
-    asfuser = x$settings$userAlphaSpending
+    asfpar = round(x$settings$parameterAlphaSpending, 3)
+    asfuser = round(x$settings$userAlphaSpending, 4)
 
     bsf = tolower(x$settings$typeBetaSpending)
-    bsfpar = x$settings$parameterBetaSpending
-    bsfuser = x$settings$userBetaSpending
+    bsfpar = round(x$settings$parameterBetaSpending, 3)
+    bsfuser = round(x$settings$userBetaSpending, 4)
 
     if (asf == "of") {
       str6 = paste0("Alpha spending: O'Brien-Fleming")
@@ -70,7 +70,7 @@ print.design <- function(x, ...) {
       str6 = paste0("Alpha spending: HSD(gamma = ", asfpar, ")")
     } else if (asf == "user") {
       str6 = paste0("Alpha spending: User defined(",
-                    paste(asfuser, collapse = " "), ")")
+                    paste(asfuser, collapse = ","), ")")
     } else {
       str6 = "Alpha spending: None"
     }
@@ -97,9 +97,9 @@ print.design <- function(x, ...) {
     }
 
     if (!any(is.na(x$settings$spendingTime)) &&
-        !all.equal(x$settings$spendingTime, s$informationRates)) {
+        !all(x$settings$spendingTime == s$informationRates)) {
       str8 = paste0("Spending time: ",
-                    paste(x$settings$spendingTime, collapse = ","), ")")
+                    paste(round(x$settings$spendingTime, 3), collapse = ","))
       df1 = data.frame(x = rep("", 8))
       colnames(df1) = NULL
       rownames(df1) = c(str1, str2, str3, str4, str5,
@@ -237,8 +237,8 @@ print.designEquiv <- function(x, ...) {
                    round(a$expectedInformationH20, 2))
 
     asf = tolower(x$settings$typeAlphaSpending)
-    asfpar = x$settings$parameterAlphaSpending
-    asfuser = x$settings$userAlphaSpending
+    asfpar = round(x$settings$parameterAlphaSpending, 3)
+    asfuser = round(x$settings$userAlphaSpending, 4)
 
     if (asf == "of") {
       str6 = paste0("Alpha spending: O'Brien-Fleming")
@@ -256,15 +256,15 @@ print.designEquiv <- function(x, ...) {
       str6 = paste0("Alpha spending: HSD(gamma = ", asfpar, ")")
     } else if (asf == "user") {
       str6 = paste0("Alpha spending: User defined(",
-                    paste(asfuser, collapse = " "), ")")
+                    paste(asfuser, collapse = ","), ")")
     } else {
       str6 = "Alpha spending: None"
     }
 
     if (!any(is.na(x$settings$spendingTime)) &&
-        !all.equal(x$settings$spendingTime, s$informationRates)) {
+        !all(x$settings$spendingTime == s$informationRates)) {
       str7 = paste0("Spending time: ",
-                    paste(x$settings$spendingTime, collapse = ","), ")")
+                    paste(round(x$settings$spendingTime, 3), collapse = ","))
       df1 = data.frame(x = rep("", 8))
       colnames(df1) = NULL
       rownames(df1) = c(str1, str2, str3, str4, str5, str6, str7, "")
@@ -599,11 +599,11 @@ print.lrpower <- function(x, ...) {
 
   if (k > 1) {
     asf = tolower(x$settings$typeAlphaSpending)
-    asfpar = x$settings$parameterAlphaSpending
-    asfuser = x$settings$userAlphaSpending
+    asfpar = round(x$settings$parameterAlphaSpending, 3)
+    asfuser = round(x$settings$userAlphaSpending, 4)
 
     bsf = tolower(x$settings$typeBetaSpending)
-    bsfpar = x$settings$parameterBetaSpending
+    bsfpar = round(x$settings$parameterBetaSpending, 3)
 
     if (asf == "of") {
       str10 = paste0("Alpha spending: O'Brien-Fleming")
@@ -621,7 +621,7 @@ print.lrpower <- function(x, ...) {
       str10 = paste0("Alpha spending: HSD(gamma = ", asfpar, ")")
     } else if (asf == "user") {
       str10 = paste0("Alpha spending: User defined(",
-                     paste(asfuser, collapse = " "), ")")
+                     paste(asfuser, collapse = ","), ")")
     } else {
       str10 = "Alpha spending: None"
     }
@@ -647,9 +647,9 @@ print.lrpower <- function(x, ...) {
     }
 
     if (!any(is.na(x$settings$spendingTime)) &&
-        !all.equal(x$settings$spendingTime, s$informationRates)) {
+        !all(x$settings$spendingTime == s$informationRates)) {
       str12 = paste0("Spending time: ",
-                     paste(x$settings$spendingTime, collapse = ","), ")")
+                     paste(round(x$settings$spendingTime, 3), collapse = ","))
       df1 = data.frame(x = rep("", 12))
       colnames(df1) = NULL
       rownames(df1) = c(str1, str2, str3, str4, str5, str6, str7,
@@ -938,9 +938,9 @@ print.nbpower <- function(x, ...) {
 
 
   str2 <- paste0("Rate ratio under H0: ",
-                    round(a$rateRatioH0, 3), ", ",
-                    "rate ratio under H1: ",
-                    round(a$rateRatio, 3))
+                 round(a$rateRatioH0, 3), ", ",
+                 "rate ratio under H1: ",
+                 round(a$rateRatio, 3))
 
 
   if (length(x$settings$stratumFraction) > 1) {
@@ -962,7 +962,7 @@ print.nbpower <- function(x, ...) {
                        collapse = " "), ", ",
                  "dispersion for control: ",
                  paste(round(x$settings$kappa2, 3),
-                       collapse = " "))
+                       collase = " "))
 
   str5 <- paste0("Overall power: ",
                  round(a$overallReject, 3), ", ",
@@ -991,14 +991,14 @@ print.nbpower <- function(x, ...) {
                    round(a$expectedExposure, 1))
 
     str10 <- paste0("Maximum information: ",
-                   round(a$information, 2), ", ",
-                   "expected information: ",
-                   round(a$expectedInformation, 2))
+                    round(a$information, 2), ", ",
+                    "expected information: ",
+                    round(a$expectedInformation, 2))
 
     str11 <- paste0("Total study duration: ",
-                   round(a$studyDuration, 1), ", ",
-                   "expected study duration: ",
-                   round(a$expectedStudyDuration, 1))
+                    round(a$studyDuration, 1), ", ",
+                    "expected study duration: ",
+                    round(a$expectedStudyDuration, 1))
   } else {
     str6 <- paste0("Number of events: ",
                    round(a$numberOfEvents, 1))
@@ -1013,10 +1013,10 @@ print.nbpower <- function(x, ...) {
                    round(a$exposure, 1))
 
     str10 <- paste0("Information: ",
-                   round(a$information, 2))
+                    round(a$information, 2))
 
     str11 <- paste0("Study duration: ",
-                   round(a$studyDuration, 1))
+                    round(a$studyDuration, 1))
   }
 
   str12 <- paste0("Accrual duration: ",
@@ -1033,11 +1033,11 @@ print.nbpower <- function(x, ...) {
 
   if (k > 1) {
     asf = tolower(x$settings$typeAlphaSpending)
-    asfpar = x$settings$parameterAlphaSpending
-    asfuser = x$settings$userAlphaSpending
+    asfpar = round(x$settings$parameterAlphaSpending, 3)
+    asfuser = round(x$settings$userAlphaSpending, 4)
 
     bsf = tolower(x$settings$typeBetaSpending)
-    bsfpar = x$settings$parameterBetaSpending
+    bsfpar = round(x$settings$parameterBetaSpending, 3)
 
     if (asf == "of") {
       str14 = paste0("Alpha spending: O'Brien-Fleming")
@@ -1055,7 +1055,7 @@ print.nbpower <- function(x, ...) {
       str14 = paste0("Alpha spending: HSD(gamma = ", asfpar, ")")
     } else if (asf == "user") {
       str14 = paste0("Alpha spending: User defined(",
-                     paste(asfuser, collapse = " "), ")")
+                     paste(asfuser, collapse = ","), ")")
     } else {
       str14 = "Alpha spending: None"
     }
@@ -1081,9 +1081,9 @@ print.nbpower <- function(x, ...) {
     }
 
     if (!any(is.na(x$settings$spendingTime)) &&
-        !all.equal(x$settings$spendingTime, s$informationRates)) {
+        !all(x$settings$spendingTime == s$informationRates)) {
       str16 = paste0("Spending time: ",
-                     paste(x$settings$spendingTime, collapse = ","), ")")
+                     paste(round(x$settings$spendingTime, 3), collapse = ","))
 
       if (length(x$settings$stratumFraction) > 1) {
         df1 = data.frame(x = rep("", 17))
@@ -1338,8 +1338,8 @@ print.nbpowerequiv <- function(x, ...) {
 
   if (k > 1) {
     asf = tolower(x$settings$typeAlphaSpending)
-    asfpar = x$settings$parameterAlphaSpending
-    asfuser = x$settings$userAlphaSpending
+    asfpar = round(x$settings$parameterAlphaSpending, 3)
+    asfuser = round(x$settings$userAlphaSpending, 4)
 
     if (asf == "of") {
       str14 = paste0("Alpha spending: O'Brien-Fleming")
@@ -1357,15 +1357,15 @@ print.nbpowerequiv <- function(x, ...) {
       str14 = paste0("Alpha spending: HSD(gamma = ", asfpar, ")")
     } else if (asf == "user") {
       str14 = paste0("Alpha spending: User defined(",
-                     paste(asfuser, collapse = " "), ")")
+                     paste(asfuser, collapse = ","), ")")
     } else {
       str14 = "Alpha spending: None"
     }
 
     if (!any(is.na(x$settings$spendingTime)) &&
-        !all.equal(x$settings$spendingTime, s$informationRates)) {
+        !all(x$settings$spendingTime == s$informationRates)) {
       str15 = paste0("Spending time: ",
-                     paste(x$settings$spendingTime, collapse = ","), ")")
+                     paste(round(x$settings$spendingTime, 3), collapse = ","))
       if (length(x$settings$stratumFraction) > 1) {
         df1 = data.frame(x = rep("", 17))
         colnames(df1) = NULL
@@ -1519,8 +1519,7 @@ print.nbpower1s <- function(x, ...) {
                          collapse = " "))
   } else {
     str3 <- paste0("Dispersion: ",
-                   paste(round(x$settings$kappa, 3),
-                         collapse = " "))
+                   round(x$settings$kappa, 3))
   }
 
   str4 <- paste0("Overall power: ",
@@ -1587,11 +1586,11 @@ print.nbpower1s <- function(x, ...) {
 
   if (k > 1) {
     asf = tolower(x$settings$typeAlphaSpending)
-    asfpar = x$settings$parameterAlphaSpending
-    asfuser = x$settings$userAlphaSpending
+    asfpar = round(x$settings$parameterAlphaSpending, 3)
+    asfuser = round(x$settings$userAlphaSpending, 4)
 
     bsf = tolower(x$settings$typeBetaSpending)
-    bsfpar = x$settings$parameterBetaSpending
+    bsfpar = round(x$settings$parameterBetaSpending, 3)
 
     if (asf == "of") {
       str12 = paste0("Alpha spending: O'Brien-Fleming")
@@ -1609,7 +1608,7 @@ print.nbpower1s <- function(x, ...) {
       str12 = paste0("Alpha spending: HSD(gamma = ", asfpar, ")")
     } else if (asf == "user") {
       str12 = paste0("Alpha spending: User defined(",
-                     paste(asfuser, collapse = " "), ")")
+                     paste(asfuser, collapse = ","), ")")
     } else {
       str12 = "Alpha spending: None"
     }
@@ -1635,10 +1634,10 @@ print.nbpower1s <- function(x, ...) {
     }
 
     if (!any(is.na(x$settings$spendingTime)) &&
-        !all.equal(x$settings$spendingTime, s$informationRates)) {
+        !all(x$settings$spendingTime == s$informationRates)) {
       str14 = paste0("Spending time: ",
-                     paste(x$settings$spendingTime, collapse = ","), ")")
-      df1 = data.frame(x = rep("", 15))
+                     paste(round(x$settings$spendingTime, 3), collapse = ","))
+      df1 = data.frame(x = rep("", 14))
       colnames(df1) = NULL
       rownames(df1) = c(str1, str2, str3, str4, str5, str6, str7,
                         str8, str9, str10, str11,
@@ -1810,12 +1809,12 @@ print.designOneMean <- function(x, ...) {
 
   if (k > 1) {
     asf = tolower(x$settings$typeAlphaSpending)
-    asfpar = x$settings$parameterAlphaSpending
-    asfuser = x$settings$userAlphaSpending
+    asfpar = round(x$settings$parameterAlphaSpending, 3)
+    asfuser = round(x$settings$userAlphaSpending, 4)
 
     bsf = tolower(x$settings$typeBetaSpending)
-    bsfpar = x$settings$parameterBetaSpending
-    bsfuser = x$settings$userBetaSpending
+    bsfpar = round(x$settings$parameterBetaSpending, 3)
+    bsfuser = round(x$settings$userBetaSpending, 4)
 
     if (asf == "of") {
       str7 = paste0("Alpha spending: O'Brien-Fleming")
@@ -1833,7 +1832,7 @@ print.designOneMean <- function(x, ...) {
       str7 = paste0("Alpha spending: HSD(gamma = ", asfpar, ")")
     } else if (asf == "user") {
       str7 = paste0("Alpha spending: User defined(",
-                    paste(asfuser, collapse = " "), ")")
+                    paste(asfuser, collapse = ","), ")")
     } else {
       str7 = "Alpha spending: None"
     }
@@ -1860,9 +1859,9 @@ print.designOneMean <- function(x, ...) {
     }
 
     if (!any(is.na(x$settings$spendingTime)) &&
-        !all.equal(x$settings$spendingTime, s$informationRates)) {
+        !all(x$settings$spendingTime == s$informationRates)) {
       str9 = paste0("Spending time: ",
-                    paste(x$settings$spendingTime, collapse = ","), ")")
+                    paste(round(x$settings$spendingTime, 3), collapse = ","))
       df1 = data.frame(x = rep("", 9))
       colnames(df1) = NULL
       rownames(df1) = c(str1, str2, str3, str4, str5, str6,
@@ -2032,12 +2031,12 @@ print.designPairedMeanDiff <- function(x, ...) {
 
   if (k > 1) {
     asf = tolower(x$settings$typeAlphaSpending)
-    asfpar = x$settings$parameterAlphaSpending
-    asfuser = x$settings$userAlphaSpending
+    asfpar = round(x$settings$parameterAlphaSpending, 3)
+    asfuser = round(x$settings$userAlphaSpending, 4)
 
     bsf = tolower(x$settings$typeBetaSpending)
-    bsfpar = x$settings$parameterBetaSpending
-    bsfuser = x$settings$userBetaSpending
+    bsfpar = round(x$settings$parameterBetaSpending, 3)
+    bsfuser = round(x$settings$userBetaSpending, 4)
 
     if (asf == "of") {
       str7 = paste0("Alpha spending: O'Brien-Fleming")
@@ -2055,7 +2054,7 @@ print.designPairedMeanDiff <- function(x, ...) {
       str7 = paste0("Alpha spending: HSD(gamma = ", asfpar, ")")
     } else if (asf == "user") {
       str7 = paste0("Alpha spending: User defined(",
-                    paste(asfuser, collapse = " "), ")")
+                    paste(asfuser, collapse = ","), ")")
     } else {
       str7 = "Alpha spending: None"
     }
@@ -2082,9 +2081,9 @@ print.designPairedMeanDiff <- function(x, ...) {
     }
 
     if (!any(is.na(x$settings$spendingTime)) &&
-        !all.equal(x$settings$spendingTime, s$informationRates)) {
+        !all(x$settings$spendingTime == s$informationRates)) {
       str9 = paste0("Spending time: ",
-                    paste(x$settings$spendingTime, collapse = ","), ")")
+                    paste(round(x$settings$spendingTime, 3), collapse = ","))
       df1 = data.frame(x = rep("", 9))
       colnames(df1) = NULL
       rownames(df1) = c(str1, str2, str3, str4, str5, str6,
@@ -2255,12 +2254,12 @@ print.designPairedMeanRatio <- function(x, ...) {
 
   if (k > 1) {
     asf = tolower(x$settings$typeAlphaSpending)
-    asfpar = x$settings$parameterAlphaSpending
-    asfuser = x$settings$userAlphaSpending
+    asfpar = round(x$settings$parameterAlphaSpending, 3)
+    asfuser = round(x$settings$userAlphaSpending, 4)
 
     bsf = tolower(x$settings$typeBetaSpending)
-    bsfpar = x$settings$parameterBetaSpending
-    bsfuser = x$settings$userBetaSpending
+    bsfpar = round(x$settings$parameterBetaSpending, 3)
+    bsfuser = round(x$settings$userBetaSpending, 4)
 
     if (asf == "of") {
       str7 = paste0("Alpha spending: O'Brien-Fleming")
@@ -2278,7 +2277,7 @@ print.designPairedMeanRatio <- function(x, ...) {
       str7 = paste0("Alpha spending: HSD(gamma = ", asfpar, ")")
     } else if (asf == "user") {
       str7 = paste0("Alpha spending: User defined(",
-                    paste(asfuser, collapse = " "), ")")
+                    paste(asfuser, collapse = ","), ")")
     } else {
       str7 = "Alpha spending: None"
     }
@@ -2305,9 +2304,9 @@ print.designPairedMeanRatio <- function(x, ...) {
     }
 
     if (!any(is.na(x$settings$spendingTime)) &&
-        !all.equal(x$settings$spendingTime, s$informationRates)) {
+        !all(x$settings$spendingTime == s$informationRates)) {
       str9 = paste0("Spending time: ",
-                    paste(x$settings$spendingTime, collapse = ","), ")")
+                    paste(round(x$settings$spendingTime, 3), collapse = ","))
       df1 = data.frame(x = rep("", 9))
       colnames(df1) = NULL
       rownames(df1) = c(str1, str2, str3, str4, str5, str6,
@@ -2480,12 +2479,12 @@ print.designMeanDiff <- function(x, ...) {
 
   if (k > 1) {
     asf = tolower(x$settings$typeAlphaSpending)
-    asfpar = x$settings$parameterAlphaSpending
-    asfuser = x$settings$userAlphaSpending
+    asfpar = round(x$settings$parameterAlphaSpending, 3)
+    asfuser = round(x$settings$userAlphaSpending, 4)
 
     bsf = tolower(x$settings$typeBetaSpending)
-    bsfpar = x$settings$parameterBetaSpending
-    bsfuser = x$settings$userBetaSpending
+    bsfpar = round(x$settings$parameterBetaSpending, 3)
+    bsfuser = round(x$settings$userBetaSpending, 4)
 
     if (asf == "of") {
       str8 = paste0("Alpha spending: O'Brien-Fleming")
@@ -2503,7 +2502,7 @@ print.designMeanDiff <- function(x, ...) {
       str8 = paste0("Alpha spending: HSD(gamma = ", asfpar, ")")
     } else if (asf == "user") {
       str8 = paste0("Alpha spending: User defined(",
-                    paste(asfuser, collapse = " "), ")")
+                    paste(asfuser, collapse = ","), ")")
     } else {
       str8 = "Alpha spending: None"
     }
@@ -2530,9 +2529,9 @@ print.designMeanDiff <- function(x, ...) {
     }
 
     if (!any(is.na(x$settings$spendingTime)) &&
-        !all.equal(x$settings$spendingTime, s$informationRates)) {
+        !all(x$settings$spendingTime == s$informationRates)) {
       str10 = paste0("Spending time: ",
-                     paste(x$settings$spendingTime, collapse = ","), ")")
+                     paste(round(x$settings$spendingTime, 3), collapse = ","))
       df1 = data.frame(x = rep("", 10))
       colnames(df1) = NULL
       rownames(df1) = c(str1, str2, str3, str4, str5, str6, str7,
@@ -2705,12 +2704,12 @@ print.designMeanRatio <- function(x, ...) {
 
   if (k > 1) {
     asf = tolower(x$settings$typeAlphaSpending)
-    asfpar = x$settings$parameterAlphaSpending
-    asfuser = x$settings$userAlphaSpending
+    asfpar = round(x$settings$parameterAlphaSpending, 3)
+    asfuser = round(x$settings$userAlphaSpending, 4)
 
     bsf = tolower(x$settings$typeBetaSpending)
-    bsfpar = x$settings$parameterBetaSpending
-    bsfuser = x$settings$userBetaSpending
+    bsfpar = round(x$settings$parameterBetaSpending, 3)
+    bsfuser = round(x$settings$userBetaSpending, 4)
 
     if (asf == "of") {
       str8 = paste0("Alpha spending: O'Brien-Fleming")
@@ -2728,7 +2727,7 @@ print.designMeanRatio <- function(x, ...) {
       str8 = paste0("Alpha spending: HSD(gamma = ", asfpar, ")")
     } else if (asf == "user") {
       str8 = paste0("Alpha spending: User defined(",
-                    paste(asfuser, collapse = " "), ")")
+                    paste(asfuser, collapse = ","), ")")
     } else {
       str8 = "Alpha spending: None"
     }
@@ -2755,9 +2754,9 @@ print.designMeanRatio <- function(x, ...) {
     }
 
     if (!any(is.na(x$settings$spendingTime)) &&
-        !all.equal(x$settings$spendingTime, s$informationRates)) {
+        !all(x$settings$spendingTime == s$informationRates)) {
       str10 = paste0("Spending time: ",
-                     paste(x$settings$spendingTime, collapse = ","), ")")
+                     paste(round(x$settings$spendingTime, 3), collapse = ","))
       df1 = data.frame(x = rep("", 10))
       colnames(df1) = NULL
       rownames(df1) = c(str1, str2, str3, str4, str5, str6, str7,
@@ -2932,12 +2931,12 @@ print.designMeanDiffXO <- function(x, ...) {
 
   if (k > 1) {
     asf = tolower(x$settings$typeAlphaSpending)
-    asfpar = x$settings$parameterAlphaSpending
-    asfuser = x$settings$userAlphaSpending
+    asfpar = round(x$settings$parameterAlphaSpending, 3)
+    asfuser = round(x$settings$userAlphaSpending, 4)
 
     bsf = tolower(x$settings$typeBetaSpending)
-    bsfpar = x$settings$parameterBetaSpending
-    bsfuser = x$settings$userBetaSpending
+    bsfpar = round(x$settings$parameterBetaSpending, 3)
+    bsfuser = round(x$settings$userBetaSpending, 4)
 
     if (asf == "of") {
       str8 = paste0("Alpha spending: O'Brien-Fleming")
@@ -2955,7 +2954,7 @@ print.designMeanDiffXO <- function(x, ...) {
       str8 = paste0("Alpha spending: HSD(gamma = ", asfpar, ")")
     } else if (asf == "user") {
       str8 = paste0("Alpha spending: User defined(",
-                    paste(asfuser, collapse = " "), ")")
+                    paste(asfuser, collapse = ","), ")")
     } else {
       str8 = "Alpha spending: None"
     }
@@ -2982,9 +2981,9 @@ print.designMeanDiffXO <- function(x, ...) {
     }
 
     if (!any(is.na(x$settings$spendingTime)) &&
-        !all.equal(x$settings$spendingTime, s$informationRates)) {
+        !all(x$settings$spendingTime == s$informationRates)) {
       str10 = paste0("Spending time: ",
-                     paste(x$settings$spendingTime, collapse = ","), ")")
+                     paste(round(x$settings$spendingTime, 3), collapse = ","))
       df1 = data.frame(x = rep("", 10))
       colnames(df1) = NULL
       rownames(df1) = c(str1, str2, str3, str4, str5, str6, str7,
@@ -3157,12 +3156,12 @@ print.designMeanRatioXO <- function(x, ...) {
 
   if (k > 1) {
     asf = tolower(x$settings$typeAlphaSpending)
-    asfpar = x$settings$parameterAlphaSpending
-    asfuser = x$settings$userAlphaSpending
+    asfpar = round(x$settings$parameterAlphaSpending, 3)
+    asfuser = round(x$settings$userAlphaSpending, 4)
 
     bsf = tolower(x$settings$typeBetaSpending)
-    bsfpar = x$settings$parameterBetaSpending
-    bsfuser = x$settings$userBetaSpending
+    bsfpar = round(x$settings$parameterBetaSpending, 3)
+    bsfuser = round(x$settings$userBetaSpending, 4)
 
     if (asf == "of") {
       str8 = paste0("Alpha spending: O'Brien-Fleming")
@@ -3180,7 +3179,7 @@ print.designMeanRatioXO <- function(x, ...) {
       str8 = paste0("Alpha spending: HSD(gamma = ", asfpar, ")")
     } else if (asf == "user") {
       str8 = paste0("Alpha spending: User defined(",
-                    paste(asfuser, collapse = " "), ")")
+                    paste(asfuser, collapse = ","), ")")
     } else {
       str8 = "Alpha spending: None"
     }
@@ -3207,9 +3206,9 @@ print.designMeanRatioXO <- function(x, ...) {
     }
 
     if (!any(is.na(x$settings$spendingTime)) &&
-        !all.equal(x$settings$spendingTime, s$informationRates)) {
+        !all(x$settings$spendingTime == s$informationRates)) {
       str10 = paste0("Spending time: ",
-                     paste(x$settings$spendingTime, collapse = ","), ")")
+                     paste(round(x$settings$spendingTime, 3), collapse = ","))
       df1 = data.frame(x = rep("", 10))
       colnames(df1) = NULL
       rownames(df1) = c(str1, str2, str3, str4, str5, str6, str7,
@@ -3377,8 +3376,8 @@ print.designPairedMeanDiffEquiv <- function(x, ...) {
 
   if (k > 1) {
     asf = tolower(x$settings$typeAlphaSpending)
-    asfpar = x$settings$parameterAlphaSpending
-    asfuser = x$settings$userAlphaSpending
+    asfpar = round(x$settings$parameterAlphaSpending, 3)
+    asfuser = round(x$settings$userAlphaSpending, 4)
 
     if (asf == "of") {
       str7 = paste0("Alpha spending: O'Brien-Fleming")
@@ -3396,15 +3395,15 @@ print.designPairedMeanDiffEquiv <- function(x, ...) {
       str7 = paste0("Alpha spending: HSD(gamma = ", asfpar, ")")
     } else if (asf == "user") {
       str7 = paste0("Alpha spending: User defined(",
-                    paste(asfuser, collapse = " "), ")")
+                    paste(asfuser, collapse = ","), ")")
     } else {
       str7 = "Alpha spending: None"
     }
 
     if (!any(is.na(x$settings$spendingTime)) &&
-        !all.equal(x$settings$spendingTime, s$informationRates)) {
+        !all(x$settings$spendingTime == s$informationRates)) {
       str8 = paste0("Spending time: ",
-                    paste(x$settings$spendingTime, collapse = ","), ")")
+                    paste(round(x$settings$spendingTime, 3), collapse = ","))
       df1 = data.frame(x = rep("", 9))
       colnames(df1) = NULL
       rownames(df1) = c(str1, str2, str3, str4, str5, str6, str7, str8, "")
@@ -3554,8 +3553,8 @@ print.designPairedMeanRatioEquiv <- function(x, ...) {
 
   if (k > 1) {
     asf = tolower(x$settings$typeAlphaSpending)
-    asfpar = x$settings$parameterAlphaSpending
-    asfuser = x$settings$userAlphaSpending
+    asfpar = round(x$settings$parameterAlphaSpending, 3)
+    asfuser = round(x$settings$userAlphaSpending, 4)
 
     if (asf == "of") {
       str7 = paste0("Alpha spending: O'Brien-Fleming")
@@ -3573,15 +3572,15 @@ print.designPairedMeanRatioEquiv <- function(x, ...) {
       str7 = paste0("Alpha spending: HSD(gamma = ", asfpar, ")")
     } else if (asf == "user") {
       str7 = paste0("Alpha spending: User defined(",
-                    paste(asfuser, collapse = " "), ")")
+                    paste(asfuser, collapse = ","), ")")
     } else {
       str7 = "Alpha spending: None"
     }
 
     if (!any(is.na(x$settings$spendingTime)) &&
-        !all.equal(x$settings$spendingTime, s$informationRates)) {
+        !all(x$settings$spendingTime == s$informationRates)) {
       str8 = paste0("Spending time: ",
-                    paste(x$settings$spendingTime, collapse = ","), ")")
+                    paste(round(x$settings$spendingTime, 3), collapse = ","))
       df1 = data.frame(x = rep("", 9))
       colnames(df1) = NULL
       rownames(df1) = c(str1, str2, str3, str4, str5, str6, str7, str8, "")
@@ -3734,8 +3733,8 @@ print.designMeanDiffEquiv <- function(x, ...) {
 
   if (k > 1) {
     asf = tolower(x$settings$typeAlphaSpending)
-    asfpar = x$settings$parameterAlphaSpending
-    asfuser = x$settings$userAlphaSpending
+    asfpar = round(x$settings$parameterAlphaSpending, 3)
+    asfuser = round(x$settings$userAlphaSpending, 4)
 
     if (asf == "of") {
       str8 = paste0("Alpha spending: O'Brien-Fleming")
@@ -3753,15 +3752,15 @@ print.designMeanDiffEquiv <- function(x, ...) {
       str8 = paste0("Alpha spending: HSD(gamma = ", asfpar, ")")
     } else if (asf == "user") {
       str8 = paste0("Alpha spending: User defined(",
-                    paste(asfuser, collapse = " "), ")")
+                    paste(asfuser, collapse = ","), ")")
     } else {
       str8 = "Alpha spending: None"
     }
 
     if (!any(is.na(x$settings$spendingTime)) &&
-        !all.equal(x$settings$spendingTime, s$informationRates)) {
+        !all(x$settings$spendingTime == s$informationRates)) {
       str9 = paste0("Spending time: ",
-                    paste(x$settings$spendingTime, collapse = ","), ")")
+                    paste(round(x$settings$spendingTime, 3), collapse = ","))
       df1 = data.frame(x = rep("", 10))
       colnames(df1) = NULL
       rownames(df1) = c(str1, str2, str3, str4, str5, str6, str7,
@@ -3915,8 +3914,8 @@ print.designMeanRatioEquiv <- function(x, ...) {
 
   if (k > 1) {
     asf = tolower(x$settings$typeAlphaSpending)
-    asfpar = x$settings$parameterAlphaSpending
-    asfuser = x$settings$userAlphaSpending
+    asfpar = round(x$settings$parameterAlphaSpending, 3)
+    asfuser = round(x$settings$userAlphaSpending, 4)
 
     if (asf == "of") {
       str8 = paste0("Alpha spending: O'Brien-Fleming")
@@ -3934,15 +3933,15 @@ print.designMeanRatioEquiv <- function(x, ...) {
       str8 = paste0("Alpha spending: HSD(gamma = ", asfpar, ")")
     } else if (asf == "user") {
       str8 = paste0("Alpha spending: User defined(",
-                    paste(asfuser, collapse = " "), ")")
+                    paste(asfuser, collapse = ","), ")")
     } else {
       str8 = "Alpha spending: None"
     }
 
     if (!any(is.na(x$settings$spendingTime)) &&
-        !all.equal(x$settings$spendingTime, s$informationRates)) {
+        !all(x$settings$spendingTime == s$informationRates)) {
       str9 = paste0("Spending time: ",
-                    paste(x$settings$spendingTime, collapse = ","), ")")
+                    paste(round(x$settings$spendingTime, 3), collapse = ","))
       df1 = data.frame(x = rep("", 10))
       colnames(df1) = NULL
       rownames(df1) = c(str1, str2, str3, str4, str5, str6, str7,
@@ -4096,8 +4095,8 @@ print.designMeanDiffXOEquiv <- function(x, ...) {
 
   if (k > 1) {
     asf = tolower(x$settings$typeAlphaSpending)
-    asfpar = x$settings$parameterAlphaSpending
-    asfuser = x$settings$userAlphaSpending
+    asfpar = round(x$settings$parameterAlphaSpending, 3)
+    asfuser = round(x$settings$userAlphaSpending, 4)
 
     if (asf == "of") {
       str8 = paste0("Alpha spending: O'Brien-Fleming")
@@ -4115,15 +4114,15 @@ print.designMeanDiffXOEquiv <- function(x, ...) {
       str8 = paste0("Alpha spending: HSD(gamma = ", asfpar, ")")
     } else if (asf == "user") {
       str8 = paste0("Alpha spending: User defined(",
-                    paste(asfuser, collapse = " "), ")")
+                    paste(asfuser, collapse = ","), ")")
     } else {
       str8 = "Alpha spending: None"
     }
 
     if (!any(is.na(x$settings$spendingTime)) &&
-        !all.equal(x$settings$spendingTime, s$informationRates)) {
+        !all(x$settings$spendingTime == s$informationRates)) {
       str9 = paste0("Spending time: ",
-                    paste(x$settings$spendingTime, collapse = ","), ")")
+                    paste(round(x$settings$spendingTime, 3), collapse = ","))
       df1 = data.frame(x = rep("", 10))
       colnames(df1) = NULL
       rownames(df1) = c(str1, str2, str3, str4, str5, str6, str7,
@@ -4278,8 +4277,8 @@ print.designMeanRatioXOEquiv <- function(x, ...) {
 
   if (k > 1) {
     asf = tolower(x$settings$typeAlphaSpending)
-    asfpar = x$settings$parameterAlphaSpending
-    asfuser = x$settings$userAlphaSpending
+    asfpar = round(x$settings$parameterAlphaSpending, 3)
+    asfuser = round(x$settings$userAlphaSpending, 4)
 
     if (asf == "of") {
       str8 = paste0("Alpha spending: O'Brien-Fleming")
@@ -4297,15 +4296,15 @@ print.designMeanRatioXOEquiv <- function(x, ...) {
       str8 = paste0("Alpha spending: HSD(gamma = ", asfpar, ")")
     } else if (asf == "user") {
       str8 = paste0("Alpha spending: User defined(",
-                    paste(asfuser, collapse = " "), ")")
+                    paste(asfuser, collapse = ","), ")")
     } else {
       str8 = "Alpha spending: None"
     }
 
     if (!any(is.na(x$settings$spendingTime)) &&
-        !all.equal(x$settings$spendingTime, s$informationRates)) {
+        !all(x$settings$spendingTime == s$informationRates)) {
       str9 = paste0("Spending time: ",
-                    paste(x$settings$spendingTime, collapse = ","), ")")
+                    paste(round(x$settings$spendingTime, 3), collapse = ","))
       df1 = data.frame(x = rep("", 10))
       colnames(df1) = NULL
       rownames(df1) = c(str1, str2, str3, str4, str5, str6, str7,
@@ -4459,12 +4458,12 @@ print.designWilcoxon <- function(x, ...) {
 
   if (k > 1) {
     asf = tolower(x$settings$typeAlphaSpending)
-    asfpar = x$settings$parameterAlphaSpending
-    asfuser = x$settings$userAlphaSpending
+    asfpar = round(x$settings$parameterAlphaSpending, 3)
+    asfuser = round(x$settings$userAlphaSpending, 4)
 
     bsf = tolower(x$settings$typeBetaSpending)
-    bsfpar = x$settings$parameterBetaSpending
-    bsfuser = x$settings$userBetaSpending
+    bsfpar = round(x$settings$parameterBetaSpending, 3)
+    bsfuser = round(x$settings$userBetaSpending, 4)
 
     if (asf == "of") {
       str8 = paste0("Alpha spending: O'Brien-Fleming")
@@ -4482,7 +4481,7 @@ print.designWilcoxon <- function(x, ...) {
       str8 = paste0("Alpha spending: HSD(gamma = ", asfpar, ")")
     } else if (asf == "user") {
       str8 = paste0("Alpha spending: User defined(",
-                    paste(asfuser, collapse = " "), ")")
+                    paste(asfuser, collapse = ","), ")")
     } else {
       str8 = "Alpha spending: None"
     }
@@ -4509,9 +4508,9 @@ print.designWilcoxon <- function(x, ...) {
     }
 
     if (!any(is.na(x$settings$spendingTime)) &&
-        !all.equal(x$settings$spendingTime, s$informationRates)) {
+        !all(x$settings$spendingTime == s$informationRates)) {
       str10 = paste0("Spending time: ",
-                     paste(x$settings$spendingTime, collapse = ","), ")")
+                     paste(round(x$settings$spendingTime, 3), collapse = ","))
       df1 = data.frame(x = rep("", 10))
       colnames(df1) = NULL
       rownames(df1) = c(str1, str2, str3, str4, str5, str6, str7,
@@ -4620,7 +4619,6 @@ print.designWilcoxon <- function(x, ...) {
 print.designMeanDiffMMRM <- function(x, ...) {
   a = x$overallResults
   s = x$byStageResults
-  z = x$settings
   kMax = a$kMax
 
   if (kMax>1) {
@@ -4638,16 +4636,18 @@ print.designMeanDiffMMRM <- function(x, ...) {
                  round(a$meanDiff, 3))
 
   str3 <- paste0("Standard deviation for treatment: ",
-                 round(sqrt(z$covar1[z$k,z$k]), 3), ", ",
+                 round(sqrt(x$settings$covar1[x$settings$k,x$settings$k]),
+                       3), ", ",
                  "standard deviation for control: ",
-                 round(sqrt(z$covar2[z$k,z$k]), 3))
+                 round(sqrt(x$settings$covar2[x$settings$k,x$settings$k]),
+                       3))
 
   str4 <- paste0("Overall power: ",
                  round(a$overallReject, 3), ", ",
                  "overall alpha (1-sided): ",
                  round(a$alpha, 4))
 
-  if (z$typeBetaSpending != 'none' ||
+  if (x$settings$typeBetaSpending != 'none' ||
       (kMax > 1 && any(s$futilityBounds[1:(kMax-1)] > -6))) {
     str4 <- paste0(str4, ", ",
                    "attained alpha: ", round(a$attainedAlpha, 4))
@@ -4695,16 +4695,16 @@ print.designMeanDiffMMRM <- function(x, ...) {
                  "fixed follow-up: ", a$fixedFollowup)
 
   str10 <- paste0("Allocation ratio: ",
-                  round(z$allocationRatioPlanned, 3))
+                  round(x$settings$allocationRatioPlanned, 3))
 
   if (kMax > 1) {
-    asf = tolower(z$typeAlphaSpending)
-    asfpar = z$parameterAlphaSpending
-    asfuser = z$userAlphaSpending
+    asf = tolower(x$settings$typeAlphaSpending)
+    asfpar = round(x$settings$parameterAlphaSpending, 3)
+    asfuser = round(x$settings$userAlphaSpending, 4)
 
-    bsf = tolower(z$typeBetaSpending)
-    bsfpar = z$parameterBetaSpending
-    bsfuser = z$userBetaSpending
+    bsf = tolower(x$settings$typeBetaSpending)
+    bsfpar = round(x$settings$parameterBetaSpending, 3)
+    bsfuser = round(x$settings$userBetaSpending, 4)
 
     if (asf == "of") {
       str11 = paste0("Alpha spending: O'Brien-Fleming")
@@ -4722,7 +4722,7 @@ print.designMeanDiffMMRM <- function(x, ...) {
       str11 = paste0("Alpha spending: HSD(gamma = ", asfpar, ")")
     } else if (asf == "user") {
       str11 = paste0("Alpha spending: User defined(",
-                    paste(asfuser, collapse = " "), ")")
+                     paste(asfuser, collapse = ","), ")")
     } else {
       str11 = "Alpha spending: None"
     }
@@ -4743,15 +4743,15 @@ print.designMeanDiffMMRM <- function(x, ...) {
       str12 = paste0("beta spending: HSD(gamma = ", bsfpar, ")")
     } else if (bsf == "user") {
       str12 = paste0("beta spending: User defined(",
-                    paste(bsfuser, collapse = ","), ")")
+                     paste(bsfuser, collapse = ","), ")")
     } else {
       str12 = "beta spending: None"
     }
 
-    if (!any(is.na(z$spendingTime)) &&
-        !all.equal(z$spendingTime, s$informationRates)) {
+    if (!any(is.na(x$settings$spendingTime)) &&
+        !all(x$settings$spendingTime == s$informationRates)) {
       str13 = paste0("Spending time: ",
-                     paste(z$spendingTime, collapse = ","), ")")
+                     paste(round(x$settings$spendingTime, 3), collapse = ","))
       df1 = data.frame(x = rep("", 13))
       colnames(df1) = NULL
       rownames(df1) = c(str1, str2, str3, str4, str5, str6, str7, str8,
@@ -4790,7 +4790,7 @@ print.designMeanDiffMMRM <- function(x, ...) {
     b[j3] <- lapply(b[j3], formatC, format = "f", digits = 3)
     b[j4] <- lapply(b[j4], formatC, format = "f", digits = 4)
 
-    if (z$typeBetaSpending != 'none' ||
+    if (x$settings$typeBetaSpending != 'none' ||
         (kMax > 1 && any(s$futilityBounds[1:(kMax-1)] > -6))) {
       df = t(b)
       rownames(df) = c("Information rate",
@@ -4833,7 +4833,7 @@ print.designMeanDiffMMRM <- function(x, ...) {
 
     df = t(b)
 
-    if (z$normalApproximation) {
+    if (x$settings$normalApproximation) {
       rownames(df) = c("Efficacy boundary (Z)",
                        "Efficacy boundary (mean diff)",
                        "Efficacy boundary (p)")
@@ -5140,12 +5140,12 @@ print.designOneSlope <- function(x, ...) {
 
   if (k > 1) {
     asf = tolower(x$settings$typeAlphaSpending)
-    asfpar = x$settings$parameterAlphaSpending
-    asfuser = x$settings$userAlphaSpending
+    asfpar = round(x$settings$parameterAlphaSpending, 3)
+    asfuser = round(x$settings$userAlphaSpending, 4)
 
     bsf = tolower(x$settings$typeBetaSpending)
-    bsfpar = x$settings$parameterBetaSpending
-    bsfuser = x$settings$userBetaSpending
+    bsfpar = round(x$settings$parameterBetaSpending, 3)
+    bsfuser = round(x$settings$userBetaSpending, 4)
 
     if (asf == "of") {
       str8 = paste0("Alpha spending: O'Brien-Fleming")
@@ -5163,7 +5163,7 @@ print.designOneSlope <- function(x, ...) {
       str8 = paste0("Alpha spending: HSD(gamma = ", asfpar, ")")
     } else if (asf == "user") {
       str8 = paste0("Alpha spending: User defined(",
-                    paste(asfuser, collapse = " "), ")")
+                    paste(asfuser, collapse = ","), ")")
     } else {
       str8 = "Alpha spending: None"
     }
@@ -5190,9 +5190,9 @@ print.designOneSlope <- function(x, ...) {
     }
 
     if (!any(is.na(x$settings$spendingTime)) &&
-        !all.equal(x$settings$spendingTime, s$informationRates)) {
+        !all(x$settings$spendingTime == s$informationRates)) {
       str10 = paste0("Spending time: ",
-                     paste(x$settings$spendingTime, collapse = ","), ")")
+                     paste(round(x$settings$spendingTime, 3), collapse = ","))
       df1 = data.frame(x = rep("", 10))
       colnames(df1) = NULL
       rownames(df1) = c(str1, str2, str3, str4, str5, str6, str7,
@@ -5369,12 +5369,12 @@ print.designSlopeDiff <- function(x, ...) {
 
   if (k > 1) {
     asf = tolower(x$settings$typeAlphaSpending)
-    asfpar = x$settings$parameterAlphaSpending
-    asfuser = x$settings$userAlphaSpending
+    asfpar = round(x$settings$parameterAlphaSpending, 3)
+    asfuser = round(x$settings$userAlphaSpending, 4)
 
     bsf = tolower(x$settings$typeBetaSpending)
-    bsfpar = x$settings$parameterBetaSpending
-    bsfuser = x$settings$userBetaSpending
+    bsfpar = round(x$settings$parameterBetaSpending, 3)
+    bsfuser = round(x$settings$userBetaSpending, 4)
 
     if (asf == "of") {
       str9 = paste0("Alpha spending: O'Brien-Fleming")
@@ -5392,7 +5392,7 @@ print.designSlopeDiff <- function(x, ...) {
       str9 = paste0("Alpha spending: HSD(gamma = ", asfpar, ")")
     } else if (asf == "user") {
       str9 = paste0("Alpha spending: User defined(",
-                    paste(asfuser, collapse = " "), ")")
+                    paste(asfuser, collapse = ","), ")")
     } else {
       str9 = "Alpha spending: None"
     }
@@ -5419,9 +5419,9 @@ print.designSlopeDiff <- function(x, ...) {
     }
 
     if (!any(is.na(x$settings$spendingTime)) &&
-        !all.equal(x$settings$spendingTime, s$informationRates)) {
+        !all(x$settings$spendingTime == s$informationRates)) {
       str11 = paste0("Spending time: ",
-                     paste(x$settings$spendingTime, collapse = ","), ")")
+                     paste(round(x$settings$spendingTime, 3), collapse = ","))
       df1 = data.frame(x = rep("", 11))
       colnames(df1) = NULL
       rownames(df1) = c(str1, str2, str3, str4, str5, str6, str7, str8,
@@ -5537,7 +5537,6 @@ print.designSlopeDiff <- function(x, ...) {
 print.designSlopeDiffMMRM <- function(x, ...) {
   a = x$overallResults
   s = x$byStageResults
-  z = x$settings
   kMax = a$kMax
 
   if (kMax>1) {
@@ -5555,21 +5554,22 @@ print.designSlopeDiffMMRM <- function(x, ...) {
                  round(a$slopeDiff, 3))
 
   str3 <- paste0("Standard deviation of within-subject residual: ",
-                 round(z$stDev, 3))
+                 round(x$settings$stDev, 3))
 
   str4 <- paste0("Standard deviation of random intercept: ",
-                 round(sqrt(z$G[1,1]), 3), ", ",
+                 round(sqrt(x$settings$G[1,1]), 3), ", ",
                  "of random slope: ",
-                 round(sqrt(z$G[2,2]), 3), ", ",
+                 round(sqrt(x$settings$G[2,2]), 3), ", ",
                  "correlation: ",
-                 round(z$G[1,2]/sqrt(z$G[1,1]*z$G[2,2]), 3))
+                 round(x$settings$G[1,2]/sqrt(x$settings$G[1,1]*
+                                                x$settings$G[2,2]), 3))
 
   str5 <- paste0("Overall power: ",
                  round(a$overallReject, 3), ", ",
                  "overall alpha (1-sided): ",
                  round(a$alpha, 4))
 
-  if (z$typeBetaSpending != 'none' ||
+  if (x$settings$typeBetaSpending != 'none' ||
       (kMax > 1 && any(s$futilityBounds[1:(kMax-1)] > -6))) {
     str5 <- paste0(str5, ", ",
                    "attained alpha: ", round(a$attainedAlpha, 4))
@@ -5617,16 +5617,16 @@ print.designSlopeDiffMMRM <- function(x, ...) {
                   "fixed follow-up: ", a$fixedFollowup)
 
   str11 <- paste0("Allocation ratio: ",
-                  round(z$allocationRatioPlanned, 3))
+                  round(x$settings$allocationRatioPlanned, 3))
 
   if (kMax > 1) {
-    asf = tolower(z$typeAlphaSpending)
-    asfpar = z$parameterAlphaSpending
-    asfuser = z$userAlphaSpending
+    asf = tolower(x$settings$typeAlphaSpending)
+    asfpar = round(x$settings$parameterAlphaSpending, 3)
+    asfuser = round(x$settings$userAlphaSpending, 4)
 
-    bsf = tolower(z$typeBetaSpending)
-    bsfpar = z$parameterBetaSpending
-    bsfuser = z$userBetaSpending
+    bsf = tolower(x$settings$typeBetaSpending)
+    bsfpar = round(x$settings$parameterBetaSpending, 3)
+    bsfuser = round(x$settings$userBetaSpending, 4)
 
     if (asf == "of") {
       str12 = paste0("Alpha spending: O'Brien-Fleming")
@@ -5644,7 +5644,7 @@ print.designSlopeDiffMMRM <- function(x, ...) {
       str12 = paste0("Alpha spending: HSD(gamma = ", asfpar, ")")
     } else if (asf == "user") {
       str12 = paste0("Alpha spending: User defined(",
-                    paste(asfuser, collapse = " "), ")")
+                     paste(asfuser, collapse = ","), ")")
     } else {
       str12 = "Alpha spending: None"
     }
@@ -5670,10 +5670,10 @@ print.designSlopeDiffMMRM <- function(x, ...) {
       str13 = "beta spending: None"
     }
 
-    if (!any(is.na(z$spendingTime)) &&
-        !all.equal(z$spendingTime, s$informationRates)) {
+    if (!any(is.na(x$settings$spendingTime)) &&
+        !all(x$settings$spendingTime == s$informationRates)) {
       str14 = paste0("Spending time: ",
-                     paste(z$spendingTime, collapse = ","), ")")
+                     paste(round(x$settings$spendingTime, 3), collapse = ","))
       df1 = data.frame(x = rep("", 14))
       colnames(df1) = NULL
       rownames(df1) = c(str1, str2, str3, str4, str5, str6, str7, str8,
@@ -5712,7 +5712,7 @@ print.designSlopeDiffMMRM <- function(x, ...) {
     b[j3] <- lapply(b[j3], formatC, format = "f", digits = 3)
     b[j4] <- lapply(b[j4], formatC, format = "f", digits = 4)
 
-    if (z$typeBetaSpending != 'none' ||
+    if (x$settings$typeBetaSpending != 'none' ||
         (kMax > 1 && any(s$futilityBounds[1:(kMax-1)] > -6))) {
       df = t(b)
       rownames(df) = c("Information rate",
@@ -5755,7 +5755,7 @@ print.designSlopeDiffMMRM <- function(x, ...) {
 
     df = t(b)
 
-    if (z$normalApproximation) {
+    if (x$settings$normalApproximation) {
       rownames(df) = c("Efficacy boundary (Z)",
                        "Efficacy boundary (slope diff)",
                        "Efficacy boundary (p)")
@@ -5850,12 +5850,12 @@ print.designOneProportion <- function(x, ...) {
 
   if (k > 1) {
     asf = tolower(x$settings$typeAlphaSpending)
-    asfpar = x$settings$parameterAlphaSpending
-    asfuser = x$settings$userAlphaSpending
+    asfpar = round(x$settings$parameterAlphaSpending, 3)
+    asfuser = round(x$settings$userAlphaSpending, 4)
 
     bsf = tolower(x$settings$typeBetaSpending)
-    bsfpar = x$settings$parameterBetaSpending
-    bsfuser = x$settings$userBetaSpending
+    bsfpar = round(x$settings$parameterBetaSpending, 3)
+    bsfuser = round(x$settings$userBetaSpending, 4)
 
     if (asf == "of") {
       str8 = paste0("Alpha spending: O'Brien-Fleming")
@@ -5873,7 +5873,7 @@ print.designOneProportion <- function(x, ...) {
       str8 = paste0("Alpha spending: HSD(gamma = ", asfpar, ")")
     } else if (asf == "user") {
       str8 = paste0("Alpha spending: User defined(",
-                    paste(asfuser, collapse = " "), ")")
+                    paste(asfuser, collapse = ","), ")")
     } else {
       str8 = "Alpha spending: None"
     }
@@ -5900,9 +5900,9 @@ print.designOneProportion <- function(x, ...) {
     }
 
     if (!any(is.na(x$settings$spendingTime)) &&
-        !all.equal(x$settings$spendingTime, s$informationRates)) {
+        !all(x$settings$spendingTime == s$informationRates)) {
       str10 = paste0("Spending time: ",
-                     paste(x$settings$spendingTime, collapse = ","), ")")
+                     paste(round(x$settings$spendingTime, 3), collapse = ","))
       df1 = data.frame(x = rep("", 10))
       colnames(df1) = NULL
       rownames(df1) = c(str1, str2, str3, str4, str5, str6, str7,
@@ -6076,12 +6076,12 @@ print.designPairedPropMcNemar <- function(x, ...) {
 
   if (k > 1) {
     asf = tolower(x$settings$typeAlphaSpending)
-    asfpar = x$settings$parameterAlphaSpending
-    asfuser = x$settings$userAlphaSpending
+    asfpar = round(x$settings$parameterAlphaSpending, 3)
+    asfuser = round(x$settings$userAlphaSpending, 4)
 
     bsf = tolower(x$settings$typeBetaSpending)
-    bsfpar = x$settings$parameterBetaSpending
-    bsfuser = x$settings$userBetaSpending
+    bsfpar = round(x$settings$parameterBetaSpending, 3)
+    bsfuser = round(x$settings$userBetaSpending, 4)
 
     if (asf == "of") {
       str8 = paste0("Alpha spending: O'Brien-Fleming")
@@ -6099,7 +6099,7 @@ print.designPairedPropMcNemar <- function(x, ...) {
       str8 = paste0("Alpha spending: HSD(gamma = ", asfpar, ")")
     } else if (asf == "user") {
       str8 = paste0("Alpha spending: User defined(",
-                    paste(asfuser, collapse = " "), ")")
+                    paste(asfuser, collapse = ","), ")")
     } else {
       str8 = "Alpha spending: None"
     }
@@ -6126,9 +6126,9 @@ print.designPairedPropMcNemar <- function(x, ...) {
     }
 
     if (!any(is.na(x$settings$spendingTime)) &&
-        !all.equal(x$settings$spendingTime, s$informationRates)) {
+        !all(x$settings$spendingTime == s$informationRates)) {
       str10 = paste0("Spending time: ",
-                     paste(x$settings$spendingTime, collapse = ","), ")")
+                     paste(round(x$settings$spendingTime, 3), collapse = ","))
       df1 = data.frame(x = rep("", 10))
       colnames(df1) = NULL
       rownames(df1) = c(str1, str2, str3, str4, str5, str6, str7,
@@ -6295,12 +6295,12 @@ print.designRiskDiff <- function(x, ...) {
 
   if (k > 1) {
     asf = tolower(x$settings$typeAlphaSpending)
-    asfpar = x$settings$parameterAlphaSpending
-    asfuser = x$settings$userAlphaSpending
+    asfpar = round(x$settings$parameterAlphaSpending, 3)
+    asfuser = round(x$settings$userAlphaSpending, 4)
 
     bsf = tolower(x$settings$typeBetaSpending)
-    bsfpar = x$settings$parameterBetaSpending
-    bsfuser = x$settings$userBetaSpending
+    bsfpar = round(x$settings$parameterBetaSpending, 3)
+    bsfuser = round(x$settings$userBetaSpending, 4)
 
     if (asf == "of") {
       str8 = paste0("Alpha spending: O'Brien-Fleming")
@@ -6318,7 +6318,7 @@ print.designRiskDiff <- function(x, ...) {
       str8 = paste0("Alpha spending: HSD(gamma = ", asfpar, ")")
     } else if (asf == "user") {
       str8 = paste0("Alpha spending: User defined(",
-                    paste(asfuser, collapse = " "), ")")
+                    paste(asfuser, collapse = ","), ")")
     } else {
       str8 = "Alpha spending: None"
     }
@@ -6345,9 +6345,9 @@ print.designRiskDiff <- function(x, ...) {
     }
 
     if (!any(is.na(x$settings$spendingTime)) &&
-        !all.equal(x$settings$spendingTime, s$informationRates)) {
+        !all(x$settings$spendingTime == s$informationRates)) {
       str10 = paste0("Spending time: ",
-                     paste(x$settings$spendingTime, collapse = ","), ")")
+                     paste(round(x$settings$spendingTime, 3), collapse = ","))
       df1 = data.frame(x = rep("", 10))
       colnames(df1) = NULL
       rownames(df1) = c(str1, str2, str3, str4, str5, str6, str7,
@@ -6513,12 +6513,12 @@ print.designRiskRatio <- function(x, ...) {
 
   if (k > 1) {
     asf = tolower(x$settings$typeAlphaSpending)
-    asfpar = x$settings$parameterAlphaSpending
-    asfuser = x$settings$userAlphaSpending
+    asfpar = round(x$settings$parameterAlphaSpending, 3)
+    asfuser = round(x$settings$userAlphaSpending, 4)
 
     bsf = tolower(x$settings$typeBetaSpending)
-    bsfpar = x$settings$parameterBetaSpending
-    bsfuser = x$settings$userBetaSpending
+    bsfpar = round(x$settings$parameterBetaSpending, 3)
+    bsfuser = round(x$settings$userBetaSpending, 4)
 
     if (asf == "of") {
       str8 = paste0("Alpha spending: O'Brien-Fleming")
@@ -6536,7 +6536,7 @@ print.designRiskRatio <- function(x, ...) {
       str8 = paste0("Alpha spending: HSD(gamma = ", asfpar, ")")
     } else if (asf == "user") {
       str8 = paste0("Alpha spending: User defined(",
-                    paste(asfuser, collapse = " "), ")")
+                    paste(asfuser, collapse = ","), ")")
     } else {
       str8 = "Alpha spending: None"
     }
@@ -6563,9 +6563,9 @@ print.designRiskRatio <- function(x, ...) {
     }
 
     if (!any(is.na(x$settings$spendingTime)) &&
-        !all.equal(x$settings$spendingTime, s$informationRates)) {
+        !all(x$settings$spendingTime == s$informationRates)) {
       str10 = paste0("Spending time: ",
-                     paste(x$settings$spendingTime, collapse = ","), ")")
+                     paste(round(x$settings$spendingTime, 3), collapse = ","))
       df1 = data.frame(x = rep("", 10))
       colnames(df1) = NULL
       rownames(df1) = c(str1, str2, str3, str4, str5, str6, str7,
@@ -6732,12 +6732,12 @@ print.designRiskRatioFM <- function(x, ...) {
 
   if (k > 1) {
     asf = tolower(x$settings$typeAlphaSpending)
-    asfpar = x$settings$parameterAlphaSpending
-    asfuser = x$settings$userAlphaSpending
+    asfpar = round(x$settings$parameterAlphaSpending, 3)
+    asfuser = round(x$settings$userAlphaSpending, 4)
 
     bsf = tolower(x$settings$typeBetaSpending)
-    bsfpar = x$settings$parameterBetaSpending
-    bsfuser = x$settings$userBetaSpending
+    bsfpar = round(x$settings$parameterBetaSpending, 3)
+    bsfuser = round(x$settings$userBetaSpending, 4)
 
     if (asf == "of") {
       str8 = paste0("Alpha spending: O'Brien-Fleming")
@@ -6755,7 +6755,7 @@ print.designRiskRatioFM <- function(x, ...) {
       str8 = paste0("Alpha spending: HSD(gamma = ", asfpar, ")")
     } else if (asf == "user") {
       str8 = paste0("Alpha spending: User defined(",
-                    paste(asfuser, collapse = " "), ")")
+                    paste(asfuser, collapse = ","), ")")
     } else {
       str8 = "Alpha spending: None"
     }
@@ -6782,9 +6782,9 @@ print.designRiskRatioFM <- function(x, ...) {
     }
 
     if (!any(is.na(x$settings$spendingTime)) &&
-        !all.equal(x$settings$spendingTime, s$informationRates)) {
+        !all(x$settings$spendingTime == s$informationRates)) {
       str10 = paste0("Spending time: ",
-                     paste(x$settings$spendingTime, collapse = ","), ")")
+                     paste(round(x$settings$spendingTime, 3), collapse = ","))
       df1 = data.frame(x = rep("", 10))
       colnames(df1) = NULL
       rownames(df1) = c(str1, str2, str3, str4, str5, str6, str7,
@@ -6950,12 +6950,12 @@ print.designOddsRatio <- function(x, ...) {
 
   if (k > 1) {
     asf = tolower(x$settings$typeAlphaSpending)
-    asfpar = x$settings$parameterAlphaSpending
-    asfuser = x$settings$userAlphaSpending
+    asfpar = round(x$settings$parameterAlphaSpending, 3)
+    asfuser = round(x$settings$userAlphaSpending, 4)
 
     bsf = tolower(x$settings$typeBetaSpending)
-    bsfpar = x$settings$parameterBetaSpending
-    bsfuser = x$settings$userBetaSpending
+    bsfpar = round(x$settings$parameterBetaSpending, 3)
+    bsfuser = round(x$settings$userBetaSpending, 4)
 
     if (asf == "of") {
       str8 = paste0("Alpha spending: O'Brien-Fleming")
@@ -6973,7 +6973,7 @@ print.designOddsRatio <- function(x, ...) {
       str8 = paste0("Alpha spending: HSD(gamma = ", asfpar, ")")
     } else if (asf == "user") {
       str8 = paste0("Alpha spending: User defined(",
-                    paste(asfuser, collapse = " "), ")")
+                    paste(asfuser, collapse = ","), ")")
     } else {
       str8 = "Alpha spending: None"
     }
@@ -7000,9 +7000,9 @@ print.designOddsRatio <- function(x, ...) {
     }
 
     if (!any(is.na(x$settings$spendingTime)) &&
-        !all.equal(x$settings$spendingTime, s$informationRates)) {
+        !all(x$settings$spendingTime == s$informationRates)) {
       str10 = paste0("Spending time: ",
-                     paste(x$settings$spendingTime, collapse = ","), ")")
+                     paste(round(x$settings$spendingTime, 3), collapse = ","))
       df1 = data.frame(x = rep("", 10))
       colnames(df1) = NULL
       rownames(df1) = c(str1, str2, str3, str4, str5, str6, str7,
@@ -7173,8 +7173,8 @@ print.designRiskDiffEquiv <- function(x, ...) {
 
   if (k > 1) {
     asf = tolower(x$settings$typeAlphaSpending)
-    asfpar = x$settings$parameterAlphaSpending
-    asfuser = x$settings$userAlphaSpending
+    asfpar = round(x$settings$parameterAlphaSpending, 3)
+    asfuser = round(x$settings$userAlphaSpending, 4)
 
     if (asf == "of") {
       str8 = paste0("Alpha spending: O'Brien-Fleming")
@@ -7192,15 +7192,15 @@ print.designRiskDiffEquiv <- function(x, ...) {
       str8 = paste0("Alpha spending: HSD(gamma = ", asfpar, ")")
     } else if (asf == "user") {
       str8 = paste0("Alpha spending: User defined(",
-                    paste(asfuser, collapse = " "), ")")
+                    paste(asfuser, collapse = ","), ")")
     } else {
       str8 = "Alpha spending: None"
     }
 
     if (!any(is.na(x$settings$spendingTime)) &&
-        !all.equal(x$settings$spendingTime, s$informationRates)) {
+        !all(x$settings$spendingTime == s$informationRates)) {
       str9 = paste0("Spending time: ",
-                    paste(x$settings$spendingTime, collapse = ","), ")")
+                    paste(round(x$settings$spendingTime, 3), collapse = ","))
       df1 = data.frame(x = rep("", 10))
       colnames(df1) = NULL
       rownames(df1) = c(str1, str2, str3, str4, str5, str6, str7,
@@ -7355,8 +7355,8 @@ print.designRiskRatioEquiv <- function(x, ...) {
 
   if (k > 1) {
     asf = tolower(x$settings$typeAlphaSpending)
-    asfpar = x$settings$parameterAlphaSpending
-    asfuser = x$settings$userAlphaSpending
+    asfpar = round(x$settings$parameterAlphaSpending, 3)
+    asfuser = round(x$settings$userAlphaSpending, 4)
 
     if (asf == "of") {
       str8 = paste0("Alpha spending: O'Brien-Fleming")
@@ -7374,15 +7374,15 @@ print.designRiskRatioEquiv <- function(x, ...) {
       str8 = paste0("Alpha spending: HSD(gamma = ", asfpar, ")")
     } else if (asf == "user") {
       str8 = paste0("Alpha spending: User defined(",
-                    paste(asfuser, collapse = " "), ")")
+                    paste(asfuser, collapse = ","), ")")
     } else {
       str8 = "Alpha spending: None"
     }
 
     if (!any(is.na(x$settings$spendingTime)) &&
-        !all.equal(x$settings$spendingTime, s$informationRates)) {
+        !all(x$settings$spendingTime == s$informationRates)) {
       str9 = paste0("Spending time: ",
-                    paste(x$settings$spendingTime, collapse = ","), ")")
+                    paste(round(x$settings$spendingTime, 3), collapse = ","))
       df1 = data.frame(x = rep("", 10))
       colnames(df1) = NULL
       rownames(df1) = c(str1, str2, str3, str4, str5, str6, str7,
@@ -7537,8 +7537,8 @@ print.designOddsRatioEquiv <- function(x, ...) {
 
   if (k > 1) {
     asf = tolower(x$settings$typeAlphaSpending)
-    asfpar = x$settings$parameterAlphaSpending
-    asfuser = x$settings$userAlphaSpending
+    asfpar = round(x$settings$parameterAlphaSpending, 3)
+    asfuser = round(x$settings$userAlphaSpending, 4)
 
     if (asf == "of") {
       str8 = paste0("Alpha spending: O'Brien-Fleming")
@@ -7556,15 +7556,15 @@ print.designOddsRatioEquiv <- function(x, ...) {
       str8 = paste0("Alpha spending: HSD(gamma = ", asfpar, ")")
     } else if (asf == "user") {
       str8 = paste0("Alpha spending: User defined(",
-                    paste(asfuser, collapse = " "), ")")
+                    paste(asfuser, collapse = ","), ")")
     } else {
       str8 = "Alpha spending: None"
     }
 
     if (!any(is.na(x$settings$spendingTime)) &&
-        !all.equal(x$settings$spendingTime, s$informationRates)) {
+        !all(x$settings$spendingTime == s$informationRates)) {
       str9 = paste0("Spending time: ",
-                    paste(x$settings$spendingTime, collapse = ","), ")")
+                    paste(round(x$settings$spendingTime, 3), collapse = ","))
       df1 = data.frame(x = rep("", 10))
       colnames(df1) = NULL
       rownames(df1) = c(str1, str2, str3, str4, str5, str6, str7,
@@ -8031,11 +8031,11 @@ print.kmpower <- function(x, ...) {
 
   if (k > 1) {
     asf = tolower(x$settings$typeAlphaSpending)
-    asfpar = x$settings$parameterAlphaSpending
-    asfuser = x$settings$userAlphaSpending
+    asfpar = round(x$settings$parameterAlphaSpending, 3)
+    asfuser = round(x$settings$userAlphaSpending, 4)
 
     bsf = tolower(x$settings$typeBetaSpending)
-    bsfpar = x$settings$parameterBetaSpending
+    bsfpar = round(x$settings$parameterBetaSpending, 3)
 
     if (asf == "of") {
       str11 = paste0("Alpha spending: O'Brien-Fleming")
@@ -8053,7 +8053,7 @@ print.kmpower <- function(x, ...) {
       str11 = paste0("Alpha spending: HSD(gamma = ", asfpar, ")")
     } else if (asf == "user") {
       str11 = paste0("Alpha spending: User defined(",
-                     paste(asfuser, collapse = " "), ")")
+                     paste(asfuser, collapse = ","), ")")
     } else {
       str11 = "Alpha spending: None"
     }
@@ -8079,9 +8079,9 @@ print.kmpower <- function(x, ...) {
     }
 
     if (!any(is.na(x$settings$spendingTime)) &&
-        !all.equal(x$settings$spendingTime, s$informationRates)) {
+        !all(x$settings$spendingTime == s$informationRates)) {
       str13 = paste0("Spending time: ",
-                     paste(x$settings$spendingTime, collapse = ","), ")")
+                     paste(round(x$settings$spendingTime, 3), collapse = ","))
       df1 = data.frame(x = rep("", 13))
       colnames(df1) = NULL
       rownames(df1) = c(str1, str2, str3, str4, str5, str6, str7,
@@ -8258,11 +8258,11 @@ print.rmpower <- function(x, ...) {
 
   if (k > 1) {
     asf = tolower(x$settings$typeAlphaSpending)
-    asfpar = x$settings$parameterAlphaSpending
-    asfuser = x$settings$userAlphaSpending
+    asfpar = round(x$settings$parameterAlphaSpending, 3)
+    asfuser = round(x$settings$userAlphaSpending, 4)
 
     bsf = tolower(x$settings$typeBetaSpending)
-    bsfpar = x$settings$parameterBetaSpending
+    bsfpar = round(x$settings$parameterBetaSpending, 3)
 
     if (asf == "of") {
       str11 = paste0("Alpha spending: O'Brien-Fleming")
@@ -8280,7 +8280,7 @@ print.rmpower <- function(x, ...) {
       str11 = paste0("Alpha spending: HSD(gamma = ", asfpar, ")")
     } else if (asf == "user") {
       str11 = paste0("Alpha spending: User defined(",
-                     paste(asfuser, collapse = " "), ")")
+                     paste(asfuser, collapse = ","), ")")
     } else {
       str11 = "Alpha spending: None"
     }
@@ -8306,9 +8306,9 @@ print.rmpower <- function(x, ...) {
     }
 
     if (!any(is.na(x$settings$spendingTime)) &&
-        !all.equal(x$settings$spendingTime, s$informationRates)) {
+        !all(x$settings$spendingTime == s$informationRates)) {
       str13 = paste0("Spending time: ",
-                     paste(x$settings$spendingTime, collapse = ","), ")")
+                     paste(round(x$settings$spendingTime, 3), collapse = ","))
       df1 = data.frame(x = rep("", 13))
       colnames(df1) = NULL
       rownames(df1) = c(str1, str2, str3, str4, str5, str6, str7,
@@ -8489,8 +8489,8 @@ print.kmpowerequiv <- function(x, ...) {
 
   if (k > 1) {
     asf = tolower(x$settings$typeAlphaSpending)
-    asfpar = x$settings$parameterAlphaSpending
-    asfuser = x$settings$userAlphaSpending
+    asfpar = round(x$settings$parameterAlphaSpending, 3)
+    asfuser = round(x$settings$userAlphaSpending, 4)
 
     if (asf == "of") {
       str10 = paste0("Alpha spending: O'Brien-Fleming")
@@ -8508,15 +8508,15 @@ print.kmpowerequiv <- function(x, ...) {
       str10 = paste0("Alpha spending: HSD(gamma = ", asfpar, ")")
     } else if (asf == "user") {
       str10 = paste0("Alpha spending: User defined(",
-                     paste(asfuser, collapse = " "), ")")
+                     paste(asfuser, collapse = ","), ")")
     } else {
       str10 = "Alpha spending: None"
     }
 
     if (!any(is.na(x$settings$spendingTime)) &&
-        !all.equal(x$settings$spendingTime, s$informationRates)) {
+        !all(x$settings$spendingTime == s$informationRates)) {
       str11 = paste0("Spending time: ",
-                     paste(x$settings$spendingTime, collapse = ","), ")")
+                     paste(round(x$settings$spendingTime, 3), collapse = ","))
       df1 = data.frame(x = rep("", 12))
       colnames(df1) = NULL
       rownames(df1) = c(str1, str2, str3, str4, str5, str6, str7,
@@ -8681,8 +8681,8 @@ print.rmpowerequiv <- function(x, ...) {
 
   if (k > 1) {
     asf = tolower(x$settings$typeAlphaSpending)
-    asfpar = x$settings$parameterAlphaSpending
-    asfuser = x$settings$userAlphaSpending
+    asfpar = round(x$settings$parameterAlphaSpending, 3)
+    asfuser = round(x$settings$userAlphaSpending, 4)
 
     if (asf == "of") {
       str10 = paste0("Alpha spending: O'Brien-Fleming")
@@ -8700,15 +8700,15 @@ print.rmpowerequiv <- function(x, ...) {
       str10 = paste0("Alpha spending: HSD(gamma = ", asfpar, ")")
     } else if (asf == "user") {
       str10 = paste0("Alpha spending: User defined(",
-                     paste(asfuser, collapse = " "), ")")
+                     paste(asfuser, collapse = ","), ")")
     } else {
       str10 = "Alpha spending: None"
     }
 
     if (!any(is.na(x$settings$spendingTime)) &&
-        !all.equal(x$settings$spendingTime, s$informationRates)) {
+        !all(x$settings$spendingTime == s$informationRates)) {
       str11 = paste0("Spending time: ",
-                     paste(x$settings$spendingTime, collapse = ","), ")")
+                     paste(round(x$settings$spendingTime, 3), collapse = ","))
       df1 = data.frame(x = rep("", 12))
       colnames(df1) = NULL
       rownames(df1) = c(str1, str2, str3, str4, str5, str6, str7,
@@ -8883,8 +8883,8 @@ print.lrpowerequiv <- function(x, ...) {
 
   if (k > 1) {
     asf = tolower(x$settings$typeAlphaSpending)
-    asfpar = x$settings$parameterAlphaSpending
-    asfuser = x$settings$userAlphaSpending
+    asfpar = round(x$settings$parameterAlphaSpending, 3)
+    asfuser = round(x$settings$userAlphaSpending, 4)
 
     if (asf == "of") {
       str11 = paste0("Alpha spending: O'Brien-Fleming")
@@ -8902,15 +8902,15 @@ print.lrpowerequiv <- function(x, ...) {
       str11 = paste0("Alpha spending: HSD(gamma = ", asfpar, ")")
     } else if (asf == "user") {
       str11 = paste0("Alpha spending: User defined(",
-                     paste(asfuser, collapse = " "), ")")
+                     paste(asfuser, collapse = ","), ")")
     } else {
       str11 = "Alpha spending: None"
     }
 
     if (!any(is.na(x$settings$spendingTime)) &&
-        !all.equal(x$settings$spendingTime, s$informationRates)) {
+        !all(x$settings$spendingTime == s$informationRates)) {
       str12 = paste0("Spending time: ",
-                     paste(x$settings$spendingTime, collapse = ","), ")")
+                     paste(round(x$settings$spendingTime, 3), collapse = ","))
       df1 = data.frame(x = rep("", 13))
       colnames(df1) = NULL
       rownames(df1) = c(str1, str2, str3, str4, str5, str6, str7,
@@ -9070,11 +9070,11 @@ print.kmpower1s <- function(x, ...) {
 
   if (k > 1) {
     asf = tolower(x$settings$typeAlphaSpending)
-    asfpar = x$settings$parameterAlphaSpending
-    asfuser = x$settings$userAlphaSpending
+    asfpar = round(x$settings$parameterAlphaSpending, 3)
+    asfuser = round(x$settings$userAlphaSpending, 4)
 
     bsf = tolower(x$settings$typeBetaSpending)
-    bsfpar = x$settings$parameterBetaSpending
+    bsfpar = round(x$settings$parameterBetaSpending, 3)
 
     if (asf == "of") {
       str9 = paste0("Alpha spending: O'Brien-Fleming")
@@ -9092,7 +9092,7 @@ print.kmpower1s <- function(x, ...) {
       str9 = paste0("Alpha spending: HSD(gamma = ", asfpar, ")")
     } else if (asf == "user") {
       str9 = paste0("Alpha spending: User defined(",
-                    paste(asfuser, collapse = " "), ")")
+                    paste(asfuser, collapse = ","), ")")
     } else {
       str9 = "Alpha spending: None"
     }
@@ -9118,9 +9118,9 @@ print.kmpower1s <- function(x, ...) {
     }
 
     if (!any(is.na(x$settings$spendingTime)) &&
-        !all.equal(x$settings$spendingTime, s$informationRates)) {
+        !all(x$settings$spendingTime == s$informationRates)) {
       str11 = paste0("Spending time: ",
-                     paste(x$settings$spendingTime, collapse = ","), ")")
+                     paste(round(x$settings$spendingTime, 3), collapse = ","))
       df1 = data.frame(x = rep("", 11))
       colnames(df1) = NULL
       rownames(df1) = c(str1, str2, str3, str4, str5, str6, str7,
@@ -9289,11 +9289,11 @@ print.rmpower1s <- function(x, ...) {
 
   if (k > 1) {
     asf = tolower(x$settings$typeAlphaSpending)
-    asfpar = x$settings$parameterAlphaSpending
-    asfuser = x$settings$userAlphaSpending
+    asfpar = round(x$settings$parameterAlphaSpending, 3)
+    asfuser = round(x$settings$userAlphaSpending, 4)
 
     bsf = tolower(x$settings$typeBetaSpending)
-    bsfpar = x$settings$parameterBetaSpending
+    bsfpar = round(x$settings$parameterBetaSpending, 3)
 
     if (asf == "of") {
       str9 = paste0("Alpha spending: O'Brien-Fleming")
@@ -9311,7 +9311,7 @@ print.rmpower1s <- function(x, ...) {
       str9 = paste0("Alpha spending: HSD(gamma = ", asfpar, ")")
     } else if (asf == "user") {
       str9 = paste0("Alpha spending: User defined(",
-                    paste(asfuser, collapse = " "), ")")
+                    paste(asfuser, collapse = ","), ")")
     } else {
       str9 = "Alpha spending: None"
     }
@@ -9337,9 +9337,9 @@ print.rmpower1s <- function(x, ...) {
     }
 
     if (!any(is.na(x$settings$spendingTime)) &&
-        !all.equal(x$settings$spendingTime, s$informationRates)) {
+        !all(x$settings$spendingTime == s$informationRates)) {
       str11 = paste0("Spending time: ",
-                     paste(x$settings$spendingTime, collapse = ","), ")")
+                     paste(round(x$settings$spendingTime, 3), collapse = ","))
       df1 = data.frame(x = rep("", 11))
       colnames(df1) = NULL
       rownames(df1) = c(str1, str2, str3, str4, str5, str6, str7,

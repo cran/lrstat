@@ -4,7 +4,13 @@
 \alias{samplesizeFisherExact}
 \title{Sample size for Fisher's exact test for two proportions}
 \usage{
-samplesizeFisherExact(beta, pi1, pi2, allocationRatioPlanned = 1, alpha = 0.05)
+samplesizeFisherExact(
+  beta = NA_real_,
+  pi1 = NA_real_,
+  pi2 = NA_real_,
+  allocationRatioPlanned = 1,
+  alpha = 0.05
+)
 }
 \arguments{
 \item{beta}{The type II error.}

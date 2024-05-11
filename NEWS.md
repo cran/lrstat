@@ -1,3 +1,8 @@
+# lrstat 0.2.6
+
+- replace "R_isnancpp(x)" with "x == NA_INTEGER" for integer parameter x
+- replace "!all.equal(x$settings$spendingTime, s$informationRates)" with "!all(x$settings$spendingTime == s$informationRates)" in prints.R
+
 # lrstat 0.2.5
 
 - update survQuantile in getDesignMeans.R to handle new censoring and inestimable quantiles

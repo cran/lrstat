@@ -22,6 +22,10 @@ each analysis time interval.}
 \item{lowerBound}{The left truncation time point for the survival time.
 Defaults to 0 for no truncation.}
 }
+\value{
+The random numbers from truncated piecewise exponential
+distribution.
+}
 \description{
 Obtains random samples from a truncated piecewise
 exponential distribution.

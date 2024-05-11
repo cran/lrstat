@@ -4,7 +4,13 @@
 \alias{simon2stage}
 \title{Simon's two-stage design}
 \usage{
-simon2stage(alpha, beta, piH0, pi, n_max = 110L)
+simon2stage(
+  alpha = NA_real_,
+  beta = NA_real_,
+  piH0 = NA_real_,
+  pi = NA_real_,
+  n_max = 110L
+)
 }
 \arguments{
 \item{alpha}{Type I error rate (one-sided).}

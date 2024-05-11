@@ -5,7 +5,13 @@
 \title{Miettinen-Nurminen score confidence interval for
 two-sample risk ratio}
 \usage{
-mnRiskRatioCI(n1, y1, n2, y2, cilevel = 0.95)
+mnRiskRatioCI(
+  n1 = NA_real_,
+  y1 = NA_real_,
+  n2 = NA_real_,
+  y2 = NA_real_,
+  cilevel = 0.95
+)
 }
 \arguments{
 \item{n1}{The sample size for the active treatment group.}

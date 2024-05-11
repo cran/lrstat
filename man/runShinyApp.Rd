@@ -6,6 +6,9 @@
 \usage{
 runShinyApp()
 }
+\value{
+No return value, called for side effects.
+}
 \description{
 Runs the log-rank test power and sample size calculation
 Shiny app.

@@ -10,47 +10,6 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
-// simonBayesAnalysis
-List simonBayesAnalysis(const int nstrata, const IntegerVector& r, const IntegerVector& n, const double lambda, const double gamma, const double phi, const double plo);
-RcppExport SEXP _lrstat_simonBayesAnalysis(SEXP nstrataSEXP, SEXP rSEXP, SEXP nSEXP, SEXP lambdaSEXP, SEXP gammaSEXP, SEXP phiSEXP, SEXP ploSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const int >::type nstrata(nstrataSEXP);
-    Rcpp::traits::input_parameter< const IntegerVector& >::type r(rSEXP);
-    Rcpp::traits::input_parameter< const IntegerVector& >::type n(nSEXP);
-    Rcpp::traits::input_parameter< const double >::type lambda(lambdaSEXP);
-    Rcpp::traits::input_parameter< const double >::type gamma(gammaSEXP);
-    Rcpp::traits::input_parameter< const double >::type phi(phiSEXP);
-    Rcpp::traits::input_parameter< const double >::type plo(ploSEXP);
-    rcpp_result_gen = Rcpp::wrap(simonBayesAnalysis(nstrata, r, n, lambda, gamma, phi, plo));
-    return rcpp_result_gen;
-END_RCPP
-}
-// simonBayesSim
-List simonBayesSim(const NumericVector& p, const NumericVector& accrualTime, const NumericVector& accrualIntensity, const NumericVector& stratumFraction, const double lambda, const double gamma, const double phi, const double plo, const double T, const int maxSubjects, const IntegerVector& plannedSubjects, const int maxNumberOfIterations, const int maxNumberOfRawDatasets, const int seed);
-RcppExport SEXP _lrstat_simonBayesSim(SEXP pSEXP, SEXP accrualTimeSEXP, SEXP accrualIntensitySEXP, SEXP stratumFractionSEXP, SEXP lambdaSEXP, SEXP gammaSEXP, SEXP phiSEXP, SEXP ploSEXP, SEXP TSEXP, SEXP maxSubjectsSEXP, SEXP plannedSubjectsSEXP, SEXP maxNumberOfIterationsSEXP, SEXP maxNumberOfRawDatasetsSEXP, SEXP seedSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const NumericVector& >::type p(pSEXP);
-    Rcpp::traits::input_parameter< const NumericVector& >::type accrualTime(accrualTimeSEXP);
-    Rcpp::traits::input_parameter< const NumericVector& >::type accrualIntensity(accrualIntensitySEXP);
-    Rcpp::traits::input_parameter< const NumericVector& >::type stratumFraction(stratumFractionSEXP);
-    Rcpp::traits::input_parameter< const double >::type lambda(lambdaSEXP);
-    Rcpp::traits::input_parameter< const double >::type gamma(gammaSEXP);
-    Rcpp::traits::input_parameter< const double >::type phi(phiSEXP);
-    Rcpp::traits::input_parameter< const double >::type plo(ploSEXP);
-    Rcpp::traits::input_parameter< const double >::type T(TSEXP);
-    Rcpp::traits::input_parameter< const int >::type maxSubjects(maxSubjectsSEXP);
-    Rcpp::traits::input_parameter< const IntegerVector& >::type plannedSubjects(plannedSubjectsSEXP);
-    Rcpp::traits::input_parameter< const int >::type maxNumberOfIterations(maxNumberOfIterationsSEXP);
-    Rcpp::traits::input_parameter< const int >::type maxNumberOfRawDatasets(maxNumberOfRawDatasetsSEXP);
-    Rcpp::traits::input_parameter< const int >::type seed(seedSEXP);
-    rcpp_result_gen = Rcpp::wrap(simonBayesSim(p, accrualTime, accrualIntensity, stratumFraction, lambda, gamma, phi, plo, T, maxSubjects, plannedSubjects, maxNumberOfIterations, maxNumberOfRawDatasets, seed));
-    return rcpp_result_gen;
-END_RCPP
-}
 // kmstat1
 DataFrame kmstat1(const double time, const double milestone, const double allocationRatioPlanned, const NumericVector& accrualTime, const NumericVector& accrualIntensity, const NumericVector& piecewiseSurvivalTime, const NumericVector& stratumFraction, const NumericVector& lambda1, const NumericVector& lambda2, const NumericVector& gamma1, const NumericVector& gamma2, const double accrualDuration, const double followupTime, const bool fixedFollowup);
 RcppExport SEXP _lrstat_kmstat1(SEXP timeSEXP, SEXP milestoneSEXP, SEXP allocationRatioPlannedSEXP, SEXP accrualTimeSEXP, SEXP accrualIntensitySEXP, SEXP piecewiseSurvivalTimeSEXP, SEXP stratumFractionSEXP, SEXP lambda1SEXP, SEXP lambda2SEXP, SEXP gamma1SEXP, SEXP gamma2SEXP, SEXP accrualDurationSEXP, SEXP followupTimeSEXP, SEXP fixedFollowupSEXP) {
@@ -1114,16 +1073,16 @@ BEGIN_RCPP
 END_RCPP
 }
 // simon2stage
-DataFrame simon2stage(double alpha, double beta, double piH0, double pi, int n_max);
+DataFrame simon2stage(const double alpha, const double beta, const double piH0, const double pi, const int n_max);
 RcppExport SEXP _lrstat_simon2stage(SEXP alphaSEXP, SEXP betaSEXP, SEXP piH0SEXP, SEXP piSEXP, SEXP n_maxSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< double >::type alpha(alphaSEXP);
-    Rcpp::traits::input_parameter< double >::type beta(betaSEXP);
-    Rcpp::traits::input_parameter< double >::type piH0(piH0SEXP);
-    Rcpp::traits::input_parameter< double >::type pi(piSEXP);
-    Rcpp::traits::input_parameter< int >::type n_max(n_maxSEXP);
+    Rcpp::traits::input_parameter< const double >::type alpha(alphaSEXP);
+    Rcpp::traits::input_parameter< const double >::type beta(betaSEXP);
+    Rcpp::traits::input_parameter< const double >::type piH0(piH0SEXP);
+    Rcpp::traits::input_parameter< const double >::type pi(piSEXP);
+    Rcpp::traits::input_parameter< const int >::type n_max(n_maxSEXP);
     rcpp_result_gen = Rcpp::wrap(simon2stage(alpha, beta, piH0, pi, n_max));
     return rcpp_result_gen;
 END_RCPP
@@ -2784,8 +2743,6 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_lrstat_simonBayesAnalysis", (DL_FUNC) &_lrstat_simonBayesAnalysis, 7},
-    {"_lrstat_simonBayesSim", (DL_FUNC) &_lrstat_simonBayesSim, 14},
     {"_lrstat_kmstat1", (DL_FUNC) &_lrstat_kmstat1, 14},
     {"_lrstat_kmstat", (DL_FUNC) &_lrstat_kmstat, 14},
     {"_lrstat_kmpower", (DL_FUNC) &_lrstat_kmpower, 28},

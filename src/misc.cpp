@@ -28,8 +28,10 @@ using namespace Rcpp;
 //'
 //' @export
 // [[Rcpp::export]]
-List updateGraph(const NumericVector& w, const NumericMatrix& G,
-                 const IntegerVector& I, const int j) {
+List updateGraph(const NumericVector& w = NA_REAL,
+                 const NumericMatrix& G = NA_REAL,
+                 const IntegerVector& I = NA_INTEGER,
+                 const int j = NA_INTEGER) {
   int k, l, m = w.size();
 
   if (G.nrow() != m || G.ncol() != m) {
@@ -211,8 +213,8 @@ NumericMatrix fadjpboncpp(const NumericVector& w,
 //'
 //' @export
 // [[Rcpp::export]]
-NumericMatrix fwgtmat(const NumericVector& w,
-                      const NumericMatrix& G) {
+NumericMatrix fwgtmat(const NumericVector& w = NA_REAL,
+                      const NumericMatrix& G = NA_REAL) {
   int m = w.size();
   int i, j, k, l;
   int ntests = (1 << m) - 1;
@@ -1818,7 +1820,7 @@ DataFrame getCI(const int L = NA_INTEGER,
   NumericVector b = clone(criticalValues);
   NumericVector st = clone(spendingTime);
 
-  if (R_isnancpp(L)) {
+  if (L == NA_INTEGER) {
     stop("L must be provided");
   }
 
@@ -2047,7 +2049,7 @@ DataFrame getRCI(const int L = NA_INTEGER,
   NumericVector b = clone(criticalValues);
   NumericVector st = clone(spendingTime);
 
-  if (R_isnancpp(L)) {
+  if (L == NA_INTEGER) {
     stop("L must be provided");
   }
 
@@ -2502,7 +2504,7 @@ DataFrame getADCI(const int L = NA_INTEGER,
 
   double asfparNew = parameterAlphaSpendingNew;
 
-  if (R_isnancpp(L)) {
+  if (L == NA_INTEGER) {
     stop("L must be provided");
   }
 
@@ -2522,7 +2524,7 @@ DataFrame getADCI(const int L = NA_INTEGER,
     stop("IMax must be positive");
   }
 
-  if (R_isnancpp(kMax)) {
+  if (kMax == NA_INTEGER) {
     stop("kMax must be provided");
   }
 
@@ -2609,7 +2611,7 @@ DataFrame getADCI(const int L = NA_INTEGER,
     st = clone(t);
   }
 
-  if (R_isnancpp(L2)) {
+  if (L2 == NA_INTEGER) {
     stop("L2 must be provided");
   }
 
@@ -2953,7 +2955,7 @@ DataFrame getADRCI(const int L = NA_INTEGER,
 
   double asfparNew = parameterAlphaSpendingNew;
 
-  if (R_isnancpp(L)) {
+  if (L == NA_INTEGER) {
     stop("L must be provided");
   }
 
@@ -2973,7 +2975,7 @@ DataFrame getADRCI(const int L = NA_INTEGER,
     stop("IMax must be positive");
   }
 
-  if (R_isnancpp(kMax)) {
+  if (kMax == NA_INTEGER) {
     stop("kMax must be provided");
   }
 
@@ -3060,7 +3062,7 @@ DataFrame getADRCI(const int L = NA_INTEGER,
     st = clone(t);
   }
 
-  if (R_isnancpp(L2)) {
+  if (L2 == NA_INTEGER) {
     stop("L2 must be provided");
   }
 
@@ -3601,7 +3603,7 @@ double getCP(double INew = NA_REAL,
     stop("INew must be positive");
   }
 
-  if (R_isnancpp(L)) {
+  if (L == NA_INTEGER) {
     stop("L must be provided");
   }
 
@@ -3625,7 +3627,7 @@ double getCP(double INew = NA_REAL,
     stop("IMax must be positive");
   }
 
-  if (R_isnancpp(kMax)) {
+  if (kMax == NA_INTEGER) {
     stop("kMax must be provided");
   }
 
@@ -3774,7 +3776,7 @@ double getCP(double INew = NA_REAL,
   }
 
   if (MullerSchafer) {
-    if (R_isnancpp(kNew)) {
+    if (kNew == NA_INTEGER) {
       stop("kNew must be provided");
     }
 
@@ -4119,8 +4121,12 @@ double pfutile(double p, int n1, int n2, int r1, int r) {
 //'
 //' @export
 // [[Rcpp::export]]
-DataFrame simon2stage(
-    double alpha, double beta, double piH0, double pi, int n_max = 110) {
+DataFrame simon2stage(const double alpha = NA_REAL,
+                      const double beta = NA_REAL,
+                      const double piH0 = NA_REAL,
+                      const double pi = NA_REAL,
+                      const int n_max = 110) {
+
   int n1, n, r1, r;
 
   if (R_isnancpp(alpha)) {
@@ -4609,9 +4615,9 @@ DataFrame samplesizeOneRateExact(const double beta = 0.2,
 //'
 //' @export
 // [[Rcpp::export]]
-DataFrame powerFisherExact(const int n,
-                           const double pi1,
-                           const double pi2,
+DataFrame powerFisherExact(const int n = NA_REAL,
+                           const double pi1 = NA_REAL,
+                           const double pi2 = NA_REAL,
                            const double allocationRatioPlanned = 1,
                            const double alpha = 0.05) {
 
@@ -4725,9 +4731,9 @@ DataFrame powerFisherExact(const int n,
 //'
 //' @export
 // [[Rcpp::export]]
-DataFrame samplesizeFisherExact(const double beta,
-                                const double pi1,
-                                const double pi2,
+DataFrame samplesizeFisherExact(const double beta = NA_REAL,
+                                const double pi1 = NA_REAL,
+                                const double pi2 = NA_REAL,
                                 const double allocationRatioPlanned = 1,
                                 const double alpha = 0.05) {
 
@@ -4959,8 +4965,10 @@ double zstatRiskDiff(const double riskDiffH0 = 0.0,
 //' @export
 //'
 // [[Rcpp::export]]
-List mnRiskDiffCI(const NumericVector& n1, const NumericVector& y1,
-                  const NumericVector& n2, const NumericVector& y2,
+List mnRiskDiffCI(const NumericVector& n1 = NA_REAL,
+                  const NumericVector& y1 = NA_REAL,
+                  const NumericVector& n2 = NA_REAL,
+                  const NumericVector& y2 = NA_REAL,
                   const double cilevel = 0.95) {
   if (is_true(any(n1 <= 0))) {
     stop("Each element of n1 must be a positive integer");
@@ -5202,8 +5210,10 @@ double zstatRiskRatio(const double riskRatioH0 = 1.0,
 //' @export
 //'
 // [[Rcpp::export]]
-List mnRiskRatioCI(const NumericVector& n1, const NumericVector& y1,
-                   const NumericVector& n2, const NumericVector& y2,
+List mnRiskRatioCI(const NumericVector& n1 = NA_REAL,
+                   const NumericVector& y1 = NA_REAL,
+                   const NumericVector& n2 = NA_REAL,
+                   const NumericVector& y2 = NA_REAL,
                    const double cilevel = 0.95) {
   if (is_true(any(n1 <= 0))) {
     stop("Each element of n1 must be a positive integer");
@@ -5474,8 +5484,10 @@ double zstatOddsRatio(const double oddsRatioH0 = 1.0,
 //' @export
 //'
 // [[Rcpp::export]]
-List mnOddsRatioCI(const NumericVector& n1, const NumericVector& y1,
-                   const NumericVector& n2, const NumericVector& y2,
+List mnOddsRatioCI(const NumericVector& n1 = NA_REAL,
+                   const NumericVector& y1 = NA_REAL,
+                   const NumericVector& n2 = NA_REAL,
+                   const NumericVector& y2 = NA_REAL,
                    const double cilevel = 0.95) {
   if (is_true(any(n1 <= 0))) {
     stop("Each element of n1 must be a positive integer");
@@ -5744,8 +5756,10 @@ double zstatRateDiff(const double rateDiffH0 = 0.0,
 //' @export
 //'
 // [[Rcpp::export]]
-List mnRateDiffCI(const NumericVector& t1, const NumericVector& y1,
-                  const NumericVector& t2, const NumericVector& y2,
+List mnRateDiffCI(const NumericVector& t1 = NA_REAL,
+                  const NumericVector& y1 = NA_REAL,
+                  const NumericVector& t2 = NA_REAL,
+                  const NumericVector& y2 = NA_REAL,
                   const double cilevel = 0.95) {
   if (is_true(any(t1 <= 0))) {
     stop("Each element of t1 must be positive");

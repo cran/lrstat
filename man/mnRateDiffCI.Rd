@@ -5,7 +5,13 @@
 \title{Miettinen-Nurminen score confidence interval for
 two-sample rate difference}
 \usage{
-mnRateDiffCI(t1, y1, t2, y2, cilevel = 0.95)
+mnRateDiffCI(
+  t1 = NA_real_,
+  y1 = NA_real_,
+  t2 = NA_real_,
+  y2 = NA_real_,
+  cilevel = 0.95
+)
 }
 \arguments{
 \item{t1}{The exposure for the active treatment group.}

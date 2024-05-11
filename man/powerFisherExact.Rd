@@ -4,7 +4,13 @@
 \alias{powerFisherExact}
 \title{Power for Fisher's exact test for two proportions}
 \usage{
-powerFisherExact(n, pi1, pi2, allocationRatioPlanned = 1, alpha = 0.05)
+powerFisherExact(
+  n = NA_real_,
+  pi1 = NA_real_,
+  pi2 = NA_real_,
+  allocationRatioPlanned = 1,
+  alpha = 0.05
+)
 }
 \arguments{
 \item{n}{The total sample size.}

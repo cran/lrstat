@@ -178,8 +178,10 @@ double brent(const std::function<double(double)>& f,
 
 
 // [[Rcpp::export]]
-double errorSpentcpp(const double t, const double error,
-                     const String sf, const double sfpar) {
+double errorSpentcpp(const double t = NA_REAL,
+                     const double error = NA_REAL,
+                     const String sf = NA_STRING,
+                     const double sfpar = NA_REAL) {
   if (error <= 0 || error >= 1) {
     stop("error must be a number between 0 and 1");
   }
@@ -554,10 +556,12 @@ NumericVector qtpwexpcpp(const NumericVector& p,
 
 
 // [[Rcpp::export]]
-NumericVector rtpwexpcpp(const int n,
-                         const NumericVector& piecewiseSurvivalTime,
-                         const NumericVector& lambda,
-                         const double lowerBound) {
+NumericVector rtpwexpcpp(
+    const int n = NA_INTEGER,
+    const NumericVector& piecewiseSurvivalTime = NA_REAL,
+    const NumericVector& lambda = NA_REAL,
+    const double lowerBound = NA_REAL) {
+
   NumericVector p(n);
   for (int i=0; i<n; i++) {
     p[i] = R::runif(0,1);
@@ -568,20 +572,21 @@ NumericVector rtpwexpcpp(const int n,
 
 
 // [[Rcpp::export]]
-NumericVector getBoundcpp(const int k,
-                          const NumericVector& informationRates,
-                          const double alpha,
-                          const String typeAlphaSpending,
-                          const double parameterAlphaSpending,
-                          const NumericVector& userAlphaSpending,
-                          const NumericVector& spendingTime,
-                          const LogicalVector& efficacyStopping) {
+NumericVector getBoundcpp(
+    const int k = NA_INTEGER,
+    const NumericVector& informationRates = NA_REAL,
+    const double alpha = NA_REAL,
+    const String typeAlphaSpending = NA_STRING,
+    const double parameterAlphaSpending = NA_REAL,
+    const NumericVector& userAlphaSpending = NA_REAL,
+    const NumericVector& spendingTime = NA_REAL,
+    const LogicalVector& efficacyStopping = NA_LOGICAL) {
 
   NumericVector informationRates1 = clone(informationRates);
   NumericVector spendingTime1 = clone(spendingTime);
   LogicalVector efficacyStopping1 = clone(efficacyStopping);
 
-  if (R_isnancpp(k)) {
+  if (k == NA_INTEGER) {
     stop("k must be provided");
   }
 
@@ -1994,7 +1999,7 @@ List getDesign(const double beta = NA_REAL,
     stop("theta must be provided");
   }
 
-  if (R_isnancpp(kMax)) {
+  if (kMax == NA_INTEGER) {
     stop("kMax must be provided");
   }
 
@@ -2779,7 +2784,7 @@ List getDesignEquiv(const double beta = NA_REAL,
     stop("thetaUpper must be greater than theta");
   }
 
-  if (R_isnancpp(kMax)) {
+  if (kMax == NA_INTEGER) {
     stop("kMax must be provided");
   }
 
@@ -3434,7 +3439,7 @@ List adaptDesign(double betaNew = NA_REAL,
     stop("INew must be positive");
   }
 
-  if (R_isnancpp(L)) {
+  if (L == NA_INTEGER) {
     stop("L must be provided");
   }
 
@@ -3450,7 +3455,7 @@ List adaptDesign(double betaNew = NA_REAL,
     stop("theta must be provided");
   }
 
-  if (R_isnancpp(kMax)) {
+  if (kMax == NA_INTEGER) {
     stop("kMax must be provided");
   }
 
@@ -3593,7 +3598,7 @@ List adaptDesign(double betaNew = NA_REAL,
 
 
   if (MullerSchafer) {
-    if (R_isnancpp(kNew)) {
+    if (kNew == NA_INTEGER) {
       stop("kNew must be provided");
     }
 
