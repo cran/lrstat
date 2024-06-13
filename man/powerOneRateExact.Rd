@@ -5,7 +5,7 @@
 \title{Power for Poisson one-sample exact test}
 \usage{
 powerOneRateExact(
-  n = NA_real_,
+  n = NA_integer_,
   lambdaH0 = NA_real_,
   lambda = NA_real_,
   D = 1,

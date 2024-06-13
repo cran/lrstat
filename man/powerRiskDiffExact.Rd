@@ -5,7 +5,7 @@
 \title{Power for exact unconditional test of risk difference}
 \usage{
 powerRiskDiffExact(
-  n = NA_real_,
+  n = NA_integer_,
   riskDiffH0 = 0,
   pi1 = NA_real_,
   pi2 = NA_real_,

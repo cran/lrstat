@@ -5,7 +5,7 @@
 \title{Power for Fisher's exact test for two proportions}
 \usage{
 powerFisherExact(
-  n = NA_real_,
+  n = NA_integer_,
   pi1 = NA_real_,
   pi2 = NA_real_,
   allocationRatioPlanned = 1,

@@ -7,10 +7,10 @@
 riskRatioExactPValue(
   riskRatioH0 = 1,
   directionUpper = 1L,
-  n1 = NA_real_,
-  y1 = NA_real_,
-  n2 = NA_real_,
-  y2 = NA_real_
+  n1 = NA_integer_,
+  y1 = NA_integer_,
+  n2 = NA_integer_,
+  y2 = NA_integer_
 )
 }
 \arguments{

@@ -12,3 +12,38 @@
 #'   \item{\code{dropoutEvent}}{Whether the subject dropped out}
 #' }
 "rawdata"
+
+#' Acute myelogenous leukemia survival data from the survival package
+#'
+#' Survival in patients with acute myelogenous leukemia.
+#' \describe{
+#'   \item{\code{time}}{Survival or censoring time}
+#'   \item{\code{status}}{censoring status}
+#'   \item{\code{x}}{maintenance chemotherapy given or not}
+#' }
+"aml"
+
+#' Stanford heart transplant data from the survival package
+#'
+#' Survival of patients on the waiting list for the Stanford heart
+#' transplant program.
+#' \describe{
+#'   \item{\code{start, stop, event}}{entry and exit time and status for
+#'   the time interval}
+#'   \item{\code{age}}{age-48 years}
+#'   \item{\code{year}}{year of acceptance (in years after Nov 1, 1967)}
+#'   \item{\code{surgery}}{prior bypass surgery 1=yes, 0=no}
+#'   \item{\code{transplant}}{received transplant 1=yes, 0=no}
+#'   \item{\code{id}}{patient id}
+#' }
+"heart"
+
+#' Tobin's tobit data from the survival package
+#'
+#' Data from Tobin's original paper.
+#' \describe{
+#'   \item{\code{durable}}{Durable goods purchase}
+#'   \item{\code{age}}{Age in years}
+#'   \item{\code{quant}}{Liquidity ratio (x 1000)}
+#' }
+"tobin"

@@ -5,7 +5,7 @@
 \title{Power for exact unconditional test of risk ratio}
 \usage{
 powerRiskRatioExact(
-  n = NA_real_,
+  n = NA_integer_,
   riskRatioH0 = 1,
   pi1 = NA_real_,
   pi2 = NA_real_,

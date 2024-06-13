@@ -5,10 +5,10 @@
 \title{Exact unconditional confidence interval for risk difference}
 \usage{
 riskDiffExactCI(
-  n1 = NA_real_,
-  y1 = NA_real_,
-  n2 = NA_real_,
-  y2 = NA_real_,
+  n1 = NA_integer_,
+  y1 = NA_integer_,
+  n2 = NA_integer_,
+  y2 = NA_integer_,
   cilevel = 0.95
 )
 }

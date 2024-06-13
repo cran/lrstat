@@ -6,7 +6,7 @@
 ratio}
 \usage{
 powerRiskRatioExactEquiv(
-  n = NA_real_,
+  n = NA_integer_,
   riskRatioLower = NA_real_,
   riskRatioUpper = NA_real_,
   pi1 = NA_real_,

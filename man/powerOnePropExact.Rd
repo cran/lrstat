@@ -4,7 +4,12 @@
 \alias{powerOnePropExact}
 \title{Power for binomial one-sample exact test}
 \usage{
-powerOnePropExact(n = NA_real_, piH0 = NA_real_, pi = NA_real_, alpha = 0.025)
+powerOnePropExact(
+  n = NA_integer_,
+  piH0 = NA_real_,
+  pi = NA_real_,
+  alpha = 0.025
+)
 }
 \arguments{
 \item{n}{The sample size.}

@@ -6,7 +6,7 @@
 difference}
 \usage{
 powerRiskDiffExactEquiv(
-  n = NA_real_,
+  n = NA_integer_,
   riskDiffLower = NA_real_,
   riskDiffUpper = NA_real_,
   pi1 = NA_real_,

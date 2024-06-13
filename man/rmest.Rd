@@ -63,7 +63,7 @@ for each stratum.
 }
 \examples{
 
-rmest(data = survival::aml, stratum = "x",
+rmest(data = aml, stratum = "x",
       time = "time", event = "status", milestone = 24)
 
 }
