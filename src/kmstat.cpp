@@ -1,8 +1,5 @@
-#include <Rcpp.h>
 #include "utilities.h"
-
 using namespace Rcpp;
-
 
 // define the integrand function for kmstat1
 typedef struct {
@@ -5115,24 +5112,24 @@ DataFrame kmest(const DataFrame data,
   IntegerVector repn(n);
   IntegerVector repwi;
   NumericVector repwn;
-  CharacterVector repwc;
+  StringVector repwc;
   if (!has_rep) {
     repn.fill(1);
   } else {
     if (TYPEOF(data[rep]) == INTSXP) {
       IntegerVector repv = data[rep];
-      repwi = unique(repv);  // Get unique levels
-      std::sort(repwi.begin(), repwi.end());
-      repn = match(repv, repwi);  // Map codes to levels
+      repwi = unique(repv);
+      repwi.sort();
+      repn = match(repv, repwi);
     } else if (TYPEOF(data[rep]) == REALSXP) {
       NumericVector repv = data[rep];
       repwn = unique(repv);
-      std::sort(repwn.begin(), repwn.end());
+      repwn.sort();
       repn = match(repv, repwn);
     } else if (TYPEOF(data[rep]) == STRSXP) {
-      CharacterVector repv = data[rep];
+      StringVector repv = data[rep];
       repwc = unique(repv);
-      std::sort(repwc.begin(), repwc.end());
+      repwc.sort();
       repn = match(repv, repwc);
     } else {
       stop("incorrect type for the rep variable in the input data");
@@ -5144,24 +5141,24 @@ DataFrame kmest(const DataFrame data,
   IntegerVector stratumn(n);
   IntegerVector stratumwi;
   NumericVector stratumwn;
-  CharacterVector stratumwc;
+  StringVector stratumwc;
   if (!has_stratum) {
     stratumn.fill(1);
   } else {
     if (TYPEOF(data[stratum]) == INTSXP) {
       IntegerVector stratumv = data[stratum];
-      stratumwi = unique(stratumv);  // Get unique levels
-      std::sort(stratumwi.begin(), stratumwi.end());
-      stratumn = match(stratumv, stratumwi);  // Map codes to levels
+      stratumwi = unique(stratumv);
+      stratumwi.sort();
+      stratumn = match(stratumv, stratumwi);
     } else if (TYPEOF(data[stratum]) == REALSXP) {
       NumericVector stratumv = data[stratum];
       stratumwn = unique(stratumv);
-      std::sort(stratumwn.begin(), stratumwn.end());
+      stratumwn.sort();
       stratumn = match(stratumv, stratumwn);
     } else if (TYPEOF(data[stratum]) == STRSXP) {
-      CharacterVector stratumv = data[stratum];
+      StringVector stratumv = data[stratum];
       stratumwc = unique(stratumv);
-      std::sort(stratumwc.begin(), stratumwc.end());
+      stratumwc.sort();
       stratumn = match(stratumv, stratumwc);
     } else {
       stop("incorrect type for the stratum variable in the input data");
@@ -5554,7 +5551,7 @@ DataFrame kmdiff(const DataFrame data,
   IntegerVector treatn(n);
   IntegerVector treatwi;
   NumericVector treatwn;
-  CharacterVector treatwc;
+  StringVector treatwc;
   if (TYPEOF(data[treat]) == LGLSXP) {
     LogicalVector treatv = data[treat];
     treatn = 2 - treatv;
@@ -5565,27 +5562,27 @@ DataFrame kmdiff(const DataFrame data,
     treatwi = 2 - treatwi;
   } else if (TYPEOF(data[treat]) == INTSXP) {
     IntegerVector treatv = data[treat];
-    treatwi = unique(treatv);  // Get unique levels
+    treatwi = unique(treatv);
     if (treatwi.size() != 2) {
       stop("treat must have two and only two distinct values");
     }
-    std::sort(treatwi.begin(), treatwi.end());
-    treatn = match(treatv, treatwi);  // Map codes to levels
+    treatwi.sort();
+    treatn = match(treatv, treatwi);
   } else if (TYPEOF(data[treat]) == REALSXP) {
     NumericVector treatv = data[treat];
     treatwn = unique(treatv);
     if (treatwn.size() != 2) {
       stop("treat must have two and only two distinct values");
     }
-    std::sort(treatwn.begin(), treatwn.end());
+    treatwn.sort();
     treatn = match(treatv, treatwn);
   } else if (TYPEOF(data[treat]) == STRSXP) {
-    CharacterVector treatv = data[treat];
+    StringVector treatv = data[treat];
     treatwc = unique(treatv);
     if (treatwc.size() != 2) {
       stop("treat must have two and only two distinct values");
     }
-    std::sort(treatwc.begin(), treatwc.end());
+    treatwc.sort();
     treatn = match(treatv, treatwc);
   } else {
     stop("incorrect type for the treat variable in the input data");
@@ -5608,24 +5605,24 @@ DataFrame kmdiff(const DataFrame data,
   IntegerVector repn(n);
   IntegerVector repwi;
   NumericVector repwn;
-  CharacterVector repwc;
+  StringVector repwc;
   if (!has_rep) {
     repn.fill(1);
   } else {
     if (TYPEOF(data[rep]) == INTSXP) {
       IntegerVector repv = data[rep];
-      repwi = unique(repv);  // Get unique levels
-      std::sort(repwi.begin(), repwi.end());
-      repn = match(repv, repwi);  // Map codes to levels
+      repwi = unique(repv);
+      repwi.sort();
+      repn = match(repv, repwi);
     } else if (TYPEOF(data[rep]) == REALSXP) {
       NumericVector repv = data[rep];
       repwn = unique(repv);
-      std::sort(repwn.begin(), repwn.end());
+      repwn.sort();
       repn = match(repv, repwn);
     } else if (TYPEOF(data[rep]) == STRSXP) {
-      CharacterVector repv = data[rep];
+      StringVector repv = data[rep];
       repwc = unique(repv);
-      std::sort(repwc.begin(), repwc.end());
+      repwc.sort();
       repn = match(repv, repwc);
     } else {
       stop("incorrect type for the rep variable in the input data");
@@ -5637,24 +5634,24 @@ DataFrame kmdiff(const DataFrame data,
   IntegerVector stratumn(n);
   IntegerVector stratumwi;
   NumericVector stratumwn;
-  CharacterVector stratumwc;
+  StringVector stratumwc;
   if (!has_stratum) {
     stratumn.fill(1);
   } else {
     if (TYPEOF(data[stratum]) == INTSXP) {
       IntegerVector stratumv = data[stratum];
-      stratumwi = unique(stratumv);  // Get unique levels
-      std::sort(stratumwi.begin(), stratumwi.end());
-      stratumn = match(stratumv, stratumwi);  // Map codes to levels
+      stratumwi = unique(stratumv);
+      stratumwi.sort();
+      stratumn = match(stratumv, stratumwi);
     } else if (TYPEOF(data[stratum]) == REALSXP) {
       NumericVector stratumv = data[stratum];
       stratumwn = unique(stratumv);
-      std::sort(stratumwn.begin(), stratumwn.end());
+      stratumwn.sort();
       stratumn = match(stratumv, stratumwn);
     } else if (TYPEOF(data[stratum]) == STRSXP) {
-      CharacterVector stratumv = data[stratum];
+      StringVector stratumv = data[stratum];
       stratumwc = unique(stratumv);
-      std::sort(stratumwc.begin(), stratumwc.end());
+      stratumwc.sort();
       stratumn = match(stratumv, stratumwc);
     } else {
       stop("incorrect type for the stratum variable in the input data");
@@ -6001,4 +5998,3 @@ DataFrame kmdiff(const DataFrame data,
 
   return result;
 }
-

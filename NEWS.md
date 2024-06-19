@@ -1,3 +1,7 @@
+# lrstat 0.2.8
+
+- update std::sort handling for Rcpp character vectors
+
 # lrstat 0.2.7
 
 - add the aml, heart, and tobin datasets
