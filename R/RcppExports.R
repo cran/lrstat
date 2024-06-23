@@ -182,6 +182,305 @@ simonBayesSim <- function(p = NA_real_, accrualTime = 0L, accrualIntensity = NA_
     .Call(`_lrstat_simonBayesSim`, p, accrualTime, accrualIntensity, stratumFraction, lambda, gamma, phi, plo, T, maxSubjects, plannedSubjects, maxNumberOfIterations, maxNumberOfRawDatasets, seed)
 }
 
+#' @title Simulation for a binary endpoint and a time-to-event endpoint
+#' @description Performs simulation for two-endpoint two-arm group
+#' sequential trials. The first endpoint is a binary endpoint and
+#' the Mantel-Haenszel test is used to test risk difference.
+#' The second endpoint is a time-to-event endpoint and the log-rank
+#' test is used to test the treatment difference. The analysis times
+#' of the first endpoint are determined by the specified calendar times,
+#' while the analysis times for the second endpoint is based on the
+#' planned number of events at each look. The binary endpoint is
+#' assessed at the first post-treatment follow-up visit.
+#'
+#' @param kMax1 Number of stages for the binary endpoint.
+#' @param kMax2 Number of stages for the time-to-event endpoint.
+#' @param riskDiffH0 Risk difference under the null hypothesis for the
+#'   binary endpoint.
+#' @param hazardRatioH0 Hazard ratio under the null hypothesis for the
+#'   time-to-event endpoint.
+#' @param allocation1 Number of subjects in the treatment group in
+#'   a randomization block. Defaults to 1 for equal randomization.
+#' @param allocation2 Number of subjects in the control group in
+#'   a randomization block. Defaults to 1 for equal randomization.
+#' @inheritParams param_accrualTime
+#' @inheritParams param_accrualIntensity
+#' @inheritParams param_piecewiseSurvivalTime
+#' @inheritParams param_stratumFraction
+#' @param globalOddsRatio The global odds ratio of the Plackett copula.
+#' @param pi1 Response probabilities by stratum for the treatment group
+#'   for the binary endpoint.
+#' @param pi2 Response probabilities by stratum for the control group
+#'   for the binary endpoint.
+#' @param lambda1 A vector of hazard rates for the event in each analysis
+#'   time interval by stratum for the treatment group for the time-to-event
+#'   endpoint.
+#' @param lambda2 A vector of hazard rates for the event in each analysis
+#'   time interval by stratum for the control group for the time-to-event
+#'   endpoint.
+#' @param gamma1 The hazard rate for exponential dropout, a vector of
+#'   hazard rates for piecewise exponential dropout applicable for all
+#'   strata, or a vector of hazard rates for dropout in each analysis time
+#'   interval by stratum for the treatment group.
+#' @param gamma2 The hazard rate for exponential dropout, a vector of
+#'   hazard rates for piecewise exponential dropout applicable for all
+#'   strata, or a vector of hazard rates for dropout in each analysis time
+#'   interval by stratum for the control group.
+#' @param delta1 The hazard rate for exponential treatment discontinuation,
+#'   a vector of hazard rates for piecewise exponential treatment
+#'   discontinuation applicable for all strata, or a vector of hazard rates
+#'   for treatment discontinuation in each analysis time interval by
+#'   stratum for the treatment group for the binary endpoint.
+#' @param delta2 The hazard rate for exponential treatment discontinuation,
+#'   a vector of hazard rates for piecewise exponential treatment
+#'   discontinuation applicable for all strata, or a vector of hazard rates
+#'   for treatment discontinuation in each analysis time interval by
+#'   stratum for the control group for the binary endpoint.
+#' @param upper1 The protocol-specified treatment duration for the treatment
+#'   group.
+#' @param upper2 The protocol-specified treatment duration for the control
+#'   group.
+#' @inheritParams param_accrualDuration
+#' @param plannedTime The calendar times for the analyses of the binary
+#'   endpoint.
+#' @param plannedEvents The planned cumulative total number of events for
+#'   the time-to-event endpoint.
+#' @param maxNumberOfIterations The number of simulation iterations.
+#' @param maxNumberOfRawDatasetsPerStage The number of raw datasets per
+#'   stage to extract.
+#' @param seed The seed to reproduce the simulation results.
+#'   The seed from the environment will be used if left unspecified,
+#'
+#' @details We consider dual primary endpoints with endpoint 1 being a
+#'   binary endpoint and endpoint 2 being a time-to-event endpoint.
+#'   The analyses of endpoint 1 will be based on calendar times, while
+#'   the analyses of endpoint 2 will be based on the number of events.
+#'   Therefor the analyses of the two endpoints are not at the same
+#'   time points. The correlation between the two endpoints is
+#'   characterized by the global odds ratio of the Plackett copula.
+#'   In addition, the time-to-event endpoint will render the binary
+#'   endpoint as a non-responder, and so does the dropout. In addition,
+#'   the treatment discontinuation will impact the number of available
+#'   subjects for analysis. The administrative censoring will exclude
+#'   subjects from the analysis of the binary endpoint.
+#'
+#'
+#' @return A list with 4 components:
+#'
+#' * \code{sumdataBIN}: A data frame of summary data by iteration and stage
+#'   for the binary endpoint:
+#'
+#'     - \code{iterationNumber}: The iteration number.
+#'
+#'     - \code{stageNumber}: The stage number, covering all stages even if
+#'       the trial stops at an interim look.
+#'
+#'     - \code{analysisTime}: The time for the stage since trial start.
+#'
+#'     - \code{accruals1}: The number of subjects enrolled at the stage for
+#'       the treatment group.
+#'
+#'     - \code{accruals2}: The number of subjects enrolled at the stage for
+#'       the control group.
+#'
+#'     - \code{totalAccruals}: The total number of subjects enrolled at
+#'       the stage.
+#'
+#'     - \code{source1}: The total number of subjects with response status
+#'       determined by the underlying latent response variable.
+#'
+#'     - \code{source2}: The total number of subjects with response status
+#'       (non-responder) determined by experiencing the event for the
+#'       time-to-event endpoint.
+#'
+#'     - \code{source3}: The total number of subjects with response status
+#'       (non-responder) determined by dropping out prior to the PTFU1
+#'       visit.
+#'
+#'     - \code{n1}: The number of subjects included in the analysis of
+#'       the binary endpoint for the treatment group.
+#'
+#'     - \code{n2}: The number of subjects included in the analysis of
+#'       the binary endpoint for the control group.
+#'
+#'     - \code{n}: The total number of subjects included in the analysis of
+#'       the binary endpoint at the stage.
+#'
+#'     - \code{y1}: The number of responders for the binary endpoint in
+#'       the treatment group.
+#'
+#'     - \code{y2}: The number of responders for the binary endpoint in
+#'       the control group.
+#'
+#'     - \code{y}: The total number of responders for the binary endpoint
+#'       at the stage.
+#'
+#'     - \code{riskDiff}: The estimated risk difference for the binary
+#'       endpoint.
+#'
+#'     - \code{seRiskDiff}: The standard error for risk difference based on
+#'       the Sato approximation.
+#'
+#'     - \code{mnStatistic}: The Mantel-Haenszel test Z-statistic for
+#'       the binary endpoint.
+#'
+#' * \code{sumdataTTE}: A data frame of summary data by iteration and stage
+#'   for the time-to-event endpoint:
+#'
+#'     - \code{iterationNumber}: The iteration number.
+#'
+#'     - \code{eventsNotAchieved}: Whether the target number of events
+#'       is not achieved for the iteration.
+#'
+#'     - \code{stageNumber}: The stage number, covering all stages even if
+#'       the trial stops at an interim look.
+#'
+#'     - \code{analysisTime}: The time for the stage since trial start.
+#'
+#'     - \code{accruals1}: The number of subjects enrolled at the stage for
+#'       the treatment group.
+#'
+#'     - \code{accruals2}: The number of subjects enrolled at the stage for
+#'       the control group.
+#'
+#'     - \code{totalAccruals}: The total number of subjects enrolled at
+#'       the stage.
+#'
+#'     - \code{events1}: The number of events at the stage for
+#'       the treatment group.
+#'
+#'     - \code{events2}: The number of events at the stage for
+#'       the control group.
+#'
+#'     - \code{totalEvents}: The total number of events at the stage.
+#'
+#'     - \code{dropouts1}: The number of dropouts at the stage for
+#'       the treatment group.
+#'
+#'     - \code{dropouts2}: The number of dropouts at the stage for
+#'       the control group.
+#'
+#'     - \code{totalDropouts}: The total number of dropouts at the stage.
+#'
+#'     - \code{logRankStatistic}: The log-rank test Z-statistic for
+#'       the time-to-event endpoint.
+#'
+#' * \code{rawdataBIN} (exists if \code{maxNumberOfRawDatasetsPerStage} is a
+#'   positive integer): A data frame for subject-level data for the binary
+#'   endpoint for selected replications, containing the following variables:
+#'
+#'     - \code{iterationNumber}: The iteration number.
+#'
+#'     - \code{stageNumber}: The stage under consideration.
+#'
+#'     - \code{analysisTime}: The time for the stage since trial start.
+#'
+#'     - \code{subjectId}: The subject ID.
+#'
+#'     - \code{arrivalTime}: The enrollment time for the subject.
+#'
+#'     - \code{stratum}: The stratum for the subject.
+#'
+#'     - \code{treatmentGroup}: The treatment group (1 or 2) for the
+#'       subject.
+#'
+#'     - \code{survivalTime}: The underlying survival time for the
+#'       time-to-event endpoint for the subject.
+#'
+#'     - \code{dropoutTime}: The underlying dropout time for the
+#'       time-to-event endpoint for the subject.
+#'
+#'     - \code{ptfu1Time}:The underlying assessment time for the
+#'       binary endpoint for the subject.
+#'
+#'     - \code{timeUnderObservation}: The time under observation
+#'       since randomization for the binary endpoint for the subject.
+#'
+#'     - \code{responder}: Whether the subject is a responder for the
+#'       binary endpoint.
+#'
+#'     - \code{source}: The source of the determination of responder
+#'       status for the binary endpoint: = 1 based on the underlying
+#'       latent response variable, = 2 based on the occurrence of
+#'       the time-to-event endpoint before the assessment time of the
+#'       binary endpoint (imputed as a non-responder), = 3 based on
+#'       the dropout before the assessment time of the binary endpoint
+#'       (imputed as a non-responder), = 4 excluded from analysis
+#'       due to administrative censoring.
+#'
+#' * \code{rawdataTTE} (exists if \code{maxNumberOfRawDatasetsPerStage} is a
+#'   positive integer): A data frame for subject-level data for the
+#'   time-to-event endpoint for selected replications, containing the
+#'   following variables:
+#'
+#'     - \code{iterationNumber}: The iteration number.
+#'
+#'     - \code{stageNumber}: The stage under consideration.
+#'
+#'     - \code{analysisTime}: The time for the stage since trial start.
+#'
+#'     - \code{subjectId}: The subject ID.
+#'
+#'     - \code{arrivalTime}: The enrollment time for the subject.
+#'
+#'     - \code{stratum}: The stratum for the subject.
+#'
+#'     - \code{treatmentGroup}: The treatment group (1 or 2) for the
+#'       subject.
+#'
+#'     - \code{survivalTime}: The underlying survival time for the
+#'       time-to-event endpoint for the subject.
+#'
+#'     - \code{dropoutTime}: The underlying dropout time for the
+#'       time-to-event endpoint for the subject.
+#'
+#'     - \code{timeUnderObservation}: The time under observation
+#'       since randomization for the time-to-event endpoint for the subject.
+#'
+#'     - \code{event}: Whether the subject experienced the event for the
+#'       time-to-event endpoint.
+#'
+#'     - \code{dropoutEvent}: Whether the subject dropped out for the
+#'       time-to-event endpoint.
+#'
+#' @author Kaifeng Lu, \email{kaifenglu@@gmail.com}
+#'
+#' @examples
+#'
+#' tcut = c(0, 12, 36, 48)
+#' surv = c(1, 0.95, 0.82, 0.74)
+#' lambda2 = (log(surv[1:3]) - log(surv[2:4]))/(tcut[2:4] - tcut[1:3])
+#'
+#' sim1 = binary_tte_sim(
+#'   kMax1 = 1,
+#'   kMax2 = 2,
+#'   accrualTime = 0:8,
+#'   accrualIntensity = c(((1:8) - 0.5)/8, 1)*40,
+#'   piecewiseSurvivalTime = c(0,12,36),
+#'   globalOddsRatio = 1,
+#'   pi1 = 0.80,
+#'   pi2 = 0.65,
+#'   lambda1 = 0.65*lambda2,
+#'   lambda2 = lambda2,
+#'   gamma1 = -log(1-0.04)/12,
+#'   gamma2 = -log(1-0.04)/12,
+#'   delta1 = -log(1-0.02)/12,
+#'   delta2 = -log(1-0.02)/12,
+#'   upper1 = 15*28/30.4,
+#'   upper2 = 12*28/30.4,
+#'   accrualDuration = 20,
+#'   plannedTime = 20 + 15*28/30.4,
+#'   plannedEvents = c(130, 173),
+#'   maxNumberOfIterations = 1000,
+#'   maxNumberOfRawDatasetsPerStage = 1,
+#'   seed = 314159)
+#'
+#'
+#' @export
+binary_tte_sim <- function(kMax1 = 1L, kMax2 = 1L, riskDiffH0 = 0, hazardRatioH0 = 1, allocation1 = 1L, allocation2 = 1L, accrualTime = 0L, accrualIntensity = NA_real_, piecewiseSurvivalTime = 0L, stratumFraction = 1L, globalOddsRatio = 1, pi1 = NA_real_, pi2 = NA_real_, lambda1 = NA_real_, lambda2 = NA_real_, gamma1 = 0L, gamma2 = 0L, delta1 = 0L, delta2 = 0L, upper1 = NA_real_, upper2 = NA_real_, accrualDuration = NA_real_, plannedTime = NA_real_, plannedEvents = NA_integer_, maxNumberOfIterations = 1000L, maxNumberOfRawDatasetsPerStage = 0L, seed = NA_integer_) {
+    .Call(`_lrstat_binary_tte_sim`, kMax1, kMax2, riskDiffH0, hazardRatioH0, allocation1, allocation2, accrualTime, accrualIntensity, piecewiseSurvivalTime, stratumFraction, globalOddsRatio, pi1, pi2, lambda1, lambda2, gamma1, gamma2, delta1, delta2, upper1, upper2, accrualDuration, plannedTime, plannedEvents, maxNumberOfIterations, maxNumberOfRawDatasetsPerStage, seed)
+}
+
 #' @title Milestone survival probability by stratum
 #'
 #' @description Obtains the milestone survival probability and associated
@@ -1110,68 +1409,6 @@ kmsamplesizeequiv <- function(beta = 0.2, kMax = 1L, informationRates = NA_real_
     .Call(`_lrstat_kmsamplesizeequiv`, beta, kMax, informationRates, criticalValues, alpha, typeAlphaSpending, parameterAlphaSpending, userAlphaSpending, milestone, survDiffLower, survDiffUpper, allocationRatioPlanned, accrualTime, accrualIntensity, piecewiseSurvivalTime, stratumFraction, lambda1, lambda2, gamma1, gamma2, accrualDuration, followupTime, fixedFollowup, interval, spendingTime, rounding)
 }
 
-#' @title Kaplan-Meier estimates of the survival curve
-#' @description Obtains the Kaplan-Meier estimates of the survival curve.
-#'
-#' @param data The input data frame that contains the following variables:
-#'
-#'   * \code{rep}: The replication for by-group processing.
-#'
-#'   * \code{stratum}: The stratum.
-#'
-#'   * \code{time}: The possibly right-censored survival time.
-#'
-#'   * \code{event}: The event indicator.
-#'
-#' @param rep The name of the replication variable in the input data.
-#' @param stratum The name of the stratum variable in the input data.
-#' @param time The name of the time variable in the input data.
-#' @param event The name of the event variable in the input data.
-#' @param conftype The type of confidence interval. One of "none",
-#'   "plain", "log", "log-log" (the default), or "arcsin".
-#'   The arcsin option bases the intervals on asin(sqrt(survival)).
-#' @param confint The level of the two-sided confidence interval for
-#'   the survival probabilities. Defaults to 0.95.
-#'
-#' @return A data frame with the following variables:
-#'
-#' * \code{rep}: The replication.
-#'
-#' * \code{stratum}: The stratum.
-#'
-#' * \code{size}: The number of subjects in the stratum.
-#'
-#' * \code{time}: The event time.
-#'
-#' * \code{nrisk}: The number of subjects at risk.
-#'
-#' * \code{nevent}: The number of subjects having the event.
-#'
-#' * \code{survival}: The Kaplan-Meier estimate of the survival probability.
-#'
-#' * \code{stderr}: The standard error of the estimated survival
-#'   probability based on the Greendwood formula.
-#'
-#' * \code{lower}: The lower bound of confidence interval if requested.
-#'
-#' * \code{upper}: The upper bound of confidence interval if requested.
-#'
-#' * \code{confint}: The level of confidence interval if requested.
-#'
-#' * \code{conftype}: The type of confidence interval if requested.
-#'
-#' @author Kaifeng Lu, \email{kaifenglu@@gmail.com}
-#'
-#' @examples
-#'
-#' kmest(data = aml, stratum = "x",
-#'       time = "time", event = "status")
-#'
-#' @export
-kmest <- function(data, rep = "rep", stratum = "stratum", time = "time", event = "event", conftype = "log-log", confint = 0.95) {
-    .Call(`_lrstat_kmest`, data, rep, stratum, time, event, conftype, confint)
-}
-
 #' @title Estimate of milestone survival difference
 #' @description Obtains the estimate of milestone survival difference
 #' between two treatment groups.
@@ -1249,136 +1486,6 @@ kmdiff <- function(data, rep = "rep", stratum = "stratum", treat = "treat", time
     .Call(`_lrstat_kmdiff`, data, rep, stratum, treat, time, event, milestone, survDiffH0, confint)
 }
 
-#' @title Parametric regression models for failure time data
-#' @description Obtains the parameter estimates from parametric
-#' regression models with uncensored, right censored, left censored, or
-#' interval censored data.
-#'
-#' @param data The input data frame that contains the following variables:
-#'
-#'   * \code{rep}: The replication for by-group processing.
-#'
-#'   * \code{stratum}: The stratum.
-#'
-#'   * \code{time}: The follow-up time for right censored data, or
-#'     the left end of each interval for interval censored data.
-#'
-#'   * \code{time2}: The right end of each interval for interval
-#'     censored data.
-#'
-#'   * \code{event}: The event indicator, normally 1=event, 0=no event.
-#'
-#'   * \code{covariates}: The values of baseline covariates.
-#'     This is the full-rank design matrix (excluding the intercept)
-#'     for the regression model, assuming that factor variables
-#'     have already been expanded into dummy variables.
-#'     The intercept will be added automatically.
-#'
-#'   * \code{weight}: The weight for each observation.
-#'
-#'   * \code{id}: The optional subject ID to group the score residuals
-#'     in computing the robust sandwich variance.
-#'
-#' @param rep The name of the replication variable in the input data.
-#' @param stratum The name of the stratum variable in the input data.
-#' @param time The name of the time variable or the left end of each
-#'   interval for interval censored data in the input data.
-#' @param time2 The name of the right end of each interval for
-#'   interval censored data in the input data.
-#' @param event The name of the event variable in the input data
-#'   for right censored data.
-#' @param covariates The vector of names of baseline covariates
-#'   in the input data.
-#' @param weight The name of the weighting variable in the input data.
-#' @param id The name of the id variable in the input data.
-#' @param dist The assumed distribution for time to event. Options include
-#'   "exponential", "weibull", "lognormal", and "loglogistic" to be
-#'   modeled on the log-scale, and "normal" and "logistic" to be modeled
-#'   on the original scale.
-#' @param robust Whether a robust sandwich variance estimate should be
-#'   computed. The default is TRUE if there are fractional weights or
-#'   there is at least 1 id with >1 event. In the presence of the id
-#'   variable, the score residual will be aggregated for each id when
-#'   computing the robust sandwich variance estimate.
-#'
-#' @details There are two ways to specify the model, one for right censored
-#' data through the time and event variables, and the other for interval
-#' censored data through the time and time2 variables. For the second form,
-#' we follow the convention used in SAS PROC LIFEREG:
-#'
-#' * If lower is not missing, upper is not missing, and lower is equal
-#'   to upper, then there is no censoring and the event occurred at
-#'   time lower.
-#'
-#' * If lower is not missing, upper is not missing, and lower < upper,
-#'   then the event time is censored within the interval (lower, upper).
-#'
-#' * If lower is missing, but upper is not missing, then upper will be
-#'   used as the left censoring value.
-#'
-#' * If lower is not missing, but upper is missing, then lower will be
-#'   used as the right censoring value.
-#'
-#' * If lower is not missing, upper is not missing, but lower > upper,
-#'   or if both lower and upper are missing, then the observation will
-#'   not be used.
-#'
-#' @return A list with the following components:
-#'
-#' * \code{sumstat}: The data frame of summary statistics of model fit
-#'   with the following variables:
-#'
-#'     - \code{rep}: The replication.
-#'
-#'     - \code{n}: The number of observations.
-#'
-#'     - \code{nevents}: The number of events.
-#'
-#'     - \code{loglik0}: The log-likelihood under null.
-#'
-#'     - \code{loglik1}: The maximum log-likelihood.
-#'
-#'     - \code{scoretest}: The score test statistic.
-#'
-#' * \code{parest}: The data frame of parameter estimates with the
-#'   following variables:
-#'
-#'     - \code{rep}: The replication.
-#'
-#'     - \code{param}: The name of the covariate for the parameter estimate.
-#'
-#'     - \code{beta}: The parameter estimate.
-#'
-#'     - \code{sebeta}: The standard error of parameter estimate.
-#'
-#'     - \code{z}: The Wald test statistic.
-#'
-#'     - \code{expbeta}: The exponentiated parameter.
-#'
-#'     - \code{vbeta}: The covariance matrix for parameter estimates.
-#'
-#' @author Kaifeng Lu, \email{kaifenglu@@gmail.com}
-#'
-#' @examples
-#'
-#' library(dplyr)
-#'
-#' # right censored data
-#' liferegr(data = rawdata %>% mutate(treat = 1*(treatmentGroup == 1)),
-#'          rep = "iterationNumber", stratum = "stratum",
-#'          time = "timeUnderObservation", event = "event",
-#'          covariates = "treat", dist = "weibull")
-#'
-#' # tobit regression for left censored data
-#' liferegr(data = tobin %>% mutate(time = ifelse(durable>0, durable, NA)),
-#'          time = "time", time2 = "durable",
-#'          covariates = c("age", "quant"), dist = "normal")
-#'
-#' @export
-liferegr <- function(data, rep = "rep", stratum = "stratum", time = "time", time2 = "time2", event = "event", covariates = "treat", weight = "weight", id = "id", dist = "weibull", robust = 0L) {
-    .Call(`_lrstat_liferegr`, data, rep, stratum, time, time2, event, covariates, weight, id, dist, robust)
-}
-
 #' @title Log-rank test simulation
 #' @description Performs simulation for two-arm group sequential
 #' trials based on weighted log-rank test.
@@ -1417,7 +1524,7 @@ liferegr <- function(data, rep = "rep", stratum = "stratum", time = "time", time
 #' @param maxNumberOfIterations The number of simulation iterations.
 #'   Defaults to 1000.
 #' @param maxNumberOfRawDatasetsPerStage The number of raw datasets per
-#'   stage to extract. Defaults to 1.
+#'   stage to extract.
 #' @param seed The seed to reproduce the simulation results.
 #'   The seed from the environment will be used if left unspecified,
 #'
@@ -1602,7 +1709,7 @@ liferegr <- function(data, rep = "rep", stratum = "stratum", time = "time", time
 #' head(sim2$sumdata)
 #'
 #' @export
-lrsim <- function(kMax = NA_integer_, informationRates = NA_real_, criticalValues = NA_real_, futilityBounds = NA_real_, hazardRatioH0 = 1, allocation1 = 1L, allocation2 = 1L, accrualTime = 0L, accrualIntensity = NA_real_, piecewiseSurvivalTime = 0L, stratumFraction = 1L, lambda1 = NA_real_, lambda2 = NA_real_, gamma1 = 0L, gamma2 = 0L, accrualDuration = NA_real_, followupTime = NA_real_, fixedFollowup = 0L, rho1 = 0, rho2 = 0, plannedEvents = NA_integer_, plannedTime = NA_real_, maxNumberOfIterations = 1000L, maxNumberOfRawDatasetsPerStage = 0L, seed = NA_integer_) {
+lrsim <- function(kMax = 1L, informationRates = NA_real_, criticalValues = NA_real_, futilityBounds = NA_real_, hazardRatioH0 = 1, allocation1 = 1L, allocation2 = 1L, accrualTime = 0L, accrualIntensity = NA_real_, piecewiseSurvivalTime = 0L, stratumFraction = 1L, lambda1 = NA_real_, lambda2 = NA_real_, gamma1 = 0L, gamma2 = 0L, accrualDuration = NA_real_, followupTime = NA_real_, fixedFollowup = 0L, rho1 = 0, rho2 = 0, plannedEvents = NA_integer_, plannedTime = NA_real_, maxNumberOfIterations = 1000L, maxNumberOfRawDatasetsPerStage = 0L, seed = NA_integer_) {
     .Call(`_lrstat_lrsim`, kMax, informationRates, criticalValues, futilityBounds, hazardRatioH0, allocation1, allocation2, accrualTime, accrualIntensity, piecewiseSurvivalTime, stratumFraction, lambda1, lambda2, gamma1, gamma2, accrualDuration, followupTime, fixedFollowup, rho1, rho2, plannedEvents, plannedTime, maxNumberOfIterations, maxNumberOfRawDatasetsPerStage, seed)
 }
 
@@ -1659,7 +1766,7 @@ lrsim <- function(kMax = NA_integer_, informationRates = NA_real_, criticalValue
 #' @param maxNumberOfIterations The number of simulation iterations.
 #'   Defaults to 1000.
 #' @param maxNumberOfRawDatasetsPerStage The number of raw datasets per
-#'   stage to extract. Defaults to 1.
+#'   stage to extract.
 #' @param seed The seed to reproduce the simulation results.
 #'   The seed from the environment will be used if left unspecified,
 #'
@@ -1844,7 +1951,7 @@ lrsim3a <- function(kMax = NA_integer_, hazardRatioH013 = 1, hazardRatioH023 = 1
 #' @param maxNumberOfIterations The number of simulation iterations.
 #'   Defaults to 1000.
 #' @param maxNumberOfRawDatasetsPerStage The number of raw datasets per
-#'   stage to extract. Defaults to 1.
+#'   stage to extract.
 #' @param seed The seed to reproduce the simulation results.
 #'   The seed from the environment will be used if left unspecified,
 #'
@@ -2056,7 +2163,7 @@ lrsim2e <- function(kMax = NA_integer_, kMaxe1 = NA_integer_, hazardRatioH0e1 = 
 #' @param maxNumberOfIterations The number of simulation iterations.
 #'   Defaults to 1000.
 #' @param maxNumberOfRawDatasetsPerStage The number of raw datasets per
-#'   stage to extract. Defaults to 1.
+#'   stage to extract.
 #' @param seed The seed to reproduce the simulation results.
 #'   The seed from the environment will be used if left unspecified,
 #'
@@ -3150,61 +3257,6 @@ lrsamplesizeequiv <- function(beta = 0.2, kMax = 1L, informationRates = NA_real_
     .Call(`_lrstat_lrsamplesizeequiv`, beta, kMax, informationRates, criticalValues, alpha, typeAlphaSpending, parameterAlphaSpending, userAlphaSpending, hazardRatioLower, hazardRatioUpper, allocationRatioPlanned, accrualTime, accrualIntensity, piecewiseSurvivalTime, stratumFraction, lambda1, lambda2, gamma1, gamma2, accrualDuration, followupTime, fixedFollowup, typeOfComputation, interval, spendingTime, rounding)
 }
 
-#' @title Log-rank test of survival curve difference
-#' @description Obtains the log-rank test using the Fleming-Harrington
-#' family of weights.
-#'
-#' @param data The input data frame that contains the following variables:
-#'
-#'   * \code{rep}: The replication for by-group processing.
-#'
-#'   * \code{stratum}: The stratum.
-#'
-#'   * \code{treat}: The treatment.
-#'
-#'   * \code{time}: The possibly right-censored survival time.
-#'
-#'   * \code{event}: The event indicator.
-#'
-#' @param rep The name of the replication variable in the input data.
-#' @param stratum The name of the stratum variable in the input data.
-#' @param treat The name of the treatment variable in the input data.
-#' @param time The name of the time variable in the input data.
-#' @param event The name of the event variable in the input data.
-#' @inheritParams param_rho1
-#' @inheritParams param_rho2
-#'
-#' @return A data frame with the following variables:
-#'
-#' * \code{rep}: The replication.
-#'
-#' * \code{uscore}: The numerator of the log-rank test statistic.
-#'
-#' * \code{vscore}: The variance of the log-rank score test statistic.
-#'
-#' * \code{logRankZ}: The Z-statistic value.
-#'
-#' * \code{logRankPValue}: The one-sided p-value.
-#'
-#' * \code{rho1}: The first parameter of the Fleming-Harrington weights.
-#'
-#' * \code{rho2}: The second parameter of the Fleming-Harrington weights.
-#'
-#' @author Kaifeng Lu, \email{kaifenglu@@gmail.com}
-#'
-#' @examples
-#'
-#' df <- lrtest(data = rawdata, rep = "iterationNumber",
-#'              stratum = "stratum", treat = "treatmentGroup",
-#'              time = "timeUnderObservation", event = "event",
-#'              rho1 = 0.5, rho2 = 0)
-#' head(df)
-#'
-#' @export
-lrtest <- function(data, rep = "rep", stratum = "stratum", treat = "treat", time = "time", event = "event", rho1 = 0, rho2 = 0) {
-    .Call(`_lrstat_lrtest`, data, rep, stratum, treat, time, event, rho1, rho2)
-}
-
 #' @title Update graph for graphical approaches
 #' @description Updates the weights and transition matrix for graphical
 #' approaches.
@@ -3229,7 +3281,7 @@ lrtest <- function(data, rep = "rep", stratum = "stratum", treat = "treat", time
 #'             j = 1)
 #'
 #' @export
-updateGraph <- function(w = NA_real_, G = NA_real_, I = NA_integer_, j = NA_integer_) {
+updateGraph <- function(w, G, I, j) {
     .Call(`_lrstat_updateGraph`, w, G, I, j)
 }
 
@@ -3255,7 +3307,7 @@ fadjpboncpp <- function(w, G, p) {
 #' (wgtmat = fwgtmat(w,g))
 #'
 #' @export
-fwgtmat <- function(w = NA_real_, G = NA_real_) {
+fwgtmat <- function(w, G) {
     .Call(`_lrstat_fwgtmat`, w, G)
 }
 
@@ -3263,11 +3315,11 @@ fadjpsimcpp <- function(wgtmat, p, family) {
     .Call(`_lrstat_fadjpsimcpp`, wgtmat, p, family)
 }
 
-repeatedPValuecpp <- function(kMax = NA_integer_, typeAlphaSpending = "sfOF", parameterAlphaSpending = NA_real_, maxInformation = 1, p = NA_real_, information = NA_real_, spendingTime = NA_real_) {
+repeatedPValuecpp <- function(kMax, typeAlphaSpending, parameterAlphaSpending, maxInformation, p, information, spendingTime) {
     .Call(`_lrstat_repeatedPValuecpp`, kMax, typeAlphaSpending, parameterAlphaSpending, maxInformation, p, information, spendingTime)
 }
 
-fseqboncpp <- function(w, G, alpha = 0.025, kMax = NA_integer_, typeAlphaSpending = NA_character_, parameterAlphaSpending = NA_real_, incidenceMatrix = NA_integer_, maxInformation = NA_real_, p = NA_real_, information = NA_real_, spendingTime = NA_real_) {
+fseqboncpp <- function(w, G, alpha, kMax, typeAlphaSpending, parameterAlphaSpending, incidenceMatrix, maxInformation, p, information, spendingTime) {
     .Call(`_lrstat_fseqboncpp`, w, G, alpha, kMax, typeAlphaSpending, parameterAlphaSpending, incidenceMatrix, maxInformation, p, information, spendingTime)
 }
 
@@ -6738,119 +6790,6 @@ nbsamplesizeequiv <- function(beta = 0.2, kMax = 1L, informationRates = NA_real_
     .Call(`_lrstat_nbsamplesizeequiv`, beta, kMax, informationRates, criticalValues, alpha, typeAlphaSpending, parameterAlphaSpending, userAlphaSpending, rateRatioLower, rateRatioUpper, allocationRatioPlanned, accrualTime, accrualIntensity, piecewiseSurvivalTime, stratumFraction, kappa1, kappa2, lambda1, lambda2, gamma1, gamma2, accrualDuration, followupTime, fixedFollowup, interval, spendingTime, rounding, nullVariance)
 }
 
-#' @title Proportional hazards regression model
-#' @description Obtains the hazard ratio estimates from the proportional
-#' hazards regression model with right censored or counting process data.
-#'
-#' @param data The input data frame that contains the following variables:
-#'
-#'   * \code{rep}: The replication for by-group processing.
-#'
-#'   * \code{stratum}: The stratum.
-#'
-#'   * \code{time}: The follow-up time for right censored data, or
-#'     the left end of each interval for counting process data.
-#'
-#'   * \code{time2}: The right end of each interval for counting process
-#'     data only. Intervals are assumed to be open on the left
-#'     and closed on the right, and event indicates whether an event
-#'     occurred at the right end of each interval.
-#'
-#'   * \code{event}: The event indicator, normally 1=event, 0=no event.
-#'
-#'   * \code{covariates}: The values of baseline covariates (and
-#'     time-dependent covariates in each interval for counting
-#'     process data). This is the full-rank design matrix for the Cox
-#'     model, assuming that factor variables have already been
-#'     expanded into dummy variables.
-#'
-#'   * \code{weight}: The weight for each observation.
-#'
-#'   * \code{id}: The optional subject ID for counting process data
-#'     with time-dependent covariates.
-#'
-#' @param rep The name of the replication variable in the input data.
-#' @param stratum The name of the stratum variable in the input data.
-#' @param time The name of the time variable or the left end of each
-#'   interval for counting process data in the input data.
-#' @param time2 The name of the right end of each interval for counting
-#'   process data in the input data.
-#' @param event The name of the event variable in the input data.
-#' @param covariates The vector of names of baseline and time-dependent
-#'   covariates in the input data.
-#' @param weight The name of the weighting variable in the input data.
-#' @param id The name of the id variable in the input data.
-#' @param ties The method for handling ties with options including
-#'   "breslow" and "efron" (default).
-#' @param robust Whether a robust sandwich variance estimate should be
-#'   computed. The default is TRUE if there are fractional weights or
-#'   there is at least 1 id with >1 event. In the presence of the id
-#'   variable, the score residual will be aggregated for each id when
-#'   computing the robust sandwich variance estimate.
-#'
-#' @return A list with the following components:
-#'
-#' * \code{sumstat}: The data frame of summary statistics of model fit
-#'   with the following variables:
-#'
-#'     - \code{rep}: The replication.
-#'
-#'     - \code{n}: The number of observations.
-#'
-#'     - \code{nevents}: The number of events.
-#'
-#'     - \code{loglik0}: The log-likelihood under null.
-#'
-#'     - \code{loglik1}: The maximum log-likelihood.
-#'
-#'     - \code{scoretest}: The score test statistic.
-#'
-#' * \code{parest}: The data frame of parameter estimates with the
-#'   following variables:
-#'
-#'     - \code{rep}: The replication.
-#'
-#'     - \code{param}: The name of the covariate for the parameter estimate.
-#'
-#'     - \code{beta}: The log hazard ratio estimate.
-#'
-#'     - \code{sebeta}: The standard error of log hazard ratio estimate.
-#'
-#'     - \code{rsebeta}: The robust standard error of log hazard ratio
-#'       estimate if robust variance is requested.
-#'
-#'     - \code{z}: The Wald test statistic for log hazard ratio. The
-#'       \code{rsebeta} will be used if robust variance is requested.
-#'
-#'     - \code{hazardRatio}: The hazard ratio estimate.
-#'
-#'     - \code{vbeta}: The covariance matrix for parameter estimates.
-#'
-#'     - \code{rvbeta}: The robust covariance matrix for parameter
-#'       estimates if robust variance is requested.
-#'
-#' @author Kaifeng Lu, \email{kaifenglu@@gmail.com}
-#'
-#' @examples
-#'
-#' library(dplyr)
-#'
-#' # Example 1 with right-censored data
-#' phregr(data = rawdata %>% mutate(treat = 1*(treatmentGroup == 1)),
-#'        rep = "iterationNumber", stratum = "stratum",
-#'        time = "timeUnderObservation", event = "event",
-#'        covariates = "treat")
-#'
-#' # Example 2 with counting process data and robust variance estimate
-#' phregr(data = heart %>% mutate(rx = as.numeric(transplant) - 1),
-#'        time = "start", time2 = "stop", event = "event",
-#'        covariates = c("rx", "age"), id = "id", robust = 1)
-#'
-#' @export
-phregr <- function(data, rep = "rep", stratum = "stratum", time = "time", time2 = "time2", event = "event", covariates = "treat", weight = "weight", id = "id", ties = "efron", robust = 0L) {
-    .Call(`_lrstat_phregr`, data, rep, stratum, time, time2, event, covariates, weight, id, ties, robust)
-}
-
 #' @title Restricted mean survival time
 #' @description Obtains the restricted mean survival time over an interval.
 #'
@@ -7981,6 +7920,482 @@ rmdiff <- function(data, rep = "rep", stratum = "stratum", treat = "treat", time
     .Call(`_lrstat_rmdiff`, data, rep, stratum, treat, time, event, milestone, rmstDiffH0, confint, biascorrection)
 }
 
+#' @title Rank preserving structured failure time model (RPSFTM) for
+#' treatment switching
+#' @description Obtains the causal parameter estimate of the RPSFTM from
+#' the log-rank test and the hazard ratio estimate from the Cox model.
+#'
+#' @param data The input data frame that contains the following variables:
+#'
+#'   * \code{stratum}: The stratum.
+#'
+#'   * \code{time}: The survival time for right censored data.
+#'
+#'   * \code{event}: The event indicator, 1=event, 0=no event.
+#'
+#'   * \code{treat}: The randomized treatment indicator, 1=treatment,
+#'     0=control.
+#'
+#'   * \code{rx}: The proportion of time on active treatment.
+#'
+#'   * \code{censor_time}: The administrative censoring time. It should
+#'     be provided for all subjects including those who had events.
+#'
+#'   * \code{base_cov}: The values of baseline covariates.
+#'     This is the full-rank design matrix (excluding treat)
+#'     for the Cox model, assuming that factor variables
+#'     have already been expanded into dummy variables.
+#'
+#' @param stratum The name of the stratum variable in the input data.
+#' @param time The name of the time variable in the input data.
+#' @param event The name of the event variable in the input data.
+#' @param treat The name of the treatment variable in the input data.
+#' @param rx The name of the rx variable in the input data.
+#' @param censor_time The name of the censor_time variable in the input data.
+#' @param base_cov The vector of names of baseline covariates (excluding
+#'   treat) in the input data.
+#' @param low_psi The lower limit of the causal parameter of RPSFTM.
+#' @param hi_psi The upper limit of the causal parameter of RPSFTM.
+#' @param n_eval_z The number of points between low_psi and hi_psi at which
+#'   to evaluate the log-rank Z-statistics.
+#' @param alpha The significance level to calculate confidence intervals.
+#' @param treat_modifier The optional sensitivity parameter for the
+#'   constant treatment effect assumption.
+#' @param recensor Whether to apply recensoring to counter-factual
+#'   survival times. Defaults to \code{TRUE}.
+#' @param autoswitch Whether to exclude recensoring for treatment arms
+#'   with no switching. Defaults to \code{TRUE}.
+#' @param gridsearch Whether to use grid search to estimate the causal
+#'   parameter psi. Defaults to \code{FALSE}, in which case, a root
+#'   finding algorithm will be used.
+#' @param boot Whether to use bootstrap to obtain the confidence
+#'   interval for hazard ratio. Defaults to \code{FALSE}, in which case,
+#'   the confidence interval will be constructed to match the log-rank
+#'   test p-value.
+#' @param n_boot The number of bootstrap samples.
+#'
+#' @details We use the following steps to obtain the hazard ratio estimate
+#' and confidence interval had there been no treatment switching:
+#'
+#' * use RPSFTM to estimate the causal parameter psi based on the log-rank
+#'   test for counter-factual untreated survival times for both arms:
+#'   \eqn{U = T_{off} + T_{on} e^{\psi}}.
+#'
+#' * Fit the Cox proportional hazards model to the observed survival times
+#'   on the treatment arm and the counter-factual untreated survival times
+#'   on the control arm to obtain the hazard ratio estimate.
+#'
+#' * Use either the log-rank test p-value for the treatment policy strategy
+#'   or bootstrap to construct the confidence interval for hazard ratio.
+#'
+#' @return A list with the following components:
+#'
+#' * \code{psi}: The estimated causal parameter for RPSFTM.
+#'
+#' * \code{psi_CI}: The confidence interval for psi.
+#'
+#' * \code{psi_type}: The type of psi estimate, either "grid search" or
+#'   "root finding".
+#'
+#' * \code{Sstar}: A data frame containing the counter-factual untreated
+#'   survival times and the event indicators.
+#'
+#' * \code{kmstar}: A data frame containing the Kaplan-Meier estimates
+#'   based on the counter-factual untreated survival times by treatment arm.
+#'
+#' * \code{eval_z}: A data frame containing the log-rank test Z-statistics
+#'   evaluated at a sequence of psi values. Used to plot and to check
+#'   if the range of psi values to search for the solution and
+#'   limits of confidence interval of psi need be modified.
+#'
+#' * \code{pvalue}: The p-value of the log-rank test based on
+#'   the treatment policy strategy.
+#'
+#' * \code{hr}: The estimated hazard ratio from the Cox model.
+#'
+#' * \code{hr_CI}: The confidence interval for hazard ratio.
+#'
+#' * \code{hr_CI_type}: The type of confidence interval for hazard ratio,
+#'   either "log-rank p-value" or "bootstrap quantile".
+#'
+#' @author Kaifeng Lu, \email{kaifenglu@@gmail.com}
+#'
+#' @examples
+#'
+#' library(dplyr)
+#'
+#' data <- immdef %>% mutate(rx = 1-xoyrs/progyrs)
+#'
+#' fit <- rpsft(data, time = "progyrs", event = "prog", treat = "imm",
+#'              rx = "rx", censor_time = "censyrs", boot = 0)
+#'
+#' c(fit$hr, fit$hr_CI)
+#'
+#' @export
+rpsft <- function(data, stratum = "stratum", time = "time", event = "event", treat = "treat", rx = "rx", censor_time = "censor_time", base_cov = "none", low_psi = -1, hi_psi = 1, n_eval_z = 100L, alpha = 0.05, treat_modifier = 1, recensor = 1L, autoswitch = 1L, gridsearch = 0L, boot = 0L, n_boot = 1000L) {
+    .Call(`_lrstat_rpsft`, data, stratum, time, event, treat, rx, censor_time, base_cov, low_psi, hi_psi, n_eval_z, alpha, treat_modifier, recensor, autoswitch, gridsearch, boot, n_boot)
+}
+
+#' @title Kaplan-Meier estimates of the survival curve
+#' @description Obtains the Kaplan-Meier estimates of the survival curve.
+#'
+#' @param data The input data frame that contains the following variables:
+#'
+#'   * \code{rep}: The replication for by-group processing.
+#'
+#'   * \code{stratum}: The stratum.
+#'
+#'   * \code{time}: The possibly right-censored survival time.
+#'
+#'   * \code{event}: The event indicator.
+#'
+#' @param rep The name of the replication variable in the input data.
+#' @param stratum The name of the stratum variable in the input data.
+#' @param time The name of the time variable in the input data.
+#' @param event The name of the event variable in the input data.
+#' @param conftype The type of confidence interval. One of "none",
+#'   "plain", "log", "log-log" (the default), or "arcsin".
+#'   The arcsin option bases the intervals on asin(sqrt(survival)).
+#' @param confint The level of the two-sided confidence interval for
+#'   the survival probabilities. Defaults to 0.95.
+#'
+#' @return A data frame with the following variables:
+#'
+#' * \code{rep}: The replication.
+#'
+#' * \code{stratum}: The stratum.
+#'
+#' * \code{size}: The number of subjects in the stratum.
+#'
+#' * \code{time}: The event time.
+#'
+#' * \code{nrisk}: The number of subjects at risk.
+#'
+#' * \code{nevent}: The number of subjects having the event.
+#'
+#' * \code{survival}: The Kaplan-Meier estimate of the survival probability.
+#'
+#' * \code{stderr}: The standard error of the estimated survival
+#'   probability based on the Greendwood formula.
+#'
+#' * \code{lower}: The lower bound of confidence interval if requested.
+#'
+#' * \code{upper}: The upper bound of confidence interval if requested.
+#'
+#' * \code{confint}: The level of confidence interval if requested.
+#'
+#' * \code{conftype}: The type of confidence interval if requested.
+#'
+#' @author Kaifeng Lu, \email{kaifenglu@@gmail.com}
+#'
+#' @examples
+#'
+#' kmest(data = aml, stratum = "x",
+#'       time = "time", event = "status")
+#'
+#' @export
+kmest <- function(data, rep = "rep", stratum = "stratum", time = "time", event = "event", conftype = "log-log", confint = 0.95) {
+    .Call(`_lrstat_kmest`, data, rep, stratum, time, event, conftype, confint)
+}
+
+#' @title Log-rank test of survival curve difference
+#' @description Obtains the log-rank test using the Fleming-Harrington
+#' family of weights.
+#'
+#' @param data The input data frame that contains the following variables:
+#'
+#'   * \code{rep}: The replication for by-group processing.
+#'
+#'   * \code{stratum}: The stratum.
+#'
+#'   * \code{treat}: The treatment.
+#'
+#'   * \code{time}: The possibly right-censored survival time.
+#'
+#'   * \code{event}: The event indicator.
+#'
+#' @param rep The name of the replication variable in the input data.
+#' @param stratum The name of the stratum variable in the input data.
+#' @param treat The name of the treatment variable in the input data.
+#' @param time The name of the time variable in the input data.
+#' @param event The name of the event variable in the input data.
+#' @inheritParams param_rho1
+#' @inheritParams param_rho2
+#'
+#' @return A data frame with the following variables:
+#'
+#' * \code{rep}: The replication.
+#'
+#' * \code{uscore}: The numerator of the log-rank test statistic.
+#'
+#' * \code{vscore}: The variance of the log-rank score test statistic.
+#'
+#' * \code{logRankZ}: The Z-statistic value.
+#'
+#' * \code{logRankPValue}: The one-sided p-value.
+#'
+#' * \code{rho1}: The first parameter of the Fleming-Harrington weights.
+#'
+#' * \code{rho2}: The second parameter of the Fleming-Harrington weights.
+#'
+#' @author Kaifeng Lu, \email{kaifenglu@@gmail.com}
+#'
+#' @examples
+#'
+#' df <- lrtest(data = rawdata, rep = "iterationNumber",
+#'              stratum = "stratum", treat = "treatmentGroup",
+#'              time = "timeUnderObservation", event = "event",
+#'              rho1 = 0.5, rho2 = 0)
+#' head(df)
+#'
+#' @export
+lrtest <- function(data, rep = "rep", stratum = "stratum", treat = "treat", time = "time", event = "event", rho1 = 0, rho2 = 0) {
+    .Call(`_lrstat_lrtest`, data, rep, stratum, treat, time, event, rho1, rho2)
+}
+
+#' @title Parametric regression models for failure time data
+#' @description Obtains the parameter estimates from parametric
+#' regression models with uncensored, right censored, left censored, or
+#' interval censored data.
+#'
+#' @param data The input data frame that contains the following variables:
+#'
+#'   * \code{rep}: The replication for by-group processing.
+#'
+#'   * \code{stratum}: The stratum.
+#'
+#'   * \code{time}: The follow-up time for right censored data, or
+#'     the left end of each interval for interval censored data.
+#'
+#'   * \code{time2}: The right end of each interval for interval
+#'     censored data.
+#'
+#'   * \code{event}: The event indicator, normally 1=event, 0=no event.
+#'
+#'   * \code{covariates}: The values of baseline covariates.
+#'     This is the full-rank design matrix (excluding the intercept)
+#'     for the regression model, assuming that factor variables
+#'     have already been expanded into dummy variables.
+#'     The intercept will be added automatically.
+#'
+#'   * \code{weight}: The weight for each observation.
+#'
+#'   * \code{id}: The optional subject ID to group the score residuals
+#'     in computing the robust sandwich variance.
+#'
+#' @param rep The name of the replication variable in the input data.
+#' @param stratum The name of the stratum variable in the input data.
+#' @param time The name of the time variable or the left end of each
+#'   interval for interval censored data in the input data.
+#' @param time2 The name of the right end of each interval for
+#'   interval censored data in the input data.
+#' @param event The name of the event variable in the input data
+#'   for right censored data.
+#' @param covariates The vector of names of baseline covariates
+#'   in the input data.
+#' @param weight The name of the weighting variable in the input data.
+#' @param id The name of the id variable in the input data.
+#' @param dist The assumed distribution for time to event. Options include
+#'   "exponential", "weibull", "lognormal", and "loglogistic" to be
+#'   modeled on the log-scale, and "normal" and "logistic" to be modeled
+#'   on the original scale.
+#' @param robust Whether a robust sandwich variance estimate should be
+#'   computed. The default is TRUE if there are fractional weights or
+#'   there is at least 1 id with >1 event. In the presence of the id
+#'   variable, the score residual will be aggregated for each id when
+#'   computing the robust sandwich variance estimate.
+#'
+#' @details There are two ways to specify the model, one for right censored
+#' data through the time and event variables, and the other for interval
+#' censored data through the time and time2 variables. For the second form,
+#' we follow the convention used in SAS PROC LIFEREG:
+#'
+#' * If lower is not missing, upper is not missing, and lower is equal
+#'   to upper, then there is no censoring and the event occurred at
+#'   time lower.
+#'
+#' * If lower is not missing, upper is not missing, and lower < upper,
+#'   then the event time is censored within the interval (lower, upper).
+#'
+#' * If lower is missing, but upper is not missing, then upper will be
+#'   used as the left censoring value.
+#'
+#' * If lower is not missing, but upper is missing, then lower will be
+#'   used as the right censoring value.
+#'
+#' * If lower is not missing, upper is not missing, but lower > upper,
+#'   or if both lower and upper are missing, then the observation will
+#'   not be used.
+#'
+#' @return A list with the following components:
+#'
+#' * \code{sumstat}: The data frame of summary statistics of model fit
+#'   with the following variables:
+#'
+#'     - \code{rep}: The replication.
+#'
+#'     - \code{n}: The number of observations.
+#'
+#'     - \code{nevents}: The number of events.
+#'
+#'     - \code{loglik0}: The log-likelihood under null.
+#'
+#'     - \code{loglik1}: The maximum log-likelihood.
+#'
+#'     - \code{scoretest}: The score test statistic.
+#'
+#' * \code{parest}: The data frame of parameter estimates with the
+#'   following variables:
+#'
+#'     - \code{rep}: The replication.
+#'
+#'     - \code{param}: The name of the covariate for the parameter estimate.
+#'
+#'     - \code{beta}: The parameter estimate.
+#'
+#'     - \code{sebeta}: The standard error of parameter estimate.
+#'
+#'     - \code{z}: The Wald test statistic.
+#'
+#'     - \code{expbeta}: The exponentiated parameter.
+#'
+#'     - \code{vbeta}: The covariance matrix for parameter estimates.
+#'
+#' @author Kaifeng Lu, \email{kaifenglu@@gmail.com}
+#'
+#' @examples
+#'
+#' library(dplyr)
+#'
+#' # right censored data
+#' liferegr(data = rawdata %>% mutate(treat = 1*(treatmentGroup == 1)),
+#'          rep = "iterationNumber", stratum = "stratum",
+#'          time = "timeUnderObservation", event = "event",
+#'          covariates = "treat", dist = "weibull")
+#'
+#' # tobit regression for left censored data
+#' liferegr(data = tobin %>% mutate(time = ifelse(durable>0, durable, NA)),
+#'          time = "time", time2 = "durable",
+#'          covariates = c("age", "quant"), dist = "normal")
+#'
+#' @export
+liferegr <- function(data, rep = "rep", stratum = "stratum", time = "time", time2 = "time2", event = "event", covariates = "treat", weight = "weight", id = "id", dist = "weibull", robust = 0L) {
+    .Call(`_lrstat_liferegr`, data, rep, stratum, time, time2, event, covariates, weight, id, dist, robust)
+}
+
+#' @title Proportional hazards regression model
+#' @description Obtains the hazard ratio estimates from the proportional
+#' hazards regression model with right censored or counting process data.
+#'
+#' @param data The input data frame that contains the following variables:
+#'
+#'   * \code{rep}: The replication for by-group processing.
+#'
+#'   * \code{stratum}: The stratum.
+#'
+#'   * \code{time}: The follow-up time for right censored data, or
+#'     the left end of each interval for counting process data.
+#'
+#'   * \code{time2}: The right end of each interval for counting process
+#'     data only. Intervals are assumed to be open on the left
+#'     and closed on the right, and event indicates whether an event
+#'     occurred at the right end of each interval.
+#'
+#'   * \code{event}: The event indicator, normally 1=event, 0=no event.
+#'
+#'   * \code{covariates}: The values of baseline covariates (and
+#'     time-dependent covariates in each interval for counting
+#'     process data). This is the full-rank design matrix for the Cox
+#'     model, assuming that factor variables have already been
+#'     expanded into dummy variables.
+#'
+#'   * \code{weight}: The weight for each observation.
+#'
+#'   * \code{id}: The optional subject ID for counting process data
+#'     with time-dependent covariates.
+#'
+#' @param rep The name of the replication variable in the input data.
+#' @param stratum The name of the stratum variable in the input data.
+#' @param time The name of the time variable or the left end of each
+#'   interval for counting process data in the input data.
+#' @param time2 The name of the right end of each interval for counting
+#'   process data in the input data.
+#' @param event The name of the event variable in the input data.
+#' @param covariates The vector of names of baseline and time-dependent
+#'   covariates in the input data.
+#' @param weight The name of the weighting variable in the input data.
+#' @param id The name of the id variable in the input data.
+#' @param ties The method for handling ties with options including
+#'   "breslow" and "efron" (default).
+#' @param robust Whether a robust sandwich variance estimate should be
+#'   computed. The default is TRUE if there are fractional weights or
+#'   there is at least 1 id with >1 event. In the presence of the id
+#'   variable, the score residual will be aggregated for each id when
+#'   computing the robust sandwich variance estimate.
+#'
+#' @return A list with the following components:
+#'
+#' * \code{sumstat}: The data frame of summary statistics of model fit
+#'   with the following variables:
+#'
+#'     - \code{rep}: The replication.
+#'
+#'     - \code{n}: The number of observations.
+#'
+#'     - \code{nevents}: The number of events.
+#'
+#'     - \code{loglik0}: The log-likelihood under null.
+#'
+#'     - \code{loglik1}: The maximum log-likelihood.
+#'
+#'     - \code{scoretest}: The score test statistic.
+#'
+#' * \code{parest}: The data frame of parameter estimates with the
+#'   following variables:
+#'
+#'     - \code{rep}: The replication.
+#'
+#'     - \code{param}: The name of the covariate for the parameter estimate.
+#'
+#'     - \code{beta}: The log hazard ratio estimate.
+#'
+#'     - \code{sebeta}: The standard error of log hazard ratio estimate.
+#'
+#'     - \code{rsebeta}: The robust standard error of log hazard ratio
+#'       estimate if robust variance is requested.
+#'
+#'     - \code{z}: The Wald test statistic for log hazard ratio. The
+#'       \code{rsebeta} will be used if robust variance is requested.
+#'
+#'     - \code{hazardRatio}: The hazard ratio estimate.
+#'
+#'     - \code{vbeta}: The covariance matrix for parameter estimates.
+#'
+#'     - \code{rvbeta}: The robust covariance matrix for parameter
+#'       estimates if robust variance is requested.
+#'
+#' @author Kaifeng Lu, \email{kaifenglu@@gmail.com}
+#'
+#' @examples
+#'
+#' library(dplyr)
+#'
+#' # Example 1 with right-censored data
+#' phregr(data = rawdata %>% mutate(treat = 1*(treatmentGroup == 1)),
+#'        rep = "iterationNumber", stratum = "stratum",
+#'        time = "timeUnderObservation", event = "event",
+#'        covariates = "treat")
+#'
+#' # Example 2 with counting process data and robust variance estimate
+#' phregr(data = heart %>% mutate(rx = as.numeric(transplant) - 1),
+#'        time = "start", time2 = "stop", event = "event",
+#'        covariates = c("rx", "age"), id = "id", robust = 1)
+#'
+#' @export
+phregr <- function(data, rep = "rep", stratum = "stratum", time = "time", time2 = "time2", event = "event", covariates = "treat", weight = "weight", id = "id", ties = "efron", robust = 0L) {
+    .Call(`_lrstat_phregr`, data, rep, stratum, time, time2, event, covariates, weight, id, ties, robust)
+}
+
 set_seed <- function(seed) {
     invisible(.Call(`_lrstat_set_seed`, seed))
 }
@@ -9010,5 +9425,9 @@ hasVariable <- function(df, varName) {
 
 invsympd <- function(a) {
     .Call(`_lrstat_invsympd`, a)
+}
+
+quantilecpp <- function(x, p) {
+    .Call(`_lrstat_quantilecpp`, x, p)
 }
 

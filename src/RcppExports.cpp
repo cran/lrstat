@@ -51,6 +51,43 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// binary_tte_sim
+List binary_tte_sim(const int kMax1, const int kMax2, const double riskDiffH0, const double hazardRatioH0, const int allocation1, const int allocation2, const NumericVector& accrualTime, const NumericVector& accrualIntensity, const NumericVector& piecewiseSurvivalTime, const NumericVector& stratumFraction, const double globalOddsRatio, const NumericVector& pi1, const NumericVector& pi2, const NumericVector& lambda1, const NumericVector& lambda2, const NumericVector& gamma1, const NumericVector& gamma2, const NumericVector& delta1, const NumericVector& delta2, const double upper1, const double upper2, const double accrualDuration, const NumericVector& plannedTime, const IntegerVector& plannedEvents, const int maxNumberOfIterations, const int maxNumberOfRawDatasetsPerStage, const int seed);
+RcppExport SEXP _lrstat_binary_tte_sim(SEXP kMax1SEXP, SEXP kMax2SEXP, SEXP riskDiffH0SEXP, SEXP hazardRatioH0SEXP, SEXP allocation1SEXP, SEXP allocation2SEXP, SEXP accrualTimeSEXP, SEXP accrualIntensitySEXP, SEXP piecewiseSurvivalTimeSEXP, SEXP stratumFractionSEXP, SEXP globalOddsRatioSEXP, SEXP pi1SEXP, SEXP pi2SEXP, SEXP lambda1SEXP, SEXP lambda2SEXP, SEXP gamma1SEXP, SEXP gamma2SEXP, SEXP delta1SEXP, SEXP delta2SEXP, SEXP upper1SEXP, SEXP upper2SEXP, SEXP accrualDurationSEXP, SEXP plannedTimeSEXP, SEXP plannedEventsSEXP, SEXP maxNumberOfIterationsSEXP, SEXP maxNumberOfRawDatasetsPerStageSEXP, SEXP seedSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const int >::type kMax1(kMax1SEXP);
+    Rcpp::traits::input_parameter< const int >::type kMax2(kMax2SEXP);
+    Rcpp::traits::input_parameter< const double >::type riskDiffH0(riskDiffH0SEXP);
+    Rcpp::traits::input_parameter< const double >::type hazardRatioH0(hazardRatioH0SEXP);
+    Rcpp::traits::input_parameter< const int >::type allocation1(allocation1SEXP);
+    Rcpp::traits::input_parameter< const int >::type allocation2(allocation2SEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type accrualTime(accrualTimeSEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type accrualIntensity(accrualIntensitySEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type piecewiseSurvivalTime(piecewiseSurvivalTimeSEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type stratumFraction(stratumFractionSEXP);
+    Rcpp::traits::input_parameter< const double >::type globalOddsRatio(globalOddsRatioSEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type pi1(pi1SEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type pi2(pi2SEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type lambda1(lambda1SEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type lambda2(lambda2SEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type gamma1(gamma1SEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type gamma2(gamma2SEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type delta1(delta1SEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type delta2(delta2SEXP);
+    Rcpp::traits::input_parameter< const double >::type upper1(upper1SEXP);
+    Rcpp::traits::input_parameter< const double >::type upper2(upper2SEXP);
+    Rcpp::traits::input_parameter< const double >::type accrualDuration(accrualDurationSEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type plannedTime(plannedTimeSEXP);
+    Rcpp::traits::input_parameter< const IntegerVector& >::type plannedEvents(plannedEventsSEXP);
+    Rcpp::traits::input_parameter< const int >::type maxNumberOfIterations(maxNumberOfIterationsSEXP);
+    Rcpp::traits::input_parameter< const int >::type maxNumberOfRawDatasetsPerStage(maxNumberOfRawDatasetsPerStageSEXP);
+    Rcpp::traits::input_parameter< const int >::type seed(seedSEXP);
+    rcpp_result_gen = Rcpp::wrap(binary_tte_sim(kMax1, kMax2, riskDiffH0, hazardRatioH0, allocation1, allocation2, accrualTime, accrualIntensity, piecewiseSurvivalTime, stratumFraction, globalOddsRatio, pi1, pi2, lambda1, lambda2, gamma1, gamma2, delta1, delta2, upper1, upper2, accrualDuration, plannedTime, plannedEvents, maxNumberOfIterations, maxNumberOfRawDatasetsPerStage, seed));
+    return rcpp_result_gen;
+END_RCPP
+}
 // kmstat1
 DataFrame kmstat1(const double time, const double milestone, const double allocationRatioPlanned, const NumericVector& accrualTime, const NumericVector& accrualIntensity, const NumericVector& piecewiseSurvivalTime, const NumericVector& stratumFraction, const NumericVector& lambda1, const NumericVector& lambda2, const NumericVector& gamma1, const NumericVector& gamma2, const double accrualDuration, const double followupTime, const bool fixedFollowup);
 RcppExport SEXP _lrstat_kmstat1(SEXP timeSEXP, SEXP milestoneSEXP, SEXP allocationRatioPlannedSEXP, SEXP accrualTimeSEXP, SEXP accrualIntensitySEXP, SEXP piecewiseSurvivalTimeSEXP, SEXP stratumFractionSEXP, SEXP lambda1SEXP, SEXP lambda2SEXP, SEXP gamma1SEXP, SEXP gamma2SEXP, SEXP accrualDurationSEXP, SEXP followupTimeSEXP, SEXP fixedFollowupSEXP) {
@@ -321,23 +358,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// kmest
-DataFrame kmest(const DataFrame data, const std::string rep, const std::string stratum, const std::string time, const std::string event, const std::string conftype, const double confint);
-RcppExport SEXP _lrstat_kmest(SEXP dataSEXP, SEXP repSEXP, SEXP stratumSEXP, SEXP timeSEXP, SEXP eventSEXP, SEXP conftypeSEXP, SEXP confintSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const DataFrame >::type data(dataSEXP);
-    Rcpp::traits::input_parameter< const std::string >::type rep(repSEXP);
-    Rcpp::traits::input_parameter< const std::string >::type stratum(stratumSEXP);
-    Rcpp::traits::input_parameter< const std::string >::type time(timeSEXP);
-    Rcpp::traits::input_parameter< const std::string >::type event(eventSEXP);
-    Rcpp::traits::input_parameter< const std::string >::type conftype(conftypeSEXP);
-    Rcpp::traits::input_parameter< const double >::type confint(confintSEXP);
-    rcpp_result_gen = Rcpp::wrap(kmest(data, rep, stratum, time, event, conftype, confint));
-    return rcpp_result_gen;
-END_RCPP
-}
 // kmdiff
 DataFrame kmdiff(const DataFrame data, const std::string rep, const std::string stratum, const std::string treat, const std::string time, const std::string event, const double milestone, const double survDiffH0, const double confint);
 RcppExport SEXP _lrstat_kmdiff(SEXP dataSEXP, SEXP repSEXP, SEXP stratumSEXP, SEXP treatSEXP, SEXP timeSEXP, SEXP eventSEXP, SEXP milestoneSEXP, SEXP survDiffH0SEXP, SEXP confintSEXP) {
@@ -354,27 +374,6 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const double >::type survDiffH0(survDiffH0SEXP);
     Rcpp::traits::input_parameter< const double >::type confint(confintSEXP);
     rcpp_result_gen = Rcpp::wrap(kmdiff(data, rep, stratum, treat, time, event, milestone, survDiffH0, confint));
-    return rcpp_result_gen;
-END_RCPP
-}
-// liferegr
-List liferegr(const DataFrame data, const std::string rep, const std::string stratum, const std::string time, const std::string time2, const std::string event, const StringVector& covariates, const std::string weight, const std::string id, const std::string dist, bool robust);
-RcppExport SEXP _lrstat_liferegr(SEXP dataSEXP, SEXP repSEXP, SEXP stratumSEXP, SEXP timeSEXP, SEXP time2SEXP, SEXP eventSEXP, SEXP covariatesSEXP, SEXP weightSEXP, SEXP idSEXP, SEXP distSEXP, SEXP robustSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const DataFrame >::type data(dataSEXP);
-    Rcpp::traits::input_parameter< const std::string >::type rep(repSEXP);
-    Rcpp::traits::input_parameter< const std::string >::type stratum(stratumSEXP);
-    Rcpp::traits::input_parameter< const std::string >::type time(timeSEXP);
-    Rcpp::traits::input_parameter< const std::string >::type time2(time2SEXP);
-    Rcpp::traits::input_parameter< const std::string >::type event(eventSEXP);
-    Rcpp::traits::input_parameter< const StringVector& >::type covariates(covariatesSEXP);
-    Rcpp::traits::input_parameter< const std::string >::type weight(weightSEXP);
-    Rcpp::traits::input_parameter< const std::string >::type id(idSEXP);
-    Rcpp::traits::input_parameter< const std::string >::type dist(distSEXP);
-    Rcpp::traits::input_parameter< bool >::type robust(robustSEXP);
-    rcpp_result_gen = Rcpp::wrap(liferegr(data, rep, stratum, time, time2, event, covariates, weight, id, dist, robust));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -823,24 +822,6 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const NumericVector& >::type spendingTime(spendingTimeSEXP);
     Rcpp::traits::input_parameter< const bool >::type rounding(roundingSEXP);
     rcpp_result_gen = Rcpp::wrap(lrsamplesizeequiv(beta, kMax, informationRates, criticalValues, alpha, typeAlphaSpending, parameterAlphaSpending, userAlphaSpending, hazardRatioLower, hazardRatioUpper, allocationRatioPlanned, accrualTime, accrualIntensity, piecewiseSurvivalTime, stratumFraction, lambda1, lambda2, gamma1, gamma2, accrualDuration, followupTime, fixedFollowup, typeOfComputation, interval, spendingTime, rounding));
-    return rcpp_result_gen;
-END_RCPP
-}
-// lrtest
-DataFrame lrtest(const DataFrame data, const std::string rep, const std::string stratum, const std::string treat, const std::string time, const std::string event, const double rho1, const double rho2);
-RcppExport SEXP _lrstat_lrtest(SEXP dataSEXP, SEXP repSEXP, SEXP stratumSEXP, SEXP treatSEXP, SEXP timeSEXP, SEXP eventSEXP, SEXP rho1SEXP, SEXP rho2SEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const DataFrame >::type data(dataSEXP);
-    Rcpp::traits::input_parameter< const std::string >::type rep(repSEXP);
-    Rcpp::traits::input_parameter< const std::string >::type stratum(stratumSEXP);
-    Rcpp::traits::input_parameter< const std::string >::type treat(treatSEXP);
-    Rcpp::traits::input_parameter< const std::string >::type time(timeSEXP);
-    Rcpp::traits::input_parameter< const std::string >::type event(eventSEXP);
-    Rcpp::traits::input_parameter< const double >::type rho1(rho1SEXP);
-    Rcpp::traits::input_parameter< const double >::type rho2(rho2SEXP);
-    rcpp_result_gen = Rcpp::wrap(lrtest(data, rep, stratum, treat, time, event, rho1, rho2));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -2019,27 +2000,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// phregr
-List phregr(const DataFrame data, const std::string rep, const std::string stratum, const std::string time, const std::string time2, const std::string event, const StringVector& covariates, const std::string weight, const std::string id, const std::string ties, bool robust);
-RcppExport SEXP _lrstat_phregr(SEXP dataSEXP, SEXP repSEXP, SEXP stratumSEXP, SEXP timeSEXP, SEXP time2SEXP, SEXP eventSEXP, SEXP covariatesSEXP, SEXP weightSEXP, SEXP idSEXP, SEXP tiesSEXP, SEXP robustSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const DataFrame >::type data(dataSEXP);
-    Rcpp::traits::input_parameter< const std::string >::type rep(repSEXP);
-    Rcpp::traits::input_parameter< const std::string >::type stratum(stratumSEXP);
-    Rcpp::traits::input_parameter< const std::string >::type time(timeSEXP);
-    Rcpp::traits::input_parameter< const std::string >::type time2(time2SEXP);
-    Rcpp::traits::input_parameter< const std::string >::type event(eventSEXP);
-    Rcpp::traits::input_parameter< const StringVector& >::type covariates(covariatesSEXP);
-    Rcpp::traits::input_parameter< const std::string >::type weight(weightSEXP);
-    Rcpp::traits::input_parameter< const std::string >::type id(idSEXP);
-    Rcpp::traits::input_parameter< const std::string >::type ties(tiesSEXP);
-    Rcpp::traits::input_parameter< bool >::type robust(robustSEXP);
-    rcpp_result_gen = Rcpp::wrap(phregr(data, rep, stratum, time, time2, event, covariates, weight, id, ties, robust));
-    return rcpp_result_gen;
-END_RCPP
-}
 // rmst
 double rmst(const double t1, const double t2, const NumericVector& piecewiseSurvivalTime, const NumericVector& lambda);
 RcppExport SEXP _lrstat_rmst(SEXP t1SEXP, SEXP t2SEXP, SEXP piecewiseSurvivalTimeSEXP, SEXP lambdaSEXP) {
@@ -2382,6 +2342,111 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const double >::type confint(confintSEXP);
     Rcpp::traits::input_parameter< const bool >::type biascorrection(biascorrectionSEXP);
     rcpp_result_gen = Rcpp::wrap(rmdiff(data, rep, stratum, treat, time, event, milestone, rmstDiffH0, confint, biascorrection));
+    return rcpp_result_gen;
+END_RCPP
+}
+// rpsft
+List rpsft(const DataFrame data, const std::string stratum, const std::string time, const std::string event, const std::string treat, const std::string rx, const std::string censor_time, const StringVector& base_cov, const double low_psi, const double hi_psi, const int n_eval_z, const double alpha, const double treat_modifier, const bool recensor, const bool autoswitch, const bool gridsearch, const bool boot, const int n_boot);
+RcppExport SEXP _lrstat_rpsft(SEXP dataSEXP, SEXP stratumSEXP, SEXP timeSEXP, SEXP eventSEXP, SEXP treatSEXP, SEXP rxSEXP, SEXP censor_timeSEXP, SEXP base_covSEXP, SEXP low_psiSEXP, SEXP hi_psiSEXP, SEXP n_eval_zSEXP, SEXP alphaSEXP, SEXP treat_modifierSEXP, SEXP recensorSEXP, SEXP autoswitchSEXP, SEXP gridsearchSEXP, SEXP bootSEXP, SEXP n_bootSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const DataFrame >::type data(dataSEXP);
+    Rcpp::traits::input_parameter< const std::string >::type stratum(stratumSEXP);
+    Rcpp::traits::input_parameter< const std::string >::type time(timeSEXP);
+    Rcpp::traits::input_parameter< const std::string >::type event(eventSEXP);
+    Rcpp::traits::input_parameter< const std::string >::type treat(treatSEXP);
+    Rcpp::traits::input_parameter< const std::string >::type rx(rxSEXP);
+    Rcpp::traits::input_parameter< const std::string >::type censor_time(censor_timeSEXP);
+    Rcpp::traits::input_parameter< const StringVector& >::type base_cov(base_covSEXP);
+    Rcpp::traits::input_parameter< const double >::type low_psi(low_psiSEXP);
+    Rcpp::traits::input_parameter< const double >::type hi_psi(hi_psiSEXP);
+    Rcpp::traits::input_parameter< const int >::type n_eval_z(n_eval_zSEXP);
+    Rcpp::traits::input_parameter< const double >::type alpha(alphaSEXP);
+    Rcpp::traits::input_parameter< const double >::type treat_modifier(treat_modifierSEXP);
+    Rcpp::traits::input_parameter< const bool >::type recensor(recensorSEXP);
+    Rcpp::traits::input_parameter< const bool >::type autoswitch(autoswitchSEXP);
+    Rcpp::traits::input_parameter< const bool >::type gridsearch(gridsearchSEXP);
+    Rcpp::traits::input_parameter< const bool >::type boot(bootSEXP);
+    Rcpp::traits::input_parameter< const int >::type n_boot(n_bootSEXP);
+    rcpp_result_gen = Rcpp::wrap(rpsft(data, stratum, time, event, treat, rx, censor_time, base_cov, low_psi, hi_psi, n_eval_z, alpha, treat_modifier, recensor, autoswitch, gridsearch, boot, n_boot));
+    return rcpp_result_gen;
+END_RCPP
+}
+// kmest
+DataFrame kmest(const DataFrame data, const std::string rep, const std::string stratum, const std::string time, const std::string event, const std::string conftype, const double confint);
+RcppExport SEXP _lrstat_kmest(SEXP dataSEXP, SEXP repSEXP, SEXP stratumSEXP, SEXP timeSEXP, SEXP eventSEXP, SEXP conftypeSEXP, SEXP confintSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const DataFrame >::type data(dataSEXP);
+    Rcpp::traits::input_parameter< const std::string >::type rep(repSEXP);
+    Rcpp::traits::input_parameter< const std::string >::type stratum(stratumSEXP);
+    Rcpp::traits::input_parameter< const std::string >::type time(timeSEXP);
+    Rcpp::traits::input_parameter< const std::string >::type event(eventSEXP);
+    Rcpp::traits::input_parameter< const std::string >::type conftype(conftypeSEXP);
+    Rcpp::traits::input_parameter< const double >::type confint(confintSEXP);
+    rcpp_result_gen = Rcpp::wrap(kmest(data, rep, stratum, time, event, conftype, confint));
+    return rcpp_result_gen;
+END_RCPP
+}
+// lrtest
+DataFrame lrtest(const DataFrame data, const std::string rep, const std::string stratum, const std::string treat, const std::string time, const std::string event, const double rho1, const double rho2);
+RcppExport SEXP _lrstat_lrtest(SEXP dataSEXP, SEXP repSEXP, SEXP stratumSEXP, SEXP treatSEXP, SEXP timeSEXP, SEXP eventSEXP, SEXP rho1SEXP, SEXP rho2SEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const DataFrame >::type data(dataSEXP);
+    Rcpp::traits::input_parameter< const std::string >::type rep(repSEXP);
+    Rcpp::traits::input_parameter< const std::string >::type stratum(stratumSEXP);
+    Rcpp::traits::input_parameter< const std::string >::type treat(treatSEXP);
+    Rcpp::traits::input_parameter< const std::string >::type time(timeSEXP);
+    Rcpp::traits::input_parameter< const std::string >::type event(eventSEXP);
+    Rcpp::traits::input_parameter< const double >::type rho1(rho1SEXP);
+    Rcpp::traits::input_parameter< const double >::type rho2(rho2SEXP);
+    rcpp_result_gen = Rcpp::wrap(lrtest(data, rep, stratum, treat, time, event, rho1, rho2));
+    return rcpp_result_gen;
+END_RCPP
+}
+// liferegr
+List liferegr(const DataFrame data, const std::string rep, const std::string stratum, const std::string time, const std::string time2, const std::string event, const StringVector& covariates, const std::string weight, const std::string id, const std::string dist, bool robust);
+RcppExport SEXP _lrstat_liferegr(SEXP dataSEXP, SEXP repSEXP, SEXP stratumSEXP, SEXP timeSEXP, SEXP time2SEXP, SEXP eventSEXP, SEXP covariatesSEXP, SEXP weightSEXP, SEXP idSEXP, SEXP distSEXP, SEXP robustSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const DataFrame >::type data(dataSEXP);
+    Rcpp::traits::input_parameter< const std::string >::type rep(repSEXP);
+    Rcpp::traits::input_parameter< const std::string >::type stratum(stratumSEXP);
+    Rcpp::traits::input_parameter< const std::string >::type time(timeSEXP);
+    Rcpp::traits::input_parameter< const std::string >::type time2(time2SEXP);
+    Rcpp::traits::input_parameter< const std::string >::type event(eventSEXP);
+    Rcpp::traits::input_parameter< const StringVector& >::type covariates(covariatesSEXP);
+    Rcpp::traits::input_parameter< const std::string >::type weight(weightSEXP);
+    Rcpp::traits::input_parameter< const std::string >::type id(idSEXP);
+    Rcpp::traits::input_parameter< const std::string >::type dist(distSEXP);
+    Rcpp::traits::input_parameter< bool >::type robust(robustSEXP);
+    rcpp_result_gen = Rcpp::wrap(liferegr(data, rep, stratum, time, time2, event, covariates, weight, id, dist, robust));
+    return rcpp_result_gen;
+END_RCPP
+}
+// phregr
+List phregr(const DataFrame data, const std::string rep, const std::string stratum, const std::string time, const std::string time2, const std::string event, const StringVector& covariates, const std::string weight, const std::string id, const std::string ties, bool robust);
+RcppExport SEXP _lrstat_phregr(SEXP dataSEXP, SEXP repSEXP, SEXP stratumSEXP, SEXP timeSEXP, SEXP time2SEXP, SEXP eventSEXP, SEXP covariatesSEXP, SEXP weightSEXP, SEXP idSEXP, SEXP tiesSEXP, SEXP robustSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const DataFrame >::type data(dataSEXP);
+    Rcpp::traits::input_parameter< const std::string >::type rep(repSEXP);
+    Rcpp::traits::input_parameter< const std::string >::type stratum(stratumSEXP);
+    Rcpp::traits::input_parameter< const std::string >::type time(timeSEXP);
+    Rcpp::traits::input_parameter< const std::string >::type time2(time2SEXP);
+    Rcpp::traits::input_parameter< const std::string >::type event(eventSEXP);
+    Rcpp::traits::input_parameter< const StringVector& >::type covariates(covariatesSEXP);
+    Rcpp::traits::input_parameter< const std::string >::type weight(weightSEXP);
+    Rcpp::traits::input_parameter< const std::string >::type id(idSEXP);
+    Rcpp::traits::input_parameter< const std::string >::type ties(tiesSEXP);
+    Rcpp::traits::input_parameter< bool >::type robust(robustSEXP);
+    rcpp_result_gen = Rcpp::wrap(phregr(data, rep, stratum, time, time2, event, covariates, weight, id, ties, robust));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -2835,10 +2900,23 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// quantilecpp
+double quantilecpp(const NumericVector& x, const double p);
+RcppExport SEXP _lrstat_quantilecpp(SEXP xSEXP, SEXP pSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const NumericVector& >::type x(xSEXP);
+    Rcpp::traits::input_parameter< const double >::type p(pSEXP);
+    rcpp_result_gen = Rcpp::wrap(quantilecpp(x, p));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_lrstat_simonBayesAnalysis", (DL_FUNC) &_lrstat_simonBayesAnalysis, 7},
     {"_lrstat_simonBayesSim", (DL_FUNC) &_lrstat_simonBayesSim, 14},
+    {"_lrstat_binary_tte_sim", (DL_FUNC) &_lrstat_binary_tte_sim, 27},
     {"_lrstat_kmstat1", (DL_FUNC) &_lrstat_kmstat1, 14},
     {"_lrstat_kmstat", (DL_FUNC) &_lrstat_kmstat, 14},
     {"_lrstat_kmpower", (DL_FUNC) &_lrstat_kmpower, 28},
@@ -2847,9 +2925,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_lrstat_kmsamplesize1s", (DL_FUNC) &_lrstat_kmsamplesize1s, 28},
     {"_lrstat_kmpowerequiv", (DL_FUNC) &_lrstat_kmpowerequiv, 24},
     {"_lrstat_kmsamplesizeequiv", (DL_FUNC) &_lrstat_kmsamplesizeequiv, 26},
-    {"_lrstat_kmest", (DL_FUNC) &_lrstat_kmest, 7},
     {"_lrstat_kmdiff", (DL_FUNC) &_lrstat_kmdiff, 9},
-    {"_lrstat_liferegr", (DL_FUNC) &_lrstat_liferegr, 11},
     {"_lrstat_lrsim", (DL_FUNC) &_lrstat_lrsim, 25},
     {"_lrstat_lrsim3a", (DL_FUNC) &_lrstat_lrsim3a, 27},
     {"_lrstat_lrsim2e", (DL_FUNC) &_lrstat_lrsim2e, 29},
@@ -2863,7 +2939,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"_lrstat_lrsamplesize", (DL_FUNC) &_lrstat_lrsamplesize, 35},
     {"_lrstat_lrpowerequiv", (DL_FUNC) &_lrstat_lrpowerequiv, 24},
     {"_lrstat_lrsamplesizeequiv", (DL_FUNC) &_lrstat_lrsamplesizeequiv, 26},
-    {"_lrstat_lrtest", (DL_FUNC) &_lrstat_lrtest, 8},
     {"_lrstat_updateGraph", (DL_FUNC) &_lrstat_updateGraph, 4},
     {"_lrstat_fadjpboncpp", (DL_FUNC) &_lrstat_fadjpboncpp, 3},
     {"_lrstat_fwgtmat", (DL_FUNC) &_lrstat_fwgtmat, 2},
@@ -2926,7 +3001,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"_lrstat_nbsamplesize1s", (DL_FUNC) &_lrstat_nbsamplesize1s, 28},
     {"_lrstat_nbpowerequiv", (DL_FUNC) &_lrstat_nbpowerequiv, 26},
     {"_lrstat_nbsamplesizeequiv", (DL_FUNC) &_lrstat_nbsamplesizeequiv, 28},
-    {"_lrstat_phregr", (DL_FUNC) &_lrstat_phregr, 11},
     {"_lrstat_rmst", (DL_FUNC) &_lrstat_rmst, 4},
     {"_lrstat_covrmst", (DL_FUNC) &_lrstat_covrmst, 13},
     {"_lrstat_rmstat1", (DL_FUNC) &_lrstat_rmstat1, 14},
@@ -2939,6 +3013,11 @@ static const R_CallMethodDef CallEntries[] = {
     {"_lrstat_rmsamplesizeequiv", (DL_FUNC) &_lrstat_rmsamplesizeequiv, 26},
     {"_lrstat_rmest", (DL_FUNC) &_lrstat_rmest, 8},
     {"_lrstat_rmdiff", (DL_FUNC) &_lrstat_rmdiff, 10},
+    {"_lrstat_rpsft", (DL_FUNC) &_lrstat_rpsft, 18},
+    {"_lrstat_kmest", (DL_FUNC) &_lrstat_kmest, 7},
+    {"_lrstat_lrtest", (DL_FUNC) &_lrstat_lrtest, 8},
+    {"_lrstat_liferegr", (DL_FUNC) &_lrstat_liferegr, 11},
+    {"_lrstat_phregr", (DL_FUNC) &_lrstat_phregr, 11},
     {"_lrstat_set_seed", (DL_FUNC) &_lrstat_set_seed, 1},
     {"_lrstat_stl_sort", (DL_FUNC) &_lrstat_stl_sort, 1},
     {"_lrstat_findInterval3", (DL_FUNC) &_lrstat_findInterval3, 2},
@@ -2965,6 +3044,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_lrstat_adaptDesign", (DL_FUNC) &_lrstat_adaptDesign, 31},
     {"_lrstat_hasVariable", (DL_FUNC) &_lrstat_hasVariable, 2},
     {"_lrstat_invsympd", (DL_FUNC) &_lrstat_invsympd, 1},
+    {"_lrstat_quantilecpp", (DL_FUNC) &_lrstat_quantilecpp, 2},
     {NULL, NULL, 0}
 };
 
