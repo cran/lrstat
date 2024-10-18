@@ -2,7 +2,7 @@
 % Please edit documentation in R/getDesignProportions.R
 \name{mTPI2Table}
 \alias{mTPI2Table}
-\title{mTPI-2 decision table}
+\title{mTPI-2 Decision Table}
 \usage{
 mTPI2Table(
   nMax = NA_integer_,

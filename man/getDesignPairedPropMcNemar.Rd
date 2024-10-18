@@ -2,8 +2,8 @@
 % Please edit documentation in R/getDesignProportions.R
 \name{getDesignPairedPropMcNemar}
 \alias{getDesignPairedPropMcNemar}
-\title{Group sequential design for McNemar's test for paired
-proportions}
+\title{Group Sequential Design for McNemar's Test for Paired
+Proportions}
 \usage{
 getDesignPairedPropMcNemar(
   beta = NA_real_,

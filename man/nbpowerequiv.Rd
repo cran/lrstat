@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{nbpowerequiv}
 \alias{nbpowerequiv}
-\title{Power for equivalence in negative binomial rate ratio}
+\title{Power for Equivalence in Negative Binomial Rate Ratio}
 \usage{
 nbpowerequiv(
   kMax = 1L,

@@ -2,7 +2,7 @@
 % Please edit documentation in R/getDesignMeans.R
 \name{getDesignANOVA}
 \alias{getDesignANOVA}
-\title{Power and sample size for one-way ANOVA}
+\title{Power and Sample Size for One-Way ANOVA}
 \usage{
 getDesignANOVA(
   beta = NA_real_,

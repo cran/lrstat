@@ -2,8 +2,8 @@
 % Please edit documentation in R/prints.R
 \name{print.kmpowerequiv}
 \alias{print.kmpowerequiv}
-\title{Print power and sample size results for equivalence in milestone
-survival probability difference}
+\title{Print Power and Sample Size Results for Equivalence in Milestone
+Survival Probability Difference}
 \usage{
 \method{print}{kmpowerequiv}(x, ...)
 }

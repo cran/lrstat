@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{getCI}
 \alias{getCI}
-\title{Confidence interval after trial termination}
+\title{Confidence Interval After Trial Termination}
 \usage{
 getCI(
   L = NA_integer_,

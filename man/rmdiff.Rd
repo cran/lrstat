@@ -2,18 +2,18 @@
 % Please edit documentation in R/RcppExports.R
 \name{rmdiff}
 \alias{rmdiff}
-\title{Estimate of restricted mean survival time difference}
+\title{Estimate of Restricted Mean Survival Time Difference}
 \usage{
 rmdiff(
   data,
-  rep = "rep",
-  stratum = "stratum",
+  rep = "",
+  stratum = "",
   treat = "treat",
   time = "time",
   event = "event",
   milestone = NA_real_,
   rmstDiffH0 = 0,
-  confint = 0.95,
+  conflev = 0.95,
   biascorrection = 0L
 )
 }
@@ -43,7 +43,7 @@ restricted mean survival time.}
 \item{rmstDiffH0}{The difference in restricted mean survival times
 under the null hypothesis. Defaults to 0 for superiority test.}
 
-\item{confint}{The level of the two-sided confidence interval for
+\item{conflev}{The level of the two-sided confidence interval for
 the difference in restricted mean survival times. Defaults to 0.95.}
 
 \item{biascorrection}{Whether to apply bias correction for the
@@ -70,7 +70,7 @@ survival times.
 \item \code{rmstDiffPValue}: The one-sided p-value.
 \item \code{lower}: The lower bound of confidence interval.
 \item \code{upper}: The upper bound of confidence interval.
-\item \code{confint}: The level of confidence interval.
+\item \code{conflev}: The level of confidence interval.
 \item \code{biascorrection}: Whether to apply bias correction for the
 variance estimate of individual restricted mean survival times.
 }

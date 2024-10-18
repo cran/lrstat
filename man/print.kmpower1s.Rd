@@ -2,8 +2,8 @@
 % Please edit documentation in R/prints.R
 \name{print.kmpower1s}
 \alias{print.kmpower1s}
-\title{Print power and sample size results for one-sample milestone
-survival probability}
+\title{Print Power and Sample Size Results for One-Sample Milestone
+Survival Probability}
 \usage{
 \method{print}{kmpower1s}(x, ...)
 }

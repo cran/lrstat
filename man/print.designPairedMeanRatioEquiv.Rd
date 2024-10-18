@@ -2,8 +2,8 @@
 % Please edit documentation in R/prints.R
 \name{print.designPairedMeanRatioEquiv}
 \alias{print.designPairedMeanRatioEquiv}
-\title{Print power and sample size results for equivalence in paired
-mean ratio}
+\title{Print Power and Sample Size Results for Equivalence in Paired
+Mean Ratio}
 \usage{
 \method{print}{designPairedMeanRatioEquiv}(x, ...)
 }

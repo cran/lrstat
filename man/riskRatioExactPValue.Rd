@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{riskRatioExactPValue}
 \alias{riskRatioExactPValue}
-\title{P-value for exact unconditional test of risk ratio}
+\title{P-Value for Exact Unconditional Test of Risk Ratio}
 \usage{
 riskRatioExactPValue(
   riskRatioH0 = 1,

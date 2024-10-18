@@ -2,7 +2,7 @@
 % Please edit documentation in R/getDesignMeans.R
 \name{getDesignSlopeDiff}
 \alias{getDesignSlopeDiff}
-\title{Group sequential design for two-sample slope difference}
+\title{Group Sequential Design for Two-Sample Slope Difference}
 \usage{
 getDesignSlopeDiff(
   beta = NA_real_,

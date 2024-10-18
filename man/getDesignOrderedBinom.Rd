@@ -2,8 +2,8 @@
 % Please edit documentation in R/getDesignProportions.R
 \name{getDesignOrderedBinom}
 \alias{getDesignOrderedBinom}
-\title{Power and sample size for Cochran-Armitage trend test for
-ordered multi-sample binomial response}
+\title{Power and Sample Size for Cochran-Armitage Trend Test for
+Ordered Multi-Sample Binomial Response}
 \usage{
 getDesignOrderedBinom(
   beta = NA_real_,

@@ -2,7 +2,7 @@
 % Please edit documentation in R/getDesignProportions.R
 \name{getDesignUnorderedBinom}
 \alias{getDesignUnorderedBinom}
-\title{Power and sample size for unordered multi-sample binomial response}
+\title{Power and Sample Size for Unordered Multi-Sample Binomial Response}
 \usage{
 getDesignUnorderedBinom(
   beta = NA_real_,

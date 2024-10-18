@@ -2,8 +2,8 @@
 % Please edit documentation in R/prints.R
 \name{print.designTwoMultinom}
 \alias{print.designTwoMultinom}
-\title{Print the power and sample size for difference in two-sample
-multinomial response}
+\title{Print Power and Sample Size Results for Difference in Two-Sample
+Multinomial Response}
 \usage{
 \method{print}{designTwoMultinom}(x, ...)
 }

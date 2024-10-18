@@ -2,7 +2,7 @@
 % Please edit documentation in R/prints.R
 \name{print.designMeanRatio}
 \alias{print.designMeanRatio}
-\title{Print power and sample size results for two-sample mean ratio}
+\title{Print Power and Sample Size Results for Two-Sample Mean Ratio}
 \usage{
 \method{print}{designMeanRatio}(x, ...)
 }

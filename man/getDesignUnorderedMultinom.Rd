@@ -2,8 +2,8 @@
 % Please edit documentation in R/getDesignProportions.R
 \name{getDesignUnorderedMultinom}
 \alias{getDesignUnorderedMultinom}
-\title{Power and sample size for unordered multi-sample
-multinomial response}
+\title{Power and Sample Size for Unordered Multi-Sample Multinomial
+Response}
 \usage{
 getDesignUnorderedMultinom(
   beta = NA_real_,

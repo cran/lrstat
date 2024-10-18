@@ -2,7 +2,7 @@
 % Please edit documentation in R/getDesignProportions.R
 \name{getDesignOneProportion}
 \alias{getDesignOneProportion}
-\title{Group sequential design for one-sample proportion}
+\title{Group Sequential Design for One-Sample Proportion}
 \usage{
 getDesignOneProportion(
   beta = NA_real_,

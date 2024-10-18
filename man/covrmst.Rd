@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{covrmst}
 \alias{covrmst}
-\title{Covariance between restricted mean survival times}
+\title{Covariance Between Restricted Mean Survival Times}
 \usage{
 covrmst(
   t2 = NA_real_,

@@ -12,7 +12,18 @@ lrsamplesize(beta = 0.1, kMax = 1, criticalValues = 1.96,
              allocationRatioPlanned = 3, accrualIntensity = 5, 
              lambda2 = 0.95/12, lambda1 = 0.3*0.95/12, 
              gamma1 = -log(1-0.1)/24, gamma2 = -log(1-0.1)/24, 
-             accrualDuration = NA, followupTime = 26/4, fixedFollowup = TRUE)
+             accrualDuration = NA, followupTime = 26/4, 
+             fixedFollowup = TRUE,
+             typeOfComputation = "schoenfeld")
+
+## -----------------------------------------------------------------------------
+lrsamplesize(beta = 0.1, kMax = 1, criticalValues = 1.96, 
+             allocationRatioPlanned = 3, accrualIntensity = 5, 
+             lambda2 = 0.95/12, lambda1 = 0.3*0.95/12, 
+             gamma1 = -log(1-0.1)/24, gamma2 = -log(1-0.1)/24, 
+             accrualDuration = NA, followupTime = 26/4, 
+             fixedFollowup = TRUE,
+             typeOfComputation = "direct")
 
 ## -----------------------------------------------------------------------------
 lrsim(kMax = 1, criticalValues = 1.96,  
@@ -20,7 +31,7 @@ lrsim(kMax = 1, criticalValues = 1.96,
       accrualIntensity = 5, 
       lambda2 = 0.95/12, lambda1 = 0.3*0.95/12, 
       gamma1 = -log(1-0.1)/24, gamma2 = -log(1-0.1)/24,
-      accrualDuration = 39.2, followupTime = 6.5, 
+      accrualDuration = 38.2, followupTime = 6.5, 
       fixedFollowup = TRUE,  
       plannedEvents = 39, 
       maxNumberOfIterations = 10000, seed = 12345)
@@ -30,7 +41,7 @@ lrsim(kMax = 1, criticalValues = 1.96,
       accrualIntensity = 5, 
       lambda2 = 0.95/12, lambda1 = 0.3*0.95/12, 
       gamma1 = -log(1-0.1)/24, gamma2 = -log(1-0.1)/24,
-      accrualDuration = 25.2, followupTime = 6.5, 
+      accrualDuration = 25.4, followupTime = 6.5, 
       fixedFollowup = TRUE,  
       plannedEvents = 26, 
       maxNumberOfIterations = 10000, seed = 12345)
@@ -44,5 +55,5 @@ lrsim(kMax = 1, criticalValues = 1.96,
       accrualDuration = 31.2, followupTime = 6.5, 
       fixedFollowup = TRUE,  
       plannedEvents = 32, 
-      maxNumberOfIterations = 1000, seed = 12345)
+      maxNumberOfIterations = 10000, seed = 12345)
 

@@ -2,8 +2,8 @@
 % Please edit documentation in R/RcppExports.R
 \name{mnRiskDiffCI}
 \alias{mnRiskDiffCI}
-\title{Miettinen-Nurminen score confidence interval for
-two-sample risk difference}
+\title{Miettinen-Nurminen Score Confidence Interval for
+Two-Sample Risk Difference}
 \usage{
 mnRiskDiffCI(
   n1 = NA_real_,

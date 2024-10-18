@@ -2,7 +2,7 @@
 % Please edit documentation in R/prints.R
 \name{print.designMeanDiff}
 \alias{print.designMeanDiff}
-\title{Print power and sample size results for two-sample mean difference}
+\title{Print Power and Sample Size Results for Two-Sample Mean Difference}
 \usage{
 \method{print}{designMeanDiff}(x, ...)
 }

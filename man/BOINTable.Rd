@@ -2,7 +2,7 @@
 % Please edit documentation in R/getDesignProportions.R
 \name{BOINTable}
 \alias{BOINTable}
-\title{BOIN decision table}
+\title{BOIN Decision Table}
 \usage{
 BOINTable(
   nMax = NA_integer_,

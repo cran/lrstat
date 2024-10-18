@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{rmstat1}
 \alias{rmstat1}
-\title{Restricted mean survival time by stratum}
+\title{Restricted Mean Survival Time by Stratum}
 \usage{
 rmstat1(
   time = NA_real_,

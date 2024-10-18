@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{zstatRiskRatio}
 \alias{zstatRiskRatio}
-\title{Miettinen-Nurminen score test statistic for two-sample risk ratio}
+\title{Miettinen-Nurminen Score Test Statistic for Two-Sample Risk Ratio}
 \usage{
 zstatRiskRatio(
   riskRatioH0 = 1,

@@ -2,8 +2,8 @@
 % Please edit documentation in R/prints.R
 \name{print.designOrderedBinom}
 \alias{print.designOrderedBinom}
-\title{Print the power and sample size for Cochran-Armitage trend test
-for ordered multi-sample binomial response}
+\title{Print Power and Sample Size Results for Cochran-Armitage Trend Test
+for Ordered Multi-Sample Binomial Response}
 \usage{
 \method{print}{designOrderedBinom}(x, ...)
 }

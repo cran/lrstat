@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{findInterval3}
 \alias{findInterval3}
-\title{Find interval numbers of indices}
+\title{Find Interval Numbers of Indices}
 \usage{
 findInterval3(x, v)
 }

@@ -2,8 +2,8 @@
 % Please edit documentation in R/RcppExports.R
 \name{mnRateDiffCI}
 \alias{mnRateDiffCI}
-\title{Miettinen-Nurminen score confidence interval for
-two-sample rate difference}
+\title{Miettinen-Nurminen Score Confidence Interval for
+Two-Sample Rate Difference}
 \usage{
 mnRateDiffCI(
   t1 = NA_real_,

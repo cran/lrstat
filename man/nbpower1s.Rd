@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{nbpower1s}
 \alias{nbpower1s}
-\title{Power for one-sample negative binomial rate}
+\title{Power for One-Sample Negative Binomial Rate}
 \usage{
 nbpower1s(
   kMax = 1L,

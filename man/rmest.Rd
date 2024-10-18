@@ -2,16 +2,16 @@
 % Please edit documentation in R/RcppExports.R
 \name{rmest}
 \alias{rmest}
-\title{Estimate of restricted mean survival time}
+\title{Estimate of Restricted Mean Survival Time}
 \usage{
 rmest(
   data,
-  rep = "rep",
-  stratum = "stratum",
+  rep = "",
+  stratum = "",
   time = "time",
   event = "event",
   milestone = NA_real_,
-  confint = 0.95,
+  conflev = 0.95,
   biascorrection = 0L
 )
 }
@@ -35,7 +35,7 @@ rmest(
 \item{milestone}{The milestone time at which to calculate the
 restricted mean survival time.}
 
-\item{confint}{The level of the two-sided confidence interval for
+\item{conflev}{The level of the two-sided confidence interval for
 the survival probabilities. Defaults to 0.95.}
 
 \item{biascorrection}{Whether to apply bias correction for the
@@ -52,7 +52,7 @@ A data frame with the following variables:
 \item \code{stderr}: The standard error of the estimated rmst.
 \item \code{lower}: The lower bound of confidence interval if requested.
 \item \code{upper}: The upper bound of confidence interval if requested.
-\item \code{confint}: The level of confidence interval if requested.
+\item \code{conflev}: The level of confidence interval if requested.
 \item \code{biascorrection}: Whether to apply bias correction for the
 variance estimate.
 }

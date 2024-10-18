@@ -2,7 +2,7 @@
 % Please edit documentation in R/getDesignMeans.R
 \name{getDesignRepeatedANOVA}
 \alias{getDesignRepeatedANOVA}
-\title{Power and sample size for repeated-measures ANOVA}
+\title{Power and Sample Size for Repeated-Measures ANOVA}
 \usage{
 getDesignRepeatedANOVA(
   beta = NA_real_,

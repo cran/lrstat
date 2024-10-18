@@ -2,8 +2,8 @@
 % Please edit documentation in R/getDesignProportions.R
 \name{getDesignRiskDiffExact}
 \alias{getDesignRiskDiffExact}
-\title{Power and sample size for exact unconditional test for risk
-difference}
+\title{Power and Sample Size for Exact Unconditional Test for Risk
+Difference}
 \usage{
 getDesignRiskDiffExact(
   beta = NA_real_,
@@ -63,8 +63,8 @@ getDesignRiskDiffExact(n = 50, pi1 = 0.6, pi2 = 0.25, alpha = 0.025)
 
 # Non-inferiority test
 
-getDesignRiskDiffExact(beta = 0.1, riskDiffH0 = -0.2,
-                       pi1 = 0.8, pi2 = 0.8, alpha = 0.025)
+getDesignRiskDiffExact(beta = 0.2, riskDiffH0 = -0.3,
+                       pi1 = 0.9, pi2 = 0.9, alpha = 0.025)
 
 
 }

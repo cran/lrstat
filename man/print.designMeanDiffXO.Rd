@@ -2,8 +2,8 @@
 % Please edit documentation in R/prints.R
 \name{print.designMeanDiffXO}
 \alias{print.designMeanDiffXO}
-\title{Print power and sample size results for mean difference in 2x2
-crossover}
+\title{Print Power and Sample Size Results for Mean Difference in 2x2
+Crossover}
 \usage{
 \method{print}{designMeanDiffXO}(x, ...)
 }

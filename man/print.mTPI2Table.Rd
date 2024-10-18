@@ -2,7 +2,7 @@
 % Please edit documentation in R/prints.R
 \name{print.mTPI2Table}
 \alias{print.mTPI2Table}
-\title{Print the decision table for the mTPI-2 design}
+\title{Print the Decision Table for the mTPI-2 Design}
 \usage{
 \method{print}{mTPI2Table}(x, ...)
 }

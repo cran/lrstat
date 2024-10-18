@@ -3,7 +3,7 @@
 \docType{data}
 \name{immdef}
 \alias{immdef}
-\title{Simulated Concorde trial data from the rpsftm package}
+\title{Simulated CONCORDE trial data from the rpsftm package}
 \format{
 An object of class \code{data.frame} with 1000 rows and 9 columns.
 }

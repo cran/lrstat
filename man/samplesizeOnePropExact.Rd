@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{samplesizeOnePropExact}
 \alias{samplesizeOnePropExact}
-\title{Sample size for binomial one-sample exact test}
+\title{Sample Size for Binomial One-Sample Exact Test}
 \usage{
 samplesizeOnePropExact(
   beta = 0.2,

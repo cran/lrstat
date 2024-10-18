@@ -2,8 +2,8 @@
 % Please edit documentation in R/getDesignMeans.R
 \name{getDesignPairedMeanDiffEquiv}
 \alias{getDesignPairedMeanDiffEquiv}
-\title{Group sequential design for equivalence in paired mean
-difference}
+\title{Group Sequential Design for Equivalence in Paired Mean
+Difference}
 \usage{
 getDesignPairedMeanDiffEquiv(
   beta = NA_real_,

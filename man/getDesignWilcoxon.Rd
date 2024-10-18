@@ -2,7 +2,7 @@
 % Please edit documentation in R/getDesignMeans.R
 \name{getDesignWilcoxon}
 \alias{getDesignWilcoxon}
-\title{Group sequential design for two-sample Wilcoxon test}
+\title{Group Sequential Design for Two-Sample Wilcoxon Test}
 \usage{
 getDesignWilcoxon(
   beta = NA_real_,

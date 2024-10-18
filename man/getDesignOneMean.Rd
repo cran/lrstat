@@ -2,7 +2,7 @@
 % Please edit documentation in R/getDesignMeans.R
 \name{getDesignOneMean}
 \alias{getDesignOneMean}
-\title{Group sequential design for one-sample mean}
+\title{Group Sequential Design for One-Sample Mean}
 \usage{
 getDesignOneMean(
   beta = NA_real_,

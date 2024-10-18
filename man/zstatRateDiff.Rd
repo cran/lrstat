@@ -2,8 +2,8 @@
 % Please edit documentation in R/RcppExports.R
 \name{zstatRateDiff}
 \alias{zstatRateDiff}
-\title{Miettinen-Nurminen score test statistic for two-sample rate
-difference}
+\title{Miettinen-Nurminen Score Test Statistic for Two-Sample Rate
+Difference}
 \usage{
 zstatRateDiff(
   rateDiffH0 = 0,

@@ -2,7 +2,7 @@
 % Please edit documentation in R/prints.R
 \name{print.designLogistic}
 \alias{print.designLogistic}
-\title{Print the power and sample size for logistic regression}
+\title{Print Power and Sample Size Results for Logistic Regression}
 \usage{
 \method{print}{designLogistic}(x, ...)
 }

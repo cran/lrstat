@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{kmstat1}
 \alias{kmstat1}
-\title{Milestone survival probability by stratum}
+\title{Milestone Survival Probability by Stratum}
 \usage{
 kmstat1(
   time = NA_real_,

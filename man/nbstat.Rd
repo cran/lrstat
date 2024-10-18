@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{nbstat}
 \alias{nbstat}
-\title{Negative binomial rate ratio}
+\title{Negative Binomial Rate Ratio}
 \usage{
 nbstat(
   time = NA_real_,

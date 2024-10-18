@@ -2,18 +2,18 @@
 % Please edit documentation in R/RcppExports.R
 \name{kmdiff}
 \alias{kmdiff}
-\title{Estimate of milestone survival difference}
+\title{Estimate of Milestone Survival Difference}
 \usage{
 kmdiff(
   data,
-  rep = "rep",
-  stratum = "stratum",
+  rep = "",
+  stratum = "",
   treat = "treat",
   time = "time",
   event = "event",
   milestone = NA_real_,
   survDiffH0 = 0,
-  confint = 0.95
+  conflev = 0.95
 )
 }
 \arguments{
@@ -42,7 +42,7 @@ survival probability.}
 \item{survDiffH0}{The difference in milestone survival probabilities
 under the null hypothesis. Defaults to 0 for superiority test.}
 
-\item{confint}{The level of the two-sided confidence interval for
+\item{conflev}{The level of the two-sided confidence interval for
 the difference in milestone survival probabilities. Defaults to 0.95.}
 }
 \value{
@@ -65,7 +65,7 @@ probabilities.
 \item \code{survDiffPValue}: The one-sided p-value.
 \item \code{lower}: The lower bound of confidence interval.
 \item \code{upper}: The upper bound of confidence interval.
-\item \code{confint}: The level of confidence interval.
+\item \code{conflev}: The level of confidence interval.
 }
 }
 \description{

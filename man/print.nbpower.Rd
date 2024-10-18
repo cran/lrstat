@@ -2,8 +2,8 @@
 % Please edit documentation in R/prints.R
 \name{print.nbpower}
 \alias{print.nbpower}
-\title{Print power and sample size results for negative binomial rate
-ratio}
+\title{Print Power and Sample Size Results for Negative Binomial Rate
+Ratio}
 \usage{
 \method{print}{nbpower}(x, ...)
 }

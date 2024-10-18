@@ -2,7 +2,7 @@
 % Please edit documentation in R/prints.R
 \name{print.designRiskRatio}
 \alias{print.designRiskRatio}
-\title{Print power and sample size results for two-sample risk ratio}
+\title{Print Power and Sample Size Results for Two-Sample Risk Ratio}
 \usage{
 \method{print}{designRiskRatio}(x, ...)
 }

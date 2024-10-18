@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{riskRatioExactCI}
 \alias{riskRatioExactCI}
-\title{Exact unconditional confidence interval for risk ratio}
+\title{Exact Unconditional Confidence Interval for Risk Ratio}
 \usage{
 riskRatioExactCI(
   n1 = NA_integer_,
@@ -39,7 +39,7 @@ risk ratio based on the standardized score statistic.
 }
 \examples{
 
-riskRatioExactCI(n1 = 68, y1 = 2, n2 = 65, y2 = 1, cilevel = 0.95)
+riskRatioExactCI(n1 = 30, y1 = 2, n2 = 30, y2 = 1, cilevel = 0.95)
 
 }
 \author{

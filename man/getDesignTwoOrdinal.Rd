@@ -2,8 +2,8 @@
 % Please edit documentation in R/getDesignProportions.R
 \name{getDesignTwoOrdinal}
 \alias{getDesignTwoOrdinal}
-\title{Power and sample size for the Wilcoxon test for two-sample
-ordinal response}
+\title{Power and Sample Size for the Wilcoxon Test for Two-Sample
+Ordinal Response}
 \usage{
 getDesignTwoOrdinal(
   beta = NA_real_,

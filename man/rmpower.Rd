@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{rmpower}
 \alias{rmpower}
-\title{Power for difference in restricted mean survival times}
+\title{Power for Difference in Restricted Mean Survival Times}
 \usage{
 rmpower(
   kMax = 1L,

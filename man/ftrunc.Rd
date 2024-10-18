@@ -2,7 +2,7 @@
 % Please edit documentation in R/wrappers.R
 \name{ftrunc}
 \alias{ftrunc}
-\title{Adjusted p-values for Holm, Hochberg, and Hommel procedures}
+\title{Adjusted p-Values for Holm, Hochberg, and Hommel Procedures}
 \usage{
 ftrunc(p, test = "hommel", gamma = 1)
 }

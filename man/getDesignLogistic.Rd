@@ -2,7 +2,7 @@
 % Please edit documentation in R/getDesignProportions.R
 \name{getDesignLogistic}
 \alias{getDesignLogistic}
-\title{Power and sample size for logistic regression}
+\title{Power and Sample Size for Logistic Regression}
 \usage{
 getDesignLogistic(
   beta = NA_real_,

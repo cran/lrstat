@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{nbpower}
 \alias{nbpower}
-\title{Power for negative binomial rate ratio}
+\title{Power for Negative Binomial Rate Ratio}
 \usage{
 nbpower(
   kMax = 1L,

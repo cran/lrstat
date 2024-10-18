@@ -2,7 +2,7 @@
 % Please edit documentation in R/getDesignMeans.R
 \name{getDesignRepeatedANOVAContrast}
 \alias{getDesignRepeatedANOVAContrast}
-\title{Power and sample size for one-way repeated measures ANOVA contrast}
+\title{Power and Sample Size for One-Way Repeated Measures ANOVA Contrast}
 \usage{
 getDesignRepeatedANOVAContrast(
   beta = NA_real_,

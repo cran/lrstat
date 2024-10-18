@@ -2,8 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{remlRateRatio}
 \alias{remlRateRatio}
-\title{REML estimates of individual rates with specified rate
-ratio}
+\title{REML Estimates of Individual Rates With Specified Rate Ratio}
 \usage{
 remlRateRatio(
   rateRatioH0 = 1,

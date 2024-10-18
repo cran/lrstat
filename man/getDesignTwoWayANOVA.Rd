@@ -2,7 +2,7 @@
 % Please edit documentation in R/getDesignMeans.R
 \name{getDesignTwoWayANOVA}
 \alias{getDesignTwoWayANOVA}
-\title{Power and sample size for two-way ANOVA}
+\title{Power and Sample Size for Two-Way ANOVA}
 \usage{
 getDesignTwoWayANOVA(
   beta = NA_real_,

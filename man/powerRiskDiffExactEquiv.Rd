@@ -2,8 +2,8 @@
 % Please edit documentation in R/RcppExports.R
 \name{powerRiskDiffExactEquiv}
 \alias{powerRiskDiffExactEquiv}
-\title{Power for exact unconditional test of equivalence in risk
-difference}
+\title{Power for Exact Unconditional Test of Equivalence in Risk
+Difference}
 \usage{
 powerRiskDiffExactEquiv(
   n = NA_integer_,

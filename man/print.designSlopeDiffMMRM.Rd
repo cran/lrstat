@@ -2,8 +2,8 @@
 % Please edit documentation in R/prints.R
 \name{print.designSlopeDiffMMRM}
 \alias{print.designSlopeDiffMMRM}
-\title{Print power and sample size results for two-sample slope difference
-at the last time point from the MMRM model}
+\title{Print Power and Sample Size Results for Two-Sample Slope Difference
+at the Last Time Point From the MMRM Model}
 \usage{
 \method{print}{designSlopeDiffMMRM}(x, ...)
 }

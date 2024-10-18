@@ -2,8 +2,8 @@
 % Please edit documentation in R/prints.R
 \name{print.designPairedPropMcNemar}
 \alias{print.designPairedPropMcNemar}
-\title{Print power and sample size results for McNemar's test for paired
-proportions}
+\title{Print Power and Sample Size Results for McNemar's Test for Paired
+Proportions}
 \usage{
 \method{print}{designPairedPropMcNemar}(x, ...)
 }

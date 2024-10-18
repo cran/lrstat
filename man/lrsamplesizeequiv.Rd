@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{lrsamplesizeequiv}
 \alias{lrsamplesizeequiv}
-\title{Sample size for equivalence in hazard ratio}
+\title{Sample Size for Equivalence in Hazard Ratio}
 \usage{
 lrsamplesizeequiv(
   beta = 0.2,
@@ -139,9 +139,8 @@ lrsamplesizeequiv(kMax = 2, informationRates = c(0.5, 1),
                   allocationRatioPlanned = 1, accrualTime = seq(0, 8),
                   accrualIntensity = 26/9*seq(1, 9),
                   piecewiseSurvivalTime = c(0, 6),
-                  stratumFraction = c(0.2, 0.8),
-                  lambda1 = c(0.0533, 0.0533, 1.5*0.0533, 1.5*0.0533),
-                  lambda2 = c(0.0533, 0.0533, 1.5*0.0533, 1.5*0.0533),
+                  lambda1 = c(0.0533, 0.0533),
+                  lambda2 = c(0.0533, 0.0533),
                   gamma1 = -log(1-0.05)/12,
                   gamma2 = -log(1-0.05)/12, accrualDuration = NA,
                   followupTime = 18, fixedFollowup = FALSE)

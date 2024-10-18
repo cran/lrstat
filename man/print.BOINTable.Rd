@@ -2,7 +2,7 @@
 % Please edit documentation in R/prints.R
 \name{print.BOINTable}
 \alias{print.BOINTable}
-\title{Print the decision table for the BOIN design}
+\title{Print the Decision Table for the BOIN Design}
 \usage{
 \method{print}{BOINTable}(x, ...)
 }

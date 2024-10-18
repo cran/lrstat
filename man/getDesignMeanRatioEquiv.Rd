@@ -2,8 +2,8 @@
 % Please edit documentation in R/getDesignMeans.R
 \name{getDesignMeanRatioEquiv}
 \alias{getDesignMeanRatioEquiv}
-\title{Group sequential design for equivalence in two-sample
-mean ratio}
+\title{Group Sequential Design for Equivalence in Two-Sample
+Mean Ratio}
 \usage{
 getDesignMeanRatioEquiv(
   beta = NA_real_,

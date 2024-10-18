@@ -2,8 +2,8 @@
 % Please edit documentation in R/prints.R
 \name{print.rmpower1s}
 \alias{print.rmpower1s}
-\title{Print power and sample size results for one-sample restricted
-mean survival time}
+\title{Print Power and Sample Size Results for One-Sample Restricted
+Mean Survival Time}
 \usage{
 \method{print}{rmpower1s}(x, ...)
 }

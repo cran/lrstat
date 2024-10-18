@@ -2,7 +2,8 @@
 % Please edit documentation in R/prints.R
 \name{print.designOneMultinom}
 \alias{print.designOneMultinom}
-\title{Print the power and sample size for one-sample multinomial response}
+\title{Print Power and Sample Size Results for One-Sample Multinomial
+Response}
 \usage{
 \method{print}{designOneMultinom}(x, ...)
 }

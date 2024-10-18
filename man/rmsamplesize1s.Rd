@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{rmsamplesize1s}
 \alias{rmsamplesize1s}
-\title{Sample size for one-sample restricted mean survival time}
+\title{Sample Size for One-Sample Restricted Mean Survival Time}
 \usage{
 rmsamplesize1s(
   beta = 0.2,

@@ -2,7 +2,8 @@
 % Please edit documentation in R/prints.R
 \name{print.designRepeatedANOVA}
 \alias{print.designRepeatedANOVA}
-\title{Print the power and sample size for one-way repeated measures ANOVA}
+\title{Print Power and Sample Size Results for One-Way Repeated
+Measures ANOVA}
 \usage{
 \method{print}{designRepeatedANOVA}(x, ...)
 }

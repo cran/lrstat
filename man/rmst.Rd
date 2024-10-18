@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{rmst}
 \alias{rmst}
-\title{Restricted mean survival time}
+\title{Restricted Mean Survival Time}
 \usage{
 rmst(t1 = 0, t2 = NA_real_, piecewiseSurvivalTime = 0L, lambda = NA_real_)
 }

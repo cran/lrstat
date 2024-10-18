@@ -2,7 +2,7 @@
 % Please edit documentation in R/prints.R
 \name{print.designAgreement}
 \alias{print.designAgreement}
-\title{Print the power and sample size for Cohen's kappa.}
+\title{Print Power and Sample Size Results for Cohen's kappa.}
 \usage{
 \method{print}{designAgreement}(x, ...)
 }

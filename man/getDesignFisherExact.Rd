@@ -2,7 +2,7 @@
 % Please edit documentation in R/getDesignProportions.R
 \name{getDesignFisherExact}
 \alias{getDesignFisherExact}
-\title{Power and sample size for Fisher's exact test for two proportions}
+\title{Power and Sample Size for Fisher's Exact Test for Two Proportions}
 \usage{
 getDesignFisherExact(
   beta = NA_real_,

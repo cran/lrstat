@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{riskDiffExactCI}
 \alias{riskDiffExactCI}
-\title{Exact unconditional confidence interval for risk difference}
+\title{Exact Unconditional Confidence Interval for Risk Difference}
 \usage{
 riskDiffExactCI(
   n1 = NA_integer_,
@@ -39,7 +39,7 @@ risk difference based on the standardized score statistic.
 }
 \examples{
 
-riskDiffExactCI(n1 = 68, y1 = 2, n2 = 65, y2 = 1, cilevel = 0.95)
+riskDiffExactCI(n1 = 30, y1 = 2, n2 = 30, y2 = 1, cilevel = 0.95)
 
 }
 \author{

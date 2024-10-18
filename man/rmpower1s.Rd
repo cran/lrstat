@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{rmpower1s}
 \alias{rmpower1s}
-\title{Power for one-sample restricted mean survival time}
+\title{Power for One-Sample Restricted Mean Survival Time}
 \usage{
 rmpower1s(
   kMax = 1L,

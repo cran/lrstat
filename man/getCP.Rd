@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{getCP}
 \alias{getCP}
-\title{Conditional power allowing for varying parameter values}
+\title{Conditional Power Allowing for Varying Parameter Values}
 \usage{
 getCP(
   INew = NA_real_,

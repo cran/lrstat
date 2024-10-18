@@ -2,8 +2,8 @@
 % Please edit documentation in R/prints.R
 \name{print.nbpowerequiv}
 \alias{print.nbpowerequiv}
-\title{Print power and sample size results for equivalence in negative
-binomial rate ratio}
+\title{Print Power and Sample Size Results for Equivalence in Negative
+Binomial Rate Ratio}
 \usage{
 \method{print}{nbpowerequiv}(x, ...)
 }

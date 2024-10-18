@@ -2,8 +2,8 @@
 % Please edit documentation in R/getDesignProportions.R
 \name{getDesignRiskRatioExact}
 \alias{getDesignRiskRatioExact}
-\title{Power and sample size for exact unconditional test for risk
-ratio}
+\title{Power and Sample Size for Exact Unconditional Test for Risk
+Ratio}
 \usage{
 getDesignRiskRatioExact(
   beta = NA_real_,
@@ -58,8 +58,8 @@ size given power for exact unconditional test of risk ratio.
 
 # Non-inferiority test
 
-getDesignRiskRatioExact(beta = 0.1, riskRatioH0 = 0.833,
-                        pi1 = 0.9, pi2 = 0.9, alpha = 0.025)
+getDesignRiskRatioExact(beta = 0.2, riskRatioH0 = 0.7,
+                        pi1 = 0.95, pi2 = 0.95, alpha = 0.025)
 
 
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{kmpowerequiv}
 \alias{kmpowerequiv}
-\title{Power for equivalence in milestone survival probability difference}
+\title{Power for Equivalence in Milestone Survival Probability Difference}
 \usage{
 kmpowerequiv(
   kMax = 1L,

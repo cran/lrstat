@@ -2,8 +2,8 @@
 % Please edit documentation in R/RcppExports.R
 \name{kmsamplesizeequiv}
 \alias{kmsamplesizeequiv}
-\title{Sample size for equivalence in milestone survival probability
-difference}
+\title{Sample Size for Equivalence in Milestone Survival Probability
+Difference}
 \usage{
 kmsamplesizeequiv(
   beta = 0.2,

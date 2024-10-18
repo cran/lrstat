@@ -2,8 +2,8 @@
 % Please edit documentation in R/prints.R
 \name{print.designMeanDiffCarryover}
 \alias{print.designMeanDiffCarryover}
-\title{Print power and sample size results for direct treatment effects
-in crossover trials accounting for carryover effects}
+\title{Print Power and Sample Size Results for Direct Treatment Effects
+in Crossover Trials Accounting for Carryover Effects}
 \usage{
 \method{print}{designMeanDiffCarryover}(x, ...)
 }

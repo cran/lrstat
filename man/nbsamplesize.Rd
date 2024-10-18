@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{nbsamplesize}
 \alias{nbsamplesize}
-\title{Sample size for negative binomial rate ratio}
+\title{Sample Size for Negative Binomial Rate Ratio}
 \usage{
 nbsamplesize(
   beta = 0.2,

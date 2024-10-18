@@ -2,8 +2,8 @@
 % Please edit documentation in R/getDesignProportions.R
 \name{getDesignRiskRatioExactEquiv}
 \alias{getDesignRiskRatioExactEquiv}
-\title{Power and sample size for exact unconditional test for
-equivalence in risk ratio}
+\title{Power and Sample Size for Exact Unconditional Test for
+Equivalence in Risk Ratio}
 \usage{
 getDesignRiskRatioExactEquiv(
   beta = NA_real_,

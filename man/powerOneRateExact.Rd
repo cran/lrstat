@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{powerOneRateExact}
 \alias{powerOneRateExact}
-\title{Power for Poisson one-sample exact test}
+\title{Power for Poisson One-Sample Exact Test}
 \usage{
 powerOneRateExact(
   n = NA_integer_,

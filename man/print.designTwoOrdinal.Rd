@@ -2,8 +2,8 @@
 % Please edit documentation in R/prints.R
 \name{print.designTwoOrdinal}
 \alias{print.designTwoOrdinal}
-\title{Print the power and sample size for Wilcoxon test for two-sample
-ordinal response.}
+\title{Print Power and Sample Size Results for Wilcoxon Test for
+Two-Sample Ordinal Response.}
 \usage{
 \method{print}{designTwoOrdinal}(x, ...)
 }

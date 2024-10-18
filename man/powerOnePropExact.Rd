@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{powerOnePropExact}
 \alias{powerOnePropExact}
-\title{Power for binomial one-sample exact test}
+\title{Power for Binomial One-Sample Exact Test}
 \usage{
 powerOnePropExact(
   n = NA_integer_,

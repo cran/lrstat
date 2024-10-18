@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{rmstat}
 \alias{rmstat}
-\title{Stratified difference in restricted mean survival times}
+\title{Stratified Difference in Restricted Mean Survival Times}
 \usage{
 rmstat(
   time = NA_real_,

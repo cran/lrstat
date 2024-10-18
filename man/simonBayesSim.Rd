@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{simonBayesSim}
 \alias{simonBayesSim}
-\title{Simulation of Simon's Bayesian basket trials}
+\title{Simulation of Simon's Bayesian Basket Trials}
 \usage{
 simonBayesSim(
   p = NA_real_,

@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{rmsamplesize}
 \alias{rmsamplesize}
-\title{Sample size for difference in restricted mean survival times}
+\title{Sample Size for Difference in Restricted Mean Survival Times}
 \usage{
 rmsamplesize(
   beta = 0.2,

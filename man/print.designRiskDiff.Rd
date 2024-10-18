@@ -2,7 +2,7 @@
 % Please edit documentation in R/prints.R
 \name{print.designRiskDiff}
 \alias{print.designRiskDiff}
-\title{Print power and sample size results for two-sample risk difference}
+\title{Print Power and Sample Size Results for Two-Sample Risk Difference}
 \usage{
 \method{print}{designRiskDiff}(x, ...)
 }

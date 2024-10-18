@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{getADCI}
 \alias{getADCI}
-\title{Confidence interval after adaptation}
+\title{Confidence Interval After Adaptation}
 \usage{
 getADCI(
   L = NA_integer_,

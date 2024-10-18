@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{samplesizeOneRateExact}
 \alias{samplesizeOneRateExact}
-\title{Sample size for Poisson one-sample exact test}
+\title{Sample Size for Poisson One-Sample Exact Test}
 \usage{
 samplesizeOneRateExact(
   beta = 0.2,

@@ -2,7 +2,7 @@
 % Please edit documentation in R/prints.R
 \name{print.designWilcoxon}
 \alias{print.designWilcoxon}
-\title{Print power and sample size results for two-sample Wilcoxon test}
+\title{Print Power and Sample Size Results for Two-Sample Wilcoxon Test}
 \usage{
 \method{print}{designWilcoxon}(x, ...)
 }

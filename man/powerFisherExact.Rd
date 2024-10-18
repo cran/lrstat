@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{powerFisherExact}
 \alias{powerFisherExact}
-\title{Power for Fisher's exact test for two proportions}
+\title{Power for Fisher's Exact Test for Two Proportions}
 \usage{
 powerFisherExact(
   n = NA_integer_,

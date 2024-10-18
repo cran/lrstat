@@ -2,7 +2,7 @@
 % Please edit documentation in R/prints.R
 \name{print.designMeanRatioXO}
 \alias{print.designMeanRatioXO}
-\title{Print power and sample size results for mean ratio in 2x2 crossover}
+\title{Print Power and Sample Size Results for Mean Ratio in 2x2 Crossover}
 \usage{
 \method{print}{designMeanRatioXO}(x, ...)
 }

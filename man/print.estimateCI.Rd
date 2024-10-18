@@ -2,7 +2,7 @@
 % Please edit documentation in R/prints.R
 \name{print.estimateCI}
 \alias{print.estimateCI}
-\title{Print the point estimate and confidence interval}
+\title{Print the Point Estimate and Confidence Interval}
 \usage{
 \method{print}{estimateCI}(x, ...)
 }

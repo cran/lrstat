@@ -2,7 +2,7 @@
 % Please edit documentation in R/getDesignProportions.R
 \name{getDesignOddsRatio}
 \alias{getDesignOddsRatio}
-\title{Group sequential design for two-sample odds ratio}
+\title{Group Sequential Design for Two-Sample Odds Ratio}
 \usage{
 getDesignOddsRatio(
   beta = NA_real_,

@@ -2,7 +2,7 @@
 % Please edit documentation in R/getDesignMeans.R
 \name{getDesignPairedMeanRatio}
 \alias{getDesignPairedMeanRatio}
-\title{Group sequential design for paired mean ratio}
+\title{Group Sequential Design for Paired Mean Ratio}
 \usage{
 getDesignPairedMeanRatio(
   beta = NA_real_,

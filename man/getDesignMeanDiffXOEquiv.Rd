@@ -2,8 +2,8 @@
 % Please edit documentation in R/getDesignMeans.R
 \name{getDesignMeanDiffXOEquiv}
 \alias{getDesignMeanDiffXOEquiv}
-\title{Group sequential design for equivalence in mean difference
-in 2x2 crossover}
+\title{Group Sequential Design for Equivalence in Mean Difference
+in 2x2 Crossover}
 \usage{
 getDesignMeanDiffXOEquiv(
   beta = NA_real_,

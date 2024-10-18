@@ -2,7 +2,7 @@
 % Please edit documentation in R/prints.R
 \name{print.designOneProportion}
 \alias{print.designOneProportion}
-\title{Print power and sample size results for one-sample proportion}
+\title{Print Power and Sample Size Results for One-Sample Proportion}
 \usage{
 \method{print}{designOneProportion}(x, ...)
 }

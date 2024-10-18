@@ -2,7 +2,7 @@
 % Please edit documentation in R/getDesignProportions.R
 \name{ClopperPearsonCI}
 \alias{ClopperPearsonCI}
-\title{Clopper-Pearson confidence interval for one-sample proportion}
+\title{Clopper-Pearson Confidence Interval for One-Sample Proportion}
 \usage{
 ClopperPearsonCI(n, y, cilevel = 0.95)
 }

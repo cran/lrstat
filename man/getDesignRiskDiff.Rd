@@ -2,7 +2,7 @@
 % Please edit documentation in R/getDesignProportions.R
 \name{getDesignRiskDiff}
 \alias{getDesignRiskDiff}
-\title{Group sequential design for two-sample risk difference}
+\title{Group Sequential Design for Two-Sample Risk Difference}
 \usage{
 getDesignRiskDiff(
   beta = NA_real_,

@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{kmpower}
 \alias{kmpower}
-\title{Power for difference in milestone survival probabilities}
+\title{Power for Difference in Milestone Survival Probabilities}
 \usage{
 kmpower(
   kMax = 1L,

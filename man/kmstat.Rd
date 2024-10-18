@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{kmstat}
 \alias{kmstat}
-\title{Stratified difference in milestone survival probabilities}
+\title{Stratified Difference in Milestone Survival Probabilities}
 \usage{
 kmstat(
   time = NA_real_,

@@ -2,8 +2,8 @@
 % Please edit documentation in R/RcppExports.R
 \name{remlRateDiff}
 \alias{remlRateDiff}
-\title{REML estimates of individual rates with specified rate
-difference}
+\title{REML Estimates of Individual Rates With Specified Rate
+Difference}
 \usage{
 remlRateDiff(
   rateDiffH0 = 0,

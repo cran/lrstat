@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{binary_tte_sim}
 \alias{binary_tte_sim}
-\title{Simulation for a binary endpoint and a time-to-event endpoint}
+\title{Simulation for a Binary Endpoint and a Time-to-Event Endpoint}
 \usage{
 binary_tte_sim(
   kMax1 = 1L,
@@ -126,7 +126,7 @@ the time-to-event endpoint.}
 stage to extract.}
 
 \item{seed}{The seed to reproduce the simulation results.
-The seed from the environment will be used if left unspecified,}
+The seed from the environment will be used if left unspecified.}
 }
 \value{
 A list with 4 components:

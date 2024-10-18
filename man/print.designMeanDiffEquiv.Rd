@@ -2,8 +2,8 @@
 % Please edit documentation in R/prints.R
 \name{print.designMeanDiffEquiv}
 \alias{print.designMeanDiffEquiv}
-\title{Print power and sample size results for equivalence in
-two-sample mean difference}
+\title{Print Power and Sample Size Results for Equivalence in
+Two-Sample Mean Difference}
 \usage{
 \method{print}{designMeanDiffEquiv}(x, ...)
 }

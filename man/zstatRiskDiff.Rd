@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{zstatRiskDiff}
 \alias{zstatRiskDiff}
-\title{Miettinen-Nurminen score test statistic for two-sample risk
+\title{Miettinen-Nurminen Score Test Statistic for Two-Sample Risk
 difference}
 \usage{
 zstatRiskDiff(

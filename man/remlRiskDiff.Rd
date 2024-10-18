@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{remlRiskDiff}
 \alias{remlRiskDiff}
-\title{REML estimates of individual proportions with specified risk
+\title{REML Estimates of Individual Proportions With Specified Risk
 difference}
 \usage{
 remlRiskDiff(

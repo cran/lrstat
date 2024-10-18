@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{powerRiskRatioExact}
 \alias{powerRiskRatioExact}
-\title{Power for exact unconditional test of risk ratio}
+\title{Power for Exact Unconditional Test of Risk Ratio}
 \usage{
 powerRiskRatioExact(
   n = NA_integer_,

@@ -2,7 +2,7 @@
 % Please edit documentation in R/getDesignSurvivals.R
 \name{pwexpcuts}
 \alias{pwexpcuts}
-\title{Piecewise exponential approximation to a survival distribution}
+\title{Piecewise Exponential Approximation to a Survival Distribution}
 \usage{
 pwexpcuts(S, ...)
 }
@@ -31,11 +31,11 @@ approximates a survival distribution.
 }
 \examples{
 
-# Example 1: Piecewise exponential 
-pwexpcuts(ptpwexp, piecewiseSurvivalTime = c(0, 3.4, 5.5), 
+# Example 1: Piecewise exponential
+pwexpcuts(ptpwexp, piecewiseSurvivalTime = c(0, 3.4, 5.5),
           lambda = c(0.0168, 0.0833, 0.0431), lowerBound = 0,
-          lower.tail = FALSE) 
- 
+          lower.tail = FALSE)
+
 # Example 2: Weibull
 pwexpcuts(pweibull, shape = 1.37, scale = 1/0.818, lower.tail = FALSE)
 

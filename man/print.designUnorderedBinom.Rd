@@ -2,8 +2,8 @@
 % Please edit documentation in R/prints.R
 \name{print.designUnorderedBinom}
 \alias{print.designUnorderedBinom}
-\title{Print the power and sample size for unordered multi-sample
-binomial response}
+\title{Print Power and Sample Size Results for Unordered Multi-Sample
+Binomial Response}
 \usage{
 \method{print}{designUnorderedBinom}(x, ...)
 }

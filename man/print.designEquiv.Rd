@@ -2,7 +2,7 @@
 % Please edit documentation in R/prints.R
 \name{print.designEquiv}
 \alias{print.designEquiv}
-\title{Print group sequential equivalence design}
+\title{Print Group Sequential Equivalence Design}
 \usage{
 \method{print}{designEquiv}(x, ...)
 }

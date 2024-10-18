@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{simon2stage}
 \alias{simon2stage}
-\title{Simon's two-stage design}
+\title{Simon's Two-Stage Design}
 \usage{
 simon2stage(
   alpha = NA_real_,
@@ -52,7 +52,7 @@ Obtains Simon's two-stage minimax, admissible, and
 optimal designs.
 }
 \examples{
-simon2stage(0.05, 0.15, 0.1, 0.3)
+simon2stage(0.05, 0.2, 0.1, 0.3)
 
 }
 \author{

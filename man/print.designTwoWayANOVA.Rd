@@ -2,7 +2,7 @@
 % Please edit documentation in R/prints.R
 \name{print.designTwoWayANOVA}
 \alias{print.designTwoWayANOVA}
-\title{Print the power and sample size for two-way ANOVA}
+\title{Print Power and Sample Size Results for Two-Way ANOVA}
 \usage{
 \method{print}{designTwoWayANOVA}(x, ...)
 }

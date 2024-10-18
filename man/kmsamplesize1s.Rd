@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{kmsamplesize1s}
 \alias{kmsamplesize1s}
-\title{Sample size for one-sample milestone survival probability}
+\title{Sample Size for One-Sample Milestone Survival Probability}
 \usage{
 kmsamplesize1s(
   beta = 0.2,

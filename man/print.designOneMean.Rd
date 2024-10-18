@@ -2,7 +2,7 @@
 % Please edit documentation in R/prints.R
 \name{print.designOneMean}
 \alias{print.designOneMean}
-\title{Print power and sample size results for one-sample mean}
+\title{Print Power and Sample Size Results for One-Sample Mean}
 \usage{
 \method{print}{designOneMean}(x, ...)
 }

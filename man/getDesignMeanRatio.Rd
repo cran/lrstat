@@ -2,7 +2,7 @@
 % Please edit documentation in R/getDesignMeans.R
 \name{getDesignMeanRatio}
 \alias{getDesignMeanRatio}
-\title{Group sequential design for two-sample mean ratio}
+\title{Group Sequential Design for Two-Sample Mean Ratio}
 \usage{
 getDesignMeanRatio(
   beta = NA_real_,

@@ -2,8 +2,8 @@
 % Please edit documentation in R/RcppExports.R
 \name{remlOddsRatio}
 \alias{remlOddsRatio}
-\title{REML estimates of individual proportions with specified odds
-ratio}
+\title{REML Estimates of Individual Proportions With Specified Odds
+Ratio}
 \usage{
 remlOddsRatio(
   oddsRatioH0 = 1,

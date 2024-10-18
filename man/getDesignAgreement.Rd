@@ -2,7 +2,7 @@
 % Please edit documentation in R/getDesignProportions.R
 \name{getDesignAgreement}
 \alias{getDesignAgreement}
-\title{Power and sample size for Cohen's kappa}
+\title{Power and Sample Size for Cohen's kappa}
 \usage{
 getDesignAgreement(
   beta = NA_real_,

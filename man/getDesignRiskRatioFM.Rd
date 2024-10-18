@@ -2,8 +2,8 @@
 % Please edit documentation in R/getDesignProportions.R
 \name{getDesignRiskRatioFM}
 \alias{getDesignRiskRatioFM}
-\title{Group sequential design for two-sample risk ratio based on
-the Farrington-Manning score test}
+\title{Group Sequential Design for Two-Sample Risk Ratio Based on
+the Farrington-Manning Score Test}
 \usage{
 getDesignRiskRatioFM(
   beta = NA_real_,

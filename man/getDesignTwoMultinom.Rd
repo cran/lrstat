@@ -2,7 +2,8 @@
 % Please edit documentation in R/getDesignProportions.R
 \name{getDesignTwoMultinom}
 \alias{getDesignTwoMultinom}
-\title{Power and sample for difference in two-sample multinomial responses}
+\title{Power and Sample Size for Difference in Two-Sample Multinomial
+Responses}
 \usage{
 getDesignTwoMultinom(
   beta = NA_real_,

@@ -2,7 +2,7 @@
 % Please edit documentation in R/getDesignMeans.R
 \name{getDesignPairedMeanRatioEquiv}
 \alias{getDesignPairedMeanRatioEquiv}
-\title{Group sequential design for equivalence in paired mean ratio}
+\title{Group Sequential Design for Equivalence in Paired Mean Ratio}
 \usage{
 getDesignPairedMeanRatioEquiv(
   beta = NA_real_,

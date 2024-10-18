@@ -2,8 +2,8 @@
 % Please edit documentation in R/getDesignSurvivals.R
 \name{pwexploglik}
 \alias{pwexploglik}
-\title{Profile log-likelihood function for the change points in
-piecewise exponential approximation}
+\title{Profile Log-Likelihood Function for the Change Points in
+Piecewise Exponential Approximation}
 \usage{
 pwexploglik(tau, S, ...)
 }
@@ -31,7 +31,7 @@ a survival function.
 }
 \examples{
 
-pwexploglik(tau = c(0.5, 1.2, 2.8), pweibull, 
+pwexploglik(tau = c(0.5, 1.2, 2.8), pweibull,
             shape = 1.37, scale = 1/0.818, lower.tail = FALSE)
 
 }

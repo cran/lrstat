@@ -2,7 +2,7 @@
 % Please edit documentation in R/runShinyApp.R
 \name{runShinyApp}
 \alias{runShinyApp}
-\title{Run Shiny app}
+\title{Run Shiny App}
 \usage{
 runShinyApp()
 }

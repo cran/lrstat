@@ -2,8 +2,8 @@
 % Please edit documentation in R/RcppExports.R
 \name{remlRiskRatio}
 \alias{remlRiskRatio}
-\title{REML estimates of individual proportions with specified risk
-ratio}
+\title{REML Estimates of Individual Proportions With Specified Risk
+Ratio}
 \usage{
 remlRiskRatio(
   riskRatioH0 = 1,

@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{nbstat1}
 \alias{nbstat1}
-\title{Negative binomial rate ratio by stratum}
+\title{Negative Binomial Rate Ratio by Stratum}
 \usage{
 nbstat1(
   time = NA_real_,

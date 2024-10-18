@@ -2,8 +2,8 @@
 % Please edit documentation in R/RcppExports.R
 \name{getDesignEquiv}
 \alias{getDesignEquiv}
-\title{Power and sample size for a generic group sequential equivalence
-design}
+\title{Power and Sample Size for a Generic Group Sequential Equivalence
+Design}
 \usage{
 getDesignEquiv(
   beta = NA_real_,

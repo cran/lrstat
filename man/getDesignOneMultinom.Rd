@@ -2,7 +2,7 @@
 % Please edit documentation in R/getDesignProportions.R
 \name{getDesignOneMultinom}
 \alias{getDesignOneMultinom}
-\title{Power and sample for one-sample multinomial response}
+\title{Power and Sample Size for One-Sample Multinomial Response}
 \usage{
 getDesignOneMultinom(
   beta = NA_real_,

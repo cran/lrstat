@@ -2,7 +2,7 @@
 % Please edit documentation in R/getDesignMeans.R
 \name{getDesignMeanDiff}
 \alias{getDesignMeanDiff}
-\title{Group sequential design for two-sample mean difference}
+\title{Group Sequential Design for Two-Sample Mean Difference}
 \usage{
 getDesignMeanDiff(
   beta = NA_real_,

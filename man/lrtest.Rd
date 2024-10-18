@@ -2,12 +2,12 @@
 % Please edit documentation in R/RcppExports.R
 \name{lrtest}
 \alias{lrtest}
-\title{Log-rank test of survival curve difference}
+\title{Log-Rank Test of Survival Curve Difference}
 \usage{
 lrtest(
   data,
-  rep = "rep",
-  stratum = "stratum",
+  rep = "",
+  stratum = "",
   treat = "treat",
   time = "time",
   event = "event",
@@ -44,13 +44,13 @@ weighted log-rank test. Defaults to 0 for conventional log-rank test.}
 \value{
 A data frame with the following variables:
 \itemize{
-\item \code{rep}: The replication.
 \item \code{uscore}: The numerator of the log-rank test statistic.
 \item \code{vscore}: The variance of the log-rank score test statistic.
 \item \code{logRankZ}: The Z-statistic value.
 \item \code{logRankPValue}: The one-sided p-value.
 \item \code{rho1}: The first parameter of the Fleming-Harrington weights.
 \item \code{rho2}: The second parameter of the Fleming-Harrington weights.
+\item \code{rep}: The replication.
 }
 }
 \description{

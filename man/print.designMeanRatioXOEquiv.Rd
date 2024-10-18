@@ -2,8 +2,8 @@
 % Please edit documentation in R/prints.R
 \name{print.designMeanRatioXOEquiv}
 \alias{print.designMeanRatioXOEquiv}
-\title{Print power and sample size results for equivalence in
-mean ratio in 2x2 crossover}
+\title{Print Power and Sample Size Results for Equivalence in
+Mean Ratio in 2x2 Crossover}
 \usage{
 \method{print}{designMeanRatioXOEquiv}(x, ...)
 }

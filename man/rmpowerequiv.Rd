@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{rmpowerequiv}
 \alias{rmpowerequiv}
-\title{Power for equivalence in restricted mean survival time difference}
+\title{Power for Equivalence in Restricted Mean Survival Time Difference}
 \usage{
 rmpowerequiv(
   kMax = 1L,

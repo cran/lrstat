@@ -2,8 +2,8 @@
 % Please edit documentation in R/RcppExports.R
 \name{rmsamplesizeequiv}
 \alias{rmsamplesizeequiv}
-\title{Sample size for equivalence in restricted mean survival time
-difference}
+\title{Sample Size for Equivalence in Restricted Mean Survival Time
+Difference}
 \usage{
 rmsamplesizeequiv(
   beta = 0.2,

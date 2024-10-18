@@ -2,8 +2,8 @@
 % Please edit documentation in R/getDesignProportions.R
 \name{getDesignOddsRatioEquiv}
 \alias{getDesignOddsRatioEquiv}
-\title{Group sequential design for equivalence in two-sample
-odds ratio}
+\title{Group Sequential Design for Equivalence in Two-Sample
+Odds Ratio}
 \usage{
 getDesignOddsRatioEquiv(
   beta = NA_real_,

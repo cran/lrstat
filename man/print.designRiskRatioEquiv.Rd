@@ -2,8 +2,8 @@
 % Please edit documentation in R/prints.R
 \name{print.designRiskRatioEquiv}
 \alias{print.designRiskRatioEquiv}
-\title{Print power and sample size results for equivalence in
-two-sample risk ratio}
+\title{Print Power and Sample Size Results for Equivalence in
+Two-Sample Risk Ratio}
 \usage{
 \method{print}{designRiskRatioEquiv}(x, ...)
 }

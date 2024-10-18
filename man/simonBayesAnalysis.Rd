@@ -2,12 +2,12 @@
 % Please edit documentation in R/RcppExports.R
 \name{simonBayesAnalysis}
 \alias{simonBayesAnalysis}
-\title{Analysis of Simon's Bayesian basket trials}
+\title{Analysis of Simon's Bayesian Basket Trials}
 \usage{
 simonBayesAnalysis(
   nstrata = NA_integer_,
-  r = NA_integer_,
-  n = NA_integer_,
+  r = NA_real_,
+  n = NA_real_,
   lambda = NA_real_,
   gamma = NA_real_,
   phi = NA_real_,

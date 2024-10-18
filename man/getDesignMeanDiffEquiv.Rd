@@ -2,8 +2,8 @@
 % Please edit documentation in R/getDesignMeans.R
 \name{getDesignMeanDiffEquiv}
 \alias{getDesignMeanDiffEquiv}
-\title{Group sequential design for equivalence in two-sample
-mean difference}
+\title{Group Sequential Design for Equivalence in Two-Sample
+Mean Difference}
 \usage{
 getDesignMeanDiffEquiv(
   beta = NA_real_,

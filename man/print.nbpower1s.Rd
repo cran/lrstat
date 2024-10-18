@@ -2,8 +2,8 @@
 % Please edit documentation in R/prints.R
 \name{print.nbpower1s}
 \alias{print.nbpower1s}
-\title{Print power and sample size results for one-sample negative
-binomial rate}
+\title{Print Power and Sample Size Results for One-Sample Negative
+Binomial Rate}
 \usage{
 \method{print}{nbpower1s}(x, ...)
 }

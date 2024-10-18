@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{nbsamplesizeequiv}
 \alias{nbsamplesizeequiv}
-\title{Sample size for equivalence in negative binomial rate ratio}
+\title{Sample Size for Equivalence in Negative Binomial Rate Ratio}
 \usage{
 nbsamplesizeequiv(
   beta = 0.2,

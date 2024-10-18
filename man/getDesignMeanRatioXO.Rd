@@ -2,7 +2,7 @@
 % Please edit documentation in R/getDesignMeans.R
 \name{getDesignMeanRatioXO}
 \alias{getDesignMeanRatioXO}
-\title{Group sequential design for mean ratio in 2x2 crossover}
+\title{Group Sequential Design for Mean Ratio in 2x2 Crossover}
 \usage{
 getDesignMeanRatioXO(
   beta = NA_real_,

@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{powerRiskDiffExact}
 \alias{powerRiskDiffExact}
-\title{Power for exact unconditional test of risk difference}
+\title{Power for Exact Unconditional Test of Risk Difference}
 \usage{
 powerRiskDiffExact(
   n = NA_integer_,

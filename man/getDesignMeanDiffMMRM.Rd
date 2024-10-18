@@ -2,8 +2,8 @@
 % Please edit documentation in R/getDesignMeans.R
 \name{getDesignMeanDiffMMRM}
 \alias{getDesignMeanDiffMMRM}
-\title{Group sequential design for two-sample mean difference from the
-MMRM model}
+\title{Group Sequential Design for Two-Sample Mean Difference From the
+MMRM Model}
 \usage{
 getDesignMeanDiffMMRM(
   beta = NA_real_,

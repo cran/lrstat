@@ -2,8 +2,8 @@
 % Please edit documentation in R/prints.R
 \name{print.rmpowerequiv}
 \alias{print.rmpowerequiv}
-\title{Print power and sample size results for equivalence in restricted
-mean survival time difference}
+\title{Print Power and Sample Size Results for Equivalence in Restricted
+Mean Survival Time Difference}
 \usage{
 \method{print}{rmpowerequiv}(x, ...)
 }

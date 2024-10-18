@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{samplesizeRiskRatioExact}
 \alias{samplesizeRiskRatioExact}
-\title{Sample size for exact unconditional test of risk ratio}
+\title{Sample Size for Exact Unconditional Test of Risk Ratio}
 \usage{
 samplesizeRiskRatioExact(
   beta = NA_real_,
@@ -52,8 +52,8 @@ test of risk ratio.
 }
 \examples{
 
-samplesizeRiskRatioExact(beta = 0.2, riskRatioH0 = 0.833,
-                         pi1 = 0.9, pi2 = 0.9, alpha = 0.05)
+samplesizeRiskRatioExact(beta = 0.2, riskRatioH0 = 0.8,
+                         pi1 = 0.95, pi2 = 0.95, alpha = 0.05)
 
 }
 \author{

@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{getRCI}
 \alias{getRCI}
-\title{Repeated confidence interval for group sequential design}
+\title{Repeated Confidence Interval for Group Sequential Design}
 \usage{
 getRCI(
   L = NA_integer_,

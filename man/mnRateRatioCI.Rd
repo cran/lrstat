@@ -2,8 +2,8 @@
 % Please edit documentation in R/RcppExports.R
 \name{mnRateRatioCI}
 \alias{mnRateRatioCI}
-\title{Miettinen-Nurminen score confidence interval for
-two-sample rate ratio}
+\title{Miettinen-Nurminen Score Confidence Interval for
+Two-Sample Rate Ratio}
 \usage{
 mnRateRatioCI(t1, y1, t2, y2, cilevel = 0.95)
 }

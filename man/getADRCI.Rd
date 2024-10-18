@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{getADRCI}
 \alias{getADRCI}
-\title{Repeated confidence interval after adaptation}
+\title{Repeated Confidence Interval After Adaptation}
 \usage{
 getADRCI(
   L = NA_integer_,

@@ -2,8 +2,8 @@
 % Please edit documentation in R/RcppExports.R
 \name{powerRiskRatioExactEquiv}
 \alias{powerRiskRatioExactEquiv}
-\title{Power for exact unconditional test of equivalence in risk
-ratio}
+\title{Power for Exact Unconditional Test of Equivalence in Risk
+Ratio}
 \usage{
 powerRiskRatioExactEquiv(
   n = NA_integer_,

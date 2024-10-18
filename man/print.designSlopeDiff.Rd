@@ -2,7 +2,7 @@
 % Please edit documentation in R/prints.R
 \name{print.designSlopeDiff}
 \alias{print.designSlopeDiff}
-\title{Print power and sample size results for two-sample slope difference}
+\title{Print Power and Sample Size Results for Two-Sample Slope Difference}
 \usage{
 \method{print}{designSlopeDiff}(x, ...)
 }

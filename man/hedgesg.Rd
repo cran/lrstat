@@ -2,7 +2,7 @@
 % Please edit documentation in R/getDesignMeans.R
 \name{hedgesg}
 \alias{hedgesg}
-\title{Hedges' g effect size}
+\title{Hedges' g Effect Size}
 \usage{
 hedgesg(tstat, m, ntilde, cilevel = 0.95)
 }

@@ -2,8 +2,8 @@
 % Please edit documentation in R/getDesignProportions.R
 \name{getDesignRiskRatioEquiv}
 \alias{getDesignRiskRatioEquiv}
-\title{Group sequential design for equivalence in two-sample
-risk ratio}
+\title{Group Sequential Design for Equivalence in Two-Sample
+Risk Ratio}
 \usage{
 getDesignRiskRatioEquiv(
   beta = NA_real_,

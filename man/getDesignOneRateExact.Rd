@@ -2,7 +2,7 @@
 % Please edit documentation in R/getDesignProportions.R
 \name{getDesignOneRateExact}
 \alias{getDesignOneRateExact}
-\title{Power and sample size for one-sample Poisson rate exact test}
+\title{Power and Sample Size for One-Sample Poisson Rate Exact Test}
 \usage{
 getDesignOneRateExact(
   beta = NA_real_,

@@ -2,8 +2,8 @@
 % Please edit documentation in R/prints.R
 \name{print.designRepeatedANOVAContrast}
 \alias{print.designRepeatedANOVAContrast}
-\title{Print the power and sample size for a single contrast in
-one-way repeated measures ANOVA}
+\title{Print Power and Sample Size Results for a Single Contrast in
+One-Way Repeated Measures ANOVA}
 \usage{
 \method{print}{designRepeatedANOVAContrast}(x, ...)
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{zstatOddsRatio}
 \alias{zstatOddsRatio}
-\title{Miettinen-Nurminen score test statistic for two-sample odds ratio}
+\title{Miettinen-Nurminen Score Test Statistic for Two-Sample Odds Ratio}
 \usage{
 zstatOddsRatio(
   oddsRatioH0 = 1,

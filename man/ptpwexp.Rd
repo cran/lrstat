@@ -2,8 +2,8 @@
 % Please edit documentation in R/wrappers.R
 \name{ptpwexp}
 \alias{ptpwexp}
-\title{Distribution function of truncated piecewise exponential
-distribution}
+\title{Distribution Function of Truncated Piecewise Exponential
+Distribution}
 \usage{
 ptpwexp(
   q,

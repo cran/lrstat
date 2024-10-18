@@ -2,8 +2,8 @@
 % Please edit documentation in R/prints.R
 \name{print.rmpower}
 \alias{print.rmpower}
-\title{Print power and sample size results for restricted mean survival
-time difference}
+\title{Print Power and Sample Size Results for Restricted Mean Survival
+Time Difference}
 \usage{
 \method{print}{rmpower}(x, ...)
 }

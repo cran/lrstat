@@ -2,8 +2,8 @@
 % Please edit documentation in R/RcppExports.R
 \name{samplesizeRiskDiffExactEquiv}
 \alias{samplesizeRiskDiffExactEquiv}
-\title{Sample size for exact unconditional test of equivalence in risk
-difference}
+\title{Sample Size for Exact Unconditional Test of Equivalence in Risk
+Difference}
 \usage{
 samplesizeRiskDiffExactEquiv(
   beta = NA_real_,
@@ -63,7 +63,7 @@ test of equivalence in risk difference.
 
 samplesizeRiskDiffExactEquiv(
   beta = 0.2, riskDiffLower = -0.3, riskDiffUpper = 0.3,
-  pi1 = 0.85, pi2 = 0.85, alpha = 0.05)
+  pi1 = 0.9, pi2 = 0.9, alpha = 0.05)
 
 }
 \author{

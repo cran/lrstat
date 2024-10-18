@@ -2,8 +2,8 @@
 % Please edit documentation in R/wrappers.R
 \name{rtpwexp}
 \alias{rtpwexp}
-\title{Random number generation function of truncated piecewise
-exponential distribution}
+\title{Random Number Generation Function of Truncated Piecewise
+Exponential Distribution}
 \usage{
 rtpwexp(n, piecewiseSurvivalTime = 0, lambda = 0.0578, lowerBound = 0)
 }

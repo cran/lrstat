@@ -2,8 +2,8 @@
 % Please edit documentation in R/getDesignMeans.R
 \name{getDesignMeanDiffCarryover}
 \alias{getDesignMeanDiffCarryover}
-\title{Power and sample size for direct treatment effects in crossover
-trials accounting for carryover effects}
+\title{Power and Sample Size for Direct Treatment Effects in Crossover
+Trials Accounting for Carryover Effects}
 \usage{
 getDesignMeanDiffCarryover(
   beta = NA_real_,

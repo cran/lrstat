@@ -2,7 +2,7 @@
 % Please edit documentation in R/getDesignMeans.R
 \name{getDesignOneSlope}
 \alias{getDesignOneSlope}
-\title{Group sequential design for one-sample slope}
+\title{Group Sequential Design for One-Sample Slope}
 \usage{
 getDesignOneSlope(
   beta = NA_real_,

@@ -2,7 +2,7 @@
 % Please edit documentation in R/getDesignMeans.R
 \name{getDesignMeanDiffXO}
 \alias{getDesignMeanDiffXO}
-\title{Group sequential design for mean difference in 2x2 crossover}
+\title{Group Sequential Design for Mean Difference in 2x2 Crossover}
 \usage{
 getDesignMeanDiffXO(
   beta = NA_real_,

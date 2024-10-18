@@ -2,7 +2,7 @@
 % Please edit documentation in R/prints.R
 \name{print.designOneSlope}
 \alias{print.designOneSlope}
-\title{Print power and sample size results for one-sample slope}
+\title{Print Power and Sample Size Results for One-Sample Slope}
 \usage{
 \method{print}{designOneSlope}(x, ...)
 }

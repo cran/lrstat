@@ -2,8 +2,8 @@
 % Please edit documentation in R/prints.R
 \name{print.designRiskRatioFM}
 \alias{print.designRiskRatioFM}
-\title{Print power and sample size results for two-sample risk ratio
-based on the Farrington-Manning score test}
+\title{Print Power and Sample Size Results for Two-Sample Risk Ratio
+Based on the Farrington-Manning Score Test}
 \usage{
 \method{print}{designRiskRatioFM}(x, ...)
 }

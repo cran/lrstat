@@ -2,8 +2,8 @@
 % Please edit documentation in R/prints.R
 \name{print.lrpowerequiv}
 \alias{print.lrpowerequiv}
-\title{Print power and sample size results for equivalence in hazard
-ratio}
+\title{Print Power and Sample Size Results for Equivalence in Hazard
+Ratio}
 \usage{
 \method{print}{lrpowerequiv}(x, ...)
 }

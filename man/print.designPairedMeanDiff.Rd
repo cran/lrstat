@@ -2,7 +2,7 @@
 % Please edit documentation in R/prints.R
 \name{print.designPairedMeanDiff}
 \alias{print.designPairedMeanDiff}
-\title{Print power and sample size results for paired mean difference}
+\title{Print Power and Sample Size Results for Paired Mean Difference}
 \usage{
 \method{print}{designPairedMeanDiff}(x, ...)
 }

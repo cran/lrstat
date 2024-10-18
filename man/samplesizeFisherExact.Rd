@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{samplesizeFisherExact}
 \alias{samplesizeFisherExact}
-\title{Sample size for Fisher's exact test for two proportions}
+\title{Sample Size for Fisher's Exact Test for Two Proportions}
 \usage{
 samplesizeFisherExact(
   beta = NA_real_,

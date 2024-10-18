@@ -2,7 +2,7 @@
 % Please edit documentation in R/prints.R
 \name{print.designPairedMeanRatio}
 \alias{print.designPairedMeanRatio}
-\title{Print power and sample size results for paired mean ratio}
+\title{Print Power and Sample Size Results for Paired Mean Ratio}
 \usage{
 \method{print}{designPairedMeanRatio}(x, ...)
 }

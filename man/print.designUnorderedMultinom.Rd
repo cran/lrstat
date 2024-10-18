@@ -2,8 +2,8 @@
 % Please edit documentation in R/prints.R
 \name{print.designUnorderedMultinom}
 \alias{print.designUnorderedMultinom}
-\title{Print the power and sample size for unordered multi-sample
-multinomial response}
+\title{Print Power and Sample Size Results for Unordered Multi-Sample
+Multinomial Response}
 \usage{
 \method{print}{designUnorderedMultinom}(x, ...)
 }

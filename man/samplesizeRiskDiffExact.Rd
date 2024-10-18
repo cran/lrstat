@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{samplesizeRiskDiffExact}
 \alias{samplesizeRiskDiffExact}
-\title{Sample size for exact unconditional test of risk difference}
+\title{Sample Size for Exact Unconditional Test of Risk Difference}
 \usage{
 samplesizeRiskDiffExact(
   beta = NA_real_,
@@ -52,7 +52,7 @@ test of risk difference.
 }
 \examples{
 
-samplesizeRiskDiffExact(beta = 0.2, riskDiffH0 = -0.2,
+samplesizeRiskDiffExact(beta = 0.2, riskDiffH0 = -0.3,
                         pi1 = 0.8, pi2 = 0.8, alpha = 0.025)
 
 }

@@ -2,8 +2,8 @@
 % Please edit documentation in R/getDesignMeans.R
 \name{getDesignSlopeDiffMMRM}
 \alias{getDesignSlopeDiffMMRM}
-\title{Group sequential design for two-sample slope difference
-from the MMRM model}
+\title{Group Sequential Design for Two-Sample Slope Difference
+From the MMRM Model}
 \usage{
 getDesignSlopeDiffMMRM(
   beta = NA_real_,

@@ -2,7 +2,7 @@
 % Please edit documentation in R/getDesignMeans.R
 \name{getDesignPairedMeanDiff}
 \alias{getDesignPairedMeanDiff}
-\title{Group sequential design for paired mean difference}
+\title{Group Sequential Design for Paired Mean Difference}
 \usage{
 getDesignPairedMeanDiff(
   beta = NA_real_,

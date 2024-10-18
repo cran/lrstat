@@ -2,7 +2,7 @@
 % Please edit documentation in R/prints.R
 \name{print.designOddsRatio}
 \alias{print.designOddsRatio}
-\title{Print power and sample size results for two-sample odds ratio}
+\title{Print Power and Sample Size Results for Two-Sample Odds Ratio}
 \usage{
 \method{print}{designOddsRatio}(x, ...)
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/getDesignSurvivals.R
 \name{fquantile}
 \alias{fquantile}
-\title{The quantiles of a survival distribution}
+\title{The Quantiles of a Survival Distribution}
 \usage{
 fquantile(S, probs, ...)
 }
@@ -21,7 +21,7 @@ Obtains the quantiles of a survival distribution.
 }
 \examples{
 
-fquantile(pweibull, probs = c(0.25, 0.5, 0.75), 
+fquantile(pweibull, probs = c(0.25, 0.5, 0.75),
           shape = 1.37, scale = 1/0.818, lower.tail = FALSE)
 
 }

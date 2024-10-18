@@ -2,8 +2,8 @@
 % Please edit documentation in R/prints.R
 \name{print.designOddsRatioEquiv}
 \alias{print.designOddsRatioEquiv}
-\title{Print power and sample size results for equivalence in
-two-sample odds ratio}
+\title{Print Power and Sample Size Results for Equivalence in
+Two-Sample Odds Ratio}
 \usage{
 \method{print}{designOddsRatioEquiv}(x, ...)
 }
