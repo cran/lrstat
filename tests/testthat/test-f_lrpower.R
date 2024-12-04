@@ -10,8 +10,7 @@ testthat::test_that("power with alpha-spending, weighted", {
               gamma1 = -log(1-0.05)/12,
               gamma2 = -log(1-0.05)/12, accrualDuration = 22,
               followupTime = 18, fixedFollowup = FALSE,
-              rho1 = 0, rho2 = 1,
-              numSubintervals = 300)
+              rho1 = 0, rho2 = 1)
   testthat::expect_equal(round(l$overallResults$overallReject, 4), 0.9313)
 })
 
