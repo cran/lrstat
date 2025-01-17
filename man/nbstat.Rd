@@ -173,7 +173,8 @@ the subject. If \eqn{\kappa_i=0}, the negative binomial distribution
 reduces to the Poisson distribution.
 
 For treatment group \eqn{i}, let \eqn{\beta_i = \log(\lambda_i)}.
-The likelihood for \eqn{\{(\kappa_i, \beta_i):i=1,2\}} can be written as
+The log-likelihood for \eqn{\{(\kappa_i, \beta_i):i=1,2\}}
+can be written as
 \deqn{l = \sum_{i=1}^{2}\sum_{j=1}^{n_{i}}
 \{\log \Gamma(y_{ij} + 1/\kappa_i) - \log \Gamma(1/\kappa_i) + y_{ij}
 (\log(\kappa_i) + \beta_i) - (y_{ij} + 1/\kappa_i)
@@ -227,7 +228,7 @@ and takes the derivative of the log-likelihood function with respect
 to \eqn{\beta_2}. The resulting score equation has asymptotic limit
 \deqn{E\left(\frac{\partial l}{\partial \beta_2}\right) = s_1 + s_2,}
 where
-\deqn{s_1 = n r E\left\{\lambda1_1 t_{1j} - \left(\lambda_1t_{1j}
+\deqn{s_1 = n r E\left\{\lambda_1 t_{1j} - \left(\lambda_1t_{1j}
 + \frac{1}{\kappa_1}\right) \frac{\kappa_1 e^{\tilde{\beta}_2 +
 \Delta}t_{1j}}{1 + \kappa_1 e^{\tilde{\beta}_2 +\Delta}t_{1j}}\right\},}
 and

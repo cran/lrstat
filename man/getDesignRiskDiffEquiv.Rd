@@ -12,7 +12,6 @@ getDesignRiskDiffEquiv(
   riskDiffUpper = NA_real_,
   pi1 = NA_real_,
   pi2 = NA_real_,
-  nullVariance = FALSE,
   allocationRatioPlanned = 1,
   rounding = TRUE,
   kMax = 1L,
@@ -37,9 +36,6 @@ getDesignRiskDiffEquiv(
 \item{pi1}{The assumed probability for the active treatment group.}
 
 \item{pi2}{The assumed probability for the control group.}
-
-\item{nullVariance}{Whether to use the variance under the null or
-the empirical variance under the alternative.}
 
 \item{allocationRatioPlanned}{Allocation ratio for the active treatment
 versus control. Defaults to 1 for equal randomization.}
@@ -139,16 +135,6 @@ upper equivalence limit.
 spending.
 \item \code{userAlphaSpending}: The user defined alpha spending.
 \item \code{spendingTime}: The error spending time at each analysis.
-\item \code{nullVariance}: Whether to use the variance under the null or
-the empirical variance under the alternative.
-\item \code{varianceRatioH10}: The ratio of the variance under H10 to
-the variance under H1.
-\item \code{varianceRatioH20}: The ratio of the variance under H20 to
-the variance under H1.
-\item \code{varianceRatioH12}: The ratio of the variance under H10 to
-the variance under H20.
-\item \code{varianceRatioH21}: The ratio of the variance under H20 to
-the variance under H10.
 \item \code{allocationRatioPlanned}: Allocation ratio for the active
 treatment versus control.
 \item \code{rounding}: Whether to round up sample size.
@@ -165,7 +151,6 @@ two-sample risk difference.
 (design1 <- getDesignRiskDiffEquiv(
   beta = 0.2, n = NA, riskDiffLower = -0.1,
   riskDiffUpper = 0.1, pi1 = 0.12, pi2 = 0.12,
-  nullVariance = 1,
   kMax = 3, alpha = 0.05, typeAlphaSpending = "sfOF"))
 
 }

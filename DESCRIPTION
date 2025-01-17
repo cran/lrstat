@@ -2,8 +2,8 @@ Package: lrstat
 Type: Package
 Title: Power and Sample Size Calculation for Non-Proportional Hazards
         and Beyond
-Version: 0.2.11
-Date: 2024-12-04
+Version: 0.2.12
+Date: 2025-01-17
 Authors@R: 
     person("Kaifeng", "Lu", , "kaifenglu@gmail.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-6160-7119"))
@@ -20,8 +20,8 @@ Encoding: UTF-8
 NeedsCompilation: yes
 Depends: R (>= 2.10)
 LazyData: true
-Packaged: 2024-12-04 21:26:35 UTC; kaife
+Packaged: 2025-01-17 05:10:24 UTC; kaife
 Author: Kaifeng Lu [aut, cre] (<https://orcid.org/0000-0002-6160-7119>)
 Maintainer: Kaifeng Lu <kaifenglu@gmail.com>
 Repository: CRAN
-Date/Publication: 2024-12-04 22:40:02 UTC
+Date/Publication: 2025-01-17 12:30:02 UTC

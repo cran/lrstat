@@ -31,8 +31,7 @@ nbsamplesizeequiv(
   fixedFollowup = 0L,
   interval = as.numeric(c(0.001, 240)),
   spendingTime = NA_real_,
-  rounding = 1L,
-  nullVariance = 0L
+  rounding = 1L
 )
 }
 \arguments{
@@ -127,9 +126,6 @@ same as \code{informationRates}.}
 
 \item{rounding}{Whether to round up sample size.
 Defaults to 1 for sample size rounding.}
-
-\item{nullVariance}{Whether to calculate the variance for log rate ratio
-under the null hypothesis.}
 }
 \value{
 An S3 class \code{nbpowerequiv} object
@@ -153,8 +149,7 @@ nbsamplesizeequiv(beta = 0.1, kMax = 2, informationRates = c(0.5, 1),
                   gamma1 = -log(1-0.05),
                   gamma2 = -log(1-0.10),
                   accrualDuration = 1.25,
-                  followupTime = NA, fixedFollowup = FALSE,
-                  nullVariance = 1)
+                  followupTime = NA, fixedFollowup = FALSE)
 
 # Example 2: Fixed follow-up design and solve for accrual duration
 nbsamplesizeequiv(beta = 0.2, kMax = 2, informationRates = c(0.5, 1),

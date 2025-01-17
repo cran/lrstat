@@ -120,17 +120,17 @@ the value is allowed to be less than the sum of \code{accrualDuration}
 and \code{followupTime}.}
 }
 \value{
-An S3 class \code{rmpowerequiv} object with 3 components:
+An S3 class \code{rmpowerequiv} object with 4 components:
 \itemize{
 \item \code{overallResults}: A data frame containing the following variables:
 \itemize{
 \item \code{overallReject}: The overall rejection probability.
 \item \code{alpha}: The overall significance level.
-\item \code{attainedAlphaH10}: The attained significance level under H10.
-\item \code{attainedAlphaH20}: The attained significance level under H20.
+\item \code{numberOfEvents}: The total number of events.
 \item \code{numbeOfSubjects}: The total number of subjects.
 \item \code{studyDuration}: The total study duration.
 \item \code{information}: The maximum information.
+\item \code{expectedNumberOfEvents}: The expected number of events.
 \item \code{expectedNumberOfSubjects}: The expected number of subjects.
 \item \code{expectedStudyDuration}: The expected study duration.
 \item \code{expectedInformation}: The expected information.
@@ -163,7 +163,11 @@ the two one-sided tests.
 under \code{H10}.
 \item \code{cumulativeAttainedAlphaH20}: The cumulative alpha attained
 under \code{H20}.
+\item \code{numberOfEvents}: The number of events.
+\item \code{numberOfDropouts}: The number of dropouts.
 \item \code{numberOfSubjects}: The number of subjects.
+\item \code{numberOfMilestone}: The number of subjects reaching
+milestone.
 \item \code{analysisTime}: The average time since trial start.
 \item \code{efficacyRmstDiffLower}: The efficacy boundaries on the
 restricted mean survival time difference scale for the one-sided
@@ -182,6 +186,42 @@ each of the two one-sided tests.
 \code{piecewiseSurvivalTime}, \code{stratumFraction},
 \code{lambda1}, \code{lambda2}, \code{gamma1}, \code{gamma2},
 and \code{spendingTime}.
+\item \code{byTreatmentCounts}: A list containing the following counts by
+treatment group:
+\itemize{
+\item \code{numberOfEvents1}: The number of events by stage for
+the treatment group.
+\item \code{numberOfDropouts1}: The number of dropouts by stage for
+the treatment group.
+\item \code{numberOfSubjects1}: The number of subjects by stage for
+the treatment group.
+\item \code{numberOfMilestone1}: The number of subjects reaching
+milestone by stage for the active treatment group.
+\item \code{numberOfEvents2}: The number of events by stage for
+the control group.
+\item \code{numberOfDropouts2}: The number of dropouts by stage for
+the control group.
+\item \code{numberOfSubjects2}: The number of subjects by stage for
+the control group.
+\item \code{numberOfMilestone2}: The number of subjects reaching
+milestone by stage for the control group.
+\item \code{expectedNumberOfEvents1}: The expected number of events for
+the treatment group.
+\item \code{expectedNumberOfDropouts1}: The expected number of dropouts
+for the active treatment group.
+\item \code{expectedNumberOfSubjects1}: The expected number of subjects
+for the active treatment group.
+\item \code{expectedNumberOfMilestone1}: The expected number of subjects
+reaching milestone for the active treatment group.
+\item \code{expectedNumberOfEvents2}: The expected number of events for
+control group.
+\item \code{expectedNumberOfDropouts2}: The expected number of dropouts
+for the control group.
+\item \code{expectedNumberOfSubjects2}: The expected number of subjects
+for the control group.
+\item \code{expectedNumberOfMilestone2}: The expected number of subjects
+reaching milestone for the control group.
+}
 }
 }
 \description{

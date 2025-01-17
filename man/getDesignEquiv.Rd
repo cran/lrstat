@@ -18,11 +18,7 @@ getDesignEquiv(
   typeAlphaSpending = "sfOF",
   parameterAlphaSpending = NA_real_,
   userAlphaSpending = NA_real_,
-  spendingTime = NA_real_,
-  varianceRatioH10 = 1,
-  varianceRatioH20 = 1,
-  varianceRatioH12 = 1,
-  varianceRatioH21 = 1
+  spendingTime = NA_real_
 )
 }
 \arguments{
@@ -65,18 +61,6 @@ spent up to each stage.}
 \item{spendingTime}{A vector of length \code{kMax} for the error spending
 time at each analysis. Defaults to missing, in which case, it is the
 same as \code{informationRates}.}
-
-\item{varianceRatioH10}{The ratio of the variance under H10 to
-the variance under H1.}
-
-\item{varianceRatioH20}{The ratio of the variance under H20 to
-the variance under H1.}
-
-\item{varianceRatioH12}{The ratio of the variance under H10 to
-the variance under H20.}
-
-\item{varianceRatioH21}{The ratio of the variance under H20 to
-the variance under H10.}
 }
 \value{
 An S3 class \code{designEquiv} object with three components:
@@ -129,14 +113,6 @@ each of the two one-sided tests.
 spending.
 \item \code{userAlphaSpending}: The user defined alpha spending.
 \item \code{spendingTime}: The error spending time at each analysis.
-\item \code{varianceRatioH10}: The ratio of the variance under H10 to
-the variance under H1.
-\item \code{varianceRatioH20}: The ratio of the variance under H20 to
-the variance under H1.
-\item \code{varianceRatioH12}: The ratio of the variance under H10 to
-the variance under H20.
-\item \code{varianceRatioH21}: The ratio of the variance under H20 to
-the variance under H10.
 }
 }
 }
@@ -151,51 +127,29 @@ Consider the equivalence design with two one-sided hypotheses:
 \deqn{H_{10}: \theta \leq \theta_{10},}
 \deqn{H_{20}: \theta \geq \theta_{20}.}
 We reject \eqn{H_{10}} at or before look \eqn{k} if
-\deqn{Z_{1j} = (\hat{\theta}_j - \theta_{10})\sqrt{\frac{n_j}{v_{10}}}
+\deqn{Z_{1j} = (\hat{\theta}_j - \theta_{10})\sqrt{I_j}
 \geq b_j}
 for some \eqn{j=1,\ldots,k}, where \eqn{\{b_j:j=1,\ldots,K\}} are the
 critical values associated with the specified alpha-spending function,
-and \eqn{v_{10}} is the null variance of
-\eqn{\hat{\theta}} based on the restricted maximum likelihood (reml)
-estimate of model parameters subject to the constraint imposed by
-\eqn{H_{10}} for one sampling unit drawn from \eqn{H_1}. For example,
+and \eqn{I_j} is the information for \eqn{\theta} (inverse variance of
+\eqn{\hat{\theta}} under the alternative hypothesis) at the
+\eqn{j}th look. For example,
 for estimating the risk difference \eqn{\theta = \pi_1 - \pi_2},
-the asymptotic limits of the
-reml estimates of \eqn{\pi_1} and \eqn{\pi_2} subject to the constraint
-imposed by \eqn{H_{10}} are given by
-\deqn{(\tilde{\pi}_1, \tilde{\pi}_2) = f(\theta_{10}, r, r\pi_1,
-1-r, (1-r)\pi_2),}
-where \eqn{f(\theta_0, n_1, y_1, n_2, y_2)} is the function to obtain
-the reml of \eqn{\pi_1} and \eqn{\pi_2} subject to the constraint that
-\eqn{\pi_1-\pi_2 = \theta_0} with observed data
-\eqn{(n_1, y_1, n_2, y_2)} for the number of subjects and number of
-responses in the active treatment and control groups,
-\eqn{r} is the randomization probability for the active treatment
-group, and \deqn{v_{10} = \frac{\tilde{\pi}_1 (1-\tilde{\pi}_1)}{r} +
-\frac{\tilde{\pi}_2 (1-\tilde{\pi}_2)}{1-r}.}
-
-Let \eqn{I_j = n_j/v_1} denote the information for \eqn{\theta} at the
-\eqn{j}th look, where
-\deqn{v_{1} = \frac{\pi_1 (1-\pi_1)}{r} + \frac{\pi_2 (1-\pi_2)}{1-r}}
-denotes the variance of \eqn{\hat{\theta}} under \eqn{H_1} for one
-sampling unit. It follows that
-\deqn{(Z_{1j} \geq b_j) = (Z_j \geq w_{10} b_j +
+\deqn{I_j = \left\{\frac{\pi_1 (1-\pi_1)}{n_{1j}} +
+\frac{\pi_2(1-\pi_2)}{n_{2j}}\right\}^{-1}.}
+It follows that
+\deqn{(Z_{1j} \geq b_j) = (Z_j \geq b_j +
 (\theta_{10}-\theta)\sqrt{I_j}),}
-where \eqn{Z_j = (\hat{\theta}_j - \theta)\sqrt{I_j}}, and
-\eqn{w_{10} = \sqrt{v_{10}/v_1}}.
+where \eqn{Z_j = (\hat{\theta}_j - \theta)\sqrt{I_j}}.
 
 Similarly, we reject \eqn{H_{20}} at or before look \eqn{k} if
-\deqn{Z_{2j} = (\hat{\theta}_j - \theta_{20})\sqrt{\frac{n_j}{v_{20}}}
-\leq -b_j} for some \eqn{j=1,\ldots,k}, where \eqn{v_{20}} is the null
-variance of \eqn{\hat{\theta}} based on the reml estimate of model
-parameters subject to the constraint imposed by \eqn{H_{20}} for
-one sampling unit drawn from \eqn{H_1}. We have
-\deqn{(Z_{2j} \leq -b_j) = (Z_j \leq -w_{20} b_j +
-(\theta_{20}-\theta)\sqrt{I_j}),}
-where \eqn{w_{20} = \sqrt{v_{20}/v_1}}.
+\deqn{Z_{2j} = (\hat{\theta}_j - \theta_{20})\sqrt{I_j}
+\leq -b_j} for some \eqn{j=1,\ldots,k}. We have
+\deqn{(Z_{2j} \leq -b_j) = (Z_j \leq - b_j +
+(\theta_{20}-\theta)\sqrt{I_j}).}
 
-Let \eqn{l_j = w_{10}b_j + (\theta_{10}-\theta)\sqrt{I_j}},
-and \eqn{u_j = -w_{20}b_j + (\theta_{20}-\theta)\sqrt{I_j}}.
+Let \eqn{l_j = b_j + (\theta_{10}-\theta)\sqrt{I_j}},
+and \eqn{u_j = -b_j + (\theta_{20}-\theta)\sqrt{I_j}}.
 The cumulative probability to reject \eqn{H_0 = H_{10} \cup H_{20}} at
 or before look \eqn{k} under the alternative hypothesis \eqn{H_1} is
 given by
@@ -207,70 +161,20 @@ where
 \deqn{p_2 = P_\theta\left(\cup_{j=1}^{k} (Z_{2j} \leq -b_j)\right)
 = P_\theta\left(\cup_{j=1}^{k} (Z_j \leq u_j)\right),}
 and
-\deqn{p_{12} = P_\theta\left(\cup_{j=1}^{k} \{(Z_j \geq l_j) \cup
-(Z_j \leq u_j)\}\right).}
+\deqn{p_{12} = P_\theta\left(\cup_{j=1}^{k} (Z_j \geq l_j) \cup
+(Z_j \leq u_j)\right).}
 Of note, both \eqn{p_1} and \eqn{p_2} can be evaluated using
 one-sided exit probabilities for group sequential designs.
 If there exists \eqn{j\leq k} such that \eqn{l_j \leq u_j}, then
 \eqn{p_{12} = 1}. Otherwise, \eqn{p_{12}} can be evaluated using
 two-sided exit probabilities for group sequential designs.
 
-To evaluate the type I error of the equivalence trial under
-\eqn{H_{10}}, we first match the information under \eqn{H_{10}}
-with the information under \eqn{H_1}. For example, for estimating
-the risk difference for two independent samples, the sample size
-\eqn{n_{10}} under \eqn{H_{10}} must satisfy
-\deqn{\frac{1}{n_{10}}\left(\frac{(\pi_2 + \theta_{10})
-(1 - \pi_2 - \theta_{10})}{r} + \frac{\pi_2 (1-\pi_2)}{1-r}\right)
-= \frac{1}{n}\left(\frac{\pi_1(1-\pi_1)}{r} +
-\frac{\pi_2 (1-\pi_2)}{1-r}\right).}
-Then we obtain the reml estimates of \eqn{\pi_1} and \eqn{\pi_2}
-subject to the constraint imposed by \eqn{H_{20}} for one sampling
-unit drawn from \eqn{H_{10}},
-\deqn{(\tilde{\pi}_{10}, \tilde{\pi}_{20}) = f(\theta_{20}, r,
-r(\pi_2 + \theta_{10}), 1-r, (1-r)\pi_2).}
-Let \eqn{t_j} denote the information fraction at look \eqn{j}.
-Define \deqn{\tilde{v}_1 = \frac{(\pi_2 + \theta_{10})
-(1-\pi_2 -\theta_{10})}{r} + \frac{\pi_2 (1-\pi_2)}{1-r},} and
-\deqn{\tilde{v}_{20} = \frac{\tilde{\pi}_{10}(1-\tilde{\pi}_{10})}{r} +
-\frac{\tilde{\pi}_{20} (1-\tilde{\pi}_{20})}{1-r}.}
-
-The cumulative rejection probability under \eqn{H_{10}} at or before
-look \eqn{k} is given by
-\deqn{P_{\theta_{10}}\left(\cup_{j=1}^{k} \{(\hat{\theta}_j - \theta_{10})
-\sqrt{n_{10} t_j/\tilde{v}_1} \geq b_j\} \cap
-\cup_{j=1}^{k} \{(\hat{\theta}_j - \theta_{20})
-\sqrt{n_{10} t_j/\tilde{v}_{20}} \leq -b_j\}\right) =
-q_1 + q_2 + q_{12},}
-where
-\deqn{q_1 = P_{\theta_{10}}\left(\cup_{j=1}^{k}
-\{(\hat{\theta}_j - \theta_{10})
-\sqrt{n_{10} t_j/\tilde{v}_1} \geq b_j\}\right) =
-P_{\theta_{10}}\left(\cup_{j=1}^{k} (Z_j \geq b_j)\right),}
-\deqn{q_2 = P_{\theta_{10}}\left(\cup_{j=1}^{k}
-\{(\hat{\theta}_j - \theta_{20})
-\sqrt{n_{10} t_j/\tilde{v}_{20}} \leq -b_j\}\right) =
-P_{\theta_{10}}\left(\cup_{j=1}^{k} (Z_j \leq -b_j w_{21} +
-(\theta_{20} - \theta_{10})\sqrt{I_j})\right),}
-and
-\deqn{q_{12} = P_{\theta_{10}}\left(\cup_{j=1}^{k}
-\{(Z_j \geq b_j) \cup (Z_j \leq -w_{21} b_j +
-(\theta_{20} - \theta_{10})\sqrt{I_j})\}\right).}
-Here \eqn{Z_j = (\hat{\theta}_j - \theta_{10}) \sqrt{I_j}}, and
-\eqn{w_{21} = \sqrt{\tilde{v}_{20}/\tilde{v}_1}}.
-Of note, \eqn{q_1}, \eqn{q_2}, and \eqn{q_{12}}
-can be evaluated using group sequential exit probabilities.
-Similarly, we can define \eqn{\tilde{v}_2}, \eqn{\tilde{v}_{10}},
-and \eqn{w_{12} = \sqrt{\tilde{v}_{10}/\tilde{v}_2}}, and
-evaluate the type I error under \eqn{H_{20}}.
-
-The variance ratios correspond to
-\deqn{\text{varianceRatioH10} = v_{10}/v_1,}
-\deqn{\text{varianceRatioH20} = v_{20}/v_1,}
-\deqn{\text{varianceRatioH12} = \tilde{v}_{10}/\tilde{v}_2,}
-\deqn{\text{varianceRatioH21} = \tilde{v}_{20}/\tilde{v}_1.}
-If the alternative variance is used, then the variance ratios
-are all equal to 1.
+Since the equivalent hypothesis is tested using two one-sided tests,
+the type I error is controlled. To evaluate the attained type I error
+of the equivalence trial under \eqn{H_{10}} (or \eqn{H_{20}}),
+we simply fix the control group parameters, update the active
+treatment group parameters according to the null hypothesis, and
+use the parameters in the power calculation outlined above.
 }
 \examples{
 

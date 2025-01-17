@@ -12,7 +12,6 @@ getDesignOddsRatioEquiv(
   oddsRatioUpper = NA_real_,
   pi1 = NA_real_,
   pi2 = NA_real_,
-  nullVariance = FALSE,
   allocationRatioPlanned = 1,
   rounding = TRUE,
   kMax = 1L,
@@ -37,9 +36,6 @@ getDesignOddsRatioEquiv(
 \item{pi1}{The assumed probability for the active treatment group.}
 
 \item{pi2}{The assumed probability for the control group.}
-
-\item{nullVariance}{Whether to use the variance under the null
-or the empirical variance under the alternative.}
 
 \item{allocationRatioPlanned}{Allocation ratio for the active treatment
 versus control. Defaults to 1 for equal randomization.}
@@ -137,16 +133,6 @@ each of the two one-sided tests.
 spending.
 \item \code{userAlphaSpending}: The user defined alpha spending.
 \item \code{spendingTime}: The error spending time at each analysis.
-\item \code{nullVariance}: Whether to use the variance under the null
-or the empirical variance under the alternative.
-\item \code{varianceRatioH10}: The ratio of the variance under H10 to
-the variance under H1.
-\item \code{varianceRatioH20}: The ratio of the variance under H20 to
-the variance under H1.
-\item \code{varianceRatioH12}: The ratio of the variance under H10 to
-the variance under H20.
-\item \code{varianceRatioH21}: The ratio of the variance under H20 to
-the variance under H10.
 \item \code{allocationRatioPlanned}: Allocation ratio for the active
 treatment versus control.
 \item \code{rounding}: Whether to round up sample size.

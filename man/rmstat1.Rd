@@ -76,7 +76,19 @@ A data frame containing the following variables:
 \item \code{stratum}: The stratum.
 \item \code{time}: The calendar time since trial start.
 \item \code{subjects}: The number of enrolled subjects.
+\item \code{nevents}: The total number of events.
+\item \code{nevents1}: The number of events in the active treatment group.
+\item \code{nevents2}: The number of events in the control group.
+\item \code{ndropouts}: The total number of dropouts.
+\item \code{ndropouts1}: The number of dropouts in the active treatment
+group.
+\item \code{ndropouts2}: The number of dropouts in the control group.
 \item \code{milestone}: The milestone time relative to randomization.
+\item \code{nmilestone}: The total number of subjects reaching milestone.
+\item \code{nmilestone1}: The number of subjects reaching milestone
+in the active treatment group.
+\item \code{nmiletone2}: The number of subjects reaching milestone
+in the control group.
 \item \code{rmst1}: The restricted mean survival time for the treatment
 group.
 \item \code{rmst2}: The restricted mean survival time for the control group.

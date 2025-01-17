@@ -29,8 +29,7 @@ nbpowerequiv(
   followupTime = NA_real_,
   fixedFollowup = 0L,
   spendingTime = NA_real_,
-  studyDuration = NA_real_,
-  nullVariance = 0L
+  studyDuration = NA_real_
 )
 }
 \arguments{
@@ -122,9 +121,6 @@ Defaults to missing, which is to be replaced with the sum of
 \code{accrualDuration} and \code{followupTime}. If provided,
 the value is allowed to be less than the sum of \code{accrualDuration}
 and \code{followupTime}.}
-
-\item{nullVariance}{Whether to calculate the variance for log rate ratio
-under the null hypothesis.}
 }
 \value{
 An S3 class \code{nbpowerequiv} object with 4 components:
@@ -133,16 +129,12 @@ An S3 class \code{nbpowerequiv} object with 4 components:
 \itemize{
 \item \code{overallReject}: The overall rejection probability.
 \item \code{alpha}: The overall significance level.
-\item \code{attainedAlphaH10}: The attained significance level under H10.
-\item \code{attainedAlphaH20}: The attained significance level under H20.
 \item \code{numberOfEvents}: The total number of events.
-\item \code{numberOfDropouts}: The total number of dropouts.
 \item \code{numbeOfSubjects}: The total number of subjects.
 \item \code{exposure}: The total exposure.
 \item \code{studyDuration}: The total study duration.
 \item \code{information}: The maximum information.
 \item \code{expectedNumberOfEvents}: The expected number of events.
-\item \code{expectedNumberOfDropouts}: The expected number of dropouts.
 \item \code{expectedNumberOfSubjects}: The expected number of subjects.
 \item \code{expectedExposure}: The expected exposure.
 \item \code{expectedStudyDuration}: The expected study duration.
@@ -151,6 +143,9 @@ An S3 class \code{nbpowerequiv} object with 4 components:
 \item \code{rateRatioLower}: The lower equivalence limit of rate ratio.
 \item \code{rateRatioUpper}: The upper equivalence limit of rate ratio.
 \item \code{rateRatio}: The rate ratio.
+\item \code{accrualDuration}: The accrual duration.
+\item \code{followupTime}: The follow-up duration.
+\item \code{fixedFollowup}: Whether a fixed follow-up design is used.
 }
 \item \code{byStageResults}: A data frame containing the following variables:
 \itemize{
@@ -188,20 +183,7 @@ each of the two one-sided tests.
 \code{piecewiseSurvivalTime}, \code{stratumFraction},
 \code{kappa1}, \code{kappa2},
 \code{lambda1}, \code{lambda2}, \code{gamma1}, \code{gamma2},
-\code{accrualDuration}, \code{followupTime}, \code{fixedFollowup},
-\code{spendingTime}, \code{nullVariance}, and \code{varianceRatios}.
-The \code{varianceRatios} is a data frame with the following
-variables:
-\itemize{
-\item \code{varianceRatioH10}: The ratio of the variance under
-\code{H10} to the variance under \code{H1}.
-\item \code{varianceRatioH20}: The ratio of the variance under
-\code{H20} to the variance under \code{H1}.
-\item \code{varianceRatioH12}: The ratio of the variance under
-\code{H10} to the variance under \code{H20}.
-\item \code{varianceRatioH21}: The ratio of the variance under
-\code{H20} to the variance under \code{H10}.
-}
+\code{spendingTime}.
 \item \code{byTreatmentCounts}: A list containing the following counts by
 treatment group:
 \itemize{
@@ -253,8 +235,7 @@ nbpowerequiv(kMax = 2, informationRates = c(0.5, 1),
              lambda1 = 0.125, lambda2 = 0.125,
              gamma1 = 0, gamma2 = 0,
              accrualDuration = 1.25,
-             followupTime = 2.75, fixedFollowup = FALSE,
-             nullVariance = 1)
+             followupTime = 2.75, fixedFollowup = FALSE)
 
 # Example 2: Fixed follow-up design
 nbpowerequiv(kMax = 2, informationRates = c(0.5, 1),

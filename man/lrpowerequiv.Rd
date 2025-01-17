@@ -127,8 +127,6 @@ An S3 class \code{lrpowerequiv} object with 4 components:
 \itemize{
 \item \code{overallReject}: The overall rejection probability.
 \item \code{alpha}: The overall significance level.
-\item \code{attainedAlphaH10}: The attained significance level under H10.
-\item \code{attainedAlphaH20}: The attained significance level under H20.
 \item \code{numberOfEvents}: The total number of events.
 \item \code{numberOfDropouts}: The total number of dropouts.
 \item \code{numbeOfSubjects}: The total number of subjects.
