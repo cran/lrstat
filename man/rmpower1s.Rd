@@ -131,21 +131,24 @@ An S3 class \code{rmpower1s} object with 3 components:
 \itemize{
 \item \code{overallReject}: The overall rejection probability.
 \item \code{alpha}: The overall significance level.
-\item \code{drift}: The drift parameter, equal to
-\code{(rmst - rmstH0)*sqrt(information)}.
-\item \code{inflationFactor}: The inflation factor (relative to the
-fixed design).
+\item \code{numberOfEvents}: The total number of events.
 \item \code{numbeOfSubjects}: The total number of subjects.
+\item \code{numberOfMilestone}: The total number of subjects reaching
+milestone.
 \item \code{studyDuration}: The total study duration.
 \item \code{information}: The maximum information.
+\item \code{expectedNumberOfEvents}: The expected number of events.
 \item \code{expectedNumberOfSubjects}: The expected number of subjects.
+\item \code{expectedNumberOfMilestone}: The expected number of subjects
+reaching milestone.
 \item \code{expectedStudyDuration}: The expected study duration.
 \item \code{expectedInformation}: The expected information.
 \item \code{accrualDuration}: The accrual duration.
 \item \code{followupTime}: The follow-up duration.
 \item \code{fixedFollowup}: Whether a fixed follow-up design is used.
 \item \code{kMax}: The number of stages.
-\item \code{milestone}: The milestone time relative to randomization.
+\item \code{milestone}: The milestone time to calculate the restricted
+mean survival time.
 \item \code{rmstH0}: The restricted mean survival time under the null
 hypothesis.
 \item \code{rmst}: The restricted mean survival time under the
@@ -163,7 +166,11 @@ stopping.
 \item \code{cumulativeFutility}: The cumulative probability for futility
 stopping.
 \item \code{cumulativeAlphaSpent}: The cumulative alpha spent.
+\item \code{numberOfEvents}: The number of events.
+\item \code{numberOfDropouts}: The number of dropouts.
 \item \code{numberOfSubjects}: The number of subjects.
+\item \code{numberOfMilestone}: The number of subjects reaching
+milestone.
 \item \code{analysisTime}: The average time since trial start.
 \item \code{efficacyRmst}: The efficacy boundaries on the restricted
 mean survival time.

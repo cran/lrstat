@@ -126,8 +126,8 @@ An S3 class \code{kmpowerequiv} object with 4 components:
 \itemize{
 \item \code{overallReject}: The overall rejection probability.
 \item \code{alpha}: The overall significance level.
-\item \code{numbeOfEvents}: The total number of events.
-\item \code{numbeOfSubjects}: The total number of subjects.
+\item \code{numberOfEvents}: The total number of events.
+\item \code{numberOfSubjects}: The total number of subjects.
 \item \code{studyDuration}: The total study duration.
 \item \code{information}: The maximum information.
 \item \code{expectedNumberOfEvents}: The expected number of events.

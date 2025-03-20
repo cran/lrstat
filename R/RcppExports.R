@@ -763,19 +763,23 @@ kmsamplesize <- function(beta = 0.2, kMax = 1L, informationRates = NA_real_, eff
 #'
 #'     - \code{alpha}: The overall significance level.
 #'
-#'     - \code{drift}: The drift parameter, equal to
-#'       \code{(surv - survH0)*sqrt(information)}.
-#'
-#'     - \code{inflationFactor}: The inflation factor (relative to the
-#'       fixed design).
+#'     - \code{numberOfEvents}: The total number of events.
 #'
 #'     - \code{numbeOfSubjects}: The total number of subjects.
+#'
+#'     - \code{numberOfMilestone}: The total number of subjects reaching
+#'       milestone.
 #'
 #'     - \code{studyDuration}: The total study duration.
 #'
 #'     - \code{information}: The maximum information.
 #'
+#'     - \code{expectedNumberOfEvents}: The expected number of events.
+#'
 #'     - \code{expectedNumberOfSubjects}: The expected number of subjects.
+#'
+#'     - \code{expectedNumberOfMilestone}: The expected number of subjects
+#'       reaching milestone.
 #'
 #'     - \code{expectedStudyDuration}: The expected study duration.
 #'
@@ -818,7 +822,14 @@ kmsamplesize <- function(beta = 0.2, kMax = 1L, informationRates = NA_real_, eff
 #'
 #'     - \code{cumulativeAlphaSpent}: The cumulative alpha spent.
 #'
+#'     - \code{numberOfEvents}: The number of events.
+#'
+#'     - \code{numberOfDropouts}: The number of dropouts.
+#'
 #'     - \code{numberOfSubjects}: The number of subjects.
+#'
+#'     - \code{numberOfMilestone}: The number of subjects reaching
+#'       milestone.
 #'
 #'     - \code{analysisTime}: The average time since trial start.
 #'
@@ -1028,9 +1039,9 @@ kmsamplesize1s <- function(beta = 0.2, kMax = 1L, informationRates = NA_real_, e
 #'
 #'     - \code{alpha}: The overall significance level.
 #'
-#'     - \code{numbeOfEvents}: The total number of events.
+#'     - \code{numberOfEvents}: The total number of events.
 #'
-#'     - \code{numbeOfSubjects}: The total number of subjects.
+#'     - \code{numberOfSubjects}: The total number of subjects.
 #'
 #'     - \code{studyDuration}: The total study duration.
 #'
@@ -2489,8 +2500,7 @@ kmsurv <- function(time = NA_real_, allocationRatioPlanned = 1, piecewiseSurviva
 #'
 #' * \code{uscore}: The numerator of the weighted log-rank test statistic.
 #'
-#' * \code{vscore}: The variance of the weighted log-rank score statistic
-#'   with weight squared.
+#' * \code{vscore}: The variance of the weighted log-rank score statistic.
 #'
 #' * \code{iscore}: The Fisher information of the weighted log-rank score
 #'   statistic.
@@ -7002,8 +7012,7 @@ rmstat1 <- function(time = NA_real_, milestone = NA_real_, allocationRatioPlanne
 #' and difference in restricted mean survival times at given calendar
 #' times.
 #'
-#' @param time A vector of calendar times at which to calculate the
-#'   restricted mean survival time.
+#' @param time A vector of calendar times for data cut.
 #' @param milestone The milestone time at which to calculate the
 #'   restricted mean survival time.
 #' @inheritParams param_allocationRatioPlanned
@@ -7021,8 +7030,7 @@ rmstat1 <- function(time = NA_real_, milestone = NA_real_, allocationRatioPlanne
 #'
 #' @return A data frame containing the following variables:
 #'
-#' * \code{time}: The calendar time at which to calculate the restricted
-#'   mean survival time.
+#' * \code{time}: The calendar time since trial start.
 #'
 #' * \code{subjects}: The number of enrolled subjects.
 #'
@@ -7486,19 +7494,23 @@ rmsamplesize <- function(beta = 0.2, kMax = 1L, informationRates = NA_real_, eff
 #'
 #'     - \code{alpha}: The overall significance level.
 #'
-#'     - \code{drift}: The drift parameter, equal to
-#'       \code{(rmst - rmstH0)*sqrt(information)}.
-#'
-#'     - \code{inflationFactor}: The inflation factor (relative to the
-#'       fixed design).
+#'     - \code{numberOfEvents}: The total number of events.
 #'
 #'     - \code{numbeOfSubjects}: The total number of subjects.
+#'
+#'     - \code{numberOfMilestone}: The total number of subjects reaching
+#'       milestone.
 #'
 #'     - \code{studyDuration}: The total study duration.
 #'
 #'     - \code{information}: The maximum information.
 #'
+#'     - \code{expectedNumberOfEvents}: The expected number of events.
+#'
 #'     - \code{expectedNumberOfSubjects}: The expected number of subjects.
+#'
+#'     - \code{expectedNumberOfMilestone}: The expected number of subjects
+#'       reaching milestone.
 #'
 #'     - \code{expectedStudyDuration}: The expected study duration.
 #'
@@ -7512,7 +7524,8 @@ rmsamplesize <- function(beta = 0.2, kMax = 1L, informationRates = NA_real_, eff
 #'
 #'     - \code{kMax}: The number of stages.
 #'
-#'     - \code{milestone}: The milestone time relative to randomization.
+#'     - \code{milestone}: The milestone time to calculate the restricted
+#'       mean survival time.
 #'
 #'     - \code{rmstH0}: The restricted mean survival time under the null
 #'       hypothesis.
@@ -7540,7 +7553,14 @@ rmsamplesize <- function(beta = 0.2, kMax = 1L, informationRates = NA_real_, eff
 #'
 #'     - \code{cumulativeAlphaSpent}: The cumulative alpha spent.
 #'
+#'     - \code{numberOfEvents}: The number of events.
+#'
+#'     - \code{numberOfDropouts}: The number of dropouts.
+#'
 #'     - \code{numberOfSubjects}: The number of subjects.
+#'
+#'     - \code{numberOfMilestone}: The number of subjects reaching
+#'       milestone.
 #'
 #'     - \code{analysisTime}: The average time since trial start.
 #'
@@ -7752,7 +7772,7 @@ rmsamplesize1s <- function(beta = 0.2, kMax = 1L, informationRates = NA_real_, e
 #'
 #'     - \code{numberOfEvents}: The total number of events.
 #'
-#'     - \code{numbeOfSubjects}: The total number of subjects.
+#'     - \code{numberOfSubjects}: The total number of subjects.
 #'
 #'     - \code{studyDuration}: The total study duration.
 #'
@@ -8010,6 +8030,8 @@ rmsamplesizeequiv <- function(beta = 0.2, kMax = 1L, informationRates = NA_real_
 #'   The arcsin option bases the intervals on asin(sqrt(survival)).
 #' @param conflev The level of the two-sided confidence interval for
 #'   the survival probabilities. Defaults to 0.95.
+#' @param keep_censor Whether to retain the censoring time in the output
+#'   data frame.
 #'
 #' @return A data frame with the following variables:
 #'
@@ -8020,6 +8042,8 @@ rmsamplesizeequiv <- function(beta = 0.2, kMax = 1L, informationRates = NA_real_
 #' * \code{nrisk}: The number of subjects at risk.
 #'
 #' * \code{nevent}: The number of subjects having the event.
+#'
+#' * \code{ncensor}: The number of censored subjects.
 #'
 #' * \code{survival}: The Kaplan-Meier estimate of the survival probability.
 #'
@@ -8045,8 +8069,8 @@ rmsamplesizeequiv <- function(beta = 0.2, kMax = 1L, informationRates = NA_real_
 #' kmest(data = aml, stratum = "x", time = "time", event = "status")
 #'
 #' @export
-kmest <- function(data, rep = "", stratum = "", time = "time", event = "event", conftype = "log-log", conflev = 0.95) {
-    .Call(`_lrstat_kmest`, data, rep, stratum, time, event, conftype, conflev)
+kmest <- function(data, rep = "", stratum = "", time = "time", event = "event", conftype = "log-log", conflev = 0.95, keep_censor = 0L) {
+    .Call(`_lrstat_kmest`, data, rep, stratum, time, event, conftype, conflev, keep_censor)
 }
 
 #' @title Estimate of Milestone Survival Difference
@@ -9253,6 +9277,46 @@ adaptDesign <- function(betaNew = NA_real_, INew = NA_real_, L = NA_integer_, zL
 
 hasVariable <- function(df, varName) {
     .Call(`_lrstat_hasVariable`, df, varName)
+}
+
+#' @title Split a survival data set at specified cut points
+#' @description For a given survival dataset and specified cut times, 
+#' each record is split into multiple subrecords at each cut time. 
+#' The resulting dataset is in counting process format, with each 
+#' subrecord containing a start time, stop time, and event status.
+#' This is adapted from the survplit.c function from the survival package.
+#'
+#' @param tstart The starting time of the time interval for 
+#'   counting-process data.
+#' @param tstop The stopping time of the time interval for 
+#'   counting-process data.
+#' @param cut The vector of cut points.
+#'
+#' @return A data frame with the following variables:
+#'
+#' * \code{row}: The row number of the observation in the input data 
+#'   (starting from 0).
+#'
+#' * \code{start}: The starting time of the resulting subrecord.
+#'
+#' * \code{stop}: The stopping time of the resulting subrecord.
+#'
+#' * \code{censor}: Whether the subrecord lies strictly within a record
+#'   in the input data.
+#'
+#' * \code{interval}: The interval number.
+#'
+#' @author Kaifeng Lu, \email{kaifenglu@@gmail.com}
+#'
+#' @keywords internal
+#'
+#' @examples
+#'
+#' survsplit(15, 60, c(10, 30, 40))
+#'
+#' @export
+survsplit <- function(tstart, tstop, cut) {
+    .Call(`_lrstat_survsplit`, tstart, tstop, cut)
 }
 
 #' @title QR Decomposition of a Matrix

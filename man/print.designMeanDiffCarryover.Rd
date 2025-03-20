@@ -3,7 +3,7 @@
 \name{print.designMeanDiffCarryover}
 \alias{print.designMeanDiffCarryover}
 \title{Print Power and Sample Size Results for Direct Treatment Effects
-in Crossover Trials Accounting for Carryover Effects}
+in Crossover Trials With or Without Accounting for Carryover Effects}
 \usage{
 \method{print}{designMeanDiffCarryover}(x, ...)
 }
@@ -17,8 +17,8 @@ A tabular printout of the design elements.
 }
 \description{
 Prints the summary statistics from power calculation of
-direct treatment effects in crossover trials accounting for
-carryover effects.
+direct treatment effects in crossover trials with or without accounting
+for carryover effects.
 }
 \author{
 Kaifeng Lu, \email{kaifenglu@gmail.com}

@@ -2249,8 +2249,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // kmest
-DataFrame kmest(const DataFrame data, const StringVector& rep, const StringVector& stratum, const std::string time, const std::string event, const std::string conftype, const double conflev);
-RcppExport SEXP _lrstat_kmest(SEXP dataSEXP, SEXP repSEXP, SEXP stratumSEXP, SEXP timeSEXP, SEXP eventSEXP, SEXP conftypeSEXP, SEXP conflevSEXP) {
+DataFrame kmest(const DataFrame data, const StringVector& rep, const StringVector& stratum, const std::string time, const std::string event, const std::string conftype, const double conflev, const bool keep_censor);
+RcppExport SEXP _lrstat_kmest(SEXP dataSEXP, SEXP repSEXP, SEXP stratumSEXP, SEXP timeSEXP, SEXP eventSEXP, SEXP conftypeSEXP, SEXP conflevSEXP, SEXP keep_censorSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -2261,7 +2261,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const std::string >::type event(eventSEXP);
     Rcpp::traits::input_parameter< const std::string >::type conftype(conftypeSEXP);
     Rcpp::traits::input_parameter< const double >::type conflev(conflevSEXP);
-    rcpp_result_gen = Rcpp::wrap(kmest(data, rep, stratum, time, event, conftype, conflev));
+    Rcpp::traits::input_parameter< const bool >::type keep_censor(keep_censorSEXP);
+    rcpp_result_gen = Rcpp::wrap(kmest(data, rep, stratum, time, event, conftype, conflev, keep_censor));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -2832,6 +2833,19 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// survsplit
+DataFrame survsplit(NumericVector tstart, NumericVector tstop, NumericVector cut);
+RcppExport SEXP _lrstat_survsplit(SEXP tstartSEXP, SEXP tstopSEXP, SEXP cutSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type tstart(tstartSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type tstop(tstopSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type cut(cutSEXP);
+    rcpp_result_gen = Rcpp::wrap(survsplit(tstart, tstop, cut));
+    return rcpp_result_gen;
+END_RCPP
+}
 // qrcpp
 List qrcpp(const NumericMatrix& X, double tol);
 RcppExport SEXP _lrstat_qrcpp(SEXP XSEXP, SEXP tolSEXP) {
@@ -2964,7 +2978,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_lrstat_rmsamplesize1s", (DL_FUNC) &_lrstat_rmsamplesize1s, 28},
     {"_lrstat_rmpowerequiv", (DL_FUNC) &_lrstat_rmpowerequiv, 24},
     {"_lrstat_rmsamplesizeequiv", (DL_FUNC) &_lrstat_rmsamplesizeequiv, 26},
-    {"_lrstat_kmest", (DL_FUNC) &_lrstat_kmest, 7},
+    {"_lrstat_kmest", (DL_FUNC) &_lrstat_kmest, 8},
     {"_lrstat_kmdiff", (DL_FUNC) &_lrstat_kmdiff, 9},
     {"_lrstat_lrtest", (DL_FUNC) &_lrstat_lrtest, 8},
     {"_lrstat_rmest", (DL_FUNC) &_lrstat_rmest, 8},
@@ -2995,6 +3009,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_lrstat_getDesignEquiv", (DL_FUNC) &_lrstat_getDesignEquiv, 13},
     {"_lrstat_adaptDesign", (DL_FUNC) &_lrstat_adaptDesign, 31},
     {"_lrstat_hasVariable", (DL_FUNC) &_lrstat_hasVariable, 2},
+    {"_lrstat_survsplit", (DL_FUNC) &_lrstat_survsplit, 3},
     {"_lrstat_qrcpp", (DL_FUNC) &_lrstat_qrcpp, 2},
     {"_lrstat_svdcpp", (DL_FUNC) &_lrstat_svdcpp, 3},
     {"_lrstat_float_to_fraction", (DL_FUNC) &_lrstat_float_to_fraction, 2},

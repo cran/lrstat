@@ -22,8 +22,7 @@ rmstat(
 )
 }
 \arguments{
-\item{time}{A vector of calendar times at which to calculate the
-restricted mean survival time.}
+\item{time}{A vector of calendar times for data cut.}
 
 \item{milestone}{The milestone time at which to calculate the
 restricted mean survival time.}
@@ -74,8 +73,7 @@ Defaults to 0 for variable follow-up.}
 \value{
 A data frame containing the following variables:
 \itemize{
-\item \code{time}: The calendar time at which to calculate the restricted
-mean survival time.
+\item \code{time}: The calendar time since trial start.
 \item \code{subjects}: The number of enrolled subjects.
 \item \code{nevents}: The total number of events.
 \item \code{nevents1}: The number of events in the active treatment group.

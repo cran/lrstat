@@ -60,8 +60,8 @@ hazard rates for piecewise exponential dropout for the control group.}
 \item{accrualDuration}{Duration of the enrollment period.}
 
 \item{maxFollowupTime}{Follow-up time for the first enrolled subject.
-For fixed followup, \code{maxFollowupTime = minFollowupTime}.
-For variable followup,
+For fixed follow-up, \code{maxFollowupTime = minFollowupTime}.
+For variable follow-up,
 \code{maxFollowupTime = accrualDuration + minFollowupTime}.}
 }
 \value{

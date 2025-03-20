@@ -131,14 +131,16 @@ An S3 class \code{kmpower1s} object with 3 components:
 \itemize{
 \item \code{overallReject}: The overall rejection probability.
 \item \code{alpha}: The overall significance level.
-\item \code{drift}: The drift parameter, equal to
-\code{(surv - survH0)*sqrt(information)}.
-\item \code{inflationFactor}: The inflation factor (relative to the
-fixed design).
+\item \code{numberOfEvents}: The total number of events.
 \item \code{numbeOfSubjects}: The total number of subjects.
+\item \code{numberOfMilestone}: The total number of subjects reaching
+milestone.
 \item \code{studyDuration}: The total study duration.
 \item \code{information}: The maximum information.
+\item \code{expectedNumberOfEvents}: The expected number of events.
 \item \code{expectedNumberOfSubjects}: The expected number of subjects.
+\item \code{expectedNumberOfMilestone}: The expected number of subjects
+reaching milestone.
 \item \code{expectedStudyDuration}: The expected study duration.
 \item \code{expectedInformation}: The expected information.
 \item \code{accrualDuration}: The accrual duration.
@@ -164,7 +166,11 @@ stopping.
 \item \code{cumulativeFutility}: The cumulative probability for futility
 stopping.
 \item \code{cumulativeAlphaSpent}: The cumulative alpha spent.
+\item \code{numberOfEvents}: The number of events.
+\item \code{numberOfDropouts}: The number of dropouts.
 \item \code{numberOfSubjects}: The number of subjects.
+\item \code{numberOfMilestone}: The number of subjects reaching
+milestone.
 \item \code{analysisTime}: The average time since trial start.
 \item \code{efficacySurv}: The efficacy boundaries on the milestone
 survival probability scale.
