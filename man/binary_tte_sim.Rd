@@ -2,7 +2,8 @@
 % Please edit documentation in R/RcppExports.R
 \name{binary_tte_sim}
 \alias{binary_tte_sim}
-\title{Simulation for a Binary Endpoint and a Time-to-Event Endpoint}
+\title{Simulation for a Binary and a Time-to-Event Endpoint in
+Group Sequential Trials}
 \usage{
 binary_tte_sim(
   kMax1 = 1L,
@@ -68,7 +69,8 @@ Defaults to 0 for exponential distribution.}
 \item{stratumFraction}{A vector of stratum fractions that sum to 1.
 Defaults to 1 for no stratification.}
 
-\item{globalOddsRatio}{The global odds ratio of the Plackett copula.}
+\item{globalOddsRatio}{Global odds ratio of the Plackett copula
+linking the two endpoints.}
 
 \item{pi1}{Response probabilities by stratum for the treatment group
 for the binary endpoint.}
@@ -106,27 +108,27 @@ discontinuation applicable for all strata, or a vector of hazard rates
 for treatment discontinuation in each analysis time interval by
 stratum for the control group for the binary endpoint.}
 
-\item{upper1}{The protocol-specified treatment duration for the treatment
-group.}
+\item{upper1}{Maximim protocol-specified treatment duration for
+the treatment group.}
 
-\item{upper2}{The protocol-specified treatment duration for the control
-group.}
+\item{upper2}{Maximum protocol-specified treatment duration for
+the control group.}
 
 \item{accrualDuration}{Duration of the enrollment period.}
 
-\item{plannedTime}{The calendar times for the analyses of the binary
+\item{plannedTime}{Calendar times for the analyses of the binary
 endpoint.}
 
-\item{plannedEvents}{The planned cumulative total number of events for
-the time-to-event endpoint.}
+\item{plannedEvents}{Target cumulative number of events for
+the time-to-event analyses.}
 
-\item{maxNumberOfIterations}{The number of simulation iterations.}
+\item{maxNumberOfIterations}{Number of simulation iterations to perform.}
 
-\item{maxNumberOfRawDatasetsPerStage}{The number of raw datasets per
-stage to extract.}
+\item{maxNumberOfRawDatasetsPerStage}{Number of subject-level datasets
+to retain per stage. Set to 0 to skip raw data saving.}
 
-\item{seed}{The seed to reproduce the simulation results.
-The seed from the environment will be used if left unspecified.}
+\item{seed}{Random seed for reproducibility. If not specified,
+the current R environment seed is used.}
 }
 \value{
 A list with 4 components:
@@ -258,14 +260,17 @@ time-to-event endpoint.
 }
 \description{
 Performs simulation for two-endpoint two-arm group
-sequential trials. The first endpoint is a binary endpoint and
-the Mantel-Haenszel test is used to test risk difference.
-The second endpoint is a time-to-event endpoint and the log-rank
-test is used to test the treatment difference. The analysis times
-of the first endpoint are determined by the specified calendar times,
-while the analysis times for the second endpoint is based on the
-planned number of events at each look. The binary endpoint is
-assessed at the first post-treatment follow-up visit.
+sequential trials.
+\itemize{
+\item Endpoint 1: Binary endpoint, analyzed using the
+Mantel-Haenszel test for risk difference.
+\item Endpoint 2: Time-to-event endpoint, analyzed using
+the log-rank test for treatment effect.
+}
+The analysis times for the binary endpoint are based on calendar times,
+while the time-to-event analyses are triggered by reaching the
+pre-specified number of events. The binary endpoint is
+assessed at the first post-treatment follow-up visit (PTFU1).
 }
 \details{
 We consider dual primary endpoints with endpoint 1 being a

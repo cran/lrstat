@@ -21,10 +21,12 @@ A data frame with the following variables:
 \item \code{row}: The row number of the observation in the input data
 (starting from 0).
 \item \code{start}: The starting time of the resulting subrecord.
-\item \code{stop}: The stopping time of the resulting subrecord.
+\item \code{end}: The ending time of the resulting subrecord.
 \item \code{censor}: Whether the subrecord lies strictly within a record
-in the input data.
-\item \code{interval}: The interval number.
+in the input data (1 for all but the last interval and 0 for the
+last interval with cutpoint set equal to tstop).
+\item \code{interval}: The interval number derived from cut (starting
+from 0 if the interval lies to the left of the first cutpoint).
 }
 }
 \description{
@@ -32,7 +34,7 @@ For a given survival dataset and specified cut times,
 each record is split into multiple subrecords at each cut time.
 The resulting dataset is in counting process format, with each
 subrecord containing a start time, stop time, and event status.
-This is adapted from the survplit.c function from the survival package.
+This is adapted from the survsplit.c function from the survival package.
 }
 \examples{
 

@@ -1277,8 +1277,8 @@ kmsamplesizeequiv <- function(beta = 0.2, kMax = 1L, informationRates = NA_real_
     .Call(`_lrstat_kmsamplesizeequiv`, beta, kMax, informationRates, criticalValues, alpha, typeAlphaSpending, parameterAlphaSpending, userAlphaSpending, milestone, survDiffLower, survDiffUpper, allocationRatioPlanned, accrualTime, accrualIntensity, piecewiseSurvivalTime, stratumFraction, lambda1, lambda2, gamma1, gamma2, accrualDuration, followupTime, fixedFollowup, interval, spendingTime, rounding)
 }
 
-logisregcpp <- function(data, rep = "", event = "event", covariates = "", freq = "", weight = "", offset = "", id = "", link = "logit", robust = 0L, firth = 0L, bc = 0L, flic = 0L, plci = 0L, alpha = 0.05) {
-    .Call(`_lrstat_logisregcpp`, data, rep, event, covariates, freq, weight, offset, id, link, robust, firth, bc, flic, plci, alpha)
+logisregcpp <- function(data, rep = "", event = "event", covariates = "", freq = "", weight = "", offset = "", id = "", link = "logit", robust = 0L, firth = 0L, flic = 0L, plci = 0L, alpha = 0.05, maxiter = 50L, eps = 1.0e-9) {
+    .Call(`_lrstat_logisregcpp`, data, rep, event, covariates, freq, weight, offset, id, link, robust, firth, flic, plci, alpha, maxiter, eps)
 }
 
 #' @title Log-Rank Test Simulation
@@ -2103,16 +2103,20 @@ lrsim2e3a <- function(kMax = NA_integer_, kMaxe1 = NA_integer_, hazardRatioH013e
     .Call(`_lrstat_lrsim2e3a`, kMax, kMaxe1, hazardRatioH013e1, hazardRatioH023e1, hazardRatioH012e1, hazardRatioH013e2, hazardRatioH023e2, hazardRatioH012e2, allocation1, allocation2, allocation3, accrualTime, accrualIntensity, piecewiseSurvivalTime, stratumFraction, rho, lambda1e1, lambda2e1, lambda3e1, lambda1e2, lambda2e2, lambda3e2, gamma1e1, gamma2e1, gamma3e1, gamma1e2, gamma2e2, gamma3e2, accrualDuration, followupTime, fixedFollowup, rho1, rho2, plannedEvents, plannedTime, maxNumberOfIterations, maxNumberOfRawDatasetsPerStage, seed)
 }
 
-#' @title Simulation for a Binary Endpoint and a Time-to-Event Endpoint
+#' @title Simulation for a Binary and a Time-to-Event Endpoint in
+#' Group Sequential Trials
 #' @description Performs simulation for two-endpoint two-arm group
-#' sequential trials. The first endpoint is a binary endpoint and
-#' the Mantel-Haenszel test is used to test risk difference.
-#' The second endpoint is a time-to-event endpoint and the log-rank
-#' test is used to test the treatment difference. The analysis times
-#' of the first endpoint are determined by the specified calendar times,
-#' while the analysis times for the second endpoint is based on the
-#' planned number of events at each look. The binary endpoint is
-#' assessed at the first post-treatment follow-up visit.
+#' sequential trials.
+#' \itemize{
+#'   \item Endpoint 1: Binary endpoint, analyzed using the
+#'         Mantel-Haenszel test for risk difference.
+#'   \item Endpoint 2: Time-to-event endpoint, analyzed using
+#'         the log-rank test for treatment effect.
+#' }
+#' The analysis times for the binary endpoint are based on calendar times,
+#' while the time-to-event analyses are triggered by reaching the
+#' pre-specified number of events. The binary endpoint is
+#' assessed at the first post-treatment follow-up visit (PTFU1).
 #'
 #' @param kMax1 Number of stages for the binary endpoint.
 #' @param kMax2 Number of stages for the time-to-event endpoint.
@@ -2128,7 +2132,8 @@ lrsim2e3a <- function(kMax = NA_integer_, kMaxe1 = NA_integer_, hazardRatioH013e
 #' @inheritParams param_accrualIntensity
 #' @inheritParams param_piecewiseSurvivalTime
 #' @inheritParams param_stratumFraction
-#' @param globalOddsRatio The global odds ratio of the Plackett copula.
+#' @param globalOddsRatio Global odds ratio of the Plackett copula
+#'   linking the two endpoints.
 #' @param pi1 Response probabilities by stratum for the treatment group
 #'   for the binary endpoint.
 #' @param pi2 Response probabilities by stratum for the control group
@@ -2157,20 +2162,20 @@ lrsim2e3a <- function(kMax = NA_integer_, kMaxe1 = NA_integer_, hazardRatioH013e
 #'   discontinuation applicable for all strata, or a vector of hazard rates
 #'   for treatment discontinuation in each analysis time interval by
 #'   stratum for the control group for the binary endpoint.
-#' @param upper1 The protocol-specified treatment duration for the treatment
-#'   group.
-#' @param upper2 The protocol-specified treatment duration for the control
-#'   group.
+#' @param upper1 Maximim protocol-specified treatment duration for
+#'   the treatment group.
+#' @param upper2 Maximum protocol-specified treatment duration for
+#'   the control group.
 #' @inheritParams param_accrualDuration
-#' @param plannedTime The calendar times for the analyses of the binary
+#' @param plannedTime Calendar times for the analyses of the binary
 #'   endpoint.
-#' @param plannedEvents The planned cumulative total number of events for
-#'   the time-to-event endpoint.
-#' @param maxNumberOfIterations The number of simulation iterations.
-#' @param maxNumberOfRawDatasetsPerStage The number of raw datasets per
-#'   stage to extract.
-#' @param seed The seed to reproduce the simulation results.
-#'   The seed from the environment will be used if left unspecified.
+#' @param plannedEvents Target cumulative number of events for
+#'   the time-to-event analyses.
+#' @param maxNumberOfIterations Number of simulation iterations to perform.
+#' @param maxNumberOfRawDatasetsPerStage Number of subject-level datasets
+#'   to retain per stage. Set to 0 to skip raw data saving.
+#' @param seed Random seed for reproducibility. If not specified,
+#'   the current R environment seed is used.
 #'
 #' @details We consider dual primary endpoints with endpoint 1 being a
 #'   binary endpoint and endpoint 2 being a time-to-event endpoint.
@@ -8008,6 +8013,56 @@ rmsamplesizeequiv <- function(beta = 0.2, kMax = 1L, informationRates = NA_real_
     .Call(`_lrstat_rmsamplesizeequiv`, beta, kMax, informationRates, criticalValues, alpha, typeAlphaSpending, parameterAlphaSpending, userAlphaSpending, milestone, rmstDiffLower, rmstDiffUpper, allocationRatioPlanned, accrualTime, accrualIntensity, piecewiseSurvivalTime, stratumFraction, lambda1, lambda2, gamma1, gamma2, accrualDuration, followupTime, fixedFollowup, interval, spendingTime, rounding)
 }
 
+#' @title Brookmeyer-Crowley Confidence Interval for Quantiles of
+#' Right-Censored Time-to-Event Data
+#' @description Obtains the Brookmeyer-Crowley confidence
+#' interval for quantiles of right-censored time-to-event data.
+#'
+#' @param time The vector of possibly right-censored survival times.
+#' @param event The vector of event indicators.
+#' @param cilevel The confidence interval level. Defaults to 0.95.
+#' @param transform The transformation of the survival function to use
+#'   to construct the confidence interval. Options include 
+#'   "linear" (alternatively "plain"), "log", 
+#'   "loglog" (alternatively "log-log" or "cloglog"), 
+#'   "asinsqrt" (alternatively "asin" or "arcsin"), and "logit". 
+#'   Defaults to "loglog".
+#'   
+#' @param probs The vector of probabilities to calculate the quantiles.
+#'   Defaults to c(0.25, 0.5, 0.75).
+#'
+#' @return A data frame containing the estimated quantile and
+#' confidence interval corresponding to each specified probability.
+#' It includes the following variables:
+#'
+#' * \code{prob}: The probability to calculate the quantile.
+#'
+#' * \code{quantile}: The estimated quantile.
+#'
+#' * \code{lower}: The lower limit of the confidence interval.
+#'
+#' * \code{upper}: The upper limit of the confidence interval.
+#'
+#' * \code{cilevel}: The confidence interval level.
+#'
+#' * \code{transform}: The transformation of the survival function to use
+#'   to construct the confidence interval.
+#'
+#' @author Kaifeng Lu, \email{kaifenglu@@gmail.com}
+#'
+#' @examples
+#'
+#' survQuantile(
+#'   time = c(33.7, 3.9, 10.5, 5.4, 19.5, 23.8, 7.9, 16.9, 16.6,
+#'            33.7, 17.1, 7.9, 10.5, 38),
+#'   event = c(0, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 1, 1),
+#'   probs = c(0.25, 0.5, 0.75))
+#'
+#' @export
+survQuantile <- function(time = NA_real_, event = NA_real_, cilevel = 0.95, transform = "loglog", probs = NA_real_) {
+    .Call(`_lrstat_survQuantile`, time, event, cilevel, transform, probs)
+}
+
 #' @title Kaplan-Meier Estimates of Survival Curve
 #' @description Obtains the Kaplan-Meier estimates of the survival curve.
 #'
@@ -8350,20 +8405,24 @@ rmdiff <- function(data, rep = "", stratum = "", treat = "treat", time = "time",
     .Call(`_lrstat_rmdiff`, data, rep, stratum, treat, time, event, milestone, rmstDiffH0, conflev, biascorrection)
 }
 
-liferegcpp <- function(data, rep = "", stratum = "", time = "time", time2 = "", event = "event", covariates = "", weight = "", offset = "", id = "", dist = "weibull", robust = 0L, plci = 0L, alpha = 0.05) {
-    .Call(`_lrstat_liferegcpp`, data, rep, stratum, time, time2, event, covariates, weight, offset, id, dist, robust, plci, alpha)
+liferegcpp <- function(data, rep = "", stratum = "", time = "time", time2 = "", event = "event", covariates = "", weight = "", offset = "", id = "", dist = "weibull", robust = 0L, plci = 0L, alpha = 0.05, maxiter = 50L, eps = 1.0e-9) {
+    .Call(`_lrstat_liferegcpp`, data, rep, stratum, time, time2, event, covariates, weight, offset, id, dist, robust, plci, alpha, maxiter, eps)
 }
 
-phregcpp <- function(data, rep = "", stratum = "", time = "time", time2 = "", event = "event", covariates = "", weight = "", offset = "", id = "", ties = "efron", robust = 0L, est_basehaz = 1L, est_resid = 1L, firth = 0L, plci = 0L, alpha = 0.05) {
-    .Call(`_lrstat_phregcpp`, data, rep, stratum, time, time2, event, covariates, weight, offset, id, ties, robust, est_basehaz, est_resid, firth, plci, alpha)
+residuals_liferegcpp <- function(beta, vbeta, data, stratum = "", time = "time", time2 = "", event = "event", covariates = "", weight = "", offset = "", id = "", dist = "weibull", type = "response", collapse = 0L, weighted = 0L) {
+    .Call(`_lrstat_residuals_liferegcpp`, beta, vbeta, data, stratum, time, time2, event, covariates, weight, offset, id, dist, type, collapse, weighted)
+}
+
+phregcpp <- function(data, rep = "", stratum = "", time = "time", time2 = "", event = "event", covariates = "", weight = "", offset = "", id = "", ties = "efron", robust = 0L, est_basehaz = 1L, est_resid = 1L, firth = 0L, plci = 0L, alpha = 0.05, maxiter = 50L, eps = 1.0e-9) {
+    .Call(`_lrstat_phregcpp`, data, rep, stratum, time, time2, event, covariates, weight, offset, id, ties, robust, est_basehaz, est_resid, firth, plci, alpha, maxiter, eps)
 }
 
 survfit_phregcpp <- function(p, beta, vbeta, basehaz, newdata, covariates = "", stratum = "", offset = "", id = "", tstart = "", tstop = "", sefit = 1L, conftype = "log-log", conflev = 0.95) {
     .Call(`_lrstat_survfit_phregcpp`, p, beta, vbeta, basehaz, newdata, covariates, stratum, offset, id, tstart, tstop, sefit, conftype, conflev)
 }
 
-residuals_phregcpp <- function(p, beta, data, stratum = "", time = "time", time2 = "", event = "event", covariates = "", weight = "", offset = "", id = "", ties = "efron", type = "schoenfeld") {
-    .Call(`_lrstat_residuals_phregcpp`, p, beta, data, stratum, time, time2, event, covariates, weight, offset, id, ties, type)
+residuals_phregcpp <- function(p, beta, vbeta, resmart, data, stratum = "", time = "time", time2 = "", event = "event", covariates = "", weight = "", offset = "", id = "", ties = "efron", type = "schoenfeld", collapse = 0L, weighted = 0L) {
+    .Call(`_lrstat_residuals_phregcpp`, p, beta, vbeta, resmart, data, stratum, time, time2, event, covariates, weight, offset, id, ties, type, collapse, weighted)
 }
 
 #' @title Find Interval Numbers of Indices
@@ -9093,19 +9152,20 @@ getDesignEquiv <- function(beta = NA_real_, IMax = NA_real_, thetaLower = NA_rea
 }
 
 #' @title Adaptive Design at an Interim Look
-#' @description Obtains the conditional power for specified incremental
-#' information given the interim results, parameter value, and
-#' data-dependent changes in the error spending function, and the number
-#' and spacing of interim looks. Conversely, obtains the incremental
-#' information needed to attain a specified conditional power given
-#' the interim results, parameter value, and data-dependent changes
-#' in the error spending function, and the number and spacing of
-#' interim looks.
+#' @description
+#' Calculates the conditional power for specified incremental
+#' information, given the interim results, parameter value,
+#' data-dependent changes in the error spending function, and
+#' the number and spacing of interim looks. Conversely,
+#' calculates the incremental information required to attain
+#' a specified conditional power, given the interim results,
+#' parameter value, data-dependent changes in the error
+#' spending function, and the number and spacing of interim looks.
 #'
 #' @param betaNew The type II error for the secondary trial.
 #' @param INew The maximum information of the secondary trial. Either
-#'   \code{betaNew} or \code{INew} should be provided while the other one
-#'   should be missing.
+#'   \code{betaNew} or \code{INew} should be provided, while the other
+#'   must be missing.
 #' @param L The interim adaptation look of the primary trial.
 #' @param zL The z-test statistic at the interim adaptation look of
 #'   the primary trial.
@@ -9117,10 +9177,10 @@ getDesignEquiv <- function(beta = NA_real_, IMax = NA_real_, thetaLower = NA_rea
 #' @param kMax The maximum number of stages of the primary trial.
 #' @param informationRates The information rates of the primary trial.
 #' @param efficacyStopping Indicators of whether efficacy stopping is
-#'   allowed at each stage of the primary trial. Defaults to true
+#'   allowed at each stage of the primary trial. Defaults to \code{TRUE}
 #'   if left unspecified.
 #' @param futilityStopping Indicators of whether futility stopping is
-#'   allowed at each stage of the primary trial. Defaults to true
+#'   allowed at each stage of the primary trial. Defaults to \code{TRUE}
 #'   if left unspecified.
 #' @param criticalValues The upper boundaries on the z-test statistic scale
 #'   for efficacy stopping for the primary trial.
@@ -9141,8 +9201,8 @@ getDesignEquiv <- function(beta = NA_real_, IMax = NA_real_, thetaLower = NA_rea
 #' @param parameterAlphaSpending The parameter value of alpha spending
 #'   for the primary trial. Corresponds to Delta for "WT", rho for "sfKD",
 #'   and gamma for "sfHSD".
-#' @param userAlphaSpending The user defined alpha spending for the primary
-#'   trial. Cumulative alpha spent up to each stage.
+#' @param userAlphaSpending The user-defined alpha spending for the
+#'   primary trial. Represents the cumulative alpha spent up to each stage.
 #' @param futilityBounds The lower boundaries on the z-test statistic scale
 #'   for futility stopping for the primary trial. Defaults to
 #'   \code{rep(-6, kMax-1)} if left unspecified.
@@ -9158,17 +9218,17 @@ getDesignEquiv <- function(beta = NA_real_, IMax = NA_real_, thetaLower = NA_rea
 #'   for the primary trial. Corresponds to rho for "sfKD",
 #'   and gamma for "sfHSD".
 #' @param spendingTime The error spending time of the primary trial.
-#'   Defaults to missing, in which case, it is the same as
+#'   Defaults to missing, in which case it is assumed to be the same as
 #'   \code{informationRates}.
 #' @param MullerSchafer Whether to use the Muller and Schafer (2001) method
 #'   for trial adaptation.
 #' @param kNew The number of looks of the secondary trial.
 #' @param informationRatesNew The spacing of looks of the secondary trial.
 #' @param efficacyStoppingNew The indicators of whether efficacy stopping is
-#'   allowed at each look of the secondary trial. Defaults to true
+#'   allowed at each look of the secondary trial. Defaults to \code{TRUE}
 #'   if left unspecified.
 #' @param futilityStoppingNew The indicators of whether futility stopping is
-#'   allowed at each look of the secondary trial. Defaults to true
+#'   allowed at each look of the secondary trial. Defaults to \code{TRUE}
 #'   if left unspecified.
 #' @param typeAlphaSpendingNew The type of alpha spending for the secondary
 #'   trial. One of the following:
@@ -9196,10 +9256,11 @@ getDesignEquiv <- function(beta = NA_real_, IMax = NA_real_, thetaLower = NA_rea
 #' @param parameterBetaSpendingNew The parameter value of beta spending
 #'   for the secondary trial. Corresponds to rho for "sfKD",
 #'   and gamma for "sfHSD".
-#' @param userBetaSpendingNew The user defined cumulative beta spending.
-#'   Cumulative beta spent up to each stage of the secondary trial.
+#' @param userBetaSpendingNew The user-defined cumulative beta spending.
+#'   Represents the cumulative beta spent up to each stage of the
+#'   secondary trial.
 #' @param spendingTimeNew The error spending time of the secondary trial.
-#'   Defaults to missing, in which case, it is the same as
+#'   Defaults to missing, in which case it is assumed to be the same as
 #'   \code{informationRatesNew}.
 #' @param varianceRatio The ratio of the variance under H0 to the
 #'   variance under H1.
@@ -9250,7 +9311,7 @@ getDesignEquiv <- function(beta = NA_real_, IMax = NA_real_, thetaLower = NA_rea
 #' # conditional power with sample size increase
 #' (des2 = adaptDesign(
 #'   betaNew = NA, INew = 420/(4*sigma1^2),
-#'   L, zL, theta = delta1,
+#'   L = L, zL = zL, theta = delta1,
 #'   IMax = n/(4*sigma1^2), kMax = 3, informationRates = t,
 #'   alpha = 0.05, typeAlphaSpending = "sfHSD",
 #'   parameterAlphaSpending = -4))
@@ -9259,7 +9320,7 @@ getDesignEquiv <- function(beta = NA_real_, IMax = NA_real_, thetaLower = NA_rea
 #' # 3-look gamma(-2) spending with 84% power at delta = 4.5 and sigma = 20
 #' (des2 = adaptDesign(
 #'   betaNew = 0.16, INew = NA,
-#'   L, zL, theta = delta1,
+#'   L = L, zL = zL, theta = delta1,
 #'   IMax = n/(4*sigma1^2), kMax = 3, informationRates = t,
 #'   alpha = 0.05, typeAlphaSpending = "sfHSD",
 #'   parameterAlphaSpending = -4,
@@ -9280,31 +9341,33 @@ hasVariable <- function(df, varName) {
 }
 
 #' @title Split a survival data set at specified cut points
-#' @description For a given survival dataset and specified cut times, 
-#' each record is split into multiple subrecords at each cut time. 
-#' The resulting dataset is in counting process format, with each 
+#' @description For a given survival dataset and specified cut times,
+#' each record is split into multiple subrecords at each cut time.
+#' The resulting dataset is in counting process format, with each
 #' subrecord containing a start time, stop time, and event status.
-#' This is adapted from the survplit.c function from the survival package.
+#' This is adapted from the survsplit.c function from the survival package.
 #'
-#' @param tstart The starting time of the time interval for 
+#' @param tstart The starting time of the time interval for
 #'   counting-process data.
-#' @param tstop The stopping time of the time interval for 
+#' @param tstop The stopping time of the time interval for
 #'   counting-process data.
 #' @param cut The vector of cut points.
 #'
 #' @return A data frame with the following variables:
 #'
-#' * \code{row}: The row number of the observation in the input data 
+#' * \code{row}: The row number of the observation in the input data
 #'   (starting from 0).
 #'
 #' * \code{start}: The starting time of the resulting subrecord.
 #'
-#' * \code{stop}: The stopping time of the resulting subrecord.
+#' * \code{end}: The ending time of the resulting subrecord.
 #'
 #' * \code{censor}: Whether the subrecord lies strictly within a record
-#'   in the input data.
+#'   in the input data (1 for all but the last interval and 0 for the
+#'   last interval with cutpoint set equal to tstop).
 #'
-#' * \code{interval}: The interval number.
+#' * \code{interval}: The interval number derived from cut (starting
+#'   from 0 if the interval lies to the left of the first cutpoint).
 #'
 #' @author Kaifeng Lu, \email{kaifenglu@@gmail.com}
 #'

@@ -16,10 +16,11 @@ logisregr(
   link = "logit",
   robust = FALSE,
   firth = FALSE,
-  bc = FALSE,
   flic = FALSE,
   plci = FALSE,
-  alpha = 0.05
+  alpha = 0.05,
+  maxiter = 50,
+  eps = 1e-09
 )
 }
 \arguments{
@@ -64,17 +65,16 @@ variance estimate.}
 \item{firth}{Whether the firth's bias reducing penalized likelihood
 should be used. The default is \code{FALSE}.}
 
-\item{bc}{Whether to apply firth's bias correction for noncanonical
-parameterization and weighted logistic regression. The default is
-\code{FALSE}, in which case, the penalized likelihood with Jeffreys
-prior will be used.}
-
 \item{flic}{Whether to apply intercept correction to obtain more
 accurate predicted probabilities. The default is \code{FALSE}.}
 
 \item{plci}{Whether to obtain profile likelihood confidence interval.}
 
 \item{alpha}{The two-sided significance level.}
+
+\item{maxiter}{The maximum number of iterations.}
+
+\item{eps}{The tolerance to declare convergence.}
 }
 \value{
 A list with the following components:
@@ -93,8 +93,6 @@ and regression coefficients associated with the covariates.
 \item \code{robust}: Whether a robust sandwich variance estimate should
 be computed.
 \item \code{firth}: Whether the firth's penalized likelihood is used.
-\item \code{bc}: Whether to apply firth's bias correction for noncanonical
-parameterization and weighted logistic regression.
 \item \code{flic}: Whether to apply intercept correction.
 \item \code{loglik0_unpenalized}: The unpenalized log-likelihood under null.
 \item \code{loglik1_unpenalized}: The maximum unpenalized log-likelihood.
@@ -121,10 +119,10 @@ estimates.
 }
 \item \code{fitted}: The data frame with the following variables:
 \itemize{
-\item \code{linear_predictors}: The linear fit on the logit scale.
+\item \code{linear_predictors}: The linear fit on the link function scale.
 \item \code{fitted_values}: The fitted probabilities of having an event,
 obtained by transforming the linear predictors by the inverse of
-the logit link.
+the link function.
 \item \code{rep}: The replication.
 }
 \item \code{p}: The number of parameters.
@@ -133,7 +131,7 @@ the logit link.
 \item \code{beta}: The parameter estimate.
 \item \code{vbeta}: The covariance matrix for parameter estimates.
 \item \code{vbeta_naive}: The naive covariance matrix for parameter estimates.
-\item \code{linear_predictors}: The linear fit on the logit scale.
+\item \code{linear_predictors}: The linear fit on the link function scale.
 \item \code{fitted_values}: The fitted probabilities of having an event.
 \item \code{terms}: The terms object.
 \item \code{xlevels}: A record of the levels of the factors used in fitting.
@@ -147,8 +145,6 @@ the logit link.
 \item \code{id}: The name of the id variable.
 \item \code{robust}: Whether a robust sandwich variance estimate should be
 computed.
-\item \code{bc}: Whether to apply firth's bias correction for noncanonical
-parameterization and weighted logistic regression.
 \item \code{firth}: Whether to use the firth's bias reducing penalized
 likelihood.
 \item \code{flic}: Whether to apply intercept correction.
