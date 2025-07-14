@@ -41,14 +41,14 @@ Hedges' \eqn{g} is an effect size measure commonly used in meta-analysis
 to quantify the difference between two groups. It's an improvement
 over Cohen's \eqn{d}, particularly when dealing with small sample sizes.
 
-The formula for Hedges' \eqn{g} is \deqn{g = c(m) d,} where \eqn{d}
+The formula for Hedges' \eqn{g} is \deqn{g = c(m) d} where \eqn{d}
 is Cohen's \eqn{d} effect size estimate, and \eqn{c(m)} is the bias
-correction factor, \deqn{d = (\hat{\mu}_1 - \hat{\mu}_2)/\hat{\sigma},}
+correction factor, \deqn{d = (\hat{\mu}_1 - \hat{\mu}_2)/\hat{\sigma}}
 \deqn{c(m) = 1 - \frac{3}{4m-1}.}
-Since \eqn{c(m) < 1}, Cohen's \eqn{d} overestimates the true effect size.
+Since \eqn{c(m) < 1}, Cohen's \eqn{d} overestimates the true effect size,
 \eqn{\delta = (\mu_1 - \mu_2)/\sigma.}
-Since \deqn{t = \sqrt{\tilde{n}} d,} we have
-\deqn{g = \frac{c(m)}{\sqrt{\tilde{n}}} t,} where \eqn{t}
+Since \deqn{t = \sqrt{\tilde{n}} d} we have
+\deqn{g = \frac{c(m)}{\sqrt{\tilde{n}}} t} where \eqn{t}
 has a noncentral \eqn{t} distribution with \eqn{m} degrees of freedom
 and noncentrality parameter \eqn{\sqrt{\tilde{n}} \delta}.
 

@@ -33,6 +33,12 @@ a one-sample proportion.
 ClopperPearsonCI(20, 3)
 
 }
+\references{
+Clopper, C. J., & Pearson, E. S. (1934).
+The use of confidence or fiducial limits illustrated in the case of the
+binomial.
+Biometrika, 26(4), 404-413.
+}
 \author{
 Kaifeng Lu, \email{kaifenglu@gmail.com}
 }

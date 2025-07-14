@@ -57,6 +57,39 @@ Obtains the power given sample size or obtains the sample
 size given power for the Cochran-Armitage trend test for ordered
 multi-sample binomial response.
 }
+\details{
+An ordered multi-sample binomial response design is used to test
+whether the response probabilities differ across multiple treatment
+groups. The null hypothesis is that the response probabilities
+are equal across all treatment groups, while the alternative
+hypothesis is that the response probabilities
+are ordered, i.e. the response probability increases with
+the treatment group index.
+The Cochran-Armitage trend test is used to test this hypothesis.
+This test effectively regresses the response probabilities
+against treatment group scores, and test whether
+the slope of the regression line is significantly different
+from zero.
+
+The trend parameter is defined as
+\deqn{\theta = \sum_{g=1}^{G} r_g (w_g - \bar{w}) \pi_g}
+where \eqn{G} is the number of treatment groups,
+\eqn{r_g} is the randomization probability for treatment group
+\eqn{g}, \eqn{w_g} is the score assigned to treatment group \eqn{g},
+\eqn{\pi_g} is the response probability for
+treatment group \eqn{g}, and \eqn{\bar{w} = \sum_{g=1}^{G} r_g w_g} is
+the weighted average score across all treatment groups.
+
+Since \eqn{\hat{\theta}} is a linear combination of the estimated
+response probabilities, its variance is given by
+\deqn{Var(\hat{\theta}) = \frac{1}{n}\sum_{g=1}^{G} r_g
+(w_g - \bar{w})^2 \pi_g(1-\pi_g)}
+where \eqn{n} is the total sample size.
+
+The sample size is chosen such that the power to reject the null
+hypothesis is at least \eqn{1-\beta} for a given
+significance level \eqn{\alpha}.
+}
 \examples{
 
 (design1 <- getDesignOrderedBinom(

@@ -22,6 +22,7 @@ getDesignSlopeDiffMMRM(
   gamma2 = 0,
   accrualDuration = NA_real_,
   followupTime = NA_real_,
+  fixedFollowup = FALSE,
   allocationRatioPlanned = 1,
   normalApproximation = TRUE,
   rounding = TRUE,
@@ -59,9 +60,14 @@ hypothesis.}
 \item{corrInterceptSlope}{The correlation between the random
 intercept and random slope.}
 
-\item{w}{The number of time units per measurement visit in a period.}
+\item{w}{The number of time units (e.g. weeks) per measurement visit
+in a period. In general, visits are more frequent in the beginning
+of the study and less frequent towards the end.}
 
-\item{N}{The number of measurement visits in a period.}
+\item{N}{The number of measurement visits in a period. For example,
+\code{w = c(8, 16)} and \code{N = c(2, Inf)} means that the
+response variable will be collected at baseline, week 8,
+week 16, and every 16 weeks thereafter.}
 
 \item{accrualTime}{A vector that specifies the starting time of
 piecewise Poisson enrollment time intervals. Must start with 0, e.g.,
@@ -87,6 +93,9 @@ hazard rates for piecewise exponential dropout for the control group.}
 \item{accrualDuration}{Duration of the enrollment period.}
 
 \item{followupTime}{Follow-up time for the last enrolled subject.}
+
+\item{fixedFollowup}{Whether a fixed follow-up design is used.
+Defaults to 0 for variable follow-up.}
 
 \item{allocationRatioPlanned}{Allocation ratio for the active treatment
 versus control. Defaults to 1 for equal randomization.}
@@ -268,7 +277,7 @@ MMRM model.
 \details{
 We use the following random-effects model to compare two slopes:
 \deqn{y_{ij} = \alpha + (\beta + \gamma x_i) t_j + a_i + b_i t_j
-+ e_{ij},} where
++ e_{ij}} where
 \itemize{
 \item \eqn{\alpha}: overall intercept common across treatment groups
 due to randomization
@@ -286,8 +295,42 @@ for subject \eqn{i}, \eqn{Var(a_i) = \sigma_a^2},
 }
 
 By accounting for randomization, we improve the efficiency for
-estimating the difference in slopes. We also allow for non-equal
-spacing of the time points and missing data due to dropouts.
+estimating the difference in slopes. The model also accommodates
+unequally spaced time points and missing data.
+Specifically, given a calendar time \eqn{\tau} for an interim or
+final analysis, let \eqn{k} be the number of scheduled time points
+up to and including \eqn{\tau}, subject to the follow-up duration for
+fixed follow-up designs. Let the observed time points be
+\eqn{t_1, t_2, \ldots, t_k}, where \eqn{t_1 = 0} denotes baseline.
+
+For a subject in treatment group \eqn{g} with observed data
+pattern \eqn{j}, the design matrix for the fixed effects
+\eqn{(\alpha, \beta, \gamma)'} is given by
+\deqn{X_{g,j} = (\bm{1}_j, \vec{t}_j, I(g=1)\vec{t}_j)}
+where \eqn{\bm{1}_j} is a \eqn{j}-vector of ones, and
+\eqn{\vec{t}_j = (t_1,\ldots,t_j)'} is the column vector of
+observed time points. The design matrix for the
+random effects \eqn{(a_i, b_i)'} is \deqn{Z_j = (\bm{1}_j, \vec{t}_j)}
+The variance-covariance matrix of the random effects is
+\deqn{D = \left(\begin{array}{cc} \sigma_a^2 & \rho \sigma_a \sigma_b \\
+\rho \sigma_a \sigma_b & \sigma_b^2 \end{array}\right)}
+Therefore, the variance-covariance matrix for the observed data
+for the subject is
+\deqn{V_{j} = Z_j D Z_j' + \sigma_e^2 I_j}
+where \eqn{I_j} is the \eqn{j\times j} identity matrix.
+Let \eqn{\pi_g} denote the proportion of subjects in group \eqn{g}.
+The information matrix for the fixed effects is \deqn{I = nJ}
+where
+\deqn{J = \sum_{g=1}^{2} \pi_g \sum_{j=1}^{k} p_{g,j}
+X_{g,j}' V_j^{-1} X_{g,j}}
+and \eqn{p_{g,j}} is the proportion of subjects in group \eqn{g}
+with observed data pattern \eqn{j}.
+
+The variance of the estimator for the slope difference
+\eqn{\hat{\gamma}} is given by
+\deqn{\text{Var}(\hat{\gamma}) = \frac{1}{n} J^{-1}[3,3]}
+which can be used to calculate the power and sample size for the
+group sequential design to detect a slope difference.
 }
 \examples{
 

@@ -64,7 +64,7 @@ to the \eqn{k} treatment groups. Let \eqn{\sigma} denote the
 common standard deviation, and \eqn{n} denote the total sample
 size. Then the \eqn{F}-statistic
 \deqn{F = \frac{SSR/(k-1)}{SSE/(n-k)}
-\sim F_{k-1, n-k, \lambda},} where
+\sim F_{k-1, n-k, \lambda}} where
 \deqn{\lambda = n \sum_{i=1}^k r_i (\mu_i - \bar{\mu})^2/\sigma^2}
 is the noncentrality parameter, and
 \eqn{\bar{\mu} = \sum_{i=1}^k r_i \mu_i}.

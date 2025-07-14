@@ -81,6 +81,12 @@ toxicity rates.
 BOINTable(nMax = 18, pT = 0.3, phi = 0.6*0.3, phi2 = 1.4*0.3)
 
 }
+\references{
+Liu, S., & Yuan, Y. (2015).
+Bayesian optimal interval designs for phase I clinical trials.
+Journal of the Royal Statistical Society:
+Series C (Applied Statistics), 64(3), 507-523.
+}
 \author{
 Kaifeng Lu, \email{kaifenglu@gmail.com}
 }

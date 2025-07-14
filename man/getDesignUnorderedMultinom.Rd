@@ -57,6 +57,42 @@ Obtains the power given sample size or obtains the sample
 size given power for the chi-square test for unordered multi-sample
 multinomial response.
 }
+\details{
+A multi-sample multinomial response design is used to test whether the
+response probabilities differ among multiple treatment arms.
+Let \eqn{\pi_{gi}} denote the response probability for
+category \eqn{i = 1,\ldots,C} in group
+\eqn{g = 1,\ldots,G}, where \eqn{G} is the total number of
+treatment groups, and \eqn{C} is the total number of categories
+for the response variable.
+
+The chi-square test statistic is given by
+\deqn{X^2 = \sum_{g=1}^{G} \sum_{i=1}^{C}
+\frac{(n_{gi} - n_{g+}n_{+i}/n)^2}{n_{g+} n_{+i}/n}}
+where \eqn{n_{gi}} is the number of subjects in category \eqn{i}
+for group \eqn{g}, \eqn{n_{g+}} is the total number of subjects
+in group \eqn{g}, and \eqn{n_{+i}} is the total number of subjects
+in category \eqn{i} across all groups, and
+\eqn{n} is the total sample size.
+
+Let \eqn{r_g} denote the randomization probability for group \eqn{g}, and
+define the weighted average response probability
+for category \eqn{i} across all groups as
+\deqn{\bar{\pi_i} = \sum_{g=1}^{G} r_g \pi_{gi}}
+\itemize{
+\item Under the null hypothesis, \eqn{X^2} follows a chi-square distribution
+with \eqn{(G-1)(C-1)} degrees of freedom.
+\item Under the alternative hypothesis, \eqn{X^2} follows a non-central
+chi-square distribution with non-centrality parameter
+\deqn{\lambda = n \sum_{g=1}^{G} \sum_{i=1}^{C}
+  \frac{r_g (\pi_{gi} - \bar{\pi_i})^2}
+  {\bar{\pi_i}}}
+}
+
+The sample size is chosen such that the power to reject the null
+hypothesis is at least \eqn{1-\beta} for a given
+significance level \eqn{\alpha}.
+}
 \examples{
 
 (design1 <- getDesignUnorderedMultinom(

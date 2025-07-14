@@ -186,6 +186,27 @@ Obtains the power given sample size or obtains the sample
 size given power for a group sequential design for two-sample risk
 ratio.
 }
+\details{
+Consider a group sequential design for two-sample risk ratio.
+The parameter of interest is \deqn{\rho = \pi_1 / \pi_2}
+where \eqn{\pi_1} is the response probability for the active
+treatment group and \eqn{\pi_2} is the response probability
+for the control group. For statistical inference,
+the parameter is often transformed to
+the log scale: \deqn{\theta = \log(\rho) = \log(\pi_1) - \log(\pi_2)}
+The variance of the estimator \eqn{\hat{\theta}}
+can be derived from the binomial distributions as follows:
+\deqn{Var(\hat{\theta}) = \frac{1}{n} \{
+\frac{1-\pi_1}{\pi_1 r} + \frac{1-\pi_2}{\pi_2(1-r)} \}}
+where \eqn{n} is the total number of subjects and \eqn{r} is the
+randomization probability for the active treatment group.
+When \code{nullVariance = TRUE}, the variance is computed
+under the null hypothesis. In this case, the values of
+\eqn{\pi_1} and \eqn{\pi_2} in the variance formula are
+replaced with their restricted maximum likelihood
+counterparts, subject to the constraint
+\deqn{\pi_1 / \pi_2 = \rho_0}
+}
 \examples{
 
 (design1 <- getDesignRiskRatio(

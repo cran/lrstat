@@ -51,6 +51,32 @@ components:
 Obtains the power given sample size or obtains the sample
 size given power for one-sample multinomial response.
 }
+\details{
+A single-arm multinomial response design is used to test whether the
+prevalence of each category is different from the null hypothesis
+prevalence.
+The null hypothesis is that the prevalence of each category
+is equal to \eqn{\pi_{0i}}, while the alternative hypothesis is that
+the prevalence of each category is equal to \eqn{\pi_i}, for
+\eqn{i=1,\ldots,C}, where \eqn{C} is the number of categories.
+
+The sample size is calculated based on the chi-square test for
+multinomial response. The test statistic is given by
+\deqn{X^2 = \sum_{i=1}^{C} \frac{(n_i - n\pi_{0i})^2}{n\pi_{0i}}}
+where \eqn{n_i} is the number of subjects in category \eqn{i}, and
+\eqn{n} is the total sample size.
+\itemize{
+\item Under the null hypothesis, \eqn{X^2} follows a chi-square distribution
+with \eqn{C-1} degrees of freedom.
+\item Under the alternative hypothesis, \eqn{X^2} follows a non-central
+chi-square distribution with non-centrality parameter
+\deqn{\lambda = n \sum_{i=1}^{C} \frac{(\pi_i - \pi_{0i})^2}{\pi_{0i}}}
+}
+
+The sample size is chosen such that the power to reject the null
+hypothesis is at least \eqn{1-\beta} for a given
+significance level \eqn{\alpha}.
+}
 \examples{
 
 (design1 <- getDesignOneMultinom(

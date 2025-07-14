@@ -58,6 +58,47 @@ versus control.
 Obtains the power given sample size or obtains the sample
 size given power for the Wilcoxon test for two-sample ordinal response.
 }
+\details{
+A two-sample ordinal response design is used to test whether the
+ordinal response distributions differ between two treatment arms.
+Let \eqn{\pi_{gi}} denote the prevalence of category \eqn{i}
+in group \eqn{g}, where \eqn{g=1} represents the treatment group and
+\eqn{g=2} represents the control group.
+
+The parameter of interest is
+\deqn{\theta = \sum_{i=1}^{C} w_i (\pi_{1i} - \pi_{2i})}
+where \eqn{w_i} is the midrank score for category \eqn{i}.
+The Z-test statistic is given by
+\deqn{Z = \hat{\theta}/\sqrt{Var(\hat{\theta})}}
+where \eqn{\hat{\theta}} is the estimate of \eqn{\theta}.
+
+The midrank score \eqn{w_i} for category \eqn{i} is calculated as:
+\deqn{w_i = \sum_{j=1}^{i} \pi_j - 0.5\pi_i}
+where \eqn{\pi_i = r\pi_{1i} + (1-r)\pi_{2i}} denotes the average
+prevalence of category \eqn{i} across both groups,
+and \eqn{r} is the randomization probability for the active treatment.
+
+To understand the midrank score, consider \eqn{n\pi_i} subjects
+in category \eqn{i}. The midrank score is the average rank of
+these subjects:
+\deqn{s_i = \frac{1}{n\pi_i} \sum_{j=1}^{n\pi_i} (
+n\pi_1 + \cdots + n\pi_{i-1} + j)}
+This simplifies to
+\deqn{s_i = n\left(\sum_{j=1}^{i} \pi_j - 0.5\pi_i\right) + \frac{1}{2}}
+By dividing by \eqn{n} and ignoring \eqn{\frac{1}{2n}}, we obtain
+the midrank score \eqn{w_i}.
+
+The variance of \eqn{\hat{\theta}} can be derived from the multinomial
+distributions and is given by
+\deqn{Var(\hat{\theta}) = \frac{1}{n}\sum_{g=1}^{2} \frac{1}{r_g}
+\left\{\sum_{i=1}^{C} w_i^2\pi_{gi} - \left(\sum_{i=1}^{C} w_i\pi_{gi}
+\right)^2\right\}}
+where \eqn{r_g} is the randomization probability for group \eqn{g}.
+
+The sample size is chosen such that the power to reject the null
+hypothesis is at least \eqn{1-\beta} for a given
+significance level \eqn{\alpha}.
+}
 \examples{
 
 (design1 <- getDesignTwoOrdinal(

@@ -77,6 +77,11 @@ probability interval-2 (mTPI-2) design.
 mTPI2Table(nMax = 18, pT = 0.3, epsilon1 = 0.05, epsilon2 = 0.05)
 
 }
+\references{
+Guo, W., Wang, S. J., Yang, S., Lynn, H., & Ji, Y. (2017).
+A Bayesian interval dose-finding design addressing Ockham's razor: mTPI-2.
+Contemporary Clinical Trials, 58, 23-33.
+}
 \author{
 Kaifeng Lu, \email{kaifenglu@gmail.com}
 }

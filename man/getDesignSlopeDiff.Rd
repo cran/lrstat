@@ -193,6 +193,34 @@ Obtains the power given sample size or obtains the sample
 size given power for a group sequential design for two-sample slope
 difference.
 }
+\details{
+We assume a simple linear regression of the form
+\deqn{y_{g,i} = \alpha_g + \beta_g x_{g,i} + \epsilon_{g,i}}
+for treatment group \eqn{g}, where \eqn{\epsilon_{g,i}}
+is the residual error for subject \eqn{i} in group \eqn{g},
+which is assumed to be normally distributed with mean 0 and
+standard deviation \eqn{\sigma_\epsilon}.
+The covariate \eqn{x_{g,i}} is assumed to
+be normally distributed with mean 0 and standard deviation
+\eqn{\sigma_x}. Since
+\deqn{\hat{\beta}_g = \frac{\sum_{i=1}^{n_g} (x_{g,i}-\bar{x}_g) y_{g,i}}
+{\sum_{i=1}^{n_g}(x_{g,i}-\bar{x}_g)^2}}
+where \eqn{n_g} is the sample size for group \eqn{g},
+it follows that
+\deqn{\hat{\beta}_g \sim N(\beta_g,
+\frac{\sigma_\epsilon^2}{\sum_{i=1}^{n_g}(x_{g,i}-\bar{x}_g)^2}).}
+The slope difference is defined as
+\deqn{\hat{\beta}_1 - \hat{\beta}_2}
+where \eqn{\hat{\beta}_1} and \eqn{\hat{\beta}_2}
+are the estimated slopes for treatment groups 1 and 2, respectively.
+Since the variance of \eqn{\hat{\beta}_g} is
+\deqn{\frac{\sigma_\epsilon^2}{n_g \sigma_x^2}}
+we have
+\deqn{\hat{\beta}_1 - \hat{\beta}_2 \sim N(\beta_1 - \beta_2,
+(n_1^{-1} + n_2^{-1})\sigma_\epsilon^2/\sigma_x^2)}
+which can be used to
+calculate the power and sample size for the group sequential design.
+}
 \examples{
 
 (design1 <- getDesignSlopeDiff(

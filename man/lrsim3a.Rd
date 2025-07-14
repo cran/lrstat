@@ -5,7 +5,7 @@
 \title{Log-Rank Test Simulation for Three Arms}
 \usage{
 lrsim3a(
-  kMax = NA_integer_,
+  kMax = 1L,
   hazardRatioH013 = 1,
   hazardRatioH023 = 1,
   hazardRatioH012 = 1,

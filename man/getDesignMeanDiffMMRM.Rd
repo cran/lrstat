@@ -212,6 +212,7 @@ difference scale.
 \item \code{futilityMeanDiff}: The futility boundaries on the mean
 difference scale.
 \item \code{numberOfSubjects}: The number of subjects.
+\item \code{numberOfCompleters}: The number of completers.
 \item \code{analysisTime}: The average time since trial start.
 }
 \item \code{settings}: A list containing the following input parameters:
@@ -256,6 +257,72 @@ Obtains the power and sample size for two-sample
 mean difference at the last time point from the mixed-model
 for repeated measures (MMRM) model.
 }
+\details{
+Consider a longitudinal study with two treatment groups.
+The outcome is measured at baseline and at \eqn{k} postbaseline
+time points. For each treatment group, the outcomes are assumed to
+follow a multivariate normal distribution.
+Conditional on baseline, the covariance matrix of the post-baseline
+outcomes is denoted by \eqn{\Sigma_1} for the active treatment group
+and \eqn{\Sigma_2} for the control group.
+Let \eqn{\mu_1} and \eqn{\mu_2} denote the mean vectors of
+post-baseline outcomes for the active and control groups, respectively.
+We are interested in testing the null
+hypothesis \eqn{H_0: \mu_{1,k} - \mu_{2,k} = \delta_0}
+against the alternative \eqn{H_1: \mu_{1,k} - \mu_{2,k} = \delta}.
+
+The study design is based on the information for treatment difference
+at the last postbaseline time point. This information is given by
+\deqn{I = 1/\text{Var}(\hat{\mu}_{1,k} - \hat{\mu}_{2,k})}
+In the presence of monotone missing data, let
+\eqn{p_{g,1},\ldots,p_{g,k}} denote the proportions of subjects in
+observed data patterns 1 through \eqn{k} for treatment group
+\eqn{g=1} (active) or 2 (control).
+A subject in pattern \eqn{j} has complete data up to time \eqn{t_j}, i.e.,
+the observed outcomes are \eqn{y_{i,1},\ldots,y_{i,j}},
+with missing values for \eqn{y_{i,j+1},\ldots,y_{i,k}}.
+
+According to Lu et al. (2008), the information
+matrix for the post-baseline mean vector in group \eqn{g} is
+\deqn{I_g = n \pi_g J_g}
+where \eqn{\pi_g} is the proportion of subjects in group \eqn{g},
+and \deqn{J_g = \sum_{j=1}^k p_{g,j} \left(
+\begin{array}{cc} \Sigma_{g,j}^{-1} & 0 \\ 0 & 0 \end{array}\right)}
+Here, \eqn{\Sigma_{g,j}} is the leading \eqn{j\times j}
+principal submatrix of \eqn{\Sigma_g}. It follows that
+\deqn{\text{Var}(\hat{\mu}_{1,k} - \hat{\mu}_{2,k}) =
+\frac{1}{n}\left(\frac{1}{\pi_1} J_1^{-1}[k,k] +
+\frac{1}{\pi_2} J_2^{-1}[k,k]\right)}
+
+The observed data pattern probabilities depend on the accrual and
+dropout distributions.
+Let \eqn{H(u)} denote the cumulative distribution function of
+enrollment time \eqn{u},
+\eqn{G_g(t)} denote the survival function of dropout time \eqn{t} for
+treatment group \eqn{g},
+and \eqn{\tau} denote the calendar time at interim or final analysis.
+Then, for \eqn{j=1,\ldots,k-1}, the probability that a subject in group
+\eqn{g} falls into observed data pattern \eqn{j} is
+\deqn{p_{g,j} = H(\tau - t_j)G_g(t_j) - H(\tau - t_{j+1})G_g(t_{j+1})}
+For the last pattern (\eqn{j=k}, i.e., completers),
+\deqn{p_{g,k} = H(\tau - t_k)G_g(t_k)}
+For the final analysis, \eqn{\tau} is the study duration,
+so \eqn{H(\tau - t_j) = 1} for all \eqn{j}.
+Therefore, the pattern probabilities depend only on the dropout
+distribution:
+\deqn{p_{g,j} = G_g(t_j) - G_g(t_{j+1}), \quad j=1,\ldots,k-1}
+and \deqn{p_{g,k} = G_g(t_k)}
+
+Cumulative dropout probabilities at post-baseline time points
+can be used to define a piecewise exponential dropout distribution.
+Let \eqn{F_g(t_j)} denote the cumulative probability of dropout
+by time \eqn{t_j} for treatment group \eqn{g}.
+The left endpoints of the piecewise survival time intervals are given by
+\eqn{t_0=0,t_1,\ldots,t_{k-1}}.
+The hazard rate in the interval \eqn{(t_{j-1},t_j]} is given by
+\deqn{\gamma_{g,j} = -\log\left(\frac{1 - F_g(t_j)}{1 - F_g(t_{j-1})}
+\right) / (t_j - t_{j-1}), \quad j=1,\ldots,k}
+}
 \examples{
 
 # function to generate the AR(1) correlation matrix
@@ -280,6 +347,12 @@ ar1_cor <- function(n, corr) {
   alpha = 0.025,
   typeAlphaSpending = "sfOF"))
 
+}
+\references{
+Kaifeng Lu, Xiaohui Luo, and Pei-Yun Chen.
+Sample size estimation for repeated measures analysis in randomized
+clinical trials with missing data.
+The International Journal of Biostatistics 2008; 14(1), Article 9.
 }
 \author{
 Kaifeng Lu, \email{kaifenglu@gmail.com}

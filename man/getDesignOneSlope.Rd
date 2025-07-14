@@ -183,6 +183,25 @@ the calculations are performed with the t distribution.
 Obtains the power given sample size or obtains the sample
 size given power for a group sequential design for one-sample slope.
 }
+\details{
+We assume a simple linear regression of the form
+\deqn{y_i = \alpha + \beta x_i + \epsilon_i}
+where \eqn{\epsilon_i} is the residual error, which is assumed to
+be normally distributed with mean 0 and standard deviation
+\eqn{\sigma_\epsilon}. The covariate \eqn{x_i} is assumed to
+be normally distributed with mean 0 and standard deviation
+\eqn{\sigma_x}. The slope under the null hypothesis is
+\eqn{\beta_0}, and the slope under the alternative
+hypothesis is \eqn{\beta}. Since
+\deqn{\hat{\beta} = \frac{\sum_{i=1}^{n} (x_i-\bar{x}) y_i}
+{\sum_{i=1}^{n}(x_i-\bar{x})^2}}
+it follows that
+\deqn{\hat{\beta} \sim N(\beta,
+ \frac{\sigma_\epsilon^2}{\sum_{i=1}^{n}(x_i-\bar{x})^2}).}
+Since the variance of \eqn{\hat{\beta}} is
+\deqn{\frac{\sigma_\epsilon^2}{n\sigma_x^2}} we can use it to
+calculate the power and sample size for the group sequential design.
+}
 \examples{
 
 (design1 <- getDesignOneSlope(

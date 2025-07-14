@@ -57,6 +57,34 @@ versus control.
 Obtains the power given sample size or obtains the sample
 size given power for difference in two-sample multinomial responses.
 }
+\details{
+A two-arm multinomial response design is used to test whether the
+prevalence of each category differs between two treatment arms.
+Let \eqn{\pi_{gi}} denote the prevalence of category \eqn{i}
+in group \eqn{g}, where \eqn{g=1} for the treatment group and
+\eqn{g=2} for the control group.
+The chi-square test statistic is given by
+\deqn{X^2 = \sum_{g=1}^{2} \sum_{i=1}^{C}
+\frac{(n_{gi} - n_{g+} n_{+i}/n)^2}{n_{g+} n_{+i}/n}}
+where \eqn{n_{gi}} is the number of subjects in category \eqn{i}
+for group \eqn{g}, \eqn{n_{g+}} is the total number of subjects
+in group \eqn{g}, and \eqn{n_{+i}} is the total number of subjects
+in category \eqn{i} across both groups, and
+\eqn{n} is the total sample size.
+\itemize{
+\item Under the null hypothesis, \eqn{X^2} follows a chi-square distribution
+with \eqn{C-1} degrees of freedom.
+\item Under the alternative hypothesis, \eqn{X^2} follows a non-central
+chi-square distribution with non-centrality parameter
+\deqn{\lambda = n r (1-r) \sum_{i=1}^{C} \frac{(\pi_{1i} - \pi_{2i})^2}
+  {r \pi_{1i} + (1-r)\pi_{2i}}}
+where \eqn{r} is the randomization probability for the active treatment.
+}
+
+The sample size is chosen such that the power to reject the null
+hypothesis is at least \eqn{1-\beta} for a given
+significance level \eqn{\alpha}.
+}
 \examples{
 
 (design1 <- getDesignTwoMultinom(

@@ -187,12 +187,30 @@ Obtains the power given sample size or obtains the sample
 size given power for a group sequential design for two-sample risk
 difference.
 }
+\details{
+Consider a group sequential design for two-sample risk difference.
+The parameter of interest is \deqn{\theta = \pi_1 - \pi_2}
+where \eqn{\pi_1} is the response probability for the active
+treatment group and \eqn{\pi_2} is the response probability
+for the control group. The variance of \eqn{\hat{\theta}}
+can be obtained from the binomial distributions as follows:
+\deqn{Var(\hat{\theta}) = \frac{1}{n} \{
+\frac{\pi_1(1-\pi_1)}{r} + \frac{\pi_2(1-\pi_2)}{1-r} \}}
+where \eqn{n} is the total number of subjects and \eqn{r} is the
+randomization probability for the active treatment group.
+When \code{nullVariance = TRUE}, the variance is computed
+under the null hypothesis. In this case, the values of
+\eqn{\pi_1} and \eqn{\pi_2} in the variance formula are
+replaced with their restricted maximum likelihood
+counterparts, subject to the constraint
+\deqn{\pi_1 - \pi_2 = \theta_0}
+}
 \examples{
 
 (design1 <- getDesignRiskDiff(
   beta = 0.2, n = NA, pi1 = 0.1, pi2 = 0.15,
   kMax = 3, alpha = 0.025, typeAlphaSpending = "sfOF",
-  nullVariance = 0))
+  nullVariance = FALSE))
 
 }
 \author{

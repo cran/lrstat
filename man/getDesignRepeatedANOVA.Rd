@@ -57,8 +57,8 @@ in the longitudinal study.
 \details{
 Let \eqn{y_{ij}} denote the measurement under treatment condition
 \eqn{j (j=1,\ldots,k)} for subject \eqn{i (i=1,\ldots,n)}. Then
-\deqn{y_{ij} = \alpha + \beta_j + b_i + e_{ij},} where \eqn{b_i}
-denotes the subject random effect, \eqn{b_i \sim N(0, \sigma_b^2),}
+\deqn{y_{ij} = \alpha + \beta_j + b_i + e_{ij}} where \eqn{b_i}
+denotes the subject random effect, \eqn{b_i \sim N(0, \sigma_b^2)}
 and \eqn{e_{ij} \sim N(0, \sigma_e^2)} denotes the within-subject
 residual. If we set \eqn{\beta_k = 0}, then \eqn{\alpha} is the
 mean of the last treatment (control), and \eqn{\beta_j} is the
@@ -77,7 +77,7 @@ X_i\right)^{-1}.} It can be shown that
 \deqn{Var(\hat{\beta}) = \frac{\sigma^2 (1-\rho)}{n} (I_{k-1} +
 1_{k-1} 1_{k-1}^T).} It follows that
 \eqn{\hat{\beta}^T \hat{V}_{\hat{\beta}}^{-1} \hat{\beta} \sim
-F_{k-1,(n-1)(k-1), \lambda},} where the noncentrality parameter for
+F_{k-1,(n-1)(k-1), \lambda}} where the noncentrality parameter for
 the \eqn{F} distribution is \deqn{\lambda =
 \beta^T V_{\hat{\beta}}^{-1} \beta = \frac{n \sum_{j=1}^{k}
 (\mu_j - \bar{\mu})^2}{\sigma^2(1-\rho)}.}

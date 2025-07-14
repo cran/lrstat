@@ -176,6 +176,38 @@ Obtains the power given sample size or obtains the sample
 size given power for a group sequential design for two-sample
 Wilcoxon test.
 }
+\details{
+The Mann-Whitney U test is a non-parametric test for the
+difference in location between two independent groups. It is
+also known as the Wilcoxon rank-sum test. The test is based on
+the ranks of the data rather than the actual values, making it
+robust to outliers and non-normal distributions.
+The test statistic is the number of times a randomly
+chosen sample from the treatment group is larger than a
+randomly chosen sample from the control group, i.e.,
+\deqn{W_{XY} = \sum_{i=1}^{n_1}\sum_{j=1}^{n_2} I(X_i > Y_j)}
+where \eqn{X_i} and \eqn{Y_j} are the samples from the
+treatment and control groups, respectively.
+The test is often used when the data
+do not meet the assumptions of the t-test, such as
+non-normality or unequal variances.
+The test is also applicable to ordinal data.
+The test is one-sided, meaning that it only tests
+whether the treatment group is larger than the control group.
+Asymptotically,
+\deqn{\frac{W_{XY} - n_1 n_2/2}{\sqrt{n_1 n_2 (n+1)/12}} \sim N(0,1)
+\quad \text{under} H_0}
+where \eqn{n_1} and \eqn{n_2} are the sample sizes of the treatment
+and control groups, respectively, and \eqn{n=n_1+n_2}.
+Let \eqn{\theta = P(X > Y)}, and
+\eqn{\hat{\theta} = \frac{1}{nm}W_{XY}}. It follows that
+\deqn{\sqrt{n}(\hat{\theta} - 1/2) \sim
+N\left(0, \frac{1}{12 r(1-r)}\right) \quad \text{under} H_0}
+where \eqn{r = n_1/(n_1+n_2)} is the randomization probability
+for the active treatment group.
+This formulation allows for group sequential testing with
+futility stopping and efficacy stopping.
+}
 \examples{
 
 # Example 1: fixed design

@@ -5,8 +5,8 @@
 \title{Log-Rank Test Simulation for Two Endpoints and Three Arms}
 \usage{
 lrsim2e3a(
-  kMax = NA_integer_,
-  kMaxe1 = NA_integer_,
+  kMax = 1L,
+  kMaxe1 = 1L,
   hazardRatioH013e1 = 1,
   hazardRatioH023e1 = 1,
   hazardRatioH012e1 = 1,

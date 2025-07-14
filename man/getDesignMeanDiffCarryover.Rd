@@ -111,6 +111,9 @@ that without accounting for carryover effects. This is equal to
 \item \code{releff_carry}: The relative efficiency of the design
 for estimating the carryover effect for the treatment pair
 of interest. This is equal to \code{v_direct_only/v_carry}.
+\item \code{half_width}: The half-width of the confidence interval for the
+direct treatment effect for the treatment pair of interest.
+\item \code{nu}: Degrees of freedom for the t-test.
 \item \code{allocationRatioPlanned}: Allocation ratio for the sequences.
 \item \code{normalApproximation}: The type of computation of the p-values.
 If \code{TRUE}, the variance is assumed to be known, otherwise
@@ -127,8 +130,8 @@ carryover effects.
 The linear mixed-effects model to assess the direct treatment effects
 in the presence of carryover treatment effects is given by
 \deqn{y_{ijk} = \mu + \alpha_i + b_{ij} + \gamma_k + \tau_{d(i,k)}
-+ \lambda_{c(i,k-1)} + e_{ijk},}
-\deqn{i=1,\ldots,n; j=1,\ldots,r_i; k = 1,\ldots,p; d,c = 1,\ldots,t,}
++ \lambda_{c(i,k-1)} + e_{ijk}}
+\deqn{i=1,\ldots,n; j=1,\ldots,r_i; k = 1,\ldots,p; d,c = 1,\ldots,t}
 where \eqn{\mu} is the general mean, \eqn{\alpha_i} is the effect of
 the \eqn{i}th treatment sequence, \eqn{b_{ij}} is the random effect
 with variance \eqn{\sigma_b^2} for the \eqn{j}th subject of the

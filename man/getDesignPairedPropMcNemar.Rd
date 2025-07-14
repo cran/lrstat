@@ -179,6 +179,36 @@ Obtains the power given sample size or obtains the sample
 size given power for a group sequential design for McNemar's test for
 paired proportions.
 }
+\details{
+Consider a group sequential design for McNemar's test for paired
+proportions. The table below shows joint probabilities for
+each cell (\eqn{\pi_{ij}} where \eqn{i} is for control group and
+\eqn{j} is for experimental group), with marginal totals.
+\tabular{lccc}{
+\tab Experimental: No Response \tab Experimental: Response
+\tab Row Total \cr
+Control: No Response  \tab \eqn{\pi_{00}}  \tab \eqn{\pi_{01}}
+\tab \eqn{1-\pi_c} \cr
+Control: Response  \tab \eqn{\pi_{10}}  \tab \eqn{\pi_{11}}
+\tab \eqn{\pi_c} \cr
+Column Total  \tab \eqn{1-\pi_t}  \tab \eqn{\pi_t}  \tab 1
+}
+The parameters \eqn{\pi_{01}} and \eqn{\pi_{10}} are the discordant pairs
+(i.e., \eqn{\pi_{01} + \pi_{10} = \xi}) and the risk difference
+is \eqn{\pi_{01} - \pi_{10} = \delta}. The parameter \eqn{\pi_t} is the
+proportion of experimental group response, and \eqn{\pi_c} is the
+proportion of control group response. The parameter of interest
+is \deqn{\theta = \pi_t - \pi_c = \pi_{01} - \pi_{10} = \delta}
+The variance of \eqn{\hat{\theta}} can be obtained from the multinomial
+distribution as follows:
+\deqn{Var(\hat{\theta}) = \frac{1}{n} \{
+\pi_{01}(1-\pi_{01}) + \pi_{10}(1-\pi_{10}) + 2\pi_{01}\pi_{10} \}}
+which can be simplified to
+\deqn{Var(\hat{\theta}) = \frac{1}{n} (\xi - \delta^2)}
+Here, \eqn{n} is the total number of treatment pairs.
+This is the unconditional variance, which is used for the
+overall design.
+}
 \examples{
 
 # Example 1: fixed design

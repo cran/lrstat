@@ -9,6 +9,7 @@ getDesignOneProportion(
   n = NA_real_,
   piH0 = 0.1,
   pi = 0.2,
+  nullVariance = TRUE,
   normalApproximation = TRUE,
   rounding = TRUE,
   kMax = 1L,
@@ -35,6 +36,9 @@ getDesignOneProportion(
 \item{piH0}{The response probability under the null hypothesis.}
 
 \item{pi}{The response probability under the alternative hypothesis.}
+
+\item{nullVariance}{Whether to use the variance under the null
+or the variance under the alternative.}
 
 \item{normalApproximation}{The type of computation of the p-values.
 If \code{TRUE}, the normal approximation will be used, otherwise
@@ -168,6 +172,10 @@ spending.
 \item \code{parameterBetaSpending}: The parameter value for beta spending.
 \item \code{userBetaSpending}: The user defined beta spending.
 \item \code{spendingTime}: The error spending time at each analysis.
+\item \code{varianceRatio}: The ratio of the variance under H0 to
+the variance under H1.
+\item \code{nullVariance}: Whether to use the variance under the null or
+the empirical variance under the alternative.
 \item \code{normalApproximation}: The type of computation of the p-values.
 If \code{TRUE}, the variance is assumed to be known, otherwise
 the calculations are performed with the binomial distribution.

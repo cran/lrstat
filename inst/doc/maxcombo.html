@@ -464,58 +464,63 @@ weights.</p>
 \right)
 \]</span> Now, we obtain the critical value <span class="math inline">\(u_2\)</span> by solving equation (1).</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="fu">library</span>(mvtnorm)</span>
-<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>mu <span class="ot">=</span> <span class="fu">c</span>(<span class="fl">0.900</span>, <span class="fl">2.234</span>, <span class="fl">2.662</span>)</span>
-<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>sigma <span class="ot">=</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">1</span>, <span class="fl">0.748</span>, <span class="fl">0.370</span>, <span class="fl">0.748</span>, <span class="dv">1</span>, <span class="fl">0.861</span>, <span class="fl">0.370</span>, <span class="fl">0.861</span>, <span class="dv">1</span>), <span class="dv">3</span>, <span class="dv">3</span>)</span>
-<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a>u1 <span class="ot">=</span> <span class="fl">2.968</span></span>
-<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a>alpha <span class="ot">=</span> <span class="fl">0.025</span></span>
-<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a>f <span class="ot">&lt;-</span> <span class="cf">function</span>(u2, u1, sigma, alpha) {</span>
-<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a>  <span class="dv">1</span> <span class="sc">-</span> <span class="fu">pmvnorm</span>(<span class="at">upper=</span><span class="fu">c</span>(u1, u2, u2), <span class="at">corr=</span>sigma, <span class="at">algorithm=</span><span class="st">&quot;Miwa&quot;</span>) <span class="sc">-</span> alpha</span>
-<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a>}</span>
-<span id="cb6-9"><a href="#cb6-9" tabindex="-1"></a>(<span class="at">u2 =</span> <span class="fu">uniroot</span>(f, <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">3</span>), u1, sigma, alpha)<span class="sc">$</span>root)</span>
-<span id="cb6-10"><a href="#cb6-10" tabindex="-1"></a><span class="co">#&gt; [1] 2.136998</span></span></code></pre></div>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a><span class="co">#&gt; Attaching package: &#39;mvtnorm&#39;</span></span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a><span class="co">#&gt; The following object is masked from &#39;package:lrstat&#39;:</span></span>
+<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a><span class="co">#&gt;     rmvnorm</span></span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a>mu <span class="ot">=</span> <span class="fu">c</span>(<span class="fl">0.900</span>, <span class="fl">2.234</span>, <span class="fl">2.662</span>)</span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>sigma <span class="ot">=</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">1</span>, <span class="fl">0.748</span>, <span class="fl">0.370</span>, <span class="fl">0.748</span>, <span class="dv">1</span>, <span class="fl">0.861</span>, <span class="fl">0.370</span>, <span class="fl">0.861</span>, <span class="dv">1</span>), <span class="dv">3</span>, <span class="dv">3</span>)</span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>u1 <span class="ot">=</span> <span class="fl">2.968</span></span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a>alpha <span class="ot">=</span> <span class="fl">0.025</span></span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a>f <span class="ot">&lt;-</span> <span class="cf">function</span>(u2, u1, sigma, alpha) {</span>
+<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a>  <span class="dv">1</span> <span class="sc">-</span> <span class="fu">pmvnorm</span>(<span class="at">upper=</span><span class="fu">c</span>(u1, u2, u2), <span class="at">corr=</span>sigma, <span class="at">algorithm=</span><span class="st">&quot;Miwa&quot;</span>) <span class="sc">-</span> alpha</span>
+<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a>}</span>
+<span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a>(<span class="at">u2 =</span> <span class="fu">uniroot</span>(f, <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">3</span>), u1, sigma, alpha)<span class="sc">$</span>root)</span>
+<span id="cb7-9"><a href="#cb7-9" tabindex="-1"></a><span class="co">#&gt; [1] 2.136998</span></span></code></pre></div>
 <p>The power can be estimated by plugging in the mean under the
 alternative hypothesis.</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="dv">1</span> <span class="sc">-</span> <span class="fu">pmvnorm</span>(<span class="at">upper=</span><span class="fu">c</span>(u1, u2, u2), <span class="at">corr=</span>sigma, <span class="at">mean=</span>mu, <span class="at">algorithm=</span><span class="st">&quot;Miwa&quot;</span>)</span>
-<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a><span class="co">#&gt; [1] 0.7243152</span></span>
-<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a><span class="co">#&gt; attr(,&quot;error&quot;)</span></span>
-<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a><span class="co">#&gt; [1] NA</span></span>
-<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a><span class="co">#&gt; attr(,&quot;msg&quot;)</span></span>
-<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a><span class="co">#&gt; [1] &quot;Normal Completion&quot;</span></span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="dv">1</span> <span class="sc">-</span> <span class="fu">pmvnorm</span>(<span class="at">upper=</span><span class="fu">c</span>(u1, u2, u2), <span class="at">corr=</span>sigma, <span class="at">mean=</span>mu, <span class="at">algorithm=</span><span class="st">&quot;Miwa&quot;</span>)</span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a><span class="co">#&gt; [1] 0.7243152</span></span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a><span class="co">#&gt; attr(,&quot;error&quot;)</span></span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a><span class="co">#&gt; [1] NA</span></span>
+<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a><span class="co">#&gt; attr(,&quot;msg&quot;)</span></span>
+<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a><span class="co">#&gt; [1] &quot;Normal Completion&quot;</span></span></code></pre></div>
 <p>For the simulation study, we use very large critical values for the
 FH(0,0) and FH(0,1) log-rank statistics at the interim and final
 analyses for each iteration, and then construct the maximum combo test
 statistic at the final analysis. Finally, we tally the rejections across
 iterations to estimate the power. The same seed should be used to
 produce identical simulated data.</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a>sim1 <span class="ot">=</span> <span class="fu">lrsim</span>(<span class="at">kMax =</span> <span class="dv">2</span>, <span class="at">informationRates =</span> <span class="fu">c</span>(<span class="fl">0.5</span>, <span class="dv">1</span>),</span>
-<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>             <span class="at">criticalValues =</span> <span class="fu">c</span>(<span class="dv">6</span>, <span class="dv">6</span>),</span>
-<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a>             <span class="at">accrualIntensity =</span> <span class="dv">25</span>, </span>
-<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a>             <span class="at">piecewiseSurvivalTime =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">1.5</span>),</span>
-<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a>             <span class="at">lambda1 =</span> <span class="fu">c</span>(<span class="fl">0.25</span>, <span class="fl">0.125</span>), <span class="at">lambda2 =</span> <span class="fu">c</span>(<span class="fl">0.25</span>, <span class="fl">0.25</span>),</span>
-<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a>             <span class="at">accrualDuration =</span> <span class="dv">4</span>,</span>
-<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a>             <span class="at">rho1 =</span> <span class="dv">0</span>, <span class="at">rho2 =</span> <span class="dv">0</span>,</span>
-<span id="cb8-8"><a href="#cb8-8" tabindex="-1"></a>             <span class="at">plannedEvents =</span> <span class="fu">c</span>(<span class="dv">50</span>, <span class="dv">100</span>), </span>
-<span id="cb8-9"><a href="#cb8-9" tabindex="-1"></a>             <span class="at">maxNumberOfIterations =</span> <span class="dv">10000</span>,</span>
-<span id="cb8-10"><a href="#cb8-10" tabindex="-1"></a>             <span class="at">seed =</span> <span class="dv">314159</span>)</span>
-<span id="cb8-11"><a href="#cb8-11" tabindex="-1"></a></span>
-<span id="cb8-12"><a href="#cb8-12" tabindex="-1"></a>sim2 <span class="ot">=</span> <span class="fu">lrsim</span>(<span class="at">kMax =</span> <span class="dv">2</span>, <span class="at">informationRates =</span> <span class="fu">c</span>(<span class="fl">0.5</span>, <span class="dv">1</span>),</span>
-<span id="cb8-13"><a href="#cb8-13" tabindex="-1"></a>             <span class="at">criticalValues =</span> <span class="fu">c</span>(<span class="dv">6</span>, <span class="dv">6</span>),</span>
-<span id="cb8-14"><a href="#cb8-14" tabindex="-1"></a>             <span class="at">accrualIntensity =</span> <span class="dv">25</span>,</span>
-<span id="cb8-15"><a href="#cb8-15" tabindex="-1"></a>             <span class="at">piecewiseSurvivalTime =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">1.5</span>),</span>
-<span id="cb8-16"><a href="#cb8-16" tabindex="-1"></a>             <span class="at">lambda1 =</span> <span class="fu">c</span>(<span class="fl">0.25</span>, <span class="fl">0.125</span>), <span class="at">lambda2 =</span> <span class="fu">c</span>(<span class="fl">0.25</span>, <span class="fl">0.25</span>),</span>
-<span id="cb8-17"><a href="#cb8-17" tabindex="-1"></a>             <span class="at">accrualDuration =</span> <span class="dv">4</span>,</span>
-<span id="cb8-18"><a href="#cb8-18" tabindex="-1"></a>             <span class="at">rho1 =</span> <span class="dv">0</span>, <span class="at">rho2 =</span> <span class="dv">1</span>, </span>
-<span id="cb8-19"><a href="#cb8-19" tabindex="-1"></a>             <span class="at">plannedEvents =</span> <span class="fu">c</span>(<span class="dv">50</span>, <span class="dv">100</span>),</span>
-<span id="cb8-20"><a href="#cb8-20" tabindex="-1"></a>             <span class="at">maxNumberOfIterations =</span> <span class="dv">10000</span>,</span>
-<span id="cb8-21"><a href="#cb8-21" tabindex="-1"></a>             <span class="at">seed =</span> <span class="dv">314159</span>)</span>
-<span id="cb8-22"><a href="#cb8-22" tabindex="-1"></a></span>
-<span id="cb8-23"><a href="#cb8-23" tabindex="-1"></a>w1max <span class="ot">=</span> <span class="fu">subset</span>(<span class="sc">-</span>sim1<span class="sc">$</span>sumdata<span class="sc">$</span>logRankStatistic, sim1<span class="sc">$</span>sumdata<span class="sc">$</span>stageNumber<span class="sc">==</span><span class="dv">1</span>)</span>
-<span id="cb8-24"><a href="#cb8-24" tabindex="-1"></a></span>
-<span id="cb8-25"><a href="#cb8-25" tabindex="-1"></a>w2max <span class="ot">=</span> <span class="fu">pmax</span>(<span class="sc">-</span>sim1<span class="sc">$</span>sumdata<span class="sc">$</span>logRankStatistic, <span class="sc">-</span>sim2<span class="sc">$</span>sumdata<span class="sc">$</span>logRankStatistic) </span>
-<span id="cb8-26"><a href="#cb8-26" tabindex="-1"></a>w2max <span class="ot">=</span> <span class="fu">subset</span>(w2max, sim1<span class="sc">$</span>sumdata<span class="sc">$</span>stageNumber<span class="sc">==</span><span class="dv">2</span>)</span>
-<span id="cb8-27"><a href="#cb8-27" tabindex="-1"></a></span>
-<span id="cb8-28"><a href="#cb8-28" tabindex="-1"></a><span class="fu">mean</span>((w1max <span class="sc">&gt;</span> u1) <span class="sc">|</span> (w2max <span class="sc">&gt;</span> u2))</span>
-<span id="cb8-29"><a href="#cb8-29" tabindex="-1"></a><span class="co">#&gt; [1] 0.7302</span></span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a>sim1 <span class="ot">=</span> <span class="fu">lrsim</span>(<span class="at">kMax =</span> <span class="dv">2</span>, <span class="at">informationRates =</span> <span class="fu">c</span>(<span class="fl">0.5</span>, <span class="dv">1</span>),</span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>             <span class="at">criticalValues =</span> <span class="fu">c</span>(<span class="dv">6</span>, <span class="dv">6</span>),</span>
+<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a>             <span class="at">accrualIntensity =</span> <span class="dv">25</span>, </span>
+<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a>             <span class="at">piecewiseSurvivalTime =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">1.5</span>),</span>
+<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a>             <span class="at">lambda1 =</span> <span class="fu">c</span>(<span class="fl">0.25</span>, <span class="fl">0.125</span>), <span class="at">lambda2 =</span> <span class="fu">c</span>(<span class="fl">0.25</span>, <span class="fl">0.25</span>),</span>
+<span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a>             <span class="at">accrualDuration =</span> <span class="dv">4</span>,</span>
+<span id="cb9-7"><a href="#cb9-7" tabindex="-1"></a>             <span class="at">rho1 =</span> <span class="dv">0</span>, <span class="at">rho2 =</span> <span class="dv">0</span>,</span>
+<span id="cb9-8"><a href="#cb9-8" tabindex="-1"></a>             <span class="at">plannedEvents =</span> <span class="fu">c</span>(<span class="dv">50</span>, <span class="dv">100</span>), </span>
+<span id="cb9-9"><a href="#cb9-9" tabindex="-1"></a>             <span class="at">maxNumberOfIterations =</span> <span class="dv">10000</span>,</span>
+<span id="cb9-10"><a href="#cb9-10" tabindex="-1"></a>             <span class="at">seed =</span> <span class="dv">314159</span>)</span>
+<span id="cb9-11"><a href="#cb9-11" tabindex="-1"></a></span>
+<span id="cb9-12"><a href="#cb9-12" tabindex="-1"></a>sim2 <span class="ot">=</span> <span class="fu">lrsim</span>(<span class="at">kMax =</span> <span class="dv">2</span>, <span class="at">informationRates =</span> <span class="fu">c</span>(<span class="fl">0.5</span>, <span class="dv">1</span>),</span>
+<span id="cb9-13"><a href="#cb9-13" tabindex="-1"></a>             <span class="at">criticalValues =</span> <span class="fu">c</span>(<span class="dv">6</span>, <span class="dv">6</span>),</span>
+<span id="cb9-14"><a href="#cb9-14" tabindex="-1"></a>             <span class="at">accrualIntensity =</span> <span class="dv">25</span>,</span>
+<span id="cb9-15"><a href="#cb9-15" tabindex="-1"></a>             <span class="at">piecewiseSurvivalTime =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">1.5</span>),</span>
+<span id="cb9-16"><a href="#cb9-16" tabindex="-1"></a>             <span class="at">lambda1 =</span> <span class="fu">c</span>(<span class="fl">0.25</span>, <span class="fl">0.125</span>), <span class="at">lambda2 =</span> <span class="fu">c</span>(<span class="fl">0.25</span>, <span class="fl">0.25</span>),</span>
+<span id="cb9-17"><a href="#cb9-17" tabindex="-1"></a>             <span class="at">accrualDuration =</span> <span class="dv">4</span>,</span>
+<span id="cb9-18"><a href="#cb9-18" tabindex="-1"></a>             <span class="at">rho1 =</span> <span class="dv">0</span>, <span class="at">rho2 =</span> <span class="dv">1</span>, </span>
+<span id="cb9-19"><a href="#cb9-19" tabindex="-1"></a>             <span class="at">plannedEvents =</span> <span class="fu">c</span>(<span class="dv">50</span>, <span class="dv">100</span>),</span>
+<span id="cb9-20"><a href="#cb9-20" tabindex="-1"></a>             <span class="at">maxNumberOfIterations =</span> <span class="dv">10000</span>,</span>
+<span id="cb9-21"><a href="#cb9-21" tabindex="-1"></a>             <span class="at">seed =</span> <span class="dv">314159</span>)</span>
+<span id="cb9-22"><a href="#cb9-22" tabindex="-1"></a></span>
+<span id="cb9-23"><a href="#cb9-23" tabindex="-1"></a>w1max <span class="ot">=</span> <span class="fu">subset</span>(<span class="sc">-</span>sim1<span class="sc">$</span>sumdata<span class="sc">$</span>logRankStatistic, sim1<span class="sc">$</span>sumdata<span class="sc">$</span>stageNumber<span class="sc">==</span><span class="dv">1</span>)</span>
+<span id="cb9-24"><a href="#cb9-24" tabindex="-1"></a></span>
+<span id="cb9-25"><a href="#cb9-25" tabindex="-1"></a>w2max <span class="ot">=</span> <span class="fu">pmax</span>(<span class="sc">-</span>sim1<span class="sc">$</span>sumdata<span class="sc">$</span>logRankStatistic, <span class="sc">-</span>sim2<span class="sc">$</span>sumdata<span class="sc">$</span>logRankStatistic) </span>
+<span id="cb9-26"><a href="#cb9-26" tabindex="-1"></a>w2max <span class="ot">=</span> <span class="fu">subset</span>(w2max, sim1<span class="sc">$</span>sumdata<span class="sc">$</span>stageNumber<span class="sc">==</span><span class="dv">2</span>)</span>
+<span id="cb9-27"><a href="#cb9-27" tabindex="-1"></a></span>
+<span id="cb9-28"><a href="#cb9-28" tabindex="-1"></a><span class="fu">mean</span>((w1max <span class="sc">&gt;</span> u1) <span class="sc">|</span> (w2max <span class="sc">&gt;</span> u2))</span>
+<span id="cb9-29"><a href="#cb9-29" tabindex="-1"></a><span class="co">#&gt; [1] 0.7302</span></span></code></pre></div>
 <p>The analytic method yielded a power of about 72%, while the
 simulation method yielded a power of about 73%, both are close to that
 reported by <span class="citation">Prior (2020)</span>.</p>

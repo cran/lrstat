@@ -162,16 +162,56 @@ The seed from the environment will be used if left unspecified.}
 \value{
 A list of two components:
 \itemize{
-\item \code{resultsUnderH1}: An S3 class \code{lrpower} object under the
-alternative hypothesis.
-\item \code{resultsUnderH0}: An S3 class \code{lrpower} object under the
-null hypothesis.
+\item \code{analyticalResults}: An S3 class \code{lrpower} object for
+the asymptotic power.
+\item \code{simulationResults}: An S3 class \code{lrsim} object for
+the empirical power.
 }
 }
 \description{
 Obtains the sample size and study duration by calibrating
 the number of events calculated using the Schoenfeld formula
 under the proportional hazards assumption.
+}
+\details{
+This function calculates the sample size and study duration
+by calibrating the number of events estimated using the
+Schoenfeld formula under the proportional hazards assumption,
+particularly when the hazard ratio is far away from one and/or
+the allocation between groups is unequal.
+
+For a fixed design, the Schoenfeld formula for the required
+number of events is
+\deqn{D = \frac{(\Phi^{-1}(1-\alpha) + \Phi^{-1}(1-\beta))^2}
+{(\theta - \theta_0)^2 r(1-r)}}
+where \eqn{D} is the total number of events required,
+\eqn{\alpha} is the type I error rate,
+\eqn{\beta} is the type II error rate,
+\eqn{r} is the randomization probability for the active treatment group,
+\eqn{\theta_0} and \eqn{\theta} are the log hazard ratios under
+the null and alternative hypotheses, respectively.
+
+The function first computes the number of events using the
+Schoenfeld formula. If \code{calibrate} is set to 1, the
+function uses simulations to calibrate the number of
+events, accounting for scenarios where the Schoenfeld formula
+may be inaccurate (e.g., when allocation is unequal or the hazard
+ratio is extreme).
+
+Let \eqn{D_{schoenfeld}} be the number of events calculated
+by the Schoenfeld formula, and \eqn{D_{calibrated}}
+be the calibrated number of events. The calibrated number of
+events is calculated as
+#' \deqn{D_{\text{calibrated}} =
+\frac{\left\{\Phi^{-1}(1-\alpha) + \Phi^{-1}(1-\beta)\right\}^2}
+{\left\{\Phi^{-1}(1-\alpha) +
+\Phi^{-1}(1-\beta_{\text{schoenfeld}})\right\}^2}
+D_{\text{schoenfeld}}}
+where \eqn{\beta_{schoenfeld}} is the empirical type II error
+estimated via simulation.
+
+A second round of simulation is performed to obtain the
+empirical power using the calibrated number of events.
 }
 \examples{
 

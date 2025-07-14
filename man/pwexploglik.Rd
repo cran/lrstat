@@ -2,7 +2,7 @@
 % Please edit documentation in R/getDesignSurvivals.R
 \name{pwexploglik}
 \alias{pwexploglik}
-\title{Profile Log-Likelihood Function for the Change Points in
+\title{Profile Log-Likelihood Function for Change Points in
 Piecewise Exponential Approximation}
 \usage{
 pwexploglik(tau, S, ...)
@@ -25,9 +25,46 @@ each analysis time interval.
 }
 }
 \description{
-Obtains the profile log-likelihood function for the
+Obtains the profile log-likelihood function for
 change points in the piecewise exponential approximation to
 a survival function.
+}
+\details{
+This function computes the profile log-likelihood for
+change points in a piecewise exponential survival model.
+
+Let \eqn{S(t)} denote the survival function of a univariate
+survival time, and \eqn{\tau} be a vector of \eqn{J-1} change points.
+The piecewise exponential survival model divides the time
+axis into \eqn{J} intervals defined by the change points \eqn{\tau},
+where each interval \eqn{[t_j, t_{j+1})} has a constant
+hazard rate \eqn{\lambda_j}. The time intervals are specified as:
+\deqn{[t_1, t_2), [t_2, t_3), \ldots, [t_{J}, t_{J+1})}
+where \eqn{t_1 = 0}, \eqn{t_{J+1} = \infty}, and
+\eqn{t_j = \tau_{j-1}} for \eqn{j = 2, \ldots, J}.
+
+For each subject, the expected number of events occurring
+in the \eqn{j}-th interval is
+\deqn{d_j = E\{I(t_j < Y \leq t_{j+1})\} = S(t_j) - S(t_{j+1})}
+The expected exposure in the \eqn{j}-th interval is:
+\deqn{e_j = E\{(Y-t_j)I(t_j < Y \leq t_{j+1}) +
+(t_{j+1} - t_j)I(Y > t_{j+1})\}}
+which can be shown to be equivalent to
+\deqn{e_j = \int_{t_j}^{t_{j+1}} S(t) dt}
+
+The log-likelihood for the piecewise exponential model is:
+\deqn{\ell(\tau,\lambda) =
+\sum_{j=1}^J \{d_j \log(\lambda_j) - e_j \lambda_j\}}
+The profile log-likelihood for \eqn{\tau} is obtained by maximizing
+\eqn{\ell(\tau,\lambda)} with respect to
+\eqn{\lambda} for fixed \eqn{\tau}.
+The maximum likelihood estimate of the hazard rate in the
+\eqn{j}-th interval is
+\deqn{\lambda_j = \frac{d_j}{e_j}}
+Substituting back, the profile log-likelihood is
+\deqn{\ell(\tau) = \sum_{j=1}^J d_j \log(d_j/e_j) - 1}
+where we use the fact that
+\eqn{\sum_{j=1}^J d_j = 1}.
 }
 \examples{
 

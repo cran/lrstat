@@ -73,7 +73,7 @@ in one-way analysis of variance.
 
 (design1 <- getDesignANOVAContrast(
   beta = 0.1, ngroups = 4, means = c(1.5, 2.5, 2, 0),
-  stDev = 3.5, contrast = c(1, 1, 1, -3)/3,
+  stDev = 3.5, contrast = c(1, 1, 1, -3),
   allocationRatioPlanned = c(2, 2, 2, 1),
   alpha = 0.025))
 

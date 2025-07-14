@@ -132,29 +132,29 @@ We reject \eqn{H_{10}} at or before look \eqn{k} if
 for some \eqn{j=1,\ldots,k}, where \eqn{\{b_j:j=1,\ldots,K\}} are the
 critical values associated with the specified alpha-spending function,
 and \eqn{I_j} is the information for \eqn{\theta} (inverse variance of
-\eqn{\hat{\theta}} under the alternative hypothesis) at the
+\eqn{\hat{\theta}}) at the
 \eqn{j}th look. For example,
 for estimating the risk difference \eqn{\theta = \pi_1 - \pi_2},
 \deqn{I_j = \left\{\frac{\pi_1 (1-\pi_1)}{n_{1j}} +
 \frac{\pi_2(1-\pi_2)}{n_{2j}}\right\}^{-1}.}
 It follows that
 \deqn{(Z_{1j} \geq b_j) = (Z_j \geq b_j +
-(\theta_{10}-\theta)\sqrt{I_j}),}
-where \eqn{Z_j = (\hat{\theta}_j - \theta)\sqrt{I_j}}.
+\theta_{10}\sqrt{I_j}),}
+where \eqn{Z_j = \hat{\theta}_j \sqrt{I_j}}.
 
 Similarly, we reject \eqn{H_{20}} at or before look \eqn{k} if
 \deqn{Z_{2j} = (\hat{\theta}_j - \theta_{20})\sqrt{I_j}
 \leq -b_j} for some \eqn{j=1,\ldots,k}. We have
 \deqn{(Z_{2j} \leq -b_j) = (Z_j \leq - b_j +
-(\theta_{20}-\theta)\sqrt{I_j}).}
+\theta_{20}\sqrt{I_j}).}
 
-Let \eqn{l_j = b_j + (\theta_{10}-\theta)\sqrt{I_j}},
-and \eqn{u_j = -b_j + (\theta_{20}-\theta)\sqrt{I_j}}.
+Let \eqn{l_j = b_j + \theta_{10}\sqrt{I_j}},
+and \eqn{u_j = -b_j + \theta_{20}\sqrt{I_j}}.
 The cumulative probability to reject \eqn{H_0 = H_{10} \cup H_{20}} at
 or before look \eqn{k} under the alternative hypothesis \eqn{H_1} is
 given by
 \deqn{P_\theta\left(\cup_{j=1}^{k} (Z_{1j} \geq b_j) \cap
-\cup_{j=1}^{k} (Z_{2j} \leq -b_j)\right) = p_1 + p_2 + p_{12},}
+\cup_{j=1}^{k} (Z_{2j} \leq -b_j)\right) = p_1 + p_2 - p_{12},}
 where
 \deqn{p_1 = P_\theta\left(\cup_{j=1}^{k} (Z_{1j} \geq b_j)\right)
 = P_\theta\left(\cup_{j=1}^{k} (Z_j \geq l_j)\right),}

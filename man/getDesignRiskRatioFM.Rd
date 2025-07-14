@@ -188,6 +188,28 @@ Obtains the power given sample size or obtains the sample
 size given power for a group sequential design for two-sample risk
 ratio based on the Farrington-Manning score test
 }
+\details{
+Consider a group sequential design for two-sample risk ratio.
+The parameter of interest is \deqn{\rho = \pi_1 / \pi_2}
+where \eqn{\pi_1} is the response probability for the active
+treatment group and \eqn{\pi_2} is the response probability
+for the control group. Let \eqn{\rho_0} denote the risk ratio
+under the null hypothesis. The Farrington-Manning score test
+statistic is constructed as
+\deqn{Z = \frac{\hat{\pi}_1 - \rho_0 \hat{\pi}_2}{
+\sqrt{Var(\hat{\pi}_1 - \rho_0 \hat{\pi}_2)}}}
+The variance can be derived from the binomial distributions as follows:
+\deqn{Var(\hat{\pi}_1 - \rho_0 \hat{\pi}_2) = \frac{1}{n} \{
+\frac{\pi_1(1-\pi_1)}{r} + \frac{\rho_0^2\pi_2(1-\pi_2)}{1-r} \}}
+where \eqn{n} is the total number of subjects and \eqn{r} is the
+randomization probability for the active treatment group.
+When \code{nullVariance = TRUE}, the variance is computed
+under the null hypothesis. In this case, the values of
+\eqn{\pi_1} and \eqn{\pi_2} in the variance formula are
+replaced with their restricted maximum likelihood
+counterparts, subject to the constraint
+\deqn{\pi_1 / \pi_2 = \rho_0}
+}
 \examples{
 
 (design1 <- getDesignRiskRatioFM(

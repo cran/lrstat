@@ -4,12 +4,15 @@
 \alias{pwexpcuts}
 \title{Piecewise Exponential Approximation to a Survival Distribution}
 \usage{
-pwexpcuts(S, ...)
+pwexpcuts(S, ..., tol = 1e-04)
 }
 \arguments{
 \item{S}{The survival function of a univariate survival time.}
 
 \item{...}{Additional arguments to be passed to S.}
+
+\item{tol}{The tolerance for convergence of the profile log-likelihood.
+Defaults to 0.0001.}
 }
 \value{
 A list with three components:
@@ -28,6 +31,24 @@ of change points.
 \description{
 Obtains the piecewise exponential distribution that
 approximates a survival distribution.
+}
+\details{
+This function computes the piecewise exponential approximation
+to a survival distribution.
+The piecewise exponential model divides the time axis into
+\eqn{J} intervals defined by the change points, where each
+interval \eqn{[t_j, t_{j+1})} has a constant hazard rate
+\eqn{\lambda_j}. The time intervals are specified as:
+\deqn{[t_1, t_2), [t_2, t_3), \ldots, [t_{J}, t_{J+1})}
+where \eqn{t_1 = 0}, \eqn{t_{J+1} = \infty}, and
+\eqn{t_j = \tau_{j-1}} for \eqn{j = 2, \ldots, J}.
+The function starts with \eqn{J = 2} (1 change point) and
+gradually increases \eqn{J} by adding one change point at a time
+until the maximized profile log-likelihood for change points
+stabilizes, i.e., the relative increase in the maximum of the
+profile log-likelihood function is less than \code{tol}.
+If the relative change in the hazard rate is also less than
+\code{tol}, the function stops and returns the results.
 }
 \examples{
 
