@@ -5,17 +5,9 @@
 \title{REML Estimates of Individual Proportions With Specified Risk
 difference}
 \usage{
-remlRiskDiff(
-  riskDiffH0 = 0,
-  n1 = NA_real_,
-  y1 = NA_real_,
-  n2 = NA_real_,
-  y2 = NA_real_
-)
+remlRiskDiff(n1, y1, n2, y2, riskDiffH0 = 0)
 }
 \arguments{
-\item{riskDiffH0}{The specified risk difference.}
-
 \item{n1}{The sample size for the active treatment group.}
 
 \item{y1}{The number of responses for the active treatment group.}
@@ -23,6 +15,8 @@ remlRiskDiff(
 \item{n2}{The sample size for the control group.}
 
 \item{y2}{The number of responses for the control group.}
+
+\item{riskDiffH0}{The specified risk difference.}
 }
 \value{
 A vector of the restricted maximum likelihood estimates
@@ -34,7 +28,7 @@ individual proportions with specified risk difference.
 }
 \examples{
 
-remlRiskDiff(riskDiffH0 = 0.1, n1 = 10, y1 = 4, n2 = 20, y2 = 0)
+remlRiskDiff(n1 = 10, y1 = 4, n2 = 20, y2 = 0, riskDiffH0 = 0.1)
 
 }
 \author{

@@ -4,12 +4,7 @@
 \alias{accrual}
 \title{Number of Enrolled Subjects}
 \usage{
-accrual(
-  time = NA_real_,
-  accrualTime = 0L,
-  accrualIntensity = NA_real_,
-  accrualDuration = NA_real_
-)
+accrual(time, accrualTime, accrualIntensity, accrualDuration)
 }
 \arguments{
 \item{time}{A vector of calendar times at which to calculate the number

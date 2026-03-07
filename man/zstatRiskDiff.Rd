@@ -5,18 +5,9 @@
 \title{Miettinen-Nurminen Score Test Statistic for Two-Sample Risk
 difference}
 \usage{
-zstatRiskDiff(
-  riskDiffH0 = 0,
-  n1 = NA_real_,
-  y1 = NA_real_,
-  n2 = NA_real_,
-  y2 = NA_real_
-)
+zstatRiskDiff(n1, y1, n2, y2, riskDiffH0 = 0)
 }
 \arguments{
-\item{riskDiffH0}{The risk difference under the null hypothesis.
-Defaults to 0.}
-
 \item{n1}{The sample size for the active treatment group.}
 
 \item{y1}{The number of responses for the active treatment group.}
@@ -24,6 +15,9 @@ Defaults to 0.}
 \item{n2}{The sample size for the control group.}
 
 \item{y2}{The number of responses for the control group.}
+
+\item{riskDiffH0}{The risk difference under the null hypothesis.
+Defaults to 0.}
 }
 \value{
 The value of the score test statistic.
@@ -38,8 +32,8 @@ samples.
 }
 \examples{
 
-zstatRiskDiff(riskDiffH0 = 0, n1 = c(10,10), y1 = c(4,3),
-              n2 = c(20,10), y2 = c(2,0))
+zstatRiskDiff(n1 = c(10, 10), y1 = c(4, 3),
+              n2 = c(20, 10), y2 = c(2, 0), riskDiffH0 = 0)
 
 }
 \author{

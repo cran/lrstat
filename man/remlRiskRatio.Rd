@@ -5,17 +5,9 @@
 \title{REML Estimates of Individual Proportions With Specified Risk
 Ratio}
 \usage{
-remlRiskRatio(
-  riskRatioH0 = 1,
-  n1 = NA_real_,
-  y1 = NA_real_,
-  n2 = NA_real_,
-  y2 = NA_real_
-)
+remlRiskRatio(n1, y1, n2, y2, riskRatioH0 = 1)
 }
 \arguments{
-\item{riskRatioH0}{The specified risk ratio.}
-
 \item{n1}{The sample size for the active treatment group.}
 
 \item{y1}{The number of responses for the active treatment group.}
@@ -23,6 +15,8 @@ remlRiskRatio(
 \item{n2}{The sample size for the control group.}
 
 \item{y2}{The number of responses for the control group.}
+
+\item{riskRatioH0}{The specified risk ratio.}
 }
 \value{
 A vector of the restricted maximum likelihood estimates
@@ -34,7 +28,7 @@ individual proportions with specified risk ratio.
 }
 \examples{
 
-remlRiskRatio(riskRatioH0 = 1.2, n1 = 10, y1 = 4, n2 = 20, y2 = 2)
+remlRiskRatio(n1 = 10, y1 = 4, n2 = 20, y2 = 2, riskRatioH0 = 1.2)
 
 }
 \author{

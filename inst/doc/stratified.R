@@ -37,7 +37,8 @@ lrpower(kMax = 3,
         lambda1 = 0.4466*lambda2, 
         lambda2 = lambda2, 
         accrualDuration = 24, 
-        followupTime = 30.92)
+        followupTime = 30.92, 
+        typeOfComputation = "schoenfeld")
 
 ## -----------------------------------------------------------------------------
 lrsim(kMax = 3, 
@@ -47,7 +48,7 @@ lrsim(kMax = 3,
       stratumFraction = stratumFraction,
       lambda1 = 0.4466*lambda2, 
       lambda2 = lambda2, 
-      accrualDuration = 24, 
+      n = 288, 
       followupTime = 30.92,
       plannedEvents = c(22, 44, 66),
       maxNumberOfIterations = 1000, 

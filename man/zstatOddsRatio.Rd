@@ -4,18 +4,9 @@
 \alias{zstatOddsRatio}
 \title{Miettinen-Nurminen Score Test Statistic for Two-Sample Odds Ratio}
 \usage{
-zstatOddsRatio(
-  oddsRatioH0 = 1,
-  n1 = NA_real_,
-  y1 = NA_real_,
-  n2 = NA_real_,
-  y2 = NA_real_
-)
+zstatOddsRatio(n1, y1, n2, y2, oddsRatioH0 = 1)
 }
 \arguments{
-\item{oddsRatioH0}{The odds ratio under the null hypothesis.
-Defaults to 1.}
-
 \item{n1}{The sample size for the active treatment group.}
 
 \item{y1}{The number of responses for the active treatment group.}
@@ -23,6 +14,9 @@ Defaults to 1.}
 \item{n2}{The sample size for the control group.}
 
 \item{y2}{The number of responses for the control group.}
+
+\item{oddsRatioH0}{The odds ratio under the null hypothesis.
+Defaults to 1.}
 }
 \value{
 The value of the score test statistic.
@@ -37,8 +31,8 @@ samples.
 }
 \examples{
 
-zstatOddsRatio(oddsRatioH0 = 1, n1 = c(10,10), y1 = c(4,3),
-               n2 = c(20,10), y2 = c(2,0))
+zstatOddsRatio(n1 = c(10, 10), y1 = c(4, 3),
+               n2 = c(20, 10), y2 = c(2, 0), oddsRatioH0 = 1)
 
 }
 \author{

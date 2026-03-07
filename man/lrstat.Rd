@@ -18,7 +18,7 @@ lrstat(
   gamma2 = 0L,
   accrualDuration = NA_real_,
   followupTime = NA_real_,
-  fixedFollowup = 0L,
+  fixedFollowup = FALSE,
   rho1 = 0,
   rho2 = 0,
   predictTarget = 2L

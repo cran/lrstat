@@ -4,12 +4,7 @@
 \alias{pevent}
 \title{Probability of Having an Event}
 \usage{
-pevent(
-  time = NA_real_,
-  piecewiseSurvivalTime = 0L,
-  lambda = NA_real_,
-  gamma = 0L
-)
+pevent(time, piecewiseSurvivalTime, lambda, gamma)
 }
 \arguments{
 \item{time}{A vector of analysis times at which to calculate the

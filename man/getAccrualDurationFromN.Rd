@@ -4,11 +4,7 @@
 \alias{getAccrualDurationFromN}
 \title{Accrual Duration to Enroll Target Number of Subjects}
 \usage{
-getAccrualDurationFromN(
-  nsubjects = NA_real_,
-  accrualTime = 0L,
-  accrualIntensity = NA_real_
-)
+getAccrualDurationFromN(nsubjects, accrualTime, accrualIntensity)
 }
 \arguments{
 \item{nsubjects}{The vector of target number of subjects.}

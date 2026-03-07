@@ -11,7 +11,7 @@ powerRiskDiffExact(
   pi2 = NA_real_,
   allocationRatioPlanned = 1,
   alpha = 0.025,
-  calculateAttainedAlpha = 1L
+  calculateAttainedAlpha = TRUE
 )
 }
 \arguments{

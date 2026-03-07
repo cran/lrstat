@@ -1,227 +1,186 @@
-#include <Rcpp.h>
-#include <R_ext/Applic.h>
-
-using namespace Rcpp;
-
 #ifndef __SURVIVAL_ANALYSIS__
 #define __SURVIVAL_ANALYSIS__
 
-NumericVector fsurvci(double surv, double sesurv, std::string ct, double z);
+struct FlatMatrix;
+struct DataFrameCpp;
+struct ListCpp;
 
-DataFrame survQuantile(const NumericVector& time, 
-                       const IntegerVector& event,
-                       const double cilevel, 
-                       const std::string transform,
-                       const NumericVector& probs);
+#include <string>
+#include <vector>
 
-DataFrame kmest(const DataFrame data,
-                const StringVector& rep,
-                const StringVector& stratum,
-                const std::string time,
-                const std::string event,
-                const std::string conftype,
-                const double conflev,
-                const bool keep_censor);
-
-DataFrame kmdiff(const DataFrame data,
-                 const StringVector& rep,
-                 const StringVector& stratum,
-                 const std::string treat,
-                 const std::string time,
-                 const std::string event,
-                 const double milestone,
-                 const double survDiffH0,
-                 const double conflev);
-
-DataFrame lrtest(const DataFrame data,
-                 const StringVector& rep,
-                 const StringVector& stratum,
-                 const std::string treat,
-                 const std::string time,
-                 const std::string event,
-                 const double rho1,
-                 const double rho2);
-
-DataFrame rmest(const DataFrame data,
-                const StringVector& rep,
-                const StringVector& stratum,
-                const std::string time,
-                const std::string event,
-                const double milestone,
-                const double conflev,
-                const bool biascorrection);
-
-DataFrame rmdiff(const DataFrame data,
-                 const StringVector& rep,
-                 const StringVector& stratum,
-                 const std::string treat,
-                 const std::string time,
-                 const std::string event,
-                 const double milestone,
-                 const double rmstDiffH0,
-                 const double conflev,
-                 const bool biascorrection);
-
-struct aftparams {
-  std::string dist;
-  IntegerVector strata;
-  NumericVector tstart;
-  NumericVector tstop;
-  IntegerVector status;
-  NumericVector weight;
-  NumericVector offset;
-  NumericMatrix z;
-  int nstrata;
-};
+using std::size_t;
 
 
-double f_llik_1(int p, NumericVector par, void *ex);
+DataFrameCpp survQuantilecpp(const std::vector<double>& time,
+                             const std::vector<int>& event,
+                             const double cilevel = 0.95,
+                             const std::string& transform = "loglog",
+                             const std::vector<double>& probs = {0.25, 0.5, 0.75});
 
-NumericVector f_score_1(int p, NumericVector par, void *ex);
+DataFrameCpp kmestcpp(const DataFrameCpp& data,
+                      const std::vector<std::string>& stratum,
+                      const std::string& time = "time",
+                      const std::string& time2 = "",
+                      const std::string& event = "event",
+                      const std::string& weight = "",
+                      const std::string& conftype = "log-log",
+                      const double conflev = 0.95,
+                      const bool keep_censor = false);
 
-NumericMatrix f_info_1(int p, NumericVector par, void *ex);
+DataFrameCpp kmdiffcpp(const DataFrameCpp& data,
+                       const std::vector<std::string>& stratum,
+                       const std::string& treat = "treat",
+                       const std::string& time = "time",
+                       const std::string& time2 = "",
+                       const std::string& event = "event",
+                       const std::string& weight = "",
+                       const double milestone = 0,
+                       const double survDiffH0 = 0,
+                       const double conflev = 0.95);
 
-List f_der_eta_tau_1(NumericVector eta, NumericVector sig, void *ex);
+DataFrameCpp lrtestcpp(const DataFrameCpp& data,
+                       const std::vector<std::string>& stratum,
+                       const std::string& treat = "treat",
+                       const std::string& time = "time",
+                       const std::string& time2 = "",
+                       const std::string& event = "event",
+                       const std::string& weight = "",
+                       const bool weight_readj = false,
+                       const double rho1 = 0,
+                       const double rho2 = 0);
 
-NumericMatrix f_ressco_1(int p, NumericVector par, void *ex);
+DataFrameCpp rmestcpp(const DataFrameCpp& data,
+                      const std::vector<std::string>& stratum,
+                      const std::string& time = "time",
+                      const std::string& event = "event",
+                      const double milestone = 0,
+                      const double conflev = 0.95,
+                      const bool biascorrection = false);
 
-NumericMatrix f_jj_1(int p, NumericVector par, void *ex);
+DataFrameCpp rmdiffcpp(const DataFrameCpp& data,
+                       const std::vector<std::string>& stratum,
+                       const std::string& treat = "treat",
+                       const std::string& time = "time",
+                       const std::string& event = "event",
+                       const double milestone = 0,
+                       const double rmstDiffH0 = 0,
+                       const double conflev = 0.95,
+                       const bool biascorrection = false);
 
-List liferegloop(int p, NumericVector par, void *ex,
-                 int maxiter, double eps,
-                 IntegerVector colfit, int ncolfit);
+ListCpp liferegcpp(const DataFrameCpp& data,
+                   const std::vector<std::string>& stratum,
+                   const std::string time = "time",
+                   const std::string time2 = "",
+                   const std::string event = "event",
+                   const std::vector<std::string>& covariates = {},
+                   const std::string weight = "",
+                   const std::string offset = "",
+                   const std::string id = "",
+                   const std::string dist = "weibull",
+                   const std::vector<double>& init = {},
+                   const bool robust = false,
+                   const bool plci = false,
+                   const double alpha = 0.05,
+                   const int maxiter = 50,
+                   const double eps = 1.0e-9);
 
-double liferegplloop(int p, NumericVector par, void *ex,
-                     int maxiter, double eps,
-                     int k, int which, double l0);
+FlatMatrix residuals_liferegcpp(const std::vector<double>& beta,
+                                const FlatMatrix& vbeta,
+                                const DataFrameCpp& data,
+                                const std::vector<std::string>& stratum,
+                                const std::string& time = "time",
+                                const std::string& time2 = "",
+                                const std::string& event = "event",
+                                const std::vector<std::string>& covariates = {},
+                                const std::string& weight = "",
+                                const std::string& offset = "",
+                                const std::string& id = "",
+                                const std::string& dist = "weibull",
+                                const std::string& type = "response",
+                                bool collapse = false,
+                                bool weighted = false);
 
-List liferegcpp(const DataFrame data,
-                const StringVector& rep,
-                const StringVector& stratum,
-                const std::string time,
-                const std::string time2,
-                const std::string event,
-                const StringVector& covariates,
-                const std::string weight,
-                const std::string offset,
-                const std::string id,
-                const std::string dist,
-                const NumericVector& init,
-                const bool robust,
-                const bool plci,
-                const double alpha,
-                const int maxiter,
-                const double eps);
+ListCpp phregcpp(const DataFrameCpp& data,
+                 const std::vector<std::string>& stratum,
+                 const std::string& time = "time",
+                 const std::string& time2 = "",
+                 const std::string& event = "event",
+                 const std::vector<std::string>& covariates = {},
+                 const std::string& weight = "",
+                 const std::string& offset = "",
+                 const std::string& id = "",
+                 const std::string& ties = "efron",
+                 const std::vector<double>& init = {},
+                 const bool robust = false,
+                 const bool est_basehaz = true,
+                 const bool est_resid = true,
+                 const bool firth = false,
+                 const bool plci = false,
+                 const double alpha = 0.05,
+                 const int maxiter = 50,
+                 const double eps = 1.0e-9);
 
-NumericMatrix residuals_liferegcpp(const NumericVector& beta,
-                                   const NumericMatrix& vbeta,
-                                   DataFrame data,
-                                   const StringVector& stratum,
-                                   const std::string time,
-                                   const std::string time2,
-                                   const std::string event,
-                                   const StringVector& covariates,
-                                   const std::string weight,
-                                   const std::string offset,
-                                   const std::string id,
-                                   const std::string dist,
-                                   const std::string type,
-                                   const bool collapse,
-                                   const bool weighted);
+DataFrameCpp survfit_phregcpp(const size_t p,
+                              const std::vector<double>& beta,
+                              const FlatMatrix& vbeta,
+                              const DataFrameCpp& basehaz,
+                              const DataFrameCpp& newdata,
+                              const std::vector<std::string>& covariates,
+                              const std::vector<std::string>& stratum,
+                              const std::string& offset = "",
+                              const std::string& id = "",
+                              const std::string& tstart = "",
+                              const std::string& tstop = "",
+                              const bool sefit = true,
+                              const std::string& conftype = "log-log",
+                              const double conflev = 0.95);
 
-struct coxparams {
-  int nused;
-  IntegerVector strata;
-  NumericVector tstart;
-  NumericVector tstop;
-  IntegerVector event;
-  NumericVector weight;
-  NumericVector offset;
-  NumericMatrix z;
-  IntegerVector order1;
-  int method;
-};
+ListCpp residuals_phregcpp(const int p,
+                           const std::vector<double>& beta,
+                           const FlatMatrix& vbeta,
+                           const std::vector<double>& resmart,
+                           const DataFrameCpp& data,
+                           const std::vector<std::string>& stratum,
+                           const std::string& time = "time",
+                           const std::string& time2 = "",
+                           const std::string& event = "event",
+                           const std::vector<std::string>& covariates = {},
+                           const std::string& weight = "",
+                           const std::string& offset = "",
+                           const std::string& id = "",
+                           const std::string& ties = "efron",
+                           const std::string& type = "schoenfeld",
+                           const bool collapse = false,
+                           const bool weighted = false);
 
-double f_llik_2(int p, NumericVector par, void *ex);
+ListCpp assess_phregcpp(const size_t p,
+                        const std::vector<double>& beta,
+                        const FlatMatrix& vbeta,
+                        const DataFrameCpp& data,
+                        const std::vector<std::string>& stratum ,
+                        const std::string& time = "time",
+                        const std::string& time2 = "",
+                        const std::string& event = "event",
+                        const std::vector<std::string>& covariates = {},
+                        const std::string& weight = "",
+                        const std::string& offset = "",
+                        const std::string& ties = "efron",
+                        const int resample = 1000,
+                        const int seed = 0);
 
-NumericVector f_score_2(int p, NumericVector par, void *ex);
-
-NumericMatrix f_info_2(int p, NumericVector par, void *ex);
-
-double f_pen_llik_2(int p, NumericVector par, void *ex);
-
-NumericVector f_pen_score_2(int p, NumericVector par, void *ex);
-
-NumericMatrix f_ressco_2(int p, NumericVector par, void *ex);
-
-NumericMatrix f_jj_2(int p, NumericVector par, void *ex);
-
-List phregloop(int p, NumericVector par, void *ex,
-               int maxiter, double eps, bool firth,
-               IntegerVector colfit, int ncolfit);
-
-double phregplloop(int p, NumericVector par, void *ex,
-                   int maxiter, double eps, bool firth,
-                   int k, int which, double l0);
-
-List f_basehaz(int p, NumericVector par, void *ex);
-
-NumericVector f_resmart(int p, NumericVector par, void *ex);
-
-List f_ressch(int p, NumericVector par, void *ex);
-
-List phregcpp(const DataFrame data,
-              const StringVector& rep,
-              const StringVector& stratum,
-              const std::string time,
-              const std::string time2,
-              const std::string event,
-              const StringVector& covariates,
-              const std::string weight,
-              const std::string offset,
-              const std::string id,
-              const std::string ties,
-              const NumericVector& init,
-              const bool robust,
-              const bool est_basehaz,
-              const bool est_resid,
-              const bool firth,
-              const bool plci,
-              const double alpha,
-              const int maxiter,
-              const double eps);
-
-DataFrame survfit_phregcpp(const int p,
-                           const NumericVector& beta,
-                           const NumericMatrix& vbeta,
-                           DataFrame basehaz,
-                           DataFrame newdata,
-                           const StringVector& covariates,
-                           const StringVector& stratum,
-                           const std::string offset,
-                           const std::string id,
-                           const std::string tstart,
-                           const std::string tstop,
-                           const bool sefit,
-                           const String conftype,
-                           const double conflev);
-
-List residuals_phregcpp(const int p,
-                        const NumericVector& beta,
-                        const NumericMatrix& vbeta,
-                        const NumericVector& resmart,
-                        DataFrame data,
-                        const StringVector& stratum,
-                        const std::string time,
-                        const std::string time2,
-                        const std::string event,
-                        const StringVector& covariates,
-                        const std::string weight,
-                        const std::string offset,
-                        const std::string id,
-                        const std::string ties,
-                        const std::string type,
-                        const bool collapse,
-                        const bool weighted);
+ListCpp zph_phregcpp(const size_t p,
+                     const std::vector<double>& beta,
+                     const FlatMatrix& vbeta,
+                     const std::vector<double>& resmart,
+                     const DataFrameCpp& data,
+                     const std::vector<std::string>& stratum,
+                     const std::string& time = "time",
+                     const std::string& time2 = "",
+                     const std::string& event = "event",
+                     const std::vector<std::string>& covariates = {},
+                     const std::string& weight = "",
+                     const std::string& offset = "",
+                     const std::string& ties = "efron",
+                     const std::string& transform = "km");
 
 #endif // __SURVIVAL_ANALYSIS__

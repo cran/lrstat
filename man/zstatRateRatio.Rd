@@ -4,18 +4,9 @@
 \alias{zstatRateRatio}
 \title{Miettinen-Nurminen Score Test Statistic for Two-Sample Rate Ratio}
 \usage{
-zstatRateRatio(
-  rateRatioH0 = 1,
-  t1 = NA_real_,
-  y1 = NA_real_,
-  t2 = NA_real_,
-  y2 = NA_real_
-)
+zstatRateRatio(t1, y1, t2, y2, rateRatioH0 = 1)
 }
 \arguments{
-\item{rateRatioH0}{The rate ratio under the null hypothesis.
-Defaults to 1.}
-
 \item{t1}{The exposure for the active treatment group.}
 
 \item{y1}{The number of events for the active treatment group.}
@@ -23,6 +14,9 @@ Defaults to 1.}
 \item{t2}{The exposure for the control group.}
 
 \item{y2}{The number of events for the control group.}
+
+\item{rateRatioH0}{The rate ratio under the null hypothesis.
+Defaults to 1.}
 }
 \value{
 The value of the score test statistic.
@@ -36,8 +30,8 @@ The Mantel-Haenszel weights are used for stratified samples.
 }
 \examples{
 
-zstatRateRatio(rateRatioH0 = 1, t1 = c(10,10), y1 = c(4,3),
-               t2 = c(20,10), y2 = c(2,0))
+zstatRateRatio(t1 = c(10, 10), y1 = c(4, 3),
+               t2 = c(20, 10), y2 = c(2, 0), rateRatioH0 = 1)
 
 }
 \author{

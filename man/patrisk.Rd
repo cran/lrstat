@@ -4,12 +4,7 @@
 \alias{patrisk}
 \title{Probability of Being at Risk}
 \usage{
-patrisk(
-  time = NA_real_,
-  piecewiseSurvivalTime = 0L,
-  lambda = NA_real_,
-  gamma = 0L
-)
+patrisk(time, piecewiseSurvivalTime, lambda, gamma)
 }
 \arguments{
 \item{time}{A vector of analysis times at which to calculate the

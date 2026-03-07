@@ -6,12 +6,13 @@
 \usage{
 kmdiff(
   data,
-  rep = "",
   stratum = "",
   treat = "treat",
   time = "time",
+  time2 = "",
   event = "event",
-  milestone = NA_real_,
+  weight = "",
+  milestone = 0,
   survDiffH0 = 0,
   conflev = 0.95
 )
@@ -19,22 +20,31 @@ kmdiff(
 \arguments{
 \item{data}{The input data frame that contains the following variables:
 \itemize{
-\item \code{rep}: The replication for by-group processing.
 \item \code{stratum}: The stratum.
 \item \code{treat}: The treatment.
-\item \code{time}: The possibly right-censored survival time.
-\item \code{event}: The event indicator.
+\item \code{time}: The follow-up time for right censored data, or
+the left end of each interval for counting process data.
+\item \code{time2}: The right end of each interval for counting process
+data. Intervals are assumed to be open on the left
+and closed on the right, and event indicates whether an event
+occurred at the right end of each interval.
+\item \code{event}: The event indicator, 1=event, 0=no event.
+\item \code{weight}: The weight for each observation.
 }}
-
-\item{rep}{The name of the replication variable in the input data.}
 
 \item{stratum}{The name of the stratum variable in the input data.}
 
 \item{treat}{The name of the treatment variable in the input data.}
 
-\item{time}{The name of the time variable in the input data.}
+\item{time}{The name of the time variable or the left end of each
+interval for counting process data in the input data.}
+
+\item{time2}{The name of the right end of each interval for counting
+process data in the input data.}
 
 \item{event}{The name of the event variable in the input data.}
+
+\item{weight}{The name of the weight variable in the input data.}
 
 \item{milestone}{The milestone time at which to calculate the
 survival probability.}
@@ -48,7 +58,6 @@ the difference in milestone survival probabilities. Defaults to 0.95.}
 \value{
 A data frame with the following variables:
 \itemize{
-\item \code{rep}: The replication.
 \item \code{milestone}: The milestone time relative to randomization.
 \item \code{survDiffH0}: The difference in milestone survival probabilities
 under the null hypothesis.
@@ -60,9 +69,9 @@ the control group.
 probabilities.
 \item \code{vsurv1}: The variance for surv1.
 \item \code{vsurv2}: The variance for surv2.
-\item \code{vsurvDiff}: The variance for survDiff.
+\item \code{sesurvDiff}: The standard error for survDiff.
 \item \code{survDiffZ}: The Z-statistic value.
-\item \code{survDiffPValue}: The one-sided p-value.
+\item \code{survDiffPValue}: The two-sided p-value.
 \item \code{lower}: The lower bound of confidence interval.
 \item \code{upper}: The upper bound of confidence interval.
 \item \code{conflev}: The level of confidence interval.
@@ -74,11 +83,10 @@ between two treatment groups.
 }
 \examples{
 
-df <- kmdiff(data = rawdata, rep = "iterationNumber",
-             stratum = "stratum", treat = "treatmentGroup",
-             time = "timeUnderObservation", event = "event",
-             milestone = 12)
-head(df)
+kmdiff(data = rawdata[rawdata$iterationNumber == 1, ],
+       stratum = "stratum", treat = "treatmentGroup",
+       time = "timeUnderObservation", event = "event",
+       milestone = 12)
 
 }
 \author{

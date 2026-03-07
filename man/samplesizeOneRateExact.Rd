@@ -9,7 +9,9 @@ samplesizeOneRateExact(
   lambdaH0 = NA_real_,
   lambda = NA_real_,
   D = 1,
-  alpha = 0.025
+  alpha = 0.025,
+  max_n_search = 1000L,
+  window = 10L
 )
 }
 \arguments{
@@ -22,6 +24,15 @@ samplesizeOneRateExact(
 \item{D}{The average exposure per subject.}
 
 \item{alpha}{The one-sided significance level. Defaults to 0.025.}
+
+\item{max_n_search}{The maximum sample size to search up to. If no
+sample size up to this value satisfies the windowed power criterion,
+an error is thrown.}
+
+\item{window}{The number of consecutive sample sizes that must all
+satisfy the power criterion to confirm the found sample size.
+This is to mitigate non-monotonicity of power in sample size for
+the exact test.}
 }
 \value{
 A data frame containing the critical value of the number of

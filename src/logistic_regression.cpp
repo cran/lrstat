@@ -1,905 +1,842 @@
-#include <Rcpp.h>
-#include <R_ext/Applic.h>
-#include "utilities.h"
 #include "logistic_regression.h"
+#include "utilities.h"
+#include "dataframe_list.h"
+#include "thread_utils.h"
 
-using namespace Rcpp;
+#include <algorithm> // any_of, fill, for_each, none_of, sort
+#include <cctype>    // tolower
+#include <climits>   // INT_MIN
+#include <cmath>     // exp, fabs, isinf, isnan, log, pow
+#include <numeric>   // accumulate, inner_product, iota
+#include <stdexcept> // invalid_argument, runtime_error
+#include <string>    // string
+#include <utility>   // move
+#include <vector>    // vector
+
+#include <Rcpp.h>
+
+using std::size_t;
 
 
-// log likelihood
-double f_llik_0(int p, NumericVector par, void *ex) {
+// structure to hold parameters for logistic regression
+struct logparams {
+  size_t n;
+  int link_code; // 1: logit, 2: probit, 3: cloglog
+  std::vector<int> y;
+  FlatMatrix z; // n x p column-major
+  std::vector<int> freq;
+  std::vector<double> weight;
+  std::vector<double> offset;
+};
+
+// --------------------------- f_der_0 (log-likelihood, score, information) ----
+ListCpp f_der_0(size_t p, const std::vector<double>& par, void *ex, bool firth) {
   logparams *param = (logparams *) ex;
-  int n = param->n;
-  int person, i;
+  const size_t n = param->n;
+  const int link_code = param->link_code;
+  const std::vector<int>& yv = param->y;
+  const double* zptr = param->z.data_ptr();
+  const std::vector<int>& freq = param->freq;
+  const std::vector<double>& weight = param->weight;
+  std::vector<double> fwvec(n);  // freq * weight per observation
+  for (size_t i = 0; i < n; ++i) {
+    fwvec[i] = freq[i] * weight[i];
+  }
 
-  NumericVector eta(n);
-  for (person = 0; person < n; person++) {
-    eta[person] = param->offset[person];
-    for (i=0; i<p; i++) {
-      eta[person] += par[i]*param->z(person,i);
+  // compute linear predictor eta efficiently using column-major storage:
+  std::vector<double> eta = param->offset; // initialize with offset
+  // add contributions of each coefficient times column
+  for (size_t i = 0; i < p; ++i) {
+    double beta = par[i];
+    if (beta == 0.0) continue;
+    const double* zi = zptr + i * n;
+    for (size_t r = 0; r < n; ++r) {
+      eta[r] += beta * zi[r];
     }
   }
 
-  double loglik = 0;
-  if (param->link == "logit") {
-    for (person = 0; person < n; person++) {
-      double f = param->freq[person];
-      double w = param->weight[person];
-      double y = param->y[person];
-      double r = R::plogis(eta[person], 0, 1, 1, 0);
-      double v = y*eta[person] + log(1-r);
-      loglik += f*w*v;
-    }
-  } else if (param->link == "probit") {
-    for (person = 0; person < n; person++) {
-      double f = param->freq[person];
-      double w = param->weight[person];
-      double y = param->y[person];
-      double r = R::pnorm(eta[person], 0, 1, 1, 0);
-      double v = y*log(r/(1-r)) + log(1-r);
-      loglik += f*w*v;
-    }
-  } else if (param->link == "cloglog") {
-    for (person = 0; person < n; person++) {
-      double f = param->freq[person];
-      double w = param->weight[person];
-      double y = param->y[person];
-      double r = 1 - exp(-exp(eta[person]));
-      double v = y*log(r/(1-r)) + log(1-r);
-      loglik += f*w*v;
-    }
+  double loglik = 0.0;
+  std::vector<double> score(p);
+  FlatMatrix imat(p, p); // information matrix in column-major p x p
+
+  // Pre-allocate per-observation temporaries
+  std::vector<double> rvec(n); // fitted probabilities
+  std::vector<double> c1(n);   // contribution for score
+  std::vector<double> c2(n);   // contribution for information
+
+  // firth temporaries
+  std::vector<double> pi, d, a, b;
+  if (firth) {
+    pi.assign(n, 0.0);
+    d.assign(n, 0.0);
+    a.assign(n, 0.0);
+    b.assign(n, 0.0);
   }
 
-  return loglik;
-}
+  // 1) single pass over observations: compute r, loglik, c1, c2 + firth temporaries
+  for (size_t person = 0; person < n; ++person) {
+    double fw = fwvec[person];
+    double y = yv[person];
+    double et = eta[person];
 
-
-// score vector
-NumericVector f_score_0(int p, NumericVector par, void *ex) {
-  logparams *param = (logparams *) ex;
-  int n = param->n;
-  int person, i;
-
-  NumericVector eta(n);
-  for (person = 0; person < n; person++) {
-    eta[person] = param->offset[person];
-    for (i=0; i<p; i++) {
-      eta[person] += par[i]*param->z(person,i);
-    }
-  }
-
-  NumericVector score(p);
-  if (param->link == "logit") {
-    for (person = 0; person < n; person++) {
-      double f = param->freq[person];
-      double w = param->weight[person];
-      double r = R::plogis(eta[person], 0, 1, 1, 0);
-      double v = param->y[person] - r;
-      NumericVector z = param->z(person, _);
-      for (i=0; i<p; i++) {
-        score[i] += f*w*v*z[i];
+    if (link_code == 1) {                // logit
+      double r = boost_plogis(et);
+      rvec[person] = r;
+      loglik += fw * (y * et + std::log(1.0 - r));
+      c1[person] = fw * (y - r);
+      c2[person] = fw * r * (1.0 - r);
+      if (firth) {
+        pi[person] = r;
+        d[person]  = 1.0;
+        a[person]  = r * (1.0 - r);
+        b[person]  = 1.0 - 2.0 * r;
+      }
+    } else if (link_code == 2) {         // probit
+      double r = boost_pnorm(et);
+      double phi = boost_dnorm(et);
+      rvec[person] = r;
+      loglik += fw * (y * std::log(r / (1.0 - r)) + std::log(1.0 - r));
+      c1[person] = fw * (y - r) * (phi / (r * (1.0 - r)));
+      c2[person] = fw * (phi * phi / (r * (1.0 - r)));
+      if (firth) {
+        double dphi = -et;
+        pi[person] = r;
+        d[person]  = phi / (r * (1.0 - r));
+        a[person]  = phi * phi / (r * (1.0 - r));
+        b[person]  = (2.0 * r - 1.0) * phi / (r * (1.0 - r)) + 2.0 * dphi;
+      }
+    } else {                                    // cloglog / extreme
+      double r = boost_pextreme(et);
+      double phi = boost_dextreme(et);
+      rvec[person] = r;
+      loglik += fw * (y * std::log(r / (1.0 - r)) + std::log(1.0 - r));
+      c1[person] = fw * (y - r) * (phi / (r * (1.0 - r)));
+      c2[person] = fw * (phi * phi / (r * (1.0 - r)));
+      if (firth) {
+        double dphi = 1 - std::exp(et);
+        pi[person] = r;
+        d[person]  = phi / (r * (1.0 - r));
+        a[person]  = phi * phi / (r * (1.0 - r));
+        b[person]  = (2.0 * r - 1.0) * phi / (r * (1.0 - r)) + 2.0 * dphi;
       }
     }
-  } else if (param->link == "probit") {
-    for (person = 0; person < n; person++) {
-      double f = param->freq[person];
-      double w = param->weight[person];
-      double r = R::pnorm(eta[person], 0, 1, 1, 0);
-      double phi = R::dnorm(eta[person], 0, 1, 0);
-      double d = phi/(r*(1-r));
-      double v = param->y[person] - r;
-      NumericVector z = param->z(person, _);
-      for (i=0; i<p; i++) {
-        score[i] += f*w*v*d*z[i];
+  }
+
+  // 2) compute score vector by column dot-products: score[j] = sum_i c1[i] * z_{i,j}
+  for (size_t j = 0; j < p; ++j) {
+    const double* zcol = zptr + j * n;   // start of column j
+    double s = 0.0;
+    // inner loop is contiguous load of zcol[i]
+    for (size_t i = 0; i < n; ++i) s += c1[i] * zcol[i];
+    score[j] = s;
+  }
+
+  // 3) compute information matrix (lower triangle) using c2 as per-observation weight
+  for (size_t j = 0; j < p; ++j) {
+    const double* zj = zptr + j * n;
+    for (size_t i = j; i < p; ++i) {
+    const double* zi = zptr + i * n;
+      double sum = 0.0;
+      for (size_t k = 0; k < n; ++k) {
+        sum += c2[k] * zi[k] * zj[k];
       }
-    }
-  } else if (param->link == "cloglog") {
-    for (person = 0; person < n; person++) {
-      double f = param->freq[person];
-      double w = param->weight[person];
-      double r = 1 - exp(-exp(eta[person]));
-      double phi = exp(eta[person] - exp(eta[person]));
-      double d = phi/(r*(1-r));
-      double v = param->y[person] - r;
-      NumericVector z = param->z(person, _);
-      for (i=0; i<p; i++) {
-        score[i] += f*w*v*d*z[i];
-      }
+      imat(i, j) = sum;
     }
   }
 
-  return score;
-}
-
-
-// expected information matrix
-NumericMatrix f_info_0(int p, NumericVector par, void *ex) {
-  logparams *param = (logparams *) ex;
-  int n = param->n;
-  int person, i, j;
-
-  NumericVector eta(n);
-  for (person = 0; person < n; person++) {
-    eta[person] = param->offset[person];
-    for (i=0; i<p; i++) {
-      eta[person] += par[i]*param->z(person,i);
+  // 4) fill upper triangle as before (keep symmetric)
+  for (size_t j = 1; j < p; ++j) {
+    for (size_t i = 0; i < j; ++i) {
+      imat(i, j) = imat(j, i);
     }
   }
 
-  NumericMatrix imat(p,p);
-  if (param->link == "logit") {
-    for (person = 0; person < n; person++) {
-      double f = param->freq[person];
-      double w = param->weight[person];
-      double v = R::dlogis(eta[person], 0, 1, 0);
-      NumericVector z = param->z(person, _);
-      for (i=0; i<p; i++) {
-        for (j=0; j<=i; j++) {
-          imat(i,j) += f*w*v*z[i]*z[j];
+  if (firth) {
+    // make a copy for Cholesky so we preserve imat for output
+    FlatMatrix imat0 = imat;
+    cholesky2(imat0, p); // in-place Cholesky on imat0
+
+    double sumlog = 0.0;
+    for (size_t i = 0; i < p; ++i) sumlog += std::log(imat0(i, i));
+
+    double penloglik = loglik + 0.5 * sumlog;
+
+    // precompute per-person scalar c[k] = f * w * a[k]
+    std::vector<double> c(n);
+    for (size_t person = 0; person < n; ++person) {
+      c[person] = fwvec[person] * a[person];
+    }
+
+    FlatMatrix xwx(p, p); // data initially zeroed by constructor
+
+    // compute lower triangle (i >= j) using column-major access
+    for (size_t j = 0; j < p; ++j) {
+      const double* zj = zptr + j * n;      // Z(:, j)
+      for (size_t i = j; i < p; ++i) {
+      const double* zi = zptr + i * n;        // Z(:, i)
+        double sum = 0.0;
+        // inner loop reads zi[k] and zj[k] contiguously
+        for (size_t k = 0; k < n; ++k) {
+          sum += c[k] * zi[k] * zj[k];
+        }
+        xwx(i, j) = sum;
+      }
+    }
+
+    // fill upper triangle of xwx
+    for (size_t j = 1; j < p; ++j) {
+      for (size_t i = 0; i < j; ++i) {
+        xwx(i, j) = xwx(j, i);
+      }
+    }
+
+    // compute inverse of xwx as FlatMatrix
+    FlatMatrix var = invsympd(xwx, p);
+    const double* vptr = var.data_ptr();
+
+    std::vector<double> h0(n, 0.0);
+    for (size_t k = 0; k < p; ++k) {
+      const double* zk = zptr + k * n;   // column k of Z
+      const double* vk = vptr + k * p;   // column k of var
+      for (size_t j = 0; j < p; ++j) {
+        const double* zj = zptr + j * n; // column j of Z
+        const double v = vk[j];          // var(j, k)
+        for (size_t i = 0; i < n; ++i) {
+          h0[i] += v * zj[i] * zk[i];
         }
       }
     }
-  } else if (param->link == "probit") {
-    for (person = 0; person < n; person++) {
-      double f = param->freq[person];
-      double w = param->weight[person];
-      double r = R::pnorm(eta[person], 0, 1, 1, 0);
-      double phi = R::dnorm(eta[person], 0, 1, 0);
-      double v = phi*phi/(r*(1-r));
-      NumericVector z = param->z(person, _);
-      for (i=0; i<p; i++) {
-        for (j=0; j<=i; j++) {
-          imat(i,j) += f*w*v*z[i]*z[j];
-        }
-      }
-    }
-  } else if (param->link == "cloglog") {
-    for (person = 0; person < n; person++) {
-      double f = param->freq[person];
-      double w = param->weight[person];
-      double r = 1 - exp(-exp(eta[person]));
-      double phi = exp(eta[person] - exp(eta[person]));
-      double v = phi*phi/(r*(1-r));
-      NumericVector z = param->z(person, _);
-      for (i=0; i<p; i++) {
-        for (j=0; j<=i; j++) {
-          imat(i,j) += f*w*v*z[i]*z[j];
-        }
-      }
-    }
-  }
 
-  for (i=0; i<p-1; i++) {
-    for (j=i+1; j<p; j++) {
-      imat(i,j) = imat(j,i);
+    // compute u[r] = f * w * resid * d + 0.5 * b * (f * w * a * h0)
+    std::vector<double> u(n);
+    for (size_t i = 0; i < n; ++i) {
+      double fw = fwvec[i];
+      double resid = yv[i] - pi[i];
+      double h_scaled = h0[i] * fw * a[i];
+      u[i] = fw * resid * d[i] + 0.5 * b[i] * h_scaled;
     }
-  }
 
-  return imat;
+    // compute g = Z^T * u
+    std::vector<double> g(p, 0.0);
+    for (size_t j = 0; j < p; ++j) {
+      const double* zj = zptr + j * n; // Z(:, j)
+      double sum = 0.0;
+      for (size_t i = 0; i < n; ++i) sum += u[i] * zj[i];
+      g[j] = sum;
+    }
+
+    ListCpp result;
+    result.push_back(penloglik, "loglik");
+    result.push_back(std::move(g), "score");
+    result.push_back(std::move(imat), "imat");
+    result.push_back(loglik, "regloglik");
+    result.push_back(std::move(score), "regscore");
+    return result;
+  } else {
+    ListCpp result;
+    result.push_back(loglik, "loglik");
+    result.push_back(std::move(score), "score");
+    result.push_back(std::move(imat), "imat");       // FlatMatrix
+    return result;
+  }
 }
 
 
-// Firth's bias-reducing penalized log likelihood
-double f_pen_llik_0(int p, NumericVector par, void *ex) {
+// --------------------------- f_ressco_0 (score residuals) --------------------
+// Returns an n x p FlatMatrix (column-major), where entry (r, c) equals
+// residual for observation r and covariate c.
+FlatMatrix f_ressco_0(size_t p, const std::vector<double>& par, void *ex) {
   logparams *param = (logparams *) ex;
-  double loglik = f_llik_0(p, par, param);
-  NumericMatrix imat = f_info_0(p, par, param);
+  const size_t n = param->n;
+  const int link_code = param->link_code;
+  const std::vector<int>& yv = param->y;
+  const double* zptr = param->z.data_ptr();
 
-  // obtain the determinant of imat
-  double toler = 1e-12;
-  int i = cholesky2(imat, p, toler);
-
-  double v = 0;
-  for (i=0; i<p; i++) {
-    v += log(imat(i,i));
-  }
-
-  return loglik + 0.5*v;
-}
-
-
-// Firth's penalized score vector
-NumericVector f_pen_score_0(int p, NumericVector par, void *ex) {
-  logparams *param = (logparams *) ex;
-  int n = param->n;
-  int person, i, j;
-
-  NumericVector eta(n);
-  for (person = 0; person < n; person++) {
-    eta[person] = param->offset[person];
-    for (i=0; i<p; i++) {
-      eta[person] += par[i]*param->z(person,i);
+  // compute eta similarly to f_der_0
+  std::vector<double> eta = param->offset;
+  for (size_t i = 0; i < p; ++i) {
+    double beta = par[i];
+    if (beta == 0.0) continue;
+    const double* zi = zptr + i * n;
+    for (size_t r = 0; r < n; ++r) {
+      eta[r] += beta * zi[r];
     }
   }
 
-  NumericVector pi(n), d(n), a(n), b(n);
-  if (param->link == "logit") {
-    for (person = 0; person < n; person++) {
-      double r = R::plogis(eta[person], 0, 1, 1, 0);
-      pi[person] = r;
-      d[person] = 1;
-      a[person] = r*(1-r);
-      b[person] = 1-2*r;
-    }
-  } else if (param->link == "probit") {
-    for (person = 0; person < n; person++) {
-      double r = R::pnorm(eta[person], 0, 1, 1, 0);
-      double phi = R::dnorm(eta[person], 0, 1, 0);
-      double dphi = -eta[person];
-      pi[person] = r;
-      d[person] = phi/(r*(1-r));
-      a[person] = phi*phi/(r*(1-r));
-      b[person] = (2*r-1)*phi/(r*(1-r)) + 2*dphi;
-    }
-  } else if (param->link == "cloglog") {
-    for (person = 0; person < n; person++) {
-      double r = 1 - exp(-exp(eta[person]));
-      double phi = exp(eta[person] - exp(eta[person]));
-      double dphi = 1 - exp(eta[person]);
-      pi[person] = r;
-      d[person] = phi/(r*(1-r));
-      a[person] = phi*phi/(r*(1-r));
-      b[person] = (2*r-1)*phi/(r*(1-r)) + 2*dphi;
-    }
-  }
+  FlatMatrix resid(n, p);
+  double* rptr = resid.data_ptr();
 
-  NumericMatrix imat(p,p); // X^T W X
-  for (person = 0; person < n; person++) {
-    double f = param->freq[person];
-    double w = param->weight[person];
-    NumericVector z = param->z(person, _);
-    for (i=0; i<p; i++) {
-      for (j=0; j<=i; j++) {
-        imat(i,j) += f*w*a[person]*z[i]*z[j];
+  switch (link_code) {
+  case 1: { // logit
+    std::vector<double> v(n);
+    for (size_t person = 0; person < n; ++person) {
+      double r = boost_plogis(eta[person]);
+      v[person] = yv[person] - r;
+    }
+
+    for (size_t i = 0; i < p; ++i) {
+      size_t off = i * n;
+      const double* zcol = zptr + off;
+      double* rcol = rptr + off;
+      for (size_t person = 0; person < n; ++person) {
+        rcol[person] = v[person] * zcol[person];
       }
     }
+    break;
   }
 
-  for (i=0; i<p-1; i++) {
-    for (j=i+1; j<p; j++) {
-      imat(i,j) = imat(j,i);
+  case 2: { // probit
+    std::vector<double> vd(n);
+    for (size_t person = 0; person < n; ++person) {
+      double r = boost_pnorm(eta[person]);
+      double phi = boost_dnorm(eta[person]);
+      double d = phi / (r * (1.0 - r));
+      double v = yv[person] - r;
+      vd[person] = v * d;
     }
-  }
 
-  double toler = 1e-12;
-  NumericMatrix var = invsympd(imat, p, toler);
-
-  NumericVector score(p);
-  for (person = 0; person < n; person++) {
-    double f = param->freq[person];
-    double w = param->weight[person];
-    NumericVector z = param->z(person, _);
-    double h = 0; // diagonal of H = W^{1/2}*X*inverse(X^T W X)*X^T W^{1/2}
-    for (i=0; i<p; i++) {
-      for (j=0; j<p; j++) {
-        h += var(i,j)*z[i]*z[j];
+    for (size_t i = 0; i < p; ++i) {
+      size_t off = i * n;
+      const double* zcol = zptr + off;
+      double* rcol = rptr + off;
+      for (size_t person = 0; person < n; ++person) {
+        rcol[person] = vd[person] * zcol[person];
       }
     }
-    h *= f*w*a[person];
-
-    double resid = param->y[person] - pi[person];
-    double u = f*w*resid*d[person] + 0.5*b[person]*h;
-    for (i=0; i<p; i++) {
-      score[i] += u*z[i];
-    }
+    break;
   }
-
-  return score;
-}
-
-
-// score residual matrix (without firth, weight and frequency)
-NumericMatrix f_ressco_0(int p, NumericVector par, void *ex) {
-  logparams *param = (logparams *) ex;
-  int n = param->n;
-  int person, i;
-
-  NumericVector eta(n);
-  for (person = 0; person < n; person++) {
-    eta[person] = param->offset[person];
-    for (i=0; i<p; i++) {
-      eta[person] += par[i]*param->z(person,i);
+  case 3: {// cloglog / extreme
+    std::vector<double> vd(n);
+    for (size_t person = 0; person < n; ++person) {
+      double r = boost_pextreme(eta[person]);
+      double phi = boost_dextreme(eta[person]);
+      double d = phi / (r * (1.0 - r));
+      double v = yv[person] - r;
+      vd[person] = v * d;
     }
-  }
 
-  NumericMatrix resid(n, p);
-  if (param->link == "logit") {
-    for (person = 0; person < n; person++) {
-      double r = R::plogis(eta[person], 0, 1, 1, 0);
-      double v = param->y[person] - r;
-      NumericVector z = param->z(person, _);
-      for (i=0; i<p; i++) {
-        resid(person, i) = v*z[i];
+    for (size_t i = 0; i < p; ++i) {
+      size_t off = i * n;
+      const double* zcol = zptr + off;
+      double* rcol = rptr + off;
+      for (size_t person = 0; person < n; ++person) {
+        rcol[person] = vd[person] * zcol[person];
       }
     }
-  } else if (param->link == "probit") {
-    for (person = 0; person < n; person++) {
-      double r = R::pnorm(eta[person], 0, 1, 1, 0);
-      double phi = R::dnorm(eta[person], 0, 1, 0);
-      double d = phi/(r*(1-r));
-      double v = param->y[person] - r;
-      NumericVector z = param->z(person, _);
-      for (i=0; i<p; i++) {
-        resid(person, i) = v*d*z[i];
-      }
-    }
-  } else if (param->link == "cloglog") {
-    for (person = 0; person < n; person++) {
-      double r = 1 - exp(-exp(eta[person]));
-      double phi = exp(eta[person] - exp(eta[person]));
-      double d = phi/(r*(1-r));
-      double v = param->y[person] - r;
-      NumericVector z = param->z(person, _);
-      for (i=0; i<p; i++) {
-        resid(person, i) = v*d*z[i];
-      }
-    }
+    break;
   }
-
+  }
   return resid;
 }
 
-
-// underlying optimization algorithm for logisreg
-//   colfit: vector of indices of parameters to update
-//   ncolfit: number of parameters to update
-List logisregloop(int p, NumericVector par, void *ex,
-                  int maxiter, double eps, bool firth,
-                  IntegerVector colfit, int ncolfit) {
+// --------------------------- logisregloop, logisregplloop and logisregcpp ----
+ListCpp logisregloop(size_t p, const std::vector<double>& par, void *ex,
+                     int maxiter, double eps, bool firth,
+                     const std::vector<size_t>& colfit, size_t ncolfit) {
   logparams *param = (logparams *) ex;
-  int i, j, iter, halving = 0;
-  bool fail;
 
-  double toler = 1e-12;
-  NumericVector beta(p), newbeta(p);
-  double loglik, newlk = 0;
-  NumericVector u(p);
-  NumericMatrix imat(p,p);
-  NumericVector u1(ncolfit);
-  NumericMatrix imat1(ncolfit, ncolfit);
+  int iter = 0, halving = 0;
+  bool fail = false;
 
+  std::vector<double> beta = par;
+  std::vector<double> newbeta(p);
+  double loglik = 0.0, newlk = 0.0;
+  std::vector<double> u(p);
+  std::vector<double> uu1(ncolfit);
+  double* u1 = uu1.data();
+  FlatMatrix imat(p, p);
+  FlatMatrix imat1(ncolfit, ncolfit);
 
-  // initial beta and log likelihood
-  for (i=0; i<p; i++) {
-    beta[i] = par[i];
-  }
+  // --- first step ---
+  ListCpp der = f_der_0(p, beta, param, firth);
+  loglik = der.get<double>("loglik");
+  u = der.get<std::vector<double>>("score");
+  imat = der.get<FlatMatrix>("imat");
 
-  if (!firth) {
-    loglik = f_llik_0(p, beta, param);
-    u = f_score_0(p, beta, param);
-  } else {
-    loglik = f_pen_llik_0(p, beta, param);
-    u = f_pen_score_0(p, beta, param);
-  }
+  for (size_t i = 0; i < ncolfit; ++i) u1[i] = u[colfit[i]];
 
-  for (i=0; i<ncolfit; i++) {
-    u1[i] = u[colfit[i]];
-  }
-
-  imat = f_info_0(p, beta, param);
-  for (i=0; i<ncolfit; i++) {
-    for (j=0; j<ncolfit; j++) {
+  for (size_t j = 0; j < ncolfit; ++j)
+    for (size_t i = 0; i < ncolfit; ++i)
       imat1(i,j) = imat(colfit[i], colfit[j]);
-    }
-  }
 
-  i = cholesky2(imat1, ncolfit, toler);
-
+  cholesky2(imat1, ncolfit);
   chsolve2(imat1, ncolfit, u1);
 
-  u.fill(0);
-  for (i=0; i<ncolfit; i++) {
-    u[colfit[i]] = u1[i];
-  }
+  std::fill(u.begin(), u.end(), 0.0);
+  for (size_t i = 0; i < ncolfit; ++i) u[colfit[i]] = u1[i];
+  for (size_t i = 0; i < p; ++i) newbeta[i] = beta[i] + u[i];
 
-  for (i=0; i<p; i++) {
-    newbeta[i] = beta[i] + u[i];
-  }
+  // --- main iteration ---
+  for (iter = 0; iter < maxiter; ++iter) {
+    der = f_der_0(p, newbeta, param, firth);
+    newlk = der.get<double>("loglik");
 
-  for (iter=0; iter<maxiter; iter++) {
-    if (!firth) newlk = f_llik_0(p, newbeta, param);
-    else newlk = f_pen_llik_0(p, newbeta, param);
+    fail = std::isnan(newlk) || std::isinf(newlk);
+    if (!fail && halving == 0 && std::fabs(1 - (loglik / newlk)) < eps) break;
 
-    // check convergence
-    fail = std::isnan(newlk) || std::isinf(newlk) == 1;
-
-    if (!fail && halving == 0 && fabs(1 - (loglik/newlk)) < eps) {
-      break;
+    if (fail || newlk < loglik) {
+      ++halving;
+      for (size_t i = 0; i < p; ++i) {
+        newbeta[i] = 0.5 * (beta[i] + newbeta[i]);
+      }
+      continue;
     }
 
-    if (fail || (newlk < loglik)) {
-      // adjust step size if likelihood decreases
-      halving++;
-      for (i=0; i<p; i++) {
-        newbeta[i] = (beta[i] + newbeta[i])/2;
-      }
-    } else { // update beta normally
-      halving = 0;
+    halving = 0;
+    beta = newbeta;
+    loglik = newlk;
+    u = der.get<std::vector<double>>("score");
+    imat = der.get<FlatMatrix>("imat");
 
-      for (i=0; i<p; i++) {
-        beta[i] = newbeta[i];
-      }
-      loglik = newlk;
+    for (size_t i = 0; i < ncolfit; ++i) u1[i] = u[colfit[i]];
 
-      if (!firth) {
-        u = f_score_0(p, beta, param);
-      } else {
-        u = f_pen_score_0(p, beta, param);
-      }
+    for (size_t j = 0; j < ncolfit; ++j)
+      for (size_t i = 0; i < ncolfit; ++i)
+        imat1(i, j) = imat(colfit[i], colfit[j]);
 
-      for (i=0; i<ncolfit; i++) {
-        u1[i] = u[colfit[i]];
-      }
+    cholesky2(imat1, ncolfit);
+    chsolve2(imat1, ncolfit, u1);
 
-      imat = f_info_0(p, beta, param);
-      for (i=0; i<ncolfit; i++) {
-        for (j=0; j<ncolfit; j++) {
-          imat1(i,j) = imat(colfit[i], colfit[j]);
-        }
-      }
-
-      i = cholesky2(imat1, ncolfit, toler);
-
-      chsolve2(imat1, ncolfit, u1);
-
-      u.fill(0);
-      for (i=0; i<ncolfit; i++) {
-        u[colfit[i]] = u1[i];
-      }
-
-      for (i=0; i<p; i++) {
-        newbeta[i] = beta[i] + u[i];
-      }
-    }
+    std::fill(u.begin(), u.end(), 0.0);
+    for (size_t i = 0; i < ncolfit; ++i) u[colfit[i]] = u1[i];
+    for (size_t i = 0; i < p; ++i) newbeta[i] = beta[i] + u[i];
   }
 
-  if (iter == maxiter) fail = 1;
+  if (iter == maxiter) fail = true;
 
-  imat = f_info_0(p, newbeta, param);
-  for (i=0; i<ncolfit; i++) {
-    for (j=0; j<ncolfit; j++) {
-      imat1(i,j) = imat(colfit[i], colfit[j]);
-    }
+  // final variance assembly
+  imat = der.get<FlatMatrix>("imat");
+
+  for (size_t j = 0; j < ncolfit; ++j)
+    for (size_t i = 0; i < ncolfit; ++i)
+      imat1(i, j) = imat(colfit[i], colfit[j]);
+
+  FlatMatrix var1 = invsympd(imat1, ncolfit);
+  FlatMatrix var(p, p);
+  for (size_t j = 0; j < ncolfit; ++j)
+    for (size_t i = 0; i < ncolfit; ++i)
+      var(colfit[i], colfit[j]) = var1(i, j);
+
+  ListCpp result;
+  result.push_back(std::move(newbeta), "coef");
+  result.push_back(iter, "iter");
+  result.push_back(std::move(var), "var");
+  result.push_back(newlk, "loglik");
+  result.push_back(fail, "fail");
+
+  if (firth) {
+    double regloglik = der.get<double>("regloglik");
+    result.push_back(regloglik, "regloglik");
   }
 
-  NumericMatrix var1 = invsympd(imat1, ncolfit, toler);
-  NumericMatrix var(p,p);
-  for (i=0; i<ncolfit; i++) {
-    for (j=0; j<ncolfit; j++) {
-      var(colfit[i], colfit[j]) = var1(i,j);
-    }
-  }
-
-  return List::create(
-    Named("coef") = newbeta,
-    Named("iter") = iter,
-    Named("var") = var,
-    Named("loglik") = newlk,
-    Named("fail") = fail);
+  return result;
 }
 
-
-// confidence limit of profile likelihood method
-//   k: index of the parameter to obtain PL CI
-//   which: computation direction (-1 for lower limit or 1 for upper limit)
-//   l0: boundary of profile loglik = max loglik - 0.5*qchisq(1-alpha, 1)
-// refer to SAS PROC LOGISTIC documentation for Likelihood Ratio-Based
-// Confidence Intervals for Parameters
-double logisregplloop(int p, NumericVector par, void *ex,
-                      int maxiter, double eps, bool firth,
-                      int k, int which, double l0) {
+// --------------------------- logisregplloop (profile likelihood solver) -----
+double logisregplloop(size_t p, const std::vector<double>& par,
+                      void *ex, int maxiter, double eps, bool firth,
+                      size_t k, int direction, double l0) {
   logparams *param = (logparams *) ex;
+  int iter;
+  bool fail = false;
 
-  int i, j, iter;
-  bool fail = 0;
+  std::vector<double> beta = par;
+  std::vector<double> newbeta(p);
+  double loglik = 0.0, newlk = 0.0;
+  std::vector<double> u(p);
+  std::vector<double> delta(p);
+  FlatMatrix imat(p, p);
+  FlatMatrix v(p, p);
 
-  NumericVector beta(p), newbeta(p);
-  double loglik, newlk;
-  NumericVector u(p);
-  NumericVector delta(p);
-  NumericMatrix imat(p,p);
-  NumericMatrix v(p,p);
+  ListCpp der = f_der_0(p, beta, param, firth);
+  loglik = der.get<double>("loglik");
+  u = der.get<std::vector<double>>("score");
+  imat = der.get<FlatMatrix>("imat");
+  v = invsympd(imat, p);
 
-  // initial beta and log likelihood
-  for (i=0; i<p; i++) {
-    beta[i] = par[i];
-  }
-
-  if (!firth) {
-    loglik = f_llik_0(p, beta, param);
-    u = f_score_0(p, beta, param);
-  } else {
-    loglik = f_pen_llik_0(p, beta, param);
-    u = f_pen_score_0(p, beta, param);
-  }
-
-  imat = f_info_0(p, beta, param);
-
-  // Lagrange multiplier method as used in SAS PROC LOGISTIC
-  double toler = 1e-12;
-  v = invsympd(imat, p, toler);
-  v = -1.0*v;
-
-  double w = 0;
-  for (i=0; i<p; i++) {
-    for (j=0; j<p; j++) {
-      w += u[i]*v(i,j)*u[j];
-    }
-  }
-
-  double underroot = 2*(l0 - loglik + 0.5*w)/v(k,k);
-  double lambda = underroot < 0.0 ? 0.0 : which*sqrt(underroot);
+  // compute w = - u^T v u
+  double w = -quadsym(u, v);
+  double underroot = -2 * (l0 - loglik + 0.5 * w) / v(k, k);
+  double lambda = underroot < 0.0 ? 0.0 : direction * std::sqrt(underroot);
   u[k] += lambda;
+  delta = mat_vec_mult(v, u);
+  for (size_t i = 0; i < p; ++i) newbeta[i] = beta[i] + delta[i];
 
-  delta.fill(0.0);
-  for (i=0; i<p; i++) {
-    for (j=0; j<p; j++) {
-      delta[i] -= v(i,j)*u[j];
-    }
-  }
-
-  // update beta
-  for (i=0; i<p; i++) {
-    newbeta[i] = beta[i] + delta[i];
-  }
-
-  for (iter=0; iter<maxiter; iter++) {
-    if (!firth) newlk = f_llik_0(p, newbeta, param);
-    else newlk = f_pen_llik_0(p, newbeta, param);
-
-    // check convergence
-    fail = std::isnan(newlk) || std::isinf(newlk) == 1;
-
-    if (!fail && fabs(newlk - l0) < eps && w < eps) {
-      break;
-    }
-
-    for (i=0; i<p; i++) {
-      beta[i] = newbeta[i];
-    }
+  // iterate to convergence
+  for (iter = 0; iter < maxiter; ++iter) {
+    der = f_der_0(p, newbeta, param, firth);
+    newlk = der.get<double>("loglik");
+    fail = std::isnan(newlk) || std::isinf(newlk);
+    if (!fail && std::fabs(newlk - l0) < eps && w < eps) break;
+    beta = newbeta;
     loglik = newlk;
-
-    if (!firth) {
-      u = f_score_0(p, beta, param);
-    } else {
-      u = f_pen_score_0(p, beta, param);
-    }
-
-    imat = f_info_0(p, beta, param);
-
-    // Lagrange multiplier method as used in SAS PROC LOGISTIC
-    v = invsympd(imat, p, toler);
-    v = -1.0*v;
-
-    w = 0;
-    for (i=0; i<p; i++) {
-      for (j=0; j<p; j++) {
-        w += u[i]*v(i,j)*u[j];
-      }
-    }
-
-    underroot = 2*(l0 - loglik + 0.5*w)/v(k,k);
-    lambda = underroot < 0.0 ? 0.0 : which*sqrt(underroot);
+    u = der.get<std::vector<double>>("score");
+    imat = der.get<FlatMatrix>("imat");
+    v = invsympd(imat, p);
+    w = -quadsym(u, v);
+    underroot = -2 * (l0 - newlk + 0.5 * w) / v(k, k);
+    lambda = underroot < 0.0 ? 0.0 : direction * std::sqrt(underroot);
     u[k] += lambda;
-
-    delta.fill(0.0);
-    for (i=0; i<p; i++) {
-      for (j=0; j<p; j++) {
-        delta[i] -= v(i,j)*u[j];
-      }
-    }
-
-    // update beta
-    for (i=0; i<p; i++) {
-      newbeta[i] = beta[i] + delta[i];
-    }
+    delta = mat_vec_mult(v, u);
+    for (size_t i = 0; i < p; ++i) newbeta[i] = beta[i] + delta[i];
   }
 
-  if (iter == maxiter) fail = 1;
-
-  if (fail) {
-    warning("The algorithm in logisregplloop did not converge");
-  }
+  if (iter == maxiter) fail = true;
+  if (fail) thread_utils::push_thread_warning("logisregplloop did not converge.");
 
   return newbeta[k];
 }
 
+// --------------------------- logisregcpp (high-level API) --------------------
+// Convert inputs to FlatMatrix design matrix and use new functions where appropriate.
+ListCpp logisregcpp(const DataFrameCpp& data,
+                    const std::string& event,
+                    const std::vector<std::string>& covariates,
+                    const std::string& freq,
+                    const std::string& weight,
+                    const std::string& offset,
+                    const std::string& id,
+                    const std::string& link,
+                    const std::vector<double>& init,
+                    const bool robust,
+                    const bool firth,
+                    const bool flic,
+                    const bool plci,
+                    const double alpha,
+                    const int maxiter,
+                    const double eps) {
 
-// [[Rcpp::export]]
-List logisregcpp(const DataFrame data,
-                 const StringVector& rep = "",
-                 const std::string event = "event",
-                 const StringVector& covariates = "",
-                 const std::string freq = "",
-                 const std::string weight = "",
-                 const std::string offset = "",
-                 const std::string id = "",
-                 const std::string link = "logit",
-                 const NumericVector& init = NA_REAL,
-                 const bool robust = 0,
-                 const bool firth = 0,
-                 const bool flic = 0,
-                 const bool plci = 0,
-                 const double alpha = 0.05,
-                 const int maxiter = 50,
-                 const double eps = 1.0e-9) {
+  size_t n = data.nrows();
+  size_t p = covariates.size() + 1;
+  if (p == 2 && covariates[0].empty()) p = 1;
 
-  int h, i, j, k, n = data.nrows();
-  int p = static_cast<int>(covariates.size()) + 1;
-  if (p == 2 && (covariates[0] == "" || covariates[0] == "none")) {
-    p = 1;
-  }
-
-  bool has_rep;
-  IntegerVector repn(n);
-  DataFrame u_rep;
-  int p_rep = static_cast<int>(rep.size());
-  if (p_rep == 1 && (rep[0] == "" || rep[0] == "none")) {
-    has_rep = 0;
-    repn.fill(1);
+  if (event.empty()) throw std::invalid_argument("event variable is not specified");
+  if (!data.containElementNamed(event))
+    throw std::invalid_argument("data must contain the event variable");
+  std::vector<int> eventn(n);
+  if (data.bool_cols.count(event)) {
+    const std::vector<unsigned char>& vb = data.get<unsigned char>(event);
+    for (size_t i = 0; i < n; ++i) eventn[i] = vb[i] ? 1 : 0;
+  } else if (data.int_cols.count(event)) {
+    eventn = data.get<int>(event);
+  } else if (data.numeric_cols.count(event)) {
+    const std::vector<double>& vd = data.get<double>(event);
+    for (size_t i = 0; i < n; ++i) eventn[i] = static_cast<int>(vd[i]);
   } else {
-    List out = bygroup(data, rep);
-    has_rep = 1;
-    repn = out["index"];
-    u_rep = DataFrame(out["lookup"]);
+    throw std::invalid_argument("event variable must be bool, integer or numeric");
   }
+  for (double val : eventn) if (val != 0 && val != 1)
+    throw std::invalid_argument("event must be 1 or 0 for each observation");
 
-  bool has_event = hasVariable(data, event);
-  if (!has_event) {
-    stop("data must contain the event variable");
-  }
-  NumericVector eventn(n);
-  if (has_event) {
-    NumericVector eventnz = data[event];
-    eventn = clone(eventnz);
-    if (is_true(any((eventn != 1) & (eventn != 0)))) {
-      stop("event must be 1 or 0 for each subject");
-    }
+  // construct design matrix zn (n x p) as FlatMatrix column-major
+  FlatMatrix zn(n, p);
+  // intercept column
+  for (size_t i = 0; i < n; ++i) zn.data[i] = 1.0;
 
-    if (is_true(all(eventn == 0))) {
-      stop("at least 1 event is needed to fit the parametric model");
-    }
-  }
-
-  NumericMatrix zn(n,p);
-  for (i=0; i<n; i++) {
-    zn(i,0) = 1; // intercept
-  }
-  for (j=0; j<p-1; j++) {
-    String zj = covariates[j];
-    if (!hasVariable(data, zj)) {
-      stop("data must contain the variables in covariates");
-    }
-    NumericVector u = data[zj];
-    for (i=0; i<n; i++) {
-      zn(i,j+1) = u[i];
-    }
-  }
-
-  bool has_freq = hasVariable(data, freq);
-  NumericVector freqn(n, 1.0);
-  if (has_freq) {
-    NumericVector freqnz = data[freq];
-    freqn = clone(freqnz);
-    if (is_true(any((freqn <= 0) | (freqn != floor(freqn))))) {
-      stop("freq must be positive integers");
-    }
-  }
-
-  bool has_weight = hasVariable(data, weight);
-  NumericVector weightn(n, 1.0);
-  if (has_weight) {
-    NumericVector weightnz = data[weight];
-    weightn = clone(weightnz);
-    if (is_true(any(weightn <= 0))) {
-      stop("weight must be greater than 0");
-    }
-  }
-
-  bool has_offset = hasVariable(data, offset);
-  NumericVector offsetn(n);
-  if (has_offset) {
-    NumericVector offsetnz = data[offset];
-    offsetn = clone(offsetnz);
-  }
-
-  bool has_id = hasVariable(data, id);
-  IntegerVector idn(n);
-  if (!has_id) {
-    idn = seq(1,n);
-  } else {
-    if (TYPEOF(data[id]) == INTSXP) {
-      IntegerVector idv = data[id];
-      IntegerVector idwi = unique(idv);
-      idwi.sort();
-      idn = match(idv, idwi);
-    } else if (TYPEOF(data[id]) == REALSXP) {
-      NumericVector idv = data[id];
-      NumericVector idwn = unique(idv);
-      idwn.sort();
-      idn = match(idv, idwn);
-    } else if (TYPEOF(data[id]) == STRSXP) {
-      StringVector idv = data[id];
-      StringVector idwc = unique(idv);
-      idwc.sort();
-      idn = match(idv, idwc);
+  // fill covariate columns (1..p-1)
+  for (size_t j = 0; j < p - 1; ++j) {
+    const std::string& zj = covariates[j];
+    if (!data.containElementNamed(zj))
+      throw std::invalid_argument("data must contain the variables in covariates");
+    double* zn_col = zn.data_ptr() + (j + 1) * n;
+    if (data.bool_cols.count(zj)) {
+      const std::vector<unsigned char>& vb = data.get<unsigned char>(zj);
+      for (size_t i = 0; i < n; ++i) zn_col[i] = vb[i] ? 1.0 : 0.0;
+    } else if (data.int_cols.count(zj)) {
+      const std::vector<int>& vi = data.get<int>(zj);
+      for (size_t i = 0; i < n; ++i) zn_col[i] = static_cast<double>(vi[i]);
+    } else if (data.numeric_cols.count(zj)) {
+      const std::vector<double>& vd = data.get<double>(zj);
+      std::memcpy(zn_col, vd.data(), n * sizeof(double));
     } else {
-      stop("incorrect type for the id variable in the input data");
+      throw std::invalid_argument("covariates must be bool, integer or numeric");
     }
   }
 
-  std::string link1 = link;
-  std::for_each(link1.begin(), link1.end(), [](char & c) {
-    c = static_cast<char>(std::tolower(static_cast<unsigned char>(c)));
-  });
-  if (!(link1=="logit" || link1=="probit" || link1=="cloglog")) {
-    stop("Invalid value for link");
+  // freq, weight, offset
+  std::vector<int> freqn(n, 1);
+  if (!freq.empty() && data.containElementNamed(freq)) {
+    if (data.int_cols.count(freq)) {
+      freqn = data.get<int>(freq);
+    } else if (data.numeric_cols.count(freq)) {
+      const std::vector<double>& vd = data.get<double>(freq);
+      for (size_t i = 0; i < n; ++i) freqn[i] = static_cast<int>(vd[i]);
+    } else throw std::invalid_argument("freq variable must be integer or numeric");
+    for (double v : freqn) if (v <= 0)
+      throw std::invalid_argument("freq must be positive integers");
   }
 
-  // sort the data by rep
-  IntegerVector order = seq(0, n-1);
-  std::stable_sort(order.begin(), order.end(), [&](int i, int j) {
-    return repn[i] < repn[j];
-  });
+  std::vector<double> weightn(n, 1.0);
+  if (!weight.empty() && data.containElementNamed(weight)) {
+    if (data.int_cols.count(weight)) {
+      const auto& weighti = data.get<int>(weight);
+      for (size_t i = 0; i < n; ++i) weightn[i] = static_cast<double>(weighti[i]);
+    } else if (data.numeric_cols.count(weight)) {
+      weightn = data.get<double>(weight);
+    } else throw std::invalid_argument("weight variable must be integer or numeric");
+    for (double v : weightn) if (v <= 0.0)
+      throw std::invalid_argument("weight must be greater than 0");
+  }
 
-  repn = repn[order];
-  eventn = eventn[order];
-  freqn = freqn[order];
-  weightn = weightn[order];
-  offsetn = offsetn[order];
-  idn = idn[order];
-  zn = subset_matrix_by_row(zn, order);
+  std::vector<double> offsetn(n, 0.0);
+  if (!offset.empty() && data.containElementNamed(offset)) {
+    if (data.int_cols.count(offset)) {
+      const auto& offseti = data.get<int>(offset);
+      for (size_t i = 0; i < n; ++i) offsetn[i] = static_cast<double>(offseti[i]);
+    } else if (data.numeric_cols.count(offset)) {
+      offsetn = data.get<double>(offset);
+    } else throw std::invalid_argument("offset variable must be integer or numeric");
+  }
+
+  // id processing (unchanged semantics)
+  bool has_id = !id.empty() && data.containElementNamed(id);
+  std::vector<int> idn(n);
+  if (!has_id) {
+    std::iota(idn.begin(), idn.end(), 0);
+  } else {
+    if (data.int_cols.count(id)) {
+      auto v = data.get<int>(id);
+      auto w = unique_sorted(v);
+      idn = matchcpp(v, w);
+    } else if (data.numeric_cols.count(id)) {
+      auto v = data.get<double>(id);
+      auto w = unique_sorted(v);
+      idn = matchcpp(v, w);
+    } else if (data.string_cols.count(id)) {
+      auto v = data.get<std::string>(id);
+      auto w = unique_sorted(v);
+      idn = matchcpp(v, w);
+    } else {
+      throw std::invalid_argument(
+          "incorrect type for the id variable in the input data");
+    }
+  }
+
+  // link code mapping
+  std::string link1 = link;
+  for (char &c : link1) {
+    c = static_cast<char>(std::tolower(static_cast<unsigned char>(c)));
+  }
+
+  if (link1 == "log-log" || link1 == "loglog") link1 = "cloglog";
+
+  int link_code = 0;
+  if (link1 == "logit") link_code = 1;
+  else if (link1 == "probit") link_code = 2;
+  else if (link1 == "cloglog") link_code = 3;
+  else throw std::invalid_argument("invalid link: " + link1);
 
   // exclude observations with missing values
-  LogicalVector sub(n,1);
-  for (i=0; i<n; i++) {
-    if ((repn[i] == NA_INTEGER) || (eventn[i] == NA_INTEGER) ||
-        (std::isnan(freqn[i])) || (std::isnan(weightn[i])) ||
-        (std::isnan(offsetn[i])) || (idn[i] == NA_INTEGER)) {
+  std::vector<unsigned char> sub(n, 1);
+  for (size_t i = 0; i < n; ++i) {
+    if (eventn[i] == INT_MIN || freqn[i] == INT_MIN ||
+        std::isnan(weightn[i]) || std::isnan(offsetn[i]) ||
+        idn[i] == INT_MIN) {
       sub[i] = 0;
+      continue;
     }
-    for (j=0; j<p-1; j++) {
-      if (std::isnan(zn(i,j+1))) sub[i] = 0;
-    }
-  }
-
-  order = which(sub);
-  repn = repn[order];
-  eventn = eventn[order];
-  freqn = freqn[order];
-  weightn = weightn[order];
-  offsetn = offsetn[order];
-  idn = idn[order];
-  zn = subset_matrix_by_row(zn, order);
-  n = sum(sub); // number of nonmissing observations
-
-  // identify the locations of the unique values of rep
-  IntegerVector idx(1,0);
-  for (i=1; i<n; i++) {
-    if (repn[i] != repn[i-1]) {
-      idx.push_back(i);
+    for (size_t j = 0; j < p - 1; ++j) {
+      if (std::isnan(zn(i, j+1))) { sub[i] = 0; break; }
     }
   }
 
-  int nreps = static_cast<int>(idx.size());
-  idx.push_back(n);
+  std::vector<size_t> order = which(sub);
+  subset_in_place(eventn, order);
+  subset_in_place(freqn, order);
+  subset_in_place(weightn, order);
+  subset_in_place(offsetn, order);
+  subset_in_place(idn, order);
+  subset_in_place_flatmatrix(zn, order);
+  n = order.size();
+  if (n == 0) throw std::invalid_argument("no observations without missing values");
 
-  // variables in the output data sets
-  IntegerVector rep01 = seq(1,nreps);
-  NumericVector nobs(nreps), nevents(nreps);
-  NumericVector loglik0(nreps), loglik1(nreps);
-  NumericVector regloglik0(nreps), regloglik1(nreps); // regular loglik
-  IntegerVector niter(nreps);
-  LogicalVector fails(nreps);
+  // sumstat data set
+  int nobs, nevents;
+  double loglik0, loglik1;
+  double regloglik0, regloglik1; // regular loglik
+  int niter;
+  bool fail;
 
-  IntegerVector rep0(nreps*p);
-  StringVector par0(nreps*p);
-  NumericVector beta0(nreps*p), sebeta0(nreps*p), rsebeta0(nreps*p);
-  NumericMatrix vbeta0(nreps*p,p), rvbeta0(nreps*p,p);
-  NumericVector lb0(nreps*p), ub0(nreps*p), prob0(nreps*p);
-  StringVector clparm0(nreps*p);
+  // parest data set
+  std::vector<std::string> par(p);
+  std::vector<double> b(p), seb(p), rseb(p);
+  std::vector<double> z(p), expbeta(p);
+  FlatMatrix vb(p, p), rvb(p, p);
+  std::vector<double> lb(p), ub(p), prob(p);
+  std::vector<std::string> clparm(p);
 
-  NumericVector linear_predictors(n), fitted_values(n);
+  // linear predictor and fitted values for all observations
+  std::vector<double> linear_predictors(n), fitted_values(n);
 
-  int N=0; // offset for the current replication data set
-  for (h=0; h<nreps; h++) {
-    IntegerVector q1 = Range(idx[h], idx[h+1]-1);
-    int n1 = static_cast<int>(q1.size());
+  double zcrit = boost_qnorm(1.0 - alpha / 2.0);
+  double xcrit = zcrit * zcrit;
 
-    NumericVector event1 = eventn[q1];
-    NumericVector freq1 = freqn[q1];
-    NumericVector weight1 = weightn[q1];
-    NumericVector offset1 = offsetn[q1];
-    IntegerVector id1 = idn[q1];
-    NumericMatrix z1 = subset_matrix_by_row(zn, q1);
+  // number of trials and number of events accounting for frequencies
+  nobs = std::accumulate(freqn.begin(), freqn.end(), 0);
+  nevents = std::inner_product(freqn.begin(), freqn.end(), eventn.begin(), 0);
+  if (nevents == 0) {
+    for (size_t i = 0; i < p; ++i) {
+      par[i] = (i == 0) ? "(Intercept)" : covariates[i-1];
+      b[i] = NaN;
+      seb[i] = 0;
+      rseb[i] = 0;
+      z[i] = NaN;
+      expbeta[i] = NaN;
+      lb[i] = NaN;
+      ub[i] = NaN;
+      prob[i] = NaN;
+      clparm[i] = "Wald";
+    }
 
-    // number of trials and number of events accounting for frequencies
-    nobs[h] = sum(freq1);
-    nevents[h] = sum(freq1*event1);
+    for (size_t j = 0; j < p; ++j) {
+      for (size_t i = 0; i < p; ++i) {
+        vb(i,j) = 0;
+        rvb(i,j) = 0;
+      }
+    }
 
+    for (size_t person = 0; person < n; ++person) {
+      linear_predictors[person] = offsetn[person];
+    }
+    switch (link_code) {
+    case 1:
+      for (size_t person = 0; person < n; ++person)
+        fitted_values[person] = boost_plogis(linear_predictors[person]);
+      break;
+    case 2:
+      for (size_t person = 0; person < n; ++person)
+        fitted_values[person] = boost_pnorm(linear_predictors[person]);
+      break;
+    case 3:
+      for (size_t person = 0; person < n; ++person)
+        fitted_values[person] = boost_pextreme(linear_predictors[person]);
+      break;
+    }
+
+    loglik0 = NaN;
+    loglik1 = NaN;
+    regloglik0 = NaN;
+    regloglik1 = NaN;
+    niter = 0;
+    fail = true;
+  } else {
     // intercept only model
     double num = 0, den = 0;
-    for (i=0; i<n1; i++) {
-      num += freq1[i]*weight1[i]*event1[i];
-      den += freq1[i]*weight1[i];
+    for (size_t i = 0; i < n; ++i) {
+      num += freqn[i] * weightn[i] * eventn[i];
+      den += freqn[i] * weightn[i];
     }
     if (firth) {
       num += 0.5;
       den += 1.0;
     }
 
-    NumericVector bint0(p);
-    bint0[0] = R::qlogis(num/den, 0, 1, 1, 0);
+    std::vector<double> bint0(p);
+    bint0[0] = boost_qlogis(num / den);
 
-    IntegerVector colfit0(1);
-    logparams param = {n1, link1, event1, z1, freq1, weight1, offset1};
-    List outint = logisregloop(p, bint0, &param, maxiter, eps, firth,
-                               colfit0, 1);
+    std::vector<size_t> colfit0(1);
+    logparams param = {n, link_code, eventn, zn, freqn, weightn, offsetn};
+    ListCpp outint = logisregloop(p, bint0, &param, maxiter, eps, firth, colfit0, 1);
 
-    NumericVector bint = outint["coef"];
-    NumericMatrix vbint = as<NumericMatrix>(outint["var"]);
+    std::vector<double> bint = outint.get<std::vector<double>>("coef");
+    FlatMatrix vbint = outint.get<FlatMatrix>("var");
 
-    NumericVector b(p);
-    NumericMatrix vb(p,p);
-    List out;
+    ListCpp out;
 
     if (p > 1) {
       // parameter estimates and standard errors for the full model
-      IntegerVector colfit = seq(0,p-1);
-      if (is_false(any(is_na(init))) && init.size() == p) {
+      std::vector<size_t> colfit = seqcpp(0,p-1);
+      if (!init.empty() && init.size() == p &&
+          std::none_of(init.begin(), init.end(), [](double val){
+            return std::isnan(val); })) {
         out = logisregloop(p, init, &param, maxiter, eps, firth, colfit, p);
       } else {
         out = logisregloop(p, bint, &param, maxiter, eps, firth, colfit, p);
       }
 
-      bool fail = out["fail"];
-      if (fail) warning("The algorithm in logisregr did not converge");
+      fail = out.get<bool>("fail");
+      if (fail) {
+        thread_utils::push_thread_warning(
+          "logisregloop failed to converge for the full model; "
+          "continuing with current results.");
+      }
 
-      b = out["coef"];
-      vb = as<NumericMatrix>(out["var"]);
+      b = out.get<std::vector<double>>("coef");
+      vb = out.get<FlatMatrix>("var");
 
       // intercept correction
       if (flic) {
-        NumericVector lp(n1);  // linear predictor excluding intercept
-        for (int person = 0; person < n1; person++) {
-          lp[person] = offset1[person];
-          for (i=1; i<p; i++) {
-            lp[person] += b[i]*z1(person,i);
+        std::vector<double> lp = offsetn;  // linear predictor excluding intercept
+
+        // pointers into data for fastest access
+        const double* zptr = zn.data_ptr();
+        double* lpptr = lp.data();
+
+        for (size_t col = 1; col < p; ++col) {   // skip intercept column 0
+          double coef = b[col];
+          if (coef == 0.0) continue;                       // skip zero coefficient
+          const double* zcol = zptr + col * n;
+          // inner loop is contiguous in memory (good locality)
+          for (size_t row = 0; row < n; ++row) {
+            lpptr[row] += coef * zcol[row];
           }
         }
 
-        logparams param0 = {n1, link1, event1, z1, freq1, weight1, lp};
-        NumericVector bint00(1, bint0[0]);
-        outint = logisregloop(1, bint00, &param0, maxiter, eps, 0, 
-                              colfit0, 1);
-        double a = as<double>(outint["coef"]);
-        double va = as<double>(outint["var"]);
+        logparams param0 = {n, link_code, eventn, zn, freqn, weightn, lp};
+        std::vector<double> bint00(1, bint0[0]);
+        ListCpp outint0 = logisregloop(1, bint00, &param0, maxiter,
+                                       eps, 0, colfit0, 1);
+        double a = outint0.get<std::vector<double>>("coef")[0];
+        double va = outint0.get<FlatMatrix>("var")(0,0);
 
         // update the intercept estimate
         b[0] = a;
 
         // partial derivative of alpha(beta) with respect to beta
-        NumericMatrix iflic = f_info_0(p, b, &param);
-        NumericVector der(p-1);
-        for (i=0; i<p-1; i++) {
-          der[i] = -iflic(i+1,0)/iflic(0,0);
+        ListCpp derint = f_der_0(p, b, &param, 0);
+        FlatMatrix iflic = derint.get<FlatMatrix>("imat");
+        std::vector<double> der(p-1);
+        for (size_t i = 0; i < p - 1; ++i) {
+          der[i] = -iflic(i+1, 0) / iflic(0, 0);
         }
 
-        // update the variance of alpha
-        vb(0,0) = va;
-        for (i=0; i<p-1; i++) {
-          for (j=0; j<p-1; j++) {
-            vb(0,0) += der[i]*vb(i+1,j+1)*der[j];
-          }
-        }
+        // update variance-covariance matrix via the delta method
+        if (p <= 1) { // only intercept
+          vb(0,0) = va;
+        } else {
+          size_t p1 = p - 1;                  // length of der and of the submatrix
+          const double* derp = der.data();
+          double* vbptr = vb.data_ptr();    // column-major
 
-        // update the covariance between alpha and beta
-        for (i=0; i<p-1; i++) {
-          vb(i+1,0) = 0;
-          for (j=0; j<p-1; j++) {
-            vb(i+1,0) += vb(i+1,j+1)*der[j];
+          // accumulator for vb(1..p-1,0): indexed 0..p1-1 corresponds to rows 1..p-1
+          std::vector<double> col0(p1, 0.0);
+
+          // Compute col0 = M * der, where M = vb[1..p-1, 1..p-1]
+          // columns of M correspond to vb columns 1..p-1;
+          // for column j (0..p1-1) start at
+          // src = vbptr + (j+1)*nrows and element M(row = r+1, col = j+1) is src[r+1]
+          for (size_t j = 0; j < p1; ++j) {
+            double dj = derp[j];
+            if (dj == 0.0) continue;                   // skip zero coeffs
+            const double* src_col = vbptr + (j + 1) * p;
+            // accumulate rows 1..p-1 -> indices r=0..p1-1 map to src_col[r+1]
+            for (size_t r = 0; r < p1; ++r) {
+              col0[r] += src_col[r + 1] * dj;
+            }
           }
-          vb(0,i+1) = vb(i+1,0);
+
+          // write back vb(1..p-1,0) and vb(0,1..p-1) and compute der^T * col0
+          double dot = 0.0;
+          // vb( row, col ) -> vbptr[ col*nrows + row ]
+          for (size_t r = 0; r < p1; ++r) {
+            double v = col0[r];
+            vbptr[0 * p + (r + 1)] = v;          // vb(r+1, 0)
+            vbptr[(r + 1) * p + 0] = v;          // vb(0, r+1)
+            dot += derp[r] * v;
+          }
+
+          // final scalar update
+          vbptr[0] = va + dot;                       // vb(0,0)
         }
       }
     } else {
@@ -909,334 +846,319 @@ List logisregcpp(const DataFrame data,
 
       if (flic) {
         out = logisregloop(p, bint0, &param, maxiter, eps, 0, colfit0, 1);
-        b = out["coef"];
-        vb = as<NumericMatrix>(outint["var"]);
+        b = out.get<std::vector<double>>("coef");
+        vb = outint.get<FlatMatrix>("var");
       }
     }
 
-    NumericVector seb(p);
-    for (j=0; j<p; j++) {
-      seb[j] = sqrt(vb(j,j));
+    for (size_t i = 0; i < p; ++i) {
+      seb[i] = std::sqrt(vb(i,i));
     }
 
-    for (i=0; i<p; i++) {
-      rep0[h*p+i] = h+1;
-      if (i==0) {
-        par0[h*p+i] = "(Intercept)";
-      } else {
-        par0[h*p+i] = covariates[i-1];
-      }
-      beta0[h*p+i] = b[i];
-      sebeta0[h*p+i] = seb[i];
-      for (j=0; j<p; j++) {
-        vbeta0(h*p+i,j) = vb(i,j);
-      }
+    for (size_t i = 0; i < p; ++i) {
+      par[i] = (i == 0) ? "(Intercept)" : covariates[i-1];
     }
 
     // linear predictors and fitted values
-    int person;
-    NumericVector eta(n1);
-    for (person = 0; person < n1; person++) {
-      eta[person] = offset1[person];
-      for (i=0; i<p; i++) {
-        eta[person] += b[i]*z1(person,i);
-      }
-      linear_predictors[N+person] = eta[person];
-    }
-
-    if (link1 == "logit") {
-      for (person = 0; person < n1; person++) {
-        fitted_values[N+person] = R::plogis(eta[person], 0, 1, 1, 0);
-      }
-    } else if (link1 == "probit") {
-      for (person = 0; person < n1; person++) {
-        fitted_values[N+person] = R::pnorm(eta[person], 0, 1, 1, 0);
-      }
-    } else if (link1 == "cloglog") {
-      for (person = 0; person < n1; person++) {
-        fitted_values[N+person] = 1 - exp(-exp(eta[person]));
+    std::vector<double> eta = offsetn;
+    for (size_t i = 0; i < p; ++i) {
+      double beta = b[i];
+      if (beta == 0.0) continue;
+      const double* zn_col = zn.data_ptr() + i * n;
+      for (size_t r = 0; r < n; ++r) {
+        eta[r] += beta * zn_col[r];
       }
     }
+    linear_predictors = eta;
 
-    N += n1;
+    switch (link_code) {
+    case 1: // logit
+      for (size_t person = 0; person < n; ++person) {
+        fitted_values[person] = boost_plogis(eta[person]);
+      }
+      break;
+    case 2: // probit
+      for (size_t person = 0; person < n; ++person) {
+        fitted_values[person] = boost_pnorm(eta[person]);
+      }
+      break;
+    case 3: // cloglog
+      for (size_t person = 0; person < n; ++person) {
+        fitted_values[person] = boost_pextreme(eta[person]);
+      }
+      break;
+    }
 
-    niter[h] = out["iter"];
-    fails[h] = out["fail"];
+    niter = out.get<int>("iter");
+    fail = out.get<bool>("fail");
 
     // robust variance estimates
-    NumericVector rseb(p);  // robust standard error for betahat
     if (robust) {
-      NumericMatrix ressco = f_ressco_0(p, b, &param);
+      FlatMatrix ressco = f_ressco_0(p, b, &param);
 
-      int nr; // number of rows in the score residual matrix
-      NumericVector freqr;
+      size_t nr; // number of rows in the score residual matrix
+      std::vector<int> freqr;
       if (!has_id) {
-        for (i=0; i<n1; i++) {
-          for (j=0; j<p; j++) {
-            ressco(i,j) = weight1[i]*ressco(i,j);
+        for (size_t j = 0; j < p; ++j) {
+          double* rcol = ressco.data_ptr() + j * n;
+          for (size_t i = 0; i < n; ++i) {
+            rcol[i] *= weightn[i];
           }
         }
-        nr = n1;
-        freqr = clone(freq1);
+
+        nr = n;
+        freqr = freqn;
       } else { // need to sum up score residuals by id
-        IntegerVector order = seq(0, n1-1);
-        std::sort(order.begin(), order.end(), [&](int i, int j) {
-          return id1[i] < id1[j];
+        std::vector<size_t> order(n);
+        std::iota(order.begin(), order.end(), 0);
+        std::sort(order.begin(), order.end(), [&](size_t i, size_t j) {
+          return idn[i] < idn[j];
         });
 
-        IntegerVector id2 = id1[order];
-        IntegerVector idx(1,0);
-        for (i=1; i<n1; i++) {
-          if (id2[i] != id2[i-1]) {
+        std::vector<int> id1 = subset(idn, order);
+        std::vector<size_t> idx(1,0);
+        for (size_t i = 1; i < n; ++i) {
+          if (id1[i] != id1[i-1]) {
             idx.push_back(i);
           }
         }
 
-        int nids = static_cast<int>(idx.size());
-        idx.push_back(n1);
+        size_t nids = idx.size();
+        idx.push_back(n);
 
-        NumericMatrix resid(n1,p);
-        for (i=0; i<n1; i++) {
-          for (j=0; j<p; j++) {
-            resid(i,j) = ressco(order[i],j);
-          }
-        }
-
-        NumericVector weight2 = weight1[order];
-        NumericVector freq2 = freq1[order];
-        NumericVector freqr0(nids); // cluster frequency
-
-        NumericMatrix ressco2(nids,p);
-        for (i=0; i<nids; i++) {
-          for (j=0; j<p; j++) {
-            for (k=idx[i]; k<idx[i+1]; k++) {
-              ressco2(i,j) += weight2[k]*resid(k,j);
+        FlatMatrix ressco1(nids, p);
+        for (size_t j = 0; j < p; ++j) {
+          const double* rcol = ressco.data_ptr() + j * n;
+          double* rcol1 = ressco1.data_ptr() + j * nids;
+          for (size_t i = 0; i < nids; ++i) {
+            double sum = 0.0;
+            for (size_t k = idx[i]; k < idx[i+1]; ++k) {
+              size_t row = order[k];
+              sum += weightn[row] * rcol[row];
             }
+            rcol1[i] = sum;
           }
-          freqr0[i] = freq2[idx[i]];
         }
 
-        ressco = ressco2;  // update the score residuals
+        std::vector<int> freq1(nids); // cluster frequency
+        for (size_t i = 0; i < nids; ++i) {
+          freq1[i] = freqn[order[idx[i]]];
+        }
+
+        // update the score residuals
+        ressco = std::move(ressco1);
         nr = nids;
-        freqr = freqr0;
+        freqr = std::move(freq1);
       }
 
-      NumericMatrix D(nr,p); // DFBETA
-      for (i=0; i<nr; i++) {
-        for (j=0; j<p; j++) {
-          for (k=0; k<p; k++) {
-            D(i,j) += ressco(i,k)*vb(k,j);
+      FlatMatrix D = mat_mat_mult(ressco, vb);
+
+      const double* Dptr = D.data_ptr();      // Dcol_j starts at Dptr + j*nr_sz
+      double* rvbptr     = rvb.data_ptr();    // rvbcol_k starts at rvbptr + k*p
+
+      // rvb(j,k) corresponds to rvbptr[k*p + j] because column-major: column k, row j
+      for (size_t j = 0; j < p; ++j) {
+        const double* Dj = Dptr + j * nr;          // pointer to D(:,j)
+        for (size_t k = 0; k <= j; ++k) {
+          const double* Dk = Dptr + k * nr;        // pointer to D(:,k)
+          double sum = 0.0;
+          // inner loop reads Dj[i] and Dk[i] contiguously
+          for (size_t i = 0; i < nr; ++i) {
+            sum += freqr[i] * Dj[i] * Dk[i];
           }
+          // write into rvb(j,k) and mirror
+          rvbptr[k * p + j] = sum;                // rvb(j,k)
+          if (j != k) rvbptr[j * p + k] = sum;    // rvb(k,j) = rvb(j,k)  (mirror)
         }
       }
 
-      NumericMatrix rvb(p,p); // robust variance matrix for betahat
-      for (j=0; j<p; j++) {
-        for (k=0; k<p; k++) {
-          for (i=0; i<nr; i++) {
-            rvb(j,k) += freqr[i]*D(i,j)*D(i,k);
-          }
-        }
-      }
-
-      for (i=0; i<p; i++) {
-        rseb[i] = sqrt(rvb(i,i));
-      }
-
-      for (i=0; i<p; i++) {
-        rsebeta0[h*p+i] = rseb[i];
-        for (j=0; j<p; j++) {
-          rvbeta0(h*p+i,j) = rvb(i,j);
-        }
+      for (size_t i = 0; i < p; ++i) {
+        rseb[i] = std::sqrt(rvb(i, i));
       }
     }
 
     // profile likelihood confidence interval for regression coefficients
-    NumericVector lb(p), ub(p), prob(p);
-    StringVector clparm(p);
-
-    double zcrit = R::qnorm(1-alpha/2, 0, 1, 1, 0);
     if (plci) {
-      double lmax;
-      if (firth) {
-        lmax = f_pen_llik_0(p, b, &param);
-      } else {
-        lmax = f_llik_0(p, b, &param);
-      }
-      double l0 = lmax - 0.5*R::qchisq(1-alpha, 1, 1, 0);
+      double lmax = out.get<double>("loglik");
+      double l0 = lmax - 0.5 * xcrit;
 
-      if (!(firth && flic)) {
-        for (k=0; k<p; k++) {
-          lb[k] = logisregplloop(p, b, &param, maxiter, eps, firth, 
-                                 k, -1, l0);
-          ub[k] = logisregplloop(p, b, &param, maxiter, eps, firth, 
-                                 k, 1, l0);
+      if (!(firth && flic)) { // PL CI for all parameters
+        for (size_t k = 0; k < p; ++k) {
+          lb[k] = logisregplloop(p, b, &param, maxiter, eps, firth, k, -1, l0);
+          ub[k] = logisregplloop(p, b, &param, maxiter, eps, firth, k, 1, l0);
 
-          IntegerVector colfit1(p-1);
-          for (i=0; i<k; i++) {
-            colfit1[i] = i;
-          }
-          for (i=k+1; i<p; i++) {
-            colfit1[i-1] = i;
+          std::vector<size_t> colfit1(p-1);
+          for (size_t i = 0, j = 0; i < p; ++i) {
+            if (i == k) continue;
+            colfit1[j++] = i;
           }
 
-          NumericVector b0(p);
-          List out0 = logisregloop(p, b0, &param, maxiter, eps, firth,
-                                   colfit1, p-1);
-          double lmax0 = out0["loglik"];
-          prob[k] = R::pchisq(-2*(lmax0 - lmax), 1, 0, 0);
+          std::vector<double> b0(p);
+          ListCpp out0 = logisregloop(p, b0, &param, maxiter, eps,
+                                      firth, colfit1, p-1);
+          double lmax0 = out0.get<double>("loglik");
+          prob[k] = boost_pchisq(-2.0 * (lmax0 - lmax), 1, 0);
           clparm[k] = "PL";
         }
       } else { // Wald CI for intercept and PL CI for slopes
         if (!robust) {
-          lb[0] = b[0] - zcrit*seb[0];
-          ub[0] = b[0] + zcrit*seb[0];
-          prob[0] = R::pchisq(pow(b[0]/seb[0], 2), 1, 0, 0);
+          lb[0] = b[0] - zcrit * seb[0];
+          ub[0] = b[0] + zcrit * seb[0];
+          prob[0] = boost_pchisq(sq(b[0] / seb[0]), 1, 0);
         } else {
-          lb[0] = b[0] - zcrit*rseb[0];
-          ub[0] = b[0] + zcrit*rseb[0];
-          prob[0] = R::pchisq(pow(b[0]/rseb[0], 2), 1, 0, 0);
+          lb[0] = b[0] - zcrit * rseb[0];
+          ub[0] = b[0] + zcrit * rseb[0];
+          prob[0] = boost_pchisq(sq(b[0] / rseb[0]), 1, 0);
         }
         clparm[0] = "Wald";
 
-        for (k=1; k<p; k++) {
-          lb[k] = logisregplloop(p, b, &param, maxiter, eps, firth, 
-                                 k, -1, l0);
-          ub[k] = logisregplloop(p, b, &param, maxiter, eps, firth, 
-                                 k, 1, l0);
+        for (size_t k = 1; k < p; ++k) {
+          lb[k] = logisregplloop(p, b, &param, maxiter, eps, firth, k, -1, l0);
+          ub[k] = logisregplloop(p, b, &param, maxiter, eps, firth, k, 1, l0);
 
-          IntegerVector colfit1(p-1);
-          for (i=0; i<k; i++) {
+          std::vector<size_t> colfit1(p-1);
+          for (size_t i = 0; i < k; ++i) {
             colfit1[i] = i;
           }
-          for (i=k+1; i<p; i++) {
+          for (size_t i = k + 1; i < p; ++i) {
             colfit1[i-1] = i;
           }
 
-          NumericVector b0(p);
-          List out0 = logisregloop(p, b0, &param, maxiter, eps, firth, 
-                                   colfit1, p-1);
-          double lmax0 = out0["loglik"];
-          prob[k] = R::pchisq(-2*(lmax0 - lmax), 1, 0, 0);
+          std::vector<double> b0(p);
+          ListCpp out0 = logisregloop(p, b0, &param, maxiter, eps,
+                                      firth, colfit1, p-1);
+          double lmax0 = out0.get<double>("loglik");
+          prob[k] = boost_pchisq(-2.0 * (lmax0 - lmax), 1, 0);
           clparm[k] = "PL";
         }
       }
-    } else {
-      for (k=0; k<p; k++) {
+    } else { // Wald confidence interval for all parameters
+      for (size_t k = 0; k < p; ++k) {
         if (!robust) {
-          lb[k] = b[k] - zcrit*seb[k];
-          ub[k] = b[k] + zcrit*seb[k];
-          prob[k] = R::pchisq(pow(b[k]/seb[k], 2), 1, 0, 0);
+          lb[k] = b[k] - zcrit * seb[k];
+          ub[k] = b[k] + zcrit * seb[k];
+          prob[k] = boost_pchisq(sq(b[k] / seb[k]), 1, 0);
         } else {
-          lb[k] = b[k] - zcrit*rseb[k];
-          ub[k] = b[k] + zcrit*rseb[k];
-          prob[k] = R::pchisq(pow(b[k]/rseb[k], 2), 1, 0, 0);
+          lb[k] = b[k] - zcrit * rseb[k];
+          ub[k] = b[k] + zcrit * rseb[k];
+          prob[k] = boost_pchisq(sq(b[k] / rseb[k]), 1, 0);
         }
         clparm[k] = "Wald";
       }
     }
 
-    for (i=0; i<p; i++) {
-      lb0[h*p+i] = lb[i];
-      ub0[h*p+i] = ub[i];
-      prob0[h*p+i] = prob[i];
-      clparm0[h*p+i] = clparm[i];
-    }
-
     // log-likelihoods
-    if (firth) {
-      loglik0[h] = f_pen_llik_0(p, bint, &param);
-      loglik1[h] = f_pen_llik_0(p, b, &param);
-      regloglik0[h] = f_llik_0(p, bint, &param);
-      regloglik1[h] = f_llik_0(p, b, &param);
+    if (p > 0 && firth) {
+      loglik0 = outint.get<double>("loglik");
+      loglik1 = out.get<double>("loglik");
+      regloglik0 = outint.get<double>("regloglik");
+      regloglik1 = out.get<double>("regloglik");
     } else {
-      loglik0[h] = f_llik_0(p, bint, &param);
-      loglik1[h] = f_llik_0(p, b, &param);
+      loglik0 = outint.get<double>("loglik");
+      loglik1 = out.get<double>("loglik");
+      regloglik0 = loglik0;
+      regloglik1 = loglik1;
     }
-  }
 
-  NumericVector expbeta0 = exp(beta0);
-  NumericVector z0(nreps*p);
-  if (!robust) z0 = beta0/sebeta0;
-  else z0 = beta0/rsebeta0;
+    // compute exp(beta)
+    for (size_t i = 0; i < p; ++i) {
+      expbeta[i] = std::exp(b[i]);
+    }
 
-  DataFrame sumstat = List::create(
-    _["n"] = nobs,
-    _["nevents"] = nevents,
-    _["loglik0"] = loglik0,
-    _["loglik1"] = loglik1,
-    _["niter"] = niter,
-    _["p"] = p,
-    _["link"] = link1,
-    _["robust"] = robust,
-    _["firth"] = firth,
-    _["flic"] = flic,
-    _["fail"] = fails);
-
-  if (firth) {
-    sumstat.push_back(regloglik0, "loglik0_unpenalized");
-    sumstat.push_back(regloglik1, "loglik1_unpenalized");
-  }
-
-  DataFrame parest;
-  if (!robust) {
-    parest = DataFrame::create(
-      _["param"] = par0,
-      _["beta"] = beta0,
-      _["sebeta"] = sebeta0,
-      _["z"] = z0,
-      _["expbeta"] = expbeta0,
-      _["vbeta"] = vbeta0,
-      _["lower"] = lb0,
-      _["upper"] = ub0,
-      _["p"] = prob0,
-      _["method"] = clparm0);
-  } else {
-    parest = DataFrame::create(
-      _["param"] = par0,
-      _["beta"] = beta0,
-      _["sebeta"] = rsebeta0,
-      _["z"] = z0,
-      _["expbeta"] = expbeta0,
-      _["vbeta"] = rvbeta0,
-      _["lower"] = lb0,
-      _["upper"] = ub0,
-      _["p"] = prob0,
-      _["method"] = clparm0,
-      _["sebeta_naive"] = sebeta0,
-      _["vbeta_naive"] = vbeta0);
-  }
-
-  DataFrame fitted = DataFrame::create(
-    Named("linear_predictors") = linear_predictors,
-    Named("fitted_values") = fitted_values);
-
-  if (has_rep) {
-    for (i=0; i<p_rep; i++) {
-      String s = rep[i];
-      if (TYPEOF(data[s]) == INTSXP) {
-        IntegerVector repwi = u_rep[s];
-        sumstat.push_back(repwi[rep01-1], s);
-        parest.push_back(repwi[rep0-1], s);
-        fitted.push_back(repwi[repn-1], s);
-      } else if (TYPEOF(data[s]) == REALSXP) {
-        NumericVector repwn = u_rep[s];
-        sumstat.push_back(repwn[rep01-1], s);
-        parest.push_back(repwn[rep0-1], s);
-        fitted.push_back(repwn[repn-1], s);
-      } else if (TYPEOF(data[rep]) == STRSXP) {
-        StringVector repwc = u_rep[s];
-        sumstat.push_back(repwc[rep01-1], s);
-        parest.push_back(repwc[rep0-1], s);
-        fitted.push_back(repwc[repn-1], s);
+    // compute z statistics
+    if (robust) {
+      for (size_t i = 0; i < p; ++i) {
+        if (rseb[i] == 0) {
+          z[i] = NaN;
+        } else {
+          z[i] = b[i] / rseb[i];
+        }
+      }
+    } else {
+      for (size_t i = 0; i < p; ++i) {
+        if (seb[i] == 0) {
+          z[i] = NaN;
+        } else {
+          z[i] = b[i] / seb[i];
+        }
       }
     }
   }
 
-  List result = List::create(
-    _["sumstat"] = sumstat,
-    _["parest"] = parest,
-    _["fitted"] = fitted);
+  // prepare the output data sets
+  DataFrameCpp sumstat;
+  sumstat.push_back(nobs, "n");
+  sumstat.push_back(nevents, "nevents");
+  sumstat.push_back(loglik0, "loglik0");
+  sumstat.push_back(loglik1, "loglik1");
+  sumstat.push_back(niter, "niter");
+  sumstat.push_back(static_cast<int>(p), "p");
+  sumstat.push_back(link1, "link");
+  sumstat.push_back(robust, "robust");
+  sumstat.push_back(firth, "firth");
+  sumstat.push_back(flic, "flic");
+  sumstat.push_back(fail, "fail");
+
+  if (p > 0 && firth) {
+    sumstat.push_back(regloglik0, "loglik0_unpenalized");
+    sumstat.push_back(regloglik1, "loglik1_unpenalized");
+  }
+
+  std::vector<double> sebeta = robust ? rseb : seb;
+  FlatMatrix vbeta = robust ? rvb : vb;
+
+  DataFrameCpp parest;
+  parest.push_back(std::move(par), "param");
+  parest.push_back(std::move(b), "beta");
+  parest.push_back(std::move(sebeta), "sebeta");
+  parest.push_back(std::move(z), "z");
+  parest.push_back(std::move(expbeta), "expbeta");
+  parest.push_back(std::move(lb), "lower");
+  parest.push_back(std::move(ub), "upper");
+  parest.push_back(std::move(prob), "p");
+  parest.push_back(std::move(clparm), "method");
+  if (robust) parest.push_back(std::move(seb), "sebeta_naive");
+
+  DataFrameCpp fitted;
+  fitted.push_back(std::move(linear_predictors), "linear_predictors");
+  fitted.push_back(std::move(fitted_values), "fitted_values");
+
+  ListCpp result;
+  result.push_back(std::move(sumstat), "sumstat");
+  result.push_back(std::move(parest), "parest");
+  result.push_back(std::move(vbeta), "vbeta");
+  if (robust) result.push_back(std::move(vb), "vbeta_naive");
+  result.push_back(std::move(fitted), "fitted");
 
   return result;
+}
+
+
+// [[Rcpp::export]]
+Rcpp::List logisregRcpp(const Rcpp::DataFrame& data,
+                        const std::string& event,
+                        const std::vector<std::string>& covariates,
+                        const std::string& freq,
+                        const std::string& weight,
+                        const std::string& offset,
+                        const std::string& id,
+                        const std::string& link,
+                        const std::vector<double>& init,
+                        const bool robust,
+                        const bool firth,
+                        const bool flic,
+                        const bool plci,
+                        const double alpha,
+                        const int maxiter,
+                        const double eps) {
+
+  DataFrameCpp dfcpp = convertRDataFrameToCpp(data);
+
+  ListCpp cpp_result = logisregcpp(
+    dfcpp, event, covariates, freq, weight, offset, id, link,
+    init, robust, firth, flic, plci, alpha, maxiter, eps
+  );
+
+  thread_utils::drain_thread_warnings_to_R();
+  return Rcpp::wrap(cpp_result);
 }

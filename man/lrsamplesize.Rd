@@ -31,14 +31,13 @@ lrsamplesize(
   gamma2 = 0L,
   accrualDuration = NA_real_,
   followupTime = NA_real_,
-  fixedFollowup = 0L,
+  fixedFollowup = FALSE,
   rho1 = 0,
   rho2 = 0,
-  estimateHazardRatio = 1L,
-  typeOfComputation = "direct",
-  interval = as.numeric(c(0.001, 240)),
+  estimateHazardRatio = TRUE,
+  typeOfComputation = "",
   spendingTime = NA_real_,
-  rounding = 1L
+  rounding = TRUE
 )
 }
 \arguments{
@@ -153,13 +152,9 @@ the hazard ratio scale.}
 \item{typeOfComputation}{The type of computation,
 either "direct" for the direct approximation method,
 or "schoenfeld" for the Schoenfeld method.
-Defaults to "direct". Can use "Schoenfeld"
-under proportional hazards and conventional log-rank test.}
-
-\item{interval}{The interval to search for the solution of
-accrualDuration, followupTime, or the proportionality constant
-of accrualIntensity. Defaults to \code{c(0.001, 240)}. Adjustment
-may be needed for non-monotone relationship with study power.}
+Defaults to empty, which selects the Schoenfeld method
+under proportional hazards and ordinary log-rank test
+and the direct method otherwise.}
 
 \item{spendingTime}{A vector of length \code{kMax} for the error spending
 time at each analysis. Defaults to missing, in which case, it is the

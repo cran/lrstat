@@ -5,13 +5,7 @@
 \title{Miettinen-Nurminen Score Confidence Interval for
 Two-Sample Risk Difference}
 \usage{
-mnRiskDiffCI(
-  n1 = NA_real_,
-  y1 = NA_real_,
-  n2 = NA_real_,
-  y2 = NA_real_,
-  cilevel = 0.95
-)
+mnRiskDiffCI(n1, y1, n2, y2, cilevel = 0.95)
 }
 \arguments{
 \item{n1}{The sample size for the active treatment group.}
@@ -59,7 +53,8 @@ samples.
 }
 \examples{
 
-mnRiskDiffCI(n1 = c(10,10), y1 = c(4,3), n2 = c(20,10), y2 = c(2,0))
+mnRiskDiffCI(n1 = c(10, 10), y1 = c(4, 3),
+             n2 = c(20, 10), y2 = c(2, 0))
 
 }
 \author{

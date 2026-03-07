@@ -7,8 +7,9 @@
 \item{typeOfComputation}{The type of computation,
 either "direct" for the direct approximation method,
 or "schoenfeld" for the Schoenfeld method.
-Defaults to "direct". Can use "Schoenfeld"
-under proportional hazards and conventional log-rank test.}
+Defaults to empty, which selects the Schoenfeld method
+under proportional hazards and ordinary log-rank test
+and the direct method otherwise.}
 }
 \description{
 Parameter Description: typeOfComputation

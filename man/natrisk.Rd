@@ -5,7 +5,7 @@
 \title{Number of Subjects at Risk}
 \usage{
 natrisk(
-  time = NA_real_,
+  t = NA_real_,
   allocationRatioPlanned = 1,
   accrualTime = 0L,
   accrualIntensity = NA_real_,
@@ -15,12 +15,12 @@ natrisk(
   gamma1 = 0L,
   gamma2 = 0L,
   accrualDuration = NA_real_,
-  minFollowupTime = NA_real_,
-  maxFollowupTime = NA_real_
+  maxFollowupTime = NA_real_,
+  time = NA_real_
 )
 }
 \arguments{
-\item{time}{A vector of analysis times at which to calculate the number
+\item{t}{A vector of analysis times at which to calculate the number
 of patients at risk.}
 
 \item{allocationRatioPlanned}{Allocation ratio for the active treatment
@@ -55,12 +55,12 @@ hazard rates for piecewise exponential dropout for the control group.}
 
 \item{accrualDuration}{Duration of the enrollment period.}
 
-\item{minFollowupTime}{Follow-up time for the last enrolled subject.}
-
 \item{maxFollowupTime}{Follow-up time for the first enrolled subject.
 For fixed follow-up, \code{maxFollowupTime = minFollowupTime}.
 For variable follow-up,
 \code{maxFollowupTime = accrualDuration + minFollowupTime}.}
+
+\item{time}{Calendar time for the analysis.}
 }
 \value{
 A matrix of the number of patients at risk at the specified
@@ -70,17 +70,26 @@ analysis times (row) for each treatment group (column).
 Obtains the number of subjects at risk at given analysis
 times for each treatment group.
 }
+\details{
+For a given treatment group \eqn{g} and calendar time \eqn{\tau},
+the number of patients at risk at analysis time \eqn{t} is calculated as
+\deqn{\phi_g A(\tau - t) S_g(t) G_g(t),} where \eqn{\phi_g} is the
+probability of randomization to treatment group \eqn{g},
+\eqn{A(\tau - t)} is the number of patients enrolled by calendar time
+\eqn{\tau - t}, \eqn{S_g(t)G_g(t)} is the probability of being at risk at
+analysis time \eqn{t} for a patient in treatment group \eqn{g}
+after enrollment. Obviously, \eqn{t < \min(\tau, T_{\rm{fmax}})}.
+}
 \examples{
 # Piecewise accrual, piecewise exponential survivals, and 5\% dropout by
 # the end of 1 year.
 
-natrisk(time = c(9, 24), allocationRatioPlanned = 1,
+natrisk(t = c(9, 24), allocationRatioPlanned = 1,
         accrualTime = c(0, 3), accrualIntensity = c(10, 20),
         piecewiseSurvivalTime = c(0, 6),
         lambda1 = c(0.0533, 0.0309), lambda2 = c(0.0533, 0.0533),
         gamma1 = -log(1-0.05)/12, gamma2 = -log(1-0.05)/12,
-        accrualDuration = 12, minFollowupTime = 18,
-        maxFollowupTime = 30)
+        accrualDuration = 12, maxFollowupTime = 30, time = 30)
 
 }
 \author{

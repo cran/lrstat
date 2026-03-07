@@ -31,7 +31,8 @@ getDesign(
 \item{IMax}{The maximum information. Either \code{beta} or \code{IMax}
 should be provided while the other one should be missing.}
 
-\item{theta}{The parameter value.}
+\item{theta}{The parameter value. Null hypothesis is at \code{theta = 0},
+and the alternative hypothesis is one-sided for \code{theta > 0}.}
 
 \item{kMax}{The maximum number of stages.}
 
@@ -178,9 +179,9 @@ stopping boundaries.
 
 }
 \references{
-Christopher Jennison, Bruce W. Turnbull. Group Sequential Methods with
-Applications to Clinical Trials. Chapman & Hall/CRC: Boca Raton, 2000,
-ISBN:0849303168
+Christopher Jennison, Bruce W. Turnbull.
+Group Sequential Methods with Applications to Clinical Trials.
+Chapman & Hall/CRC: Boca Raton, 2000, ISBN:0849303168
 }
 \author{
 Kaifeng Lu, \email{kaifenglu@gmail.com}

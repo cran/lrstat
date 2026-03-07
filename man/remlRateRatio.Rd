@@ -4,17 +4,9 @@
 \alias{remlRateRatio}
 \title{REML Estimates of Individual Rates With Specified Rate Ratio}
 \usage{
-remlRateRatio(
-  rateRatioH0 = 1,
-  t1 = NA_real_,
-  y1 = NA_real_,
-  t2 = NA_real_,
-  y2 = NA_real_
-)
+remlRateRatio(t1, y1, t2, y2, rateRatioH0 = 1)
 }
 \arguments{
-\item{rateRatioH0}{The specified rate ratio.}
-
 \item{t1}{The exposure for the active treatment group.}
 
 \item{y1}{The number of events for the active treatment group.}
@@ -22,6 +14,8 @@ remlRateRatio(
 \item{t2}{The exposure for the control group.}
 
 \item{y2}{The number of events for the control group.}
+
+\item{rateRatioH0}{The specified rate ratio.}
 }
 \value{
 A vector of the restricted maximum likelihood estimates
@@ -33,7 +27,7 @@ individual proportions with specified rate ratio.
 }
 \examples{
 
-remlRateRatio(rateRatioH0 = 1.1, t1 = 10, y1 = 4, t2 = 20, y2 = 2)
+remlRateRatio(t1 = 10, y1 = 4, t2 = 20, y2 = 2, rateRatioH0 = 1.1)
 
 }
 \author{

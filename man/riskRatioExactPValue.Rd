@@ -5,21 +5,15 @@
 \title{P-Value for Exact Unconditional Test of Risk Ratio}
 \usage{
 riskRatioExactPValue(
-  riskRatioH0 = 1,
-  directionUpper = 1L,
   n1 = NA_integer_,
   y1 = NA_integer_,
   n2 = NA_integer_,
-  y2 = NA_integer_
+  y2 = NA_integer_,
+  riskRatioH0 = 1,
+  directionUpper = TRUE
 )
 }
 \arguments{
-\item{riskRatioH0}{The risk ratio under the null hypothesis.
-Defaults to 1.}
-
-\item{directionUpper}{Whether larger values represent better
-responses.}
-
 \item{n1}{The sample size for the active treatment group.}
 
 \item{y1}{The number of responses for the active treatment group.}
@@ -27,6 +21,12 @@ responses.}
 \item{n2}{The sample size for the control group.}
 
 \item{y2}{The number of responses for the control group.}
+
+\item{riskRatioH0}{The risk ratio under the null hypothesis.
+Defaults to 1.}
+
+\item{directionUpper}{Whether larger values represent better
+responses.}
 }
 \value{
 A data frame containing the following variables:

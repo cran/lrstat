@@ -4,7 +4,7 @@
 \alias{svdcpp}
 \title{Singular Value Decomposition of a Matrix}
 \usage{
-svdcpp(X, outtransform = 1L, decreasing = 1L)
+svdcpp(X, outtransform = TRUE, decreasing = TRUE)
 }
 \arguments{
 \item{X}{A numeric matrix whose SVD decomposition is to be computed.}

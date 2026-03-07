@@ -13,7 +13,7 @@ powerRiskRatioExactEquiv(
   pi2 = NA_real_,
   allocationRatioPlanned = 1,
   alpha = 0.05,
-  calculateAttainedAlpha = 1L
+  calculateAttainedAlpha = TRUE
 )
 }
 \arguments{

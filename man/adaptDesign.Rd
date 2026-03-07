@@ -24,7 +24,7 @@ adaptDesign(
   typeBetaSpending = "none",
   parameterBetaSpending = NA_real_,
   spendingTime = NA_real_,
-  MullerSchafer = 0L,
+  MullerSchafer = FALSE,
   kNew = NA_integer_,
   informationRatesNew = NA_real_,
   efficacyStoppingNew = NA_integer_,

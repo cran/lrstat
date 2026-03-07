@@ -4,18 +4,9 @@
 \alias{zstatRiskRatio}
 \title{Miettinen-Nurminen Score Test Statistic for Two-Sample Risk Ratio}
 \usage{
-zstatRiskRatio(
-  riskRatioH0 = 1,
-  n1 = NA_real_,
-  y1 = NA_real_,
-  n2 = NA_real_,
-  y2 = NA_real_
-)
+zstatRiskRatio(n1, y1, n2, y2, riskRatioH0 = 1)
 }
 \arguments{
-\item{riskRatioH0}{The risk ratio under the null hypothesis.
-Defaults to 1.}
-
 \item{n1}{The sample size for the active treatment group.}
 
 \item{y1}{The number of responses for the active treatment group.}
@@ -23,6 +14,9 @@ Defaults to 1.}
 \item{n2}{The sample size for the control group.}
 
 \item{y2}{The number of responses for the control group.}
+
+\item{riskRatioH0}{The risk ratio under the null hypothesis.
+Defaults to 1.}
 }
 \value{
 The value of the score test statistic.
@@ -37,8 +31,8 @@ samples.
 }
 \examples{
 
-zstatRiskRatio(riskRatioH0 = 1, n1 = c(10,10), y1 = c(4,3),
-               n2 = c(20,10), y2 = c(2,0))
+zstatRiskRatio(n1 = c(10, 10), y1 = c(4, 3),
+               n2 = c(20, 10), y2 = c(2, 0), riskRatioH0 = 1)
 
 }
 \author{

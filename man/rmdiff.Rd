@@ -6,28 +6,24 @@
 \usage{
 rmdiff(
   data,
-  rep = "",
   stratum = "",
   treat = "treat",
   time = "time",
   event = "event",
-  milestone = NA_real_,
+  milestone = 0,
   rmstDiffH0 = 0,
   conflev = 0.95,
-  biascorrection = 0L
+  biascorrection = FALSE
 )
 }
 \arguments{
 \item{data}{The input data frame that contains the following variables:
 \itemize{
-\item \code{rep}: The replication for by-group processing.
 \item \code{stratum}: The stratum.
 \item \code{treat}: The treatment.
 \item \code{time}: The possibly right-censored survival time.
 \item \code{event}: The event indicator.
 }}
-
-\item{rep}{The name of the replication variable in the input data.}
 
 \item{stratum}{The name of the stratum variable in the input data.}
 
@@ -53,7 +49,6 @@ Defaults to no bias correction.}
 \value{
 A data frame with the following variables:
 \itemize{
-\item \code{rep}: The replication number.
 \item \code{milestone}: The milestone time relative to randomization.
 \item \code{rmstDiffH0}: The difference in restricted mean survival times
 under the null hypothesis.
@@ -65,9 +60,9 @@ the control group.
 survival times.
 \item \code{vrmst1}: The variance for rmst1.
 \item \code{vrmst2}: The variance for rmst2.
-\item \code{vrmstDiff}: The variance for rmstDiff.
+\item \code{sermstDiff}: The standard error for rmstDiff.
 \item \code{rmstDiffZ}: The Z-statistic value.
-\item \code{rmstDiffPValue}: The one-sided p-value.
+\item \code{rmstDiffPValue}: The two-sided p-value.
 \item \code{lower}: The lower bound of confidence interval.
 \item \code{upper}: The upper bound of confidence interval.
 \item \code{conflev}: The level of confidence interval.
@@ -81,11 +76,10 @@ difference between two treatment groups.
 }
 \examples{
 
-df <- rmdiff(data = rawdata, rep = "iterationNumber",
-             stratum = "stratum", treat = "treatmentGroup",
-             time = "timeUnderObservation", event = "event",
-             milestone = 12)
-head(df)
+rmdiff(data = rawdata[rawdata$iterationNumber == 1, ],
+       stratum = "stratum", treat = "treatmentGroup",
+       time = "timeUnderObservation", event = "event",
+       milestone = 12)
 
 }
 \author{

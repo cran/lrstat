@@ -31,7 +31,6 @@ lrschoenfeld(
   gamma2 = 0L,
   followupTime = NA_real_,
   fixedFollowup = 0L,
-  interval = as.numeric(c(0.001, 240)),
   spendingTime = NA_real_,
   rounding = 1L,
   calibrate = 1L,
@@ -136,9 +135,6 @@ by stratum for the control group.}
 
 \item{fixedFollowup}{Whether a fixed follow-up design is used.
 Defaults to 0 for variable follow-up.}
-
-\item{interval}{The interval to search for the solution of
-followupTime. Defaults to \code{c(0.001, 240)}.}
 
 \item{spendingTime}{A vector of length \code{kMax} for the error spending
 time at each analysis. Defaults to missing, in which case, it is the

@@ -20,8 +20,8 @@ nbstat(
   gamma2 = 0L,
   accrualDuration = NA_real_,
   followupTime = NA_real_,
-  fixedFollowup = 0L,
-  nullVariance = 0L
+  fixedFollowup = FALSE,
+  nullVariance = FALSE
 )
 }
 \arguments{

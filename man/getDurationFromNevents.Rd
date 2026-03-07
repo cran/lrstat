@@ -16,7 +16,7 @@ getDurationFromNevents(
   gamma1 = 0L,
   gamma2 = 0L,
   followupTime = NA_real_,
-  fixedFollowup = 0L,
+  fixedFollowup = FALSE,
   npoints = 23L
 )
 }

@@ -26,7 +26,7 @@ rmpowerequiv(
   gamma2 = 0L,
   accrualDuration = NA_real_,
   followupTime = NA_real_,
-  fixedFollowup = 0L,
+  fixedFollowup = FALSE,
   spendingTime = NA_real_,
   studyDuration = NA_real_
 )
@@ -235,7 +235,7 @@ rmpowerequiv(kMax = 2, informationRates = c(0.5, 1),
              milestone = 18,
              rmstDiffLower = -2, rmstDiffUpper = 2,
              allocationRatioPlanned = 1, accrualTime = seq(0, 8),
-             accrualIntensity = 100/9*seq(1, 9),
+             accrualIntensity = 29/9*seq(1, 9),
              piecewiseSurvivalTime = c(0, 6),
              stratumFraction = c(0.2, 0.8),
              lambda1 = c(0.0533, 0.0533, 1.5*0.0533, 1.5*0.0533),

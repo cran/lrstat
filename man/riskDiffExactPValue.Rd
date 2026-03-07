@@ -5,21 +5,15 @@
 \title{P-Value for Exact Unconditional Test of Risk Difference}
 \usage{
 riskDiffExactPValue(
-  riskDiffH0 = 0,
-  directionUpper = 1L,
   n1 = NA_integer_,
   y1 = NA_integer_,
   n2 = NA_integer_,
-  y2 = NA_integer_
+  y2 = NA_integer_,
+  riskDiffH0 = 0,
+  directionUpper = TRUE
 )
 }
 \arguments{
-\item{riskDiffH0}{The risk difference under the null hypothesis.
-Defaults to 0.}
-
-\item{directionUpper}{Whether larger values represent better
-responses.}
-
 \item{n1}{The sample size for the active treatment group.}
 
 \item{y1}{The number of responses for the active treatment group.}
@@ -27,6 +21,12 @@ responses.}
 \item{n2}{The sample size for the control group.}
 
 \item{y2}{The number of responses for the control group.}
+
+\item{riskDiffH0}{The risk difference under the null hypothesis.
+Defaults to 0.}
+
+\item{directionUpper}{Whether larger values represent better
+responses.}
 }
 \value{
 A data frame containing the following variables:

@@ -9,7 +9,9 @@ samplesizeFisherExact(
   pi1 = NA_real_,
   pi2 = NA_real_,
   allocationRatioPlanned = 1,
-  alpha = 0.05
+  alpha = 0.05,
+  max_n_search = 1000L,
+  window = 10L
 )
 }
 \arguments{
@@ -23,6 +25,15 @@ samplesizeFisherExact(
 versus control. Defaults to 1 for equal randomization.}
 
 \item{alpha}{The two-sided significance level. Defaults to 0.05.}
+
+\item{max_n_search}{The maximum sample size to search up to. If no
+sample size up to this value satisfies the windowed power criterion,
+an error is thrown.}
+
+\item{window}{The number of consecutive sample sizes that must all
+satisfy the power criterion to confirm the found sample size.
+This is to mitigate non-monotonicity of power in sample size for
+the exact test.}
 }
 \value{
 A data frame with the following variables:

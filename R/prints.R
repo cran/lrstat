@@ -126,8 +126,8 @@ print.design <- function(x, ...) {
 
     # format number of digits after decimal for each column
     j2 <- 11
-    j3 <- c(1,2,3,4,7,8,13)
-    j4 <- c(5,6,9,10,12)
+    j3 <- c(1,2,3,7,8)
+    j4 <- c(4,5,6,9,10,12,13)
 
     b[j2] <- lapply(b[j2], formatC, format = "f", digits = 2)
     b[j3] <- lapply(b[j3], formatC, format = "f", digits = 3)
@@ -289,8 +289,8 @@ print.designEquiv <- function(x, ...) {
 
     # format number of digits after decimal for each column
     j2 <- 10
-    j3 <- c(1,2,3,7,8)
-    j4 <- c(4,5,6,9)
+    j3 <- c(1,2,7,8)
+    j4 <- c(3,4,5,6,9)
 
     b[j2] <- lapply(b[j2], formatC, format = "f", digits = 2)
     b[j3] <- lapply(b[j3], formatC, format = "f", digits = 3)
@@ -447,8 +447,8 @@ print.adaptDesign <- function(x, ...) {
 
     # format number of digits after decimal for each column
     j2 <- 11
-    j3 <- c(1,2,3,4,5,7,8)
-    j4 <- c(6,9,10)
+    j3 <- c(1,2,3,7,8)
+    j4 <- c(4,5,6,9,10)
 
     b[j2] <- lapply(b[j2], formatC, format = "f", digits = 2)
     b[j3] <- lapply(b[j3], formatC, format = "f", digits = 3)
@@ -641,7 +641,9 @@ print.lrpower <- function(x, ...) {
     } else if (bsf == "sfhsd") {
       str11 = paste0("beta spending: HSD(gamma = ", bsfpar, ")")
     } else if (bsf == "user") {
-      str11 = paste0("beta spending: User defined")
+      bsfuser = round(x$settings$userBetaSpending, 4)
+      str11 = paste0("beta spending: User defined(",
+                     paste(bsfuser, collapse = ","), ")")
     } else {
       str11 = "beta spending: None"
     }
@@ -849,7 +851,7 @@ print.lrsim <- function(x, ...) {
     str1 = paste0(str1, " for log-rank test")
   }
 
-  str2 <- paste0("Overall power: ", round(a$overallReject, 3))
+  str2 <- paste0("Empirical power: ", round(a$overallReject, 3))
 
   str3 <- paste0("Expected # events: ",
                  round(a$expectedNumberOfEvents, 1))
@@ -863,13 +865,14 @@ print.lrsim <- function(x, ...) {
   str6 <- paste0("Expected study duration: ",
                  round(a$expectedStudyDuration, 1))
 
-  str7 <- paste0("Accrual duration: ",
-                 round(a$accrualDuration, 1), ", ",
+  str7 <- paste0("n: ", a$n, ", ",
                  "fixed follow-up: ", a$fixedFollowup)
 
-  df1 = data.frame(x = rep("", 8))
+  str8 <- paste0("Number of simulations: ", a$numberOfIterations)
+
+  df1 = data.frame(x = rep("", 9))
   colnames(df1) = NULL
-  rownames(df1) = c(str1, str2, str3, str4, str5, str6, str7, "")
+  rownames(df1) = c(str1, str2, str3, str4, str5, str6, str7, str8, "")
 
 
   if (k>1) {
@@ -882,10 +885,10 @@ print.lrsim <- function(x, ...) {
 
     # format number of digits after decimal for each column
     j1 <- c(3,4,5,6)
-    j3 <- c(1,2)
+    j4 <- c(1,2)
 
     b[j1] <- lapply(b[j1], formatC, format = "f", digits = 1)
-    b[j3] <- lapply(b[j3], formatC, format = "f", digits = 3)
+    b[j4] <- lapply(b[j4], formatC, format = "f", digits = 4)
 
     df = t(b)
     rownames(df) = c("Cumulative rejection",
@@ -1407,8 +1410,8 @@ print.nbpowerequiv <- function(x, ...) {
     # format number of digits after decimal for each column
     j1 <- c(7,8,9,10,11)
     j2 <- 15
-    j3 <- c(1,2,3,12,13)
-    j4 <- c(4,5,6,14)
+    j3 <- c(1,2,12,13)
+    j4 <- c(3,4,5,6,14)
 
     b[j1] <- lapply(b[j1], formatC, format = "f", digits = 1)
     b[j2] <- lapply(b[j2], formatC, format = "f", digits = 2)
@@ -1653,8 +1656,8 @@ print.nbpower1s <- function(x, ...) {
     # format number of digits after decimal for each column
     j1 <- c(7,8,9,10,11)
     j2 <- 16
-    j3 <- c(1,2,3,4,5)
-    j4 <- c(6,12,13,14,15)
+    j3 <- c(1,2,3)
+    j4 <- c(4,5,6,12,13,14,15)
 
     b[j1] <- lapply(b[j1], formatC, format = "f", digits = 1)
     b[j2] <- lapply(b[j2], formatC, format = "f", digits = 2)
@@ -1875,8 +1878,8 @@ print.designOneMean <- function(x, ...) {
     # format number of digits after decimal for each column
     j1 <- 7
     j2 <- 12
-    j3 <- c(1,2,3,4,8,9,14)
-    j4 <- c(5,6,10,11,13)
+    j3 <- c(1,2,3,8,9)
+    j4 <- c(4,5,6,10,11,13,14)
 
     b[j1] <- lapply(b[j1], formatC, format = "f", digits = 1)
     b[j2] <- lapply(b[j2], formatC, format = "f", digits = 2)
@@ -2097,8 +2100,8 @@ print.designPairedMeanDiff <- function(x, ...) {
     # format number of digits after decimal for each column
     j1 <- 7
     j2 <- 12
-    j3 <- c(1,2,3,4,8,9,14)
-    j4 <- c(5,6,10,11,13)
+    j3 <- c(1,2,3,8,9)
+    j4 <- c(4,5,6,10,11,13,14)
 
     b[j1] <- lapply(b[j1], formatC, format = "f", digits = 1)
     b[j2] <- lapply(b[j2], formatC, format = "f", digits = 2)
@@ -2320,8 +2323,8 @@ print.designPairedMeanRatio <- function(x, ...) {
     # format number of digits after decimal for each column
     j1 <- 7
     j2 <- 12
-    j3 <- c(1,2,3,4,8,9,14)
-    j4 <- c(5,6,10,11,13)
+    j3 <- c(1,2,3,8,9)
+    j4 <- c(4,5,6,10,11,13,14)
 
     b[j1] <- lapply(b[j1], formatC, format = "f", digits = 1)
     b[j2] <- lapply(b[j2], formatC, format = "f", digits = 2)
@@ -2545,8 +2548,8 @@ print.designMeanDiff <- function(x, ...) {
     # format number of digits after decimal for each column
     j1 <- 7
     j2 <- 12
-    j3 <- c(1,2,3,4,8,9,14)
-    j4 <- c(5,6,10,11,13)
+    j3 <- c(1,2,3,8,9)
+    j4 <- c(4,5,6,10,11,13,14)
 
     b[j1] <- lapply(b[j1], formatC, format = "f", digits = 1)
     b[j2] <- lapply(b[j2], formatC, format = "f", digits = 2)
@@ -2770,8 +2773,8 @@ print.designMeanRatio <- function(x, ...) {
     # format number of digits after decimal for each column
     j1 <- 7
     j2 <- 12
-    j3 <- c(1,2,3,4,8,9,14)
-    j4 <- c(5,6,10,11,13)
+    j3 <- c(1,2,3,8,9)
+    j4 <- c(4,5,6,10,11,13,14)
 
     b[j1] <- lapply(b[j1], formatC, format = "f", digits = 1)
     b[j2] <- lapply(b[j2], formatC, format = "f", digits = 2)
@@ -2997,8 +3000,8 @@ print.designMeanDiffXO <- function(x, ...) {
     # format number of digits after decimal for each column
     j1 <- 7
     j2 <- 12
-    j3 <- c(1,2,3,4,8,9,14)
-    j4 <- c(5,6,10,11,13)
+    j3 <- c(1,2,3,8,9)
+    j4 <- c(4,5,6,10,11,13,14)
 
     b[j1] <- lapply(b[j1], formatC, format = "f", digits = 1)
     b[j2] <- lapply(b[j2], formatC, format = "f", digits = 2)
@@ -3222,8 +3225,8 @@ print.designMeanRatioXO <- function(x, ...) {
     # format number of digits after decimal for each column
     j1 <- 7
     j2 <- 12
-    j3 <- c(1,2,3,4,8,9,14)
-    j4 <- c(5,6,10,11,13)
+    j3 <- c(1,2,3,8,9)
+    j4 <- c(4,5,6,10,11,13,14)
 
     b[j1] <- lapply(b[j1], formatC, format = "f", digits = 1)
     b[j2] <- lapply(b[j2], formatC, format = "f", digits = 2)
@@ -3414,8 +3417,8 @@ print.designPairedMeanDiffEquiv <- function(x, ...) {
     # format number of digits after decimal for each column
     j1 <- 6
     j2 <- 10
-    j3 <- c(1,2,3,7,8)
-    j4 <- c(4,5,9)
+    j3 <- c(1,2,7,8)
+    j4 <- c(3,4,5,9)
 
     b[j1] <- lapply(b[j1], formatC, format = "f", digits = 1)
     b[j2] <- lapply(b[j2], formatC, format = "f", digits = 2)
@@ -3591,8 +3594,8 @@ print.designPairedMeanRatioEquiv <- function(x, ...) {
     # format number of digits after decimal for each column
     j1 <- 6
     j2 <- 10
-    j3 <- c(1,2,3,7,8)
-    j4 <- c(4,5,9)
+    j3 <- c(1,2,7,8)
+    j4 <- c(3,4,5,9)
 
     b[j1] <- lapply(b[j1], formatC, format = "f", digits = 1)
     b[j2] <- lapply(b[j2], formatC, format = "f", digits = 2)
@@ -3772,8 +3775,8 @@ print.designMeanDiffEquiv <- function(x, ...) {
     # format number of digits after decimal for each column
     j1 <- 6
     j2 <- 10
-    j3 <- c(1,2,3,7,8)
-    j4 <- c(4,5,9)
+    j3 <- c(1,2,7,8)
+    j4 <- c(3,4,5,9)
 
     b[j1] <- lapply(b[j1], formatC, format = "f", digits = 1)
     b[j2] <- lapply(b[j2], formatC, format = "f", digits = 2)
@@ -3953,8 +3956,8 @@ print.designMeanRatioEquiv <- function(x, ...) {
     # format number of digits after decimal for each column
     j1 <- 6
     j2 <- 10
-    j3 <- c(1,2,3,7,8)
-    j4 <- c(4,5,9)
+    j3 <- c(1,2,7,8)
+    j4 <- c(3,4,5,9)
 
     b[j1] <- lapply(b[j1], formatC, format = "f", digits = 1)
     b[j2] <- lapply(b[j2], formatC, format = "f", digits = 2)
@@ -4135,8 +4138,8 @@ print.designMeanDiffXOEquiv <- function(x, ...) {
     # format number of digits after decimal for each column
     j1 <- 6
     j2 <- 10
-    j3 <- c(1,2,3,7,8)
-    j4 <- c(4,5,9)
+    j3 <- c(1,2,7,8)
+    j4 <- c(3,4,5,9)
 
     b[j1] <- lapply(b[j1], formatC, format = "f", digits = 1)
     b[j2] <- lapply(b[j2], formatC, format = "f", digits = 2)
@@ -4316,8 +4319,8 @@ print.designMeanRatioXOEquiv <- function(x, ...) {
     # format number of digits after decimal for each column
     j1 <- 6
     j2 <- 10
-    j3 <- c(1,2,3,7,8)
-    j4 <- c(4,5,9)
+    j3 <- c(1,2,7,8)
+    j4 <- c(3,4,5,9)
 
     b[j1] <- lapply(b[j1], formatC, format = "f", digits = 1)
     b[j2] <- lapply(b[j2], formatC, format = "f", digits = 2)
@@ -4524,8 +4527,8 @@ print.designWilcoxon <- function(x, ...) {
     # format number of digits after decimal for each column
     j1 <- 7
     j2 <- 12
-    j3 <- c(1,2,3,4,14)
-    j4 <- c(5,6,8,9,10,11,13)
+    j3 <- c(1,2,3)
+    j4 <- c(4,5,6,8,9,10,11,13,14)
 
     b[j1] <- lapply(b[j1], formatC, format = "f", digits = 1)
     b[j2] <- lapply(b[j2], formatC, format = "f", digits = 2)
@@ -4769,8 +4772,8 @@ print.designMeanDiffMMRM <- function(x, ...) {
     # format number of digits after decimal for each column
     j1 <- c(7,8,9)
     j2 <- 14
-    j3 <- c(1,2,3,4,10,11,16)
-    j4 <- c(5,6,12,13,15)
+    j3 <- c(1,2,3,10,11)
+    j4 <- c(4,5,6,12,13,15,16)
 
     b[j1] <- lapply(b[j1], formatC, format = "f", digits = 1)
     b[j2] <- lapply(b[j2], formatC, format = "f", digits = 2)
@@ -5336,8 +5339,8 @@ print.designOneSlope <- function(x, ...) {
     # format number of digits after decimal for each column
     j1 <- 7
     j2 <- 12
-    j3 <- c(1,2,3,4,8,9,14)
-    j4 <- c(5,6,10,11,13)
+    j3 <- c(1,2,3,8,9)
+    j4 <- c(4,5,6,10,11,13,14)
 
     b[j1] <- lapply(b[j1], formatC, format = "f", digits = 1)
     b[j2] <- lapply(b[j2], formatC, format = "f", digits = 2)
@@ -5565,8 +5568,8 @@ print.designSlopeDiff <- function(x, ...) {
     # format number of digits after decimal for each column
     j1 <- 7
     j2 <- 12
-    j3 <- c(1,2,3,4,8,9,14)
-    j4 <- c(5,6,10,11,13)
+    j3 <- c(1,2,3,8,9)
+    j4 <- c(4,5,6,10,11,13,14)
 
     b[j1] <- lapply(b[j1], formatC, format = "f", digits = 1)
     b[j2] <- lapply(b[j2], formatC, format = "f", digits = 2)
@@ -5822,8 +5825,8 @@ print.designSlopeDiffMMRM <- function(x, ...) {
       # format number of digits after decimal for each column
       j1 <- c(7,8)
       j2 <- 13
-      j3 <- c(1,2,3,4,9,10,15)
-      j4 <- c(5,6,11,12,14)
+      j3 <- c(1,2,3,9,10)
+      j4 <- c(4,5,6,11,12,14,15)
 
       b[j1] <- lapply(b[j1], formatC, format = "f", digits = 1)
       b[j2] <- lapply(b[j2], formatC, format = "f", digits = 2)
@@ -5872,9 +5875,9 @@ print.designSlopeDiffMMRM <- function(x, ...) {
 
       # format number of digits after decimal for each column
       j1 <- c(7,8,9)
-      j2 <- 13
-      j3 <- c(1,2,3,4,10,11,16)
-      j4 <- c(5,6,12,13,15)
+      j2 <- 14
+      j3 <- c(1,2,3,10,11)
+      j4 <- c(4,5,6,12,13,15,16)
 
       b[j1] <- lapply(b[j1], formatC, format = "f", digits = 1)
       b[j2] <- lapply(b[j2], formatC, format = "f", digits = 2)
@@ -6102,11 +6105,13 @@ print.designOneProportion <- function(x, ...) {
                "cumulativeRejectionH0", "cumulativeFutilityH0")]
 
     # format number of digits after decimal for each column
-    j1 <- c(7,8,9)
+    j0 <- c(8,9)
+    j1 <- 7
     j2 <- 12
-    j3 <- c(1,2,3,4,14)
-    j4 <- c(5,6,10,11,13)
+    j3 <- c(1,2,3)
+    j4 <- c(4,5,6,10,11,13,14)
 
+    b[j0] <- lapply(b[j0], formatC, format = "f", digits = 0)
     b[j1] <- lapply(b[j1], formatC, format = "f", digits = 1)
     b[j2] <- lapply(b[j2], formatC, format = "f", digits = 2)
     b[j3] <- lapply(b[j3], formatC, format = "f", digits = 3)
@@ -6147,11 +6152,11 @@ print.designOneProportion <- function(x, ...) {
     b <- s[, c("efficacyBounds", "efficacyResponses", "efficacyP")]
 
     # format number of digits after decimal for each column
-    j1 <- 2
+    j0 <- 2
     j3 <- 1
     j4 <- 3
 
-    b[j1] <- lapply(b[j1], formatC, format = "f", digits = 1)
+    b[j0] <- lapply(b[j0], formatC, format = "f", digits = 0)
     b[j3] <- lapply(b[j3], formatC, format = "f", digits = 3)
     b[j4] <- lapply(b[j4], formatC, format = "f", digits = 4)
 
@@ -6330,8 +6335,8 @@ print.designPairedPropMcNemar <- function(x, ...) {
     # format number of digits after decimal for each column
     j1 <- 7
     j2 <- 12
-    j3 <- c(1,2,3,4,14)
-    j4 <- c(5,6,8,9,10,11,13)
+    j3 <- c(1,2,3,8,9)
+    j4 <- c(4,5,6,10,11,13,14)
 
     b[j1] <- lapply(b[j1], formatC, format = "f", digits = 1)
     b[j2] <- lapply(b[j2], formatC, format = "f", digits = 2)
@@ -6549,8 +6554,8 @@ print.designRiskDiff <- function(x, ...) {
     # format number of digits after decimal for each column
     j1 <- 7
     j2 <- 12
-    j3 <- c(1,2,3,4,8,9,14)
-    j4 <- c(5,6,10,11,13)
+    j3 <- c(1,2,3,8,9)
+    j4 <- c(4,5,6,10,11,13,14)
 
     b[j1] <- lapply(b[j1], formatC, format = "f", digits = 1)
     b[j2] <- lapply(b[j2], formatC, format = "f", digits = 2)
@@ -6767,8 +6772,8 @@ print.designRiskRatio <- function(x, ...) {
     # format number of digits after decimal for each column
     j1 <- 7
     j2 <- 12
-    j3 <- c(1,2,3,4,8,9,14)
-    j4 <- c(5,6,10,11,13)
+    j3 <- c(1,2,3,8,9)
+    j4 <- c(4,5,6,10,11,13,14)
 
     b[j1] <- lapply(b[j1], formatC, format = "f", digits = 1)
     b[j2] <- lapply(b[j2], formatC, format = "f", digits = 2)
@@ -6986,8 +6991,8 @@ print.designRiskRatioFM <- function(x, ...) {
     # format number of digits after decimal for each column
     j1 <- 7
     j2 <- 12
-    j3 <- c(1,2,3,4,8,9,14)
-    j4 <- c(5,6,10,11,13)
+    j3 <- c(1,2,3,8,9)
+    j4 <- c(4,5,6,10,11,13,14)
 
     b[j1] <- lapply(b[j1], formatC, format = "f", digits = 1)
     b[j2] <- lapply(b[j2], formatC, format = "f", digits = 2)
@@ -7204,8 +7209,8 @@ print.designOddsRatio <- function(x, ...) {
     # format number of digits after decimal for each column
     j1 <- 7
     j2 <- 12
-    j3 <- c(1,2,3,4,8,9,14)
-    j4 <- c(5,6,10,11,13)
+    j3 <- c(1,2,3,8,9)
+    j4 <- c(4,5,6,10,11,13,14)
 
     b[j1] <- lapply(b[j1], formatC, format = "f", digits = 1)
     b[j2] <- lapply(b[j2], formatC, format = "f", digits = 2)
@@ -7401,8 +7406,8 @@ print.designRiskDiffEquiv <- function(x, ...) {
     # format number of digits after decimal for each column
     j1 <- 7
     j2 <- 11
-    j3 <- c(1,2,3,8,9)
-    j4 <- c(4,5,6,10)
+    j3 <- c(1,2,8,9)
+    j4 <- c(3,4,5,6,10)
 
     b[j1] <- lapply(b[j1], formatC, format = "f", digits = 1)
     b[j2] <- lapply(b[j2], formatC, format = "f", digits = 2)
@@ -7583,8 +7588,8 @@ print.designRiskRatioEquiv <- function(x, ...) {
     # format number of digits after decimal for each column
     j1 <- 7
     j2 <- 11
-    j3 <- c(1,2,3,8,9)
-    j4 <- c(4,5,6,10)
+    j3 <- c(1,2,8,9)
+    j4 <- c(3,4,5,6,10)
 
     b[j1] <- lapply(b[j1], formatC, format = "f", digits = 1)
     b[j2] <- lapply(b[j2], formatC, format = "f", digits = 2)
@@ -7765,8 +7770,8 @@ print.designOddsRatioEquiv <- function(x, ...) {
     # format number of digits after decimal for each column
     j1 <- 7
     j2 <- 11
-    j3 <- c(1,2,3,8,9)
-    j4 <- c(4,5,6,10)
+    j3 <- c(1,2,8,9)
+    j4 <- c(3,4,5,6,10)
 
     b[j1] <- lapply(b[j1], formatC, format = "f", digits = 1)
     b[j2] <- lapply(b[j2], formatC, format = "f", digits = 2)
@@ -7899,27 +7904,6 @@ print.BOINTable <- function(x, ...) {
   print(df1, ..., na.print = "" , quote = FALSE )
   print(df2, ..., na.print = "" , quote = FALSE )
   print(df3, ..., na.print = "" , quote = FALSE )
-  invisible(x)
-}
-
-
-#' @title Print the Point Estimate and Confidence Interval
-#' @description Prints the point estimate and confidence interval.
-#'
-#' @param x The estimateCI object to print.
-#' @param ... Ensures that all arguments starting from "..." are named.
-#'
-#' @return A tabular printout of the design elements.
-#'
-#' @keywords internal
-#'
-#' @author Kaifeng Lu, \email{kaifenglu@@gmail.com}
-#'
-#' @export
-print.estimateCI <- function(x, ...) {
-  df1 <- x$estimates
-  rownames(df1) = NULL
-  print(df1, ..., na.print = "" , quote = FALSE )
   invisible(x)
 }
 
@@ -8253,7 +8237,9 @@ print.kmpower <- function(x, ...) {
     } else if (bsf == "sfhsd") {
       str12 = paste0("beta spending: HSD(gamma = ", bsfpar, ")")
     } else if (bsf == "user") {
-      str12 = paste0("beta spending: User defined")
+      bsfuser = round(x$settings$userBetaSpending, 4)
+      str12 = paste0("beta spending: User defined(",
+                     paste(bsfuser, collapse = ","), ")")
     } else {
       str12 = "beta spending: None"
     }
@@ -8750,8 +8736,8 @@ print.kmpowerequiv <- function(x, ...) {
     # format number of digits after decimal for each column
     j1 <- c(7,8,9,10,11)
     j2 <- 15
-    j3 <- c(1,2,3,12,13)
-    j4 <- c(4,5,6,14)
+    j3 <- c(1,2,12,13)
+    j4 <- c(3,4,5,6,14)
 
     b[j1] <- lapply(b[j1], formatC, format = "f", digits = 1)
     b[j2] <- lapply(b[j2], formatC, format = "f", digits = 2)
@@ -8950,8 +8936,8 @@ print.rmpowerequiv <- function(x, ...) {
     # format number of digits after decimal for each column
     j1 <- c(7,8,9,10,11)
     j2 <- 15
-    j3 <- c(1,2,3,12,13)
-    j4 <- c(4,5,6,14)
+    j3 <- c(1,2,12,13)
+    j4 <- c(3,4,5,6,14)
 
     b[j1] <- lapply(b[j1], formatC, format = "f", digits = 1)
     b[j2] <- lapply(b[j2], formatC, format = "f", digits = 2)
@@ -9151,8 +9137,8 @@ print.lrpowerequiv <- function(x, ...) {
     # format number of digits after decimal for each column
     j1 <- c(7,8,9,10)
     j2 <- c(14,15)
-    j3 <- c(1,2,3,11,12)
-    j4 <- c(4,5,6,13)
+    j3 <- c(1,2,11,12)
+    j4 <- c(3,4,5,6,13)
 
     b[j1] <- lapply(b[j1], formatC, format = "f", digits = 1)
     b[j2] <- lapply(b[j2], formatC, format = "f", digits = 2)
@@ -9335,7 +9321,9 @@ print.kmpower1s <- function(x, ...) {
     } else if (bsf == "sfhsd") {
       str11 = paste0("beta spending: HSD(gamma = ", bsfpar, ")")
     } else if (bsf == "user") {
-      str11 = paste0("beta spending: User defined")
+      bsfuser = round(x$settings$userBetaSpending, 4)
+      str11 = paste0("beta spending: User defined(",
+                     paste(bsfuser, collapse = ","), ")")
     } else {
       str11 = "beta spending: None"
     }
@@ -9695,9 +9683,9 @@ print.rmpower1s <- function(x, ...) {
 #'
 #' @export
 print.liferegr <- function(x, ...) {
-  lrchisq = -2*(x$sumstat$loglik0 - x$sumstat$loglik1)
-  degrees = x$sumstat$nvar
-  pvalue = sapply(1:nrow(x$sumstat), function(i) {
+  lrchisq <- -2*(x$sumstat$loglik0 - x$sumstat$loglik1)
+  degrees <- x$sumstat$nvar
+  pvalue <- sapply(1:nrow(x$sumstat), function(i) {
     ifelse(degrees[i] > 0,
            pchisq(lrchisq[i], degrees[i], 0, lower.tail = FALSE),
            NA)
@@ -9706,92 +9694,63 @@ print.liferegr <- function(x, ...) {
                lrchisq = lrchisq, df = degrees, pvalue = pvalue,
                x$sumstat[, c("niter", "dist")])
 
-  p = x$p
+  p <- x$p
   if (p > 0) {
-    nreps = nrow(x$parest)/p
+    if (!x$settings$robust) {
+      if (x$settings$plci) {
+        df <- data.frame(param = x$param,
+                         coef = x$parest$beta,
+                         expcoef = x$parest$expbeta,
+                         se = x$parest$sebeta,
+                         z = x$parest$z,
+                         lower = x$parest$lower,
+                         upper = x$parest$upper,
+                         p = x$parest$p,
+                         method = x$parest$method)
 
-    if (!x$robust) {
-      if (x$plci) {
-        df = data.frame(param = rep(x$param, nreps),
-                        coef = x$parest$beta,
-                        expcoef = x$parest$expbeta,
-                        se = x$parest$sebeta,
-                        z = x$parest$z,
-                        lower = x$parest$lower,
-                        upper = x$parest$upper,
-                        p = x$parest$p,
-                        method = x$parest$method)
-
-        if (nreps > 1) {
-          df = cbind(df, x$parest[, (p+10):ncol(x$parest)])
-          colnames(df) <- c("param", "coef", "exp(coef)", "se(coef)", "z",
-                            paste("lower", 1-x$alpha),
-                            paste("upper", 1-x$alpha), "p", "method",
-                            colnames(x$parest)[(p+10):ncol(x$parest)])
-        } else {
-          colnames(df) <- c("param", "coef", "exp(coef)", "se(coef)", "z",
-                            paste("lower", 1-x$alpha),
-                            paste("upper", 1-x$alpha), "p", "method")
-        }
+        colnames(df) <- c("param", "coef", "exp(coef)", "se(coef)", "z",
+                          paste("lower", 1-x$settings$alpha),
+                          paste("upper", 1-x$settings$alpha),
+                          "p", "method")
       } else {
-        df = data.frame(param = rep(x$param, nreps),
-                        coef = x$parest$beta,
-                        expcoef = x$parest$expbeta,
-                        se = x$parest$sebeta,
-                        z = x$parest$z,
-                        p = x$parest$p)
+        df <- data.frame(param = x$param,
+                         coef = x$parest$beta,
+                         expcoef = x$parest$expbeta,
+                         se = x$parest$sebeta,
+                         z = x$parest$z,
+                         p = x$parest$p)
 
-        if (nreps > 1) {
-          df = cbind(df, x$parest[, (p+10):ncol(x$parest)])
-          colnames(df) <- c("param", "coef", "exp(coef)", "se(coef)", "z",
-                            "p", colnames(x$parest)[(p+10):ncol(x$parest)])
-        } else {
-          colnames(df) <- c("param", "coef", "exp(coef)", "se(coef)", "z",
-                            "p")
-        }
+        colnames(df) <- c("param", "coef", "exp(coef)", "se(coef)", "z", "p")
       }
     } else {
-      if (x$plci) {
-        df = data.frame(param = rep(x$param, nreps),
-                        coef = x$parest$beta,
-                        expcoef = x$parest$expbeta,
-                        nse = x$parest$sebeta_naive,
-                        se = x$parest$sebeta,
-                        z = x$parest$z,
-                        lower = x$parest$lower,
-                        upper = x$parest$upper,
-                        p = x$parest$p,
-                        method = x$parest$method)
+      if (x$settings$plci) {
+        df <- data.frame(param = x$param,
+                         coef = x$parest$beta,
+                         expcoef = x$parest$expbeta,
+                         nse = x$parest$sebeta_naive,
+                         se = x$parest$sebeta,
+                         z = x$parest$z,
+                         lower = x$parest$lower,
+                         upper = x$parest$upper,
+                         p = x$parest$p,
+                         method = x$parest$method)
 
-        if (nreps > 1) {
-          df = cbind(df, x$parest[, (2*p+11):ncol(x$parest)])
-          colnames(df) <- c("param", "coef", "exp(coef)", "se(coef)",
-                            "robust se", "z", paste("lower", 1-x$alpha),
-                            paste("upper", 1-x$alpha), "p", "method",
-                            colnames(x$parest)[(2*p+11):ncol(x$parest)])
-        } else {
-          colnames(df) <- c("param", "coef", "exp(coef)", "se(coef)",
-                            "robust se", "z", paste("lower", 1-x$alpha),
-                            paste("upper", 1-x$alpha), "p", "method")
-        }
+        colnames(df) <- c("param", "coef", "exp(coef)", "se(coef)",
+                          "robust se", "z",
+                          paste("lower", 1-x$settings$alpha),
+                          paste("upper", 1-x$settings$alpha),
+                          "p", "method")
       } else {
-        df = data.frame(param = rep(x$param, nreps),
-                        coef = x$parest$beta,
-                        expcoef = x$parest$expbeta,
-                        nse = x$parest$sebeta_naive,
-                        se = x$parest$sebeta,
-                        z = x$parest$z,
-                        p = x$parest$p)
+        df <- data.frame(param = x$param,
+                         coef = x$parest$beta,
+                         expcoef = x$parest$expbeta,
+                         nse = x$parest$sebeta_naive,
+                         se = x$parest$sebeta,
+                         z = x$parest$z,
+                         p = x$parest$p)
 
-        if (nreps > 1) {
-          df = cbind(df, x$parest[, (2*p+11):ncol(x$parest)])
-          colnames(df) <- c("param", "coef", "exp(coef)", "se(coef)",
-                            "robust se", "z", "p",
-                            colnames(x$parest)[(2*p+11):ncol(x$parest)])
-        } else {
-          colnames(df) <- c("param", "coef", "exp(coef)", "se(coef)",
-                            "robust se", "z", "p")
-        }
+        colnames(df) <- c("param", "coef", "exp(coef)", "se(coef)",
+                          "robust se", "z", "p")
       }
     }
   }
@@ -9817,9 +9776,9 @@ print.liferegr <- function(x, ...) {
 #'
 #' @export
 print.phregr <- function(x, ...) {
-  lrchisq = -2*(x$sumstat$loglik0 - x$sumstat$loglik1)
-  degrees = x$sumstat$p
-  pvalue = sapply(1:nrow(x$sumstat), function(i) {
+  lrchisq <- -2*(x$sumstat$loglik0 - x$sumstat$loglik1)
+  degrees <- x$sumstat$p
+  pvalue <- sapply(1:nrow(x$sumstat), function(i) {
     ifelse(degrees[i] > 0,
            pchisq(lrchisq[i], degrees[i], 0, lower.tail = FALSE),
            NA)
@@ -9830,92 +9789,63 @@ print.phregr <- function(x, ...) {
   print(df1, ..., na.print = "" , quote = FALSE )
   cat("\n")
 
-  p = x$p
+  p <- x$p
   if (p > 0) {
-    nreps = nrow(x$parest)/p
+    if (!x$settings$robust) {
+      if (x$settings$plci) {
+        df <- data.frame(param = x$param,
+                         coef = x$parest$beta,
+                         expcoef = x$parest$expbeta,
+                         se = x$parest$sebeta,
+                         z = x$parest$z,
+                         lower = x$parest$lower,
+                         upper = x$parest$upper,
+                         p = x$parest$p,
+                         method = x$parest$method)
 
-    if (!x$robust) {
-      if (x$plci) {
-        df = data.frame(param = rep(x$param, nreps),
-                        coef = x$parest$beta,
-                        expcoef = x$parest$expbeta,
-                        se = x$parest$sebeta,
-                        z = x$parest$z,
-                        lower = x$parest$lower,
-                        upper = x$parest$upper,
-                        p = x$parest$p,
-                        method = x$parest$method)
+        colnames(df) <- c("param", "coef", "exp(coef)", "se(coef)", "z",
+                          paste("lower", 1-x$settings$alpha),
+                          paste("upper", 1-x$settings$alpha), "p", "method")
 
-        if (nreps > 1) {
-          df = cbind(df, x$parest[, (p+10):ncol(x$parest)])
-          colnames(df) <- c("param", "coef", "exp(coef)", "se(coef)", "z",
-                            paste("lower", 1-x$alpha),
-                            paste("upper", 1-x$alpha), "p", "method",
-                            colnames(x$parest)[(p+10):ncol(x$parest)])
-        } else {
-          colnames(df) <- c("param", "coef", "exp(coef)", "se(coef)", "z",
-                            paste("lower", 1-x$alpha),
-                            paste("upper", 1-x$alpha), "p", "method")
-        }
       } else {
-        df = data.frame(param = rep(x$param, nreps),
-                        coef = x$parest$beta,
-                        expcoef = x$parest$expbeta,
-                        se = x$parest$sebeta,
-                        z = x$parest$z,
-                        p = x$parest$p)
+        df <- data.frame(param = x$param,
+                         coef = x$parest$beta,
+                         expcoef = x$parest$expbeta,
+                         se = x$parest$sebeta,
+                         z = x$parest$z,
+                         p = x$parest$p)
 
-        if (nreps > 1) {
-          df = cbind(df, x$parest[, (p+10):ncol(x$parest)])
-          colnames(df) <- c("param", "coef", "exp(coef)", "se(coef)", "z",
-                            "p", colnames(x$parest)[(p+10):ncol(x$parest)])
-        } else {
-          colnames(df) <- c("param", "coef", "exp(coef)", "se(coef)", "z",
-                            "p")
-        }
+        colnames(df) <- c("param", "coef", "exp(coef)", "se(coef)", "z", "p")
       }
     } else {
-      if (x$plci) {
-        df = data.frame(param = rep(x$param, nreps),
-                        coef = x$parest$beta,
-                        expcoef = x$parest$expbeta,
-                        nse = x$parest$sebeta_naive,
-                        se = x$parest$sebeta,
-                        z = x$parest$z,
-                        lower = x$parest$lower,
-                        upper = x$parest$upper,
-                        p = x$parest$p,
-                        method = x$parest$method)
+      if (x$settings$plci) {
+        df <- data.frame(param = x$param,
+                         coef = x$parest$beta,
+                         expcoef = x$parest$expbeta,
+                         nse = x$parest$sebeta_naive,
+                         se = x$parest$sebeta,
+                         z = x$parest$z,
+                         lower = x$parest$lower,
+                         upper = x$parest$upper,
+                         p = x$parest$p,
+                         method = x$parest$method)
 
-        if (nreps > 1) {
-          df = cbind(df, x$parest[, (2*p+11):ncol(x$parest)])
-          colnames(df) <- c("param", "coef", "exp(coef)", "se(coef)",
-                            "robust se", "z", paste("lower", 1-x$alpha),
-                            paste("upper", 1-x$alpha), "p", "method",
-                            colnames(x$parest)[(2*p+11):ncol(x$parest)])
-        } else {
-          colnames(df) <- c("param", "coef", "exp(coef)", "se(coef)",
-                            "robust se", "z", paste("lower", 1-x$alpha),
-                            paste("upper", 1-x$alpha), "p", "method")
-        }
+        colnames(df) <- c("param", "coef", "exp(coef)", "se(coef)",
+                          "robust se", "z",
+                          paste("lower", 1-x$settings$alpha),
+                          paste("upper", 1-x$settings$alpha),
+                          "p", "method")
       } else {
-        df = data.frame(param = rep(x$param, nreps),
-                        coef = x$parest$beta,
-                        expcoef = x$parest$expbeta,
-                        nse = x$parest$sebeta_naive,
-                        se = x$parest$sebeta,
-                        z = x$parest$z,
-                        p = x$parest$p)
+        df <- data.frame(param = x$param,
+                         coef = x$parest$beta,
+                         expcoef = x$parest$expbeta,
+                         nse = x$parest$sebeta_naive,
+                         se = x$parest$sebeta,
+                         z = x$parest$z,
+                         p = x$parest$p)
 
-        if (nreps > 1) {
-          df = cbind(df, x$parest[, (2*p+11):ncol(x$parest)])
-          colnames(df) <- c("param", "coef", "exp(coef)", "se(coef)",
-                            "robust se", "z", "p",
-                            colnames(x$parest)[(2*p+11):ncol(x$parest)])
-        } else {
-          colnames(df) <- c("param", "coef", "exp(coef)", "se(coef)",
-                            "robust se", "z", "p")
-        }
+        colnames(df) <- c("param", "coef", "exp(coef)", "se(coef)",
+                          "robust se", "z", "p")
       }
     }
 
@@ -9924,6 +9854,7 @@ print.phregr <- function(x, ...) {
 
   invisible(x)
 }
+
 
 
 #' @title Print logisregr Object
@@ -9940,9 +9871,9 @@ print.phregr <- function(x, ...) {
 #'
 #' @export
 print.logisregr <- function(x, ...) {
-  lrchisq = -2*(x$sumstat$loglik0 - x$sumstat$loglik1)
-  degrees = x$sumstat$p - 1
-  pvalue = sapply(1:nrow(x$sumstat), function(i) {
+  lrchisq <- -2*(x$sumstat$loglik0 - x$sumstat$loglik1)
+  degrees <- x$sumstat$p - 1
+  pvalue <- sapply(1:nrow(x$sumstat), function(i) {
     ifelse(degrees[i] > 0,
            pchisq(lrchisq[i], degrees[i], 0, lower.tail = FALSE),
            NA)
@@ -9951,92 +9882,64 @@ print.logisregr <- function(x, ...) {
                lrchisq = lrchisq, df = degrees, pvalue = pvalue,
                x$sumstat[, c("niter", "link", "firth", "flic")])
 
-  p = x$p
+  p <- x$p
   if (p > 0) {
-    nreps = nrow(x$parest)/p
+    if (!x$settings$robust) {
+      if (x$settings$plci) {
+        df <- data.frame(param = x$param,
+                         coef = x$parest$beta,
+                         expcoef = x$parest$expbeta,
+                         se = x$parest$sebeta,
+                         z = x$parest$z,
+                         lower = x$parest$lower,
+                         upper = x$parest$upper,
+                         p = x$parest$p,
+                         method = x$parest$method)
 
-    if (!x$robust) {
-      if (x$plci) {
-        df = data.frame(param = rep(x$param, nreps),
-                        coef = x$parest$beta,
-                        expcoef = x$parest$expbeta,
-                        se = x$parest$sebeta,
-                        z = x$parest$z,
-                        lower = x$parest$lower,
-                        upper = x$parest$upper,
-                        p = x$parest$p,
-                        method = x$parest$method)
+        colnames(df) <- c("param", "coef", "exp(coef)", "se(coef)", "z",
+                          paste("lower", 1-x$settings$alpha),
+                          paste("upper", 1-x$settings$alpha),
+                          "p", "method")
 
-        if (nreps > 1) {
-          df = cbind(df, x$parest[, (p+10):ncol(x$parest)])
-          colnames(df) <- c("param", "coef", "exp(coef)", "se(coef)", "z",
-                            paste("lower", 1-x$alpha),
-                            paste("upper", 1-x$alpha), "p", "method",
-                            colnames(x$parest)[(p+10):ncol(x$parest)])
-        } else {
-          colnames(df) <- c("param", "coef", "exp(coef)", "se(coef)", "z",
-                            paste("lower", 1-x$alpha),
-                            paste("upper", 1-x$alpha), "p", "method")
-        }
       } else {
-        df = data.frame(param = rep(x$param, nreps),
-                        coef = x$parest$beta,
-                        expcoef = x$parest$expbeta,
-                        se = x$parest$sebeta,
-                        z = x$parest$z,
-                        p = x$parest$p)
+        df <- data.frame(param = x$param,
+                         coef = x$parest$beta,
+                         expcoef = x$parest$expbeta,
+                         se = x$parest$sebeta,
+                         z = x$parest$z,
+                         p = x$parest$p)
 
-        if (nreps > 1) {
-          df = cbind(df, x$parest[, (p+10):ncol(x$parest)])
-          colnames(df) <- c("param", "coef", "exp(coef)", "se(coef)", "z",
-                            "p", colnames(x$parest)[(p+10):ncol(x$parest)])
-        } else {
-          colnames(df) <- c("param", "coef", "exp(coef)", "se(coef)", "z",
-                            "p")
-        }
+        colnames(df) <- c("param", "coef", "exp(coef)", "se(coef)", "z", "p")
       }
     } else {
-      if (x$plci) {
-        df = data.frame(param = rep(x$param, nreps),
-                        coef = x$parest$beta,
-                        expcoef = x$parest$expbeta,
-                        nse = x$parest$sebeta_naive,
-                        se = x$parest$sebeta,
-                        z = x$parest$z,
-                        lower = x$parest$lower,
-                        upper = x$parest$upper,
-                        p = x$parest$p,
-                        method = x$parest$method)
+      if (x$settings$plci) {
+        df <- data.frame(param = x$param,
+                         coef = x$parest$beta,
+                         expcoef = x$parest$expbeta,
+                         nse = x$parest$sebeta_naive,
+                         se = x$parest$sebeta,
+                         z = x$parest$z,
+                         lower = x$parest$lower,
+                         upper = x$parest$upper,
+                         p = x$parest$p,
+                         method = x$parest$method)
 
-        if (nreps > 1) {
-          df = cbind(df, x$parest[, (2*p+11):ncol(x$parest)])
-          colnames(df) <- c("param", "coef", "exp(coef)", "se(coef)",
-                            "robust se", "z", paste("lower", 1-x$alpha),
-                            paste("upper", 1-x$alpha), "p", "method",
-                            colnames(x$parest)[(2*p+11):ncol(x$parest)])
-        } else {
-          colnames(df) <- c("param", "coef", "exp(coef)", "se(coef)",
-                            "robust se", "z", paste("lower", 1-x$alpha),
-                            paste("upper", 1-x$alpha), "p", "method")
-        }
+        colnames(df) <- c("param", "coef", "exp(coef)", "se(coef)",
+                          "robust se", "z",
+                          paste("lower", 1-x$settings$alpha),
+                          paste("upper", 1-x$settings$alpha),
+                          "p", "method")
       } else {
-        df = data.frame(param = rep(x$param, nreps),
-                        coef = x$parest$beta,
-                        expcoef = x$parest$expbeta,
-                        nse = x$parest$sebeta_naive,
-                        se = x$parest$sebeta,
-                        z = x$parest$z,
-                        p = x$parest$p)
+        df <- data.frame(param = x$param,
+                         coef = x$parest$beta,
+                         expcoef = x$parest$expbeta,
+                         nse = x$parest$sebeta_naive,
+                         se = x$parest$sebeta,
+                         z = x$parest$z,
+                         p = x$parest$p)
 
-        if (nreps > 1) {
-          df = cbind(df, x$parest[, (2*p+11):ncol(x$parest)])
-          colnames(df) <- c("param", "coef", "exp(coef)", "se(coef)",
-                            "robust se", "z", "p",
-                            colnames(x$parest)[(2*p+11):ncol(x$parest)])
-        } else {
-          colnames(df) <- c("param", "coef", "exp(coef)", "se(coef)",
-                            "robust se", "z", "p")
-        }
+        colnames(df) <- c("param", "coef", "exp(coef)", "se(coef)",
+                          "robust se", "z", "p")
       }
     }
   }
@@ -10047,4 +9950,44 @@ print.logisregr <- function(x, ...) {
   invisible(x)
 }
 
+
+#' @title Print method for assess_phregr objects
+#' @description Prints the concise information of an assess_phregr fit.
+#'
+#' @param x An object of class \code{assess_phregr}.
+#' @param ... Ensures that all arguments starting from "..." are named.
+#'
+#' @return A printout from the fit of an assessment of proportional hazards
+#' assumption of a Cox model.
+#'
+#' @keywords internal
+#'
+#' @author Kaifeng Lu, \email{kaifenglu@@gmail.com}
+#'
+#' @export
+print.assess_phregr <- function(x, ...) {
+
+  format_pvalue <- function(p) {
+    # Handle the case of p < 0.0001
+    ifelse(p < 0.0001,
+           "<.0001",
+           # Handle the case of p > 0.9999
+           ifelse(p > 0.9999,
+                  ">.9999",
+                  # For all other cases, format to 4 decimal places
+                  sprintf("%.4f", p)))
+  }
+
+  df <- data.frame(covariate = c(x$covariates, "GLOBAL"),
+                   max_abs_value = x$max_abs_value,
+                   resample = x$resample,
+                   seed = x$seed,
+                   p_value = format_pvalue(x$p_value))
+
+  j0 <- 2
+  df[j0] <- lapply(df[j0], formatC, format = "f", digits = 4)
+  print(df, ..., na.print = "", quote = FALSE)
+
+  invisible(x)
+}
 

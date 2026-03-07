@@ -5,17 +5,9 @@
 \title{REML Estimates of Individual Rates With Specified Rate
 Difference}
 \usage{
-remlRateDiff(
-  rateDiffH0 = 0,
-  t1 = NA_real_,
-  y1 = NA_real_,
-  t2 = NA_real_,
-  y2 = NA_real_
-)
+remlRateDiff(t1, y1, t2, y2, rateDiffH0 = 0)
 }
 \arguments{
-\item{rateDiffH0}{The specified rate difference.}
-
 \item{t1}{The exposure for the active treatment group.}
 
 \item{y1}{The number of events for the active treatment group.}
@@ -23,6 +15,8 @@ remlRateDiff(
 \item{t2}{The exposure for the control group.}
 
 \item{y2}{The number of events for the control group.}
+
+\item{rateDiffH0}{The specified rate difference.}
 }
 \value{
 A vector of the restricted maximum likelihood estimates
@@ -34,7 +28,7 @@ individual proportions with specified rate difference.
 }
 \examples{
 
-remlRateDiff(rateDiffH0 = 0.1, t1 = 10, y1 = 4, t2 = 20, y2 = 2)
+remlRateDiff(t1 = 10, y1 = 4, t2 = 20, y2 = 2, rateDiffH0 = 0.1)
 
 }
 \author{

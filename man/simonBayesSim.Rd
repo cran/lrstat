@@ -18,7 +18,7 @@ simonBayesSim(
   plannedSubjects = NA_integer_,
   maxNumberOfIterations = 1000L,
   maxNumberOfRawDatasets = 1L,
-  seed = NA_integer_
+  seed = 0L
 )
 }
 \arguments{

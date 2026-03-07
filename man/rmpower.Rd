@@ -30,7 +30,7 @@ rmpower(
   gamma2 = 0L,
   accrualDuration = NA_real_,
   followupTime = NA_real_,
-  fixedFollowup = 0L,
+  fixedFollowup = FALSE,
   spendingTime = NA_real_,
   studyDuration = NA_real_
 )
@@ -147,11 +147,17 @@ An S3 class \code{rmpower} object with 4 components:
 \item \code{overallReject}: The overall rejection probability.
 \item \code{alpha}: The overall significance level.
 \item \code{numberOfEvents}: The total number of events.
+\item \code{numberOfDropouts}: The total number of dropouts.
 \item \code{numbeOfSubjects}: The total number of subjects.
+\item \code{numberOfMilestone}: The total number of subjects reaching
+milestone.
 \item \code{studyDuration}: The total study duration.
 \item \code{information}: The maximum information.
 \item \code{expectedNumberOfEvents}: The expected number of events.
+\item \code{expectedNumberOfDropouts}: The expected number of dropouts.
 \item \code{expectedNumberOfSubjects}: The expected number of subjects.
+\item \code{expectedNumberOfMilestone}: The expected number of subjects
+reaching milestone.
 \item \code{expectedStudyDuration}: The expected study duration.
 \item \code{expectedInformation}: The expected information.
 \item \code{accrualDuration}: The accrual duration.
@@ -254,7 +260,7 @@ rmpower(kMax = 2, informationRates = c(0.8, 1),
         alpha = 0.025, typeAlphaSpending = "sfOF",
         milestone = 18,
         allocationRatioPlanned = 1, accrualTime = seq(0, 8),
-        accrualIntensity = 100/9*seq(1, 9),
+        accrualIntensity = 26/9*seq(1, 9),
         piecewiseSurvivalTime = c(0, 6),
         stratumFraction = c(0.2, 0.8),
         lambda1 = c(0.0533, 0.0309, 1.5*0.0533, 1.5*0.0309),

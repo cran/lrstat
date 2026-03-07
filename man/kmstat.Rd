@@ -18,7 +18,7 @@ kmstat(
   gamma2 = 0L,
   accrualDuration = NA_real_,
   followupTime = NA_real_,
-  fixedFollowup = 0L
+  fixedFollowup = FALSE
 )
 }
 \arguments{

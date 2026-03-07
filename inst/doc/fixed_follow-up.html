@@ -50,8 +50,9 @@ overflow: visible;
 }
 </style>
 <style type="text/css" data-origin="pandoc">
+html { -webkit-text-size-adjust: 100%; }
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -62,7 +63,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
 { counter-reset: source-line 0; }
@@ -392,10 +393,10 @@ as design 1.</p>
 <span id="cb2-29"><a href="#cb2-29" tabindex="-1"></a><span class="co">#&gt; Overall power: 0.025, overall significance level (1-sided): 0.025      </span></span>
 <span id="cb2-30"><a href="#cb2-30" tabindex="-1"></a><span class="co">#&gt; Number of events: 39                                                   </span></span>
 <span id="cb2-31"><a href="#cb2-31" tabindex="-1"></a><span class="co">#&gt; Number of dropouts: 2.2                                                </span></span>
-<span id="cb2-32"><a href="#cb2-32" tabindex="-1"></a><span class="co">#&gt; Number of subjects: 113                                                </span></span>
+<span id="cb2-32"><a href="#cb2-32" tabindex="-1"></a><span class="co">#&gt; Number of subjects: 98.2                                               </span></span>
 <span id="cb2-33"><a href="#cb2-33" tabindex="-1"></a><span class="co">#&gt; Information: 7.31                                                      </span></span>
-<span id="cb2-34"><a href="#cb2-34" tabindex="-1"></a><span class="co">#&gt; Study duration: 22.6                                                   </span></span>
-<span id="cb2-35"><a href="#cb2-35" tabindex="-1"></a><span class="co">#&gt; Accrual duration: 22.6, follow-up duration: 6.5, fixed follow-up: TRUE </span></span>
+<span id="cb2-34"><a href="#cb2-34" tabindex="-1"></a><span class="co">#&gt; Study duration: 26.1                                                   </span></span>
+<span id="cb2-35"><a href="#cb2-35" tabindex="-1"></a><span class="co">#&gt; Accrual duration: 19.6, follow-up duration: 6.5, fixed follow-up: TRUE </span></span>
 <span id="cb2-36"><a href="#cb2-36" tabindex="-1"></a><span class="co">#&gt; Allocation ratio: 3                                                    </span></span>
 <span id="cb2-37"><a href="#cb2-37" tabindex="-1"></a><span class="co">#&gt;                                                                        </span></span>
 <span id="cb2-38"><a href="#cb2-38" tabindex="-1"></a><span class="co">#&gt;                              </span></span>
@@ -403,10 +404,10 @@ as design 1.</p>
 <span id="cb2-40"><a href="#cb2-40" tabindex="-1"></a><span class="co">#&gt; Efficacy boundary (HR) 0.484 </span></span>
 <span id="cb2-41"><a href="#cb2-41" tabindex="-1"></a><span class="co">#&gt; Efficacy boundary (p)  0.0250</span></span>
 <span id="cb2-42"><a href="#cb2-42" tabindex="-1"></a><span class="co">#&gt; HR                     1.000</span></span></code></pre></div>
-<p>On the other hand, the output from the default lrsamplesize call
-implies that we only need 26 events with 127 subjects enrolled over 25.4
-months, a dramatic difference from the Schoenfeld formula. Denote this
-design as design 2.</p>
+<p>On the other hand, the output from the lrsamplesize call using the
+‘direct’ method implies that we only need 26 events with 127 subjects
+enrolled over 25.4 months, a dramatic difference from the Schoenfeld
+formula. Denote this design as design 2.</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="fu">lrsamplesize</span>(<span class="at">beta =</span> <span class="fl">0.1</span>, <span class="at">kMax =</span> <span class="dv">1</span>, <span class="at">criticalValues =</span> <span class="fl">1.96</span>, </span>
 <span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a>             <span class="at">allocationRatioPlanned =</span> <span class="dv">3</span>, <span class="at">accrualIntensity =</span> <span class="dv">5</span>, </span>
 <span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a>             <span class="at">lambda2 =</span> <span class="fl">0.95</span><span class="sc">/</span><span class="dv">12</span>, <span class="at">lambda1 =</span> <span class="fl">0.3</span><span class="sc">*</span><span class="fl">0.95</span><span class="sc">/</span><span class="dv">12</span>, </span>
@@ -438,10 +439,10 @@ design as design 2.</p>
 <span id="cb3-29"><a href="#cb3-29" tabindex="-1"></a><span class="co">#&gt; Overall power: 0.025, overall significance level (1-sided): 0.025      </span></span>
 <span id="cb3-30"><a href="#cb3-30" tabindex="-1"></a><span class="co">#&gt; Number of events: 26                                                   </span></span>
 <span id="cb3-31"><a href="#cb3-31" tabindex="-1"></a><span class="co">#&gt; Number of dropouts: 1.4                                                </span></span>
-<span id="cb3-32"><a href="#cb3-32" tabindex="-1"></a><span class="co">#&gt; Number of subjects: 80.3                                               </span></span>
+<span id="cb3-32"><a href="#cb3-32" tabindex="-1"></a><span class="co">#&gt; Number of subjects: 65.5                                               </span></span>
 <span id="cb3-33"><a href="#cb3-33" tabindex="-1"></a><span class="co">#&gt; Information: 4.88                                                      </span></span>
-<span id="cb3-34"><a href="#cb3-34" tabindex="-1"></a><span class="co">#&gt; Study duration: 16.1                                                   </span></span>
-<span id="cb3-35"><a href="#cb3-35" tabindex="-1"></a><span class="co">#&gt; Accrual duration: 16.1, follow-up duration: 6.5, fixed follow-up: TRUE </span></span>
+<span id="cb3-34"><a href="#cb3-34" tabindex="-1"></a><span class="co">#&gt; Study duration: 19.6                                                   </span></span>
+<span id="cb3-35"><a href="#cb3-35" tabindex="-1"></a><span class="co">#&gt; Accrual duration: 13.1, follow-up duration: 6.5, fixed follow-up: TRUE </span></span>
 <span id="cb3-36"><a href="#cb3-36" tabindex="-1"></a><span class="co">#&gt; Allocation ratio: 3                                                    </span></span>
 <span id="cb3-37"><a href="#cb3-37" tabindex="-1"></a><span class="co">#&gt;                                                                        </span></span>
 <span id="cb3-38"><a href="#cb3-38" tabindex="-1"></a><span class="co">#&gt;                              </span></span>
@@ -456,39 +457,41 @@ the lrsim function.</p>
 <span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>      <span class="at">accrualIntensity =</span> <span class="dv">5</span>, </span>
 <span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a>      <span class="at">lambda2 =</span> <span class="fl">0.95</span><span class="sc">/</span><span class="dv">12</span>, <span class="at">lambda1 =</span> <span class="fl">0.3</span><span class="sc">*</span><span class="fl">0.95</span><span class="sc">/</span><span class="dv">12</span>, </span>
 <span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a>      <span class="at">gamma1 =</span> <span class="sc">-</span><span class="fu">log</span>(<span class="dv">1</span><span class="fl">-0.1</span>)<span class="sc">/</span><span class="dv">24</span>, <span class="at">gamma2 =</span> <span class="sc">-</span><span class="fu">log</span>(<span class="dv">1</span><span class="fl">-0.1</span>)<span class="sc">/</span><span class="dv">24</span>,</span>
-<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a>      <span class="at">accrualDuration =</span> <span class="fl">38.2</span>, <span class="at">followupTime =</span> <span class="fl">6.5</span>, </span>
+<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a>      <span class="at">n =</span> <span class="dv">191</span>, <span class="at">followupTime =</span> <span class="fl">6.5</span>, </span>
 <span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a>      <span class="at">fixedFollowup =</span> <span class="cn">TRUE</span>,  </span>
 <span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a>      <span class="at">plannedEvents =</span> <span class="dv">39</span>, </span>
 <span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a>      <span class="at">maxNumberOfIterations =</span> <span class="dv">10000</span>, <span class="at">seed =</span> <span class="dv">12345</span>)</span>
-<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a><span class="co">#&gt;                                               </span></span>
-<span id="cb4-11"><a href="#cb4-11" tabindex="-1"></a><span class="co">#&gt; Fixed design for log-rank test                </span></span>
-<span id="cb4-12"><a href="#cb4-12" tabindex="-1"></a><span class="co">#&gt; Overall power: 0.949                          </span></span>
-<span id="cb4-13"><a href="#cb4-13" tabindex="-1"></a><span class="co">#&gt; Expected # events: 37                         </span></span>
-<span id="cb4-14"><a href="#cb4-14" tabindex="-1"></a><span class="co">#&gt; Expected # dropouts: 4.4                      </span></span>
-<span id="cb4-15"><a href="#cb4-15" tabindex="-1"></a><span class="co">#&gt; Expected # subjects: 186.3                    </span></span>
-<span id="cb4-16"><a href="#cb4-16" tabindex="-1"></a><span class="co">#&gt; Expected study duration: 39.3                 </span></span>
-<span id="cb4-17"><a href="#cb4-17" tabindex="-1"></a><span class="co">#&gt; Accrual duration: 38.2, fixed follow-up: TRUE </span></span>
-<span id="cb4-18"><a href="#cb4-18" tabindex="-1"></a><span class="co">#&gt; </span></span></code></pre></div>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a></span>
-<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a><span class="fu">lrsim</span>(<span class="at">kMax =</span> <span class="dv">1</span>, <span class="at">criticalValues =</span> <span class="fl">1.96</span>,  </span>
-<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>      <span class="at">allocation1 =</span> <span class="dv">3</span>, <span class="at">allocation2 =</span> <span class="dv">1</span>,</span>
-<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a>      <span class="at">accrualIntensity =</span> <span class="dv">5</span>, </span>
-<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a>      <span class="at">lambda2 =</span> <span class="fl">0.95</span><span class="sc">/</span><span class="dv">12</span>, <span class="at">lambda1 =</span> <span class="fl">0.3</span><span class="sc">*</span><span class="fl">0.95</span><span class="sc">/</span><span class="dv">12</span>, </span>
-<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a>      <span class="at">gamma1 =</span> <span class="sc">-</span><span class="fu">log</span>(<span class="dv">1</span><span class="fl">-0.1</span>)<span class="sc">/</span><span class="dv">24</span>, <span class="at">gamma2 =</span> <span class="sc">-</span><span class="fu">log</span>(<span class="dv">1</span><span class="fl">-0.1</span>)<span class="sc">/</span><span class="dv">24</span>,</span>
-<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a>      <span class="at">accrualDuration =</span> <span class="fl">25.4</span>, <span class="at">followupTime =</span> <span class="fl">6.5</span>, </span>
-<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a>      <span class="at">fixedFollowup =</span> <span class="cn">TRUE</span>,  </span>
-<span id="cb5-9"><a href="#cb5-9" tabindex="-1"></a>      <span class="at">plannedEvents =</span> <span class="dv">26</span>, </span>
-<span id="cb5-10"><a href="#cb5-10" tabindex="-1"></a>      <span class="at">maxNumberOfIterations =</span> <span class="dv">10000</span>, <span class="at">seed =</span> <span class="dv">12345</span>)</span>
-<span id="cb5-11"><a href="#cb5-11" tabindex="-1"></a><span class="co">#&gt;                                               </span></span>
-<span id="cb5-12"><a href="#cb5-12" tabindex="-1"></a><span class="co">#&gt; Fixed design for log-rank test                </span></span>
-<span id="cb5-13"><a href="#cb5-13" tabindex="-1"></a><span class="co">#&gt; Overall power: 0.833                          </span></span>
-<span id="cb5-14"><a href="#cb5-14" tabindex="-1"></a><span class="co">#&gt; Expected # events: 24.3                       </span></span>
-<span id="cb5-15"><a href="#cb5-15" tabindex="-1"></a><span class="co">#&gt; Expected # dropouts: 2.9                      </span></span>
-<span id="cb5-16"><a href="#cb5-16" tabindex="-1"></a><span class="co">#&gt; Expected # subjects: 124.1                    </span></span>
-<span id="cb5-17"><a href="#cb5-17" tabindex="-1"></a><span class="co">#&gt; Expected study duration: 27                   </span></span>
-<span id="cb5-18"><a href="#cb5-18" tabindex="-1"></a><span class="co">#&gt; Accrual duration: 25.4, fixed follow-up: TRUE </span></span>
-<span id="cb5-19"><a href="#cb5-19" tabindex="-1"></a><span class="co">#&gt; </span></span></code></pre></div>
-<p>The simulated power is about 95% for design 1, and 83% for design 2.
+<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a><span class="co">#&gt;                                </span></span>
+<span id="cb4-11"><a href="#cb4-11" tabindex="-1"></a><span class="co">#&gt; Fixed design for log-rank test </span></span>
+<span id="cb4-12"><a href="#cb4-12" tabindex="-1"></a><span class="co">#&gt; Empirical power: 0.95          </span></span>
+<span id="cb4-13"><a href="#cb4-13" tabindex="-1"></a><span class="co">#&gt; Expected # events: 37          </span></span>
+<span id="cb4-14"><a href="#cb4-14" tabindex="-1"></a><span class="co">#&gt; Expected # dropouts: 4.4       </span></span>
+<span id="cb4-15"><a href="#cb4-15" tabindex="-1"></a><span class="co">#&gt; Expected # subjects: 186.2     </span></span>
+<span id="cb4-16"><a href="#cb4-16" tabindex="-1"></a><span class="co">#&gt; Expected study duration: 39.2  </span></span>
+<span id="cb4-17"><a href="#cb4-17" tabindex="-1"></a><span class="co">#&gt; n: 191, fixed follow-up: TRUE  </span></span>
+<span id="cb4-18"><a href="#cb4-18" tabindex="-1"></a><span class="co">#&gt; Number of simulations: 10000   </span></span>
+<span id="cb4-19"><a href="#cb4-19" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb4-20"><a href="#cb4-20" tabindex="-1"></a></span>
+<span id="cb4-21"><a href="#cb4-21" tabindex="-1"></a><span class="fu">lrsim</span>(<span class="at">kMax =</span> <span class="dv">1</span>, <span class="at">criticalValues =</span> <span class="fl">1.96</span>,  </span>
+<span id="cb4-22"><a href="#cb4-22" tabindex="-1"></a>      <span class="at">allocation1 =</span> <span class="dv">3</span>, <span class="at">allocation2 =</span> <span class="dv">1</span>,</span>
+<span id="cb4-23"><a href="#cb4-23" tabindex="-1"></a>      <span class="at">accrualIntensity =</span> <span class="dv">5</span>, </span>
+<span id="cb4-24"><a href="#cb4-24" tabindex="-1"></a>      <span class="at">lambda2 =</span> <span class="fl">0.95</span><span class="sc">/</span><span class="dv">12</span>, <span class="at">lambda1 =</span> <span class="fl">0.3</span><span class="sc">*</span><span class="fl">0.95</span><span class="sc">/</span><span class="dv">12</span>, </span>
+<span id="cb4-25"><a href="#cb4-25" tabindex="-1"></a>      <span class="at">gamma1 =</span> <span class="sc">-</span><span class="fu">log</span>(<span class="dv">1</span><span class="fl">-0.1</span>)<span class="sc">/</span><span class="dv">24</span>, <span class="at">gamma2 =</span> <span class="sc">-</span><span class="fu">log</span>(<span class="dv">1</span><span class="fl">-0.1</span>)<span class="sc">/</span><span class="dv">24</span>,</span>
+<span id="cb4-26"><a href="#cb4-26" tabindex="-1"></a>      <span class="at">n =</span> <span class="dv">127</span>, <span class="at">followupTime =</span> <span class="fl">6.5</span>, </span>
+<span id="cb4-27"><a href="#cb4-27" tabindex="-1"></a>      <span class="at">fixedFollowup =</span> <span class="cn">TRUE</span>,  </span>
+<span id="cb4-28"><a href="#cb4-28" tabindex="-1"></a>      <span class="at">plannedEvents =</span> <span class="dv">26</span>, </span>
+<span id="cb4-29"><a href="#cb4-29" tabindex="-1"></a>      <span class="at">maxNumberOfIterations =</span> <span class="dv">10000</span>, <span class="at">seed =</span> <span class="dv">12345</span>)</span>
+<span id="cb4-30"><a href="#cb4-30" tabindex="-1"></a><span class="co">#&gt;                                </span></span>
+<span id="cb4-31"><a href="#cb4-31" tabindex="-1"></a><span class="co">#&gt; Fixed design for log-rank test </span></span>
+<span id="cb4-32"><a href="#cb4-32" tabindex="-1"></a><span class="co">#&gt; Empirical power: 0.836         </span></span>
+<span id="cb4-33"><a href="#cb4-33" tabindex="-1"></a><span class="co">#&gt; Expected # events: 24.3        </span></span>
+<span id="cb4-34"><a href="#cb4-34" tabindex="-1"></a><span class="co">#&gt; Expected # dropouts: 2.9       </span></span>
+<span id="cb4-35"><a href="#cb4-35" tabindex="-1"></a><span class="co">#&gt; Expected # subjects: 124       </span></span>
+<span id="cb4-36"><a href="#cb4-36" tabindex="-1"></a><span class="co">#&gt; Expected study duration: 26.9  </span></span>
+<span id="cb4-37"><a href="#cb4-37" tabindex="-1"></a><span class="co">#&gt; n: 127, fixed follow-up: TRUE  </span></span>
+<span id="cb4-38"><a href="#cb4-38" tabindex="-1"></a><span class="co">#&gt; Number of simulations: 10000   </span></span>
+<span id="cb4-39"><a href="#cb4-39" tabindex="-1"></a><span class="co">#&gt; </span></span></code></pre></div>
+<p>The simulated power is about 95% for design 1, and 84% for design 2.
 Neither is close to the target 90% power.</p>
 <p>We use the following formula to adjust the sample size to attain the
 target power, <span class="math display">\[
@@ -505,24 +508,25 @@ N = \frac{D}{ \frac{r}{1+r}\frac{\lambda_1}{\lambda_1+\gamma_1} (1 -
 \exp(-(\lambda_2+\gamma_2)T_f)) }
 \]</span> Simulation results confirmed the accuracy of this sample size
 estimate.</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="fu">lrsim</span>(<span class="at">kMax =</span> <span class="dv">1</span>, <span class="at">criticalValues =</span> <span class="fl">1.96</span>,  </span>
-<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>      <span class="at">allocation1 =</span> <span class="dv">3</span>, <span class="at">allocation2 =</span> <span class="dv">1</span>,</span>
-<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>      <span class="at">accrualIntensity =</span> <span class="dv">5</span>, </span>
-<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a>      <span class="at">lambda2 =</span> <span class="fl">0.95</span><span class="sc">/</span><span class="dv">12</span>, <span class="at">lambda1 =</span> <span class="fl">0.3</span><span class="sc">*</span><span class="fl">0.95</span><span class="sc">/</span><span class="dv">12</span>, </span>
-<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a>      <span class="at">gamma1 =</span> <span class="sc">-</span><span class="fu">log</span>(<span class="dv">1</span><span class="fl">-0.1</span>)<span class="sc">/</span><span class="dv">24</span>, <span class="at">gamma2 =</span> <span class="sc">-</span><span class="fu">log</span>(<span class="dv">1</span><span class="fl">-0.1</span>)<span class="sc">/</span><span class="dv">24</span>,</span>
-<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a>      <span class="at">accrualDuration =</span> <span class="fl">31.2</span>, <span class="at">followupTime =</span> <span class="fl">6.5</span>, </span>
-<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a>      <span class="at">fixedFollowup =</span> <span class="cn">TRUE</span>,  </span>
-<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a>      <span class="at">plannedEvents =</span> <span class="dv">32</span>, </span>
-<span id="cb6-9"><a href="#cb6-9" tabindex="-1"></a>      <span class="at">maxNumberOfIterations =</span> <span class="dv">10000</span>, <span class="at">seed =</span> <span class="dv">12345</span>)</span>
-<span id="cb6-10"><a href="#cb6-10" tabindex="-1"></a><span class="co">#&gt;                                               </span></span>
-<span id="cb6-11"><a href="#cb6-11" tabindex="-1"></a><span class="co">#&gt; Fixed design for log-rank test                </span></span>
-<span id="cb6-12"><a href="#cb6-12" tabindex="-1"></a><span class="co">#&gt; Overall power: 0.905                          </span></span>
-<span id="cb6-13"><a href="#cb6-13" tabindex="-1"></a><span class="co">#&gt; Expected # events: 30.1                       </span></span>
-<span id="cb6-14"><a href="#cb6-14" tabindex="-1"></a><span class="co">#&gt; Expected # dropouts: 3.6                      </span></span>
-<span id="cb6-15"><a href="#cb6-15" tabindex="-1"></a><span class="co">#&gt; Expected # subjects: 152.4                    </span></span>
-<span id="cb6-16"><a href="#cb6-16" tabindex="-1"></a><span class="co">#&gt; Expected study duration: 32.6                 </span></span>
-<span id="cb6-17"><a href="#cb6-17" tabindex="-1"></a><span class="co">#&gt; Accrual duration: 31.2, fixed follow-up: TRUE </span></span>
-<span id="cb6-18"><a href="#cb6-18" tabindex="-1"></a><span class="co">#&gt; </span></span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="fu">lrsim</span>(<span class="at">kMax =</span> <span class="dv">1</span>, <span class="at">criticalValues =</span> <span class="fl">1.96</span>,  </span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>      <span class="at">allocation1 =</span> <span class="dv">3</span>, <span class="at">allocation2 =</span> <span class="dv">1</span>,</span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>      <span class="at">accrualIntensity =</span> <span class="dv">5</span>, </span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a>      <span class="at">lambda2 =</span> <span class="fl">0.95</span><span class="sc">/</span><span class="dv">12</span>, <span class="at">lambda1 =</span> <span class="fl">0.3</span><span class="sc">*</span><span class="fl">0.95</span><span class="sc">/</span><span class="dv">12</span>, </span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a>      <span class="at">gamma1 =</span> <span class="sc">-</span><span class="fu">log</span>(<span class="dv">1</span><span class="fl">-0.1</span>)<span class="sc">/</span><span class="dv">24</span>, <span class="at">gamma2 =</span> <span class="sc">-</span><span class="fu">log</span>(<span class="dv">1</span><span class="fl">-0.1</span>)<span class="sc">/</span><span class="dv">24</span>,</span>
+<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a>      <span class="at">n =</span> <span class="dv">156</span>, <span class="at">followupTime =</span> <span class="fl">6.5</span>, </span>
+<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a>      <span class="at">fixedFollowup =</span> <span class="cn">TRUE</span>,  </span>
+<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a>      <span class="at">plannedEvents =</span> <span class="dv">32</span>, </span>
+<span id="cb5-9"><a href="#cb5-9" tabindex="-1"></a>      <span class="at">maxNumberOfIterations =</span> <span class="dv">10000</span>, <span class="at">seed =</span> <span class="dv">12345</span>)</span>
+<span id="cb5-10"><a href="#cb5-10" tabindex="-1"></a><span class="co">#&gt;                                </span></span>
+<span id="cb5-11"><a href="#cb5-11" tabindex="-1"></a><span class="co">#&gt; Fixed design for log-rank test </span></span>
+<span id="cb5-12"><a href="#cb5-12" tabindex="-1"></a><span class="co">#&gt; Empirical power: 0.898         </span></span>
+<span id="cb5-13"><a href="#cb5-13" tabindex="-1"></a><span class="co">#&gt; Expected # events: 30.1        </span></span>
+<span id="cb5-14"><a href="#cb5-14" tabindex="-1"></a><span class="co">#&gt; Expected # dropouts: 3.6       </span></span>
+<span id="cb5-15"><a href="#cb5-15" tabindex="-1"></a><span class="co">#&gt; Expected # subjects: 152.3     </span></span>
+<span id="cb5-16"><a href="#cb5-16" tabindex="-1"></a><span class="co">#&gt; Expected study duration: 32.5  </span></span>
+<span id="cb5-17"><a href="#cb5-17" tabindex="-1"></a><span class="co">#&gt; n: 156, fixed follow-up: TRUE  </span></span>
+<span id="cb5-18"><a href="#cb5-18" tabindex="-1"></a><span class="co">#&gt; Number of simulations: 10000   </span></span>
+<span id="cb5-19"><a href="#cb5-19" tabindex="-1"></a><span class="co">#&gt; </span></span></code></pre></div>
 
 
 

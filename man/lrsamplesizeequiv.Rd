@@ -28,9 +28,8 @@ lrsamplesizeequiv(
   followupTime = NA_real_,
   fixedFollowup = 0L,
   typeOfComputation = "direct",
-  interval = as.numeric(c(0.001, 240)),
   spendingTime = NA_real_,
-  rounding = 1L
+  rounding = TRUE
 )
 }
 \arguments{
@@ -111,12 +110,9 @@ Defaults to 0 for variable follow-up.}
 \item{typeOfComputation}{The type of computation,
 either "direct" for the direct approximation method,
 or "schoenfeld" for the Schoenfeld method.
-Defaults to "direct". Can use "Schoenfeld"
-under proportional hazards and conventional log-rank test.}
-
-\item{interval}{The interval to search for the solution of
-accrualDuration, followupDuration, or the proportionality constant
-of accrualIntensity. Defaults to \code{c(0.001, 240)}.}
+Defaults to empty, which selects the Schoenfeld method
+under proportional hazards and ordinary log-rank test
+and the direct method otherwise.}
 
 \item{spendingTime}{A vector of length \code{kMax} for the error spending
 time at each analysis. Defaults to missing, in which case, it is the

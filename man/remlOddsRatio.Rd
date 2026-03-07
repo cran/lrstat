@@ -5,17 +5,9 @@
 \title{REML Estimates of Individual Proportions With Specified Odds
 Ratio}
 \usage{
-remlOddsRatio(
-  oddsRatioH0 = 1,
-  n1 = NA_real_,
-  y1 = NA_real_,
-  n2 = NA_real_,
-  y2 = NA_real_
-)
+remlOddsRatio(n1, y1, n2, y2, oddsRatioH0 = 1)
 }
 \arguments{
-\item{oddsRatioH0}{The specified odds ratio.}
-
 \item{n1}{The sample size for the active treatment group.}
 
 \item{y1}{The number of responses for the active treatment group.}
@@ -23,6 +15,8 @@ remlOddsRatio(
 \item{n2}{The sample size for the control group.}
 
 \item{y2}{The number of responses for the control group.}
+
+\item{oddsRatioH0}{The specified odds ratio.}
 }
 \value{
 A vector of the restricted maximum likelihood estimates
@@ -34,7 +28,7 @@ individual proportions with specified odds ratio.
 }
 \examples{
 
-remlOddsRatio(oddsRatioH0 = 1.25, n1 = 10, y1 = 4, n2 = 20, y2 = 2)
+remlOddsRatio(n1 = 10, y1 = 4, n2 = 20, y2 = 2, oddsRatioH0 = 1.25)
 
 }
 \author{
