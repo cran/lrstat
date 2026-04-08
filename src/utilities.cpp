@@ -1,9 +1,10 @@
 #include "utilities.h"
 #include "dataframe_list.h"
-#include "thread_utils.h"
 
 #include <algorithm>  // lower_bound, sort, upper_bound
 #include <cmath>      // copysign, exp, fabs, isinf, isnan, log, sqrt
+#include <cstddef>    // size_t
+#include <cstring>    // memcpy
 #include <functional> // function
 #include <limits>     // numeric_limits
 #include <numeric>    // inner_product, iota
@@ -19,7 +20,6 @@
 #include <boost/math/distributions/extreme_value.hpp>
 #include <boost/math/distributions/chi_squared.hpp>
 #include <boost/math/distributions/students_t.hpp>
-#include <boost/math/quadrature/gauss_kronrod.hpp>
 #include <boost/math/quadrature/tanh_sinh.hpp>
 #include <boost/math/tools/minima.hpp>
 
@@ -183,6 +183,95 @@ double boost_qt(double p, double df, bool lower_tail) {
 }
 
 
+// Fast normal CDF approximation
+// see https://doi.org/10.2139/ssrn.2842681
+inline constexpr double g2 = -0.0150234471495426236132;
+inline constexpr double g4 = 0.000666098511701018747289;
+inline constexpr double g6 = 5.07937324518981103694e-06;
+inline constexpr double g8 = -2.92345273673194627762e-06;
+inline constexpr double g10 = 1.34797733516989204361e-07;
+inline constexpr double m2dpi = -0.6366197723675813824329; // -2.0 / pi
+
+// [[Rcpp::export]]
+double pnorm_fast(double x) {
+  if (!std::isfinite(x)) return (x > 0 ? 1.0 : 0.0);
+
+  const double x2  = x * x;
+  const double x4  = x2 * x2;
+  const double x6  = x4 * x2;
+  const double x8  = x6 * x2;
+  const double x10 = x8 * x2;
+
+  double tmp = 1.0 + g2 * x2 + g4 * x4 + g6 * x6 + g8 * x8 + g10 * x10;
+  double t = 1.0 - std::exp(tmp * m2dpi * x2);
+  return 0.5 + 0.5 * ((x > 0) - (x < 0)) * std::sqrt(t);
+}
+
+
+// Approximate inverse standard normal CDF (qnorm).
+// Based on Peter John Acklam's rational approximation.
+// Good accuracy for double precision when p in (0,1).
+// [[Rcpp::export]]
+double qnorm_acklam(double p) {
+  // Coefficients in rational approximations
+  static constexpr double a[] = {
+    -3.969683028665376e+01,
+    2.209460984245205e+02,
+    -2.759285104469687e+02,
+    1.383577518672690e+02,
+    -3.066479806614716e+01,
+    2.506628277459239e+00
+  };
+  static constexpr double b[] = {
+    -5.447609879822406e+01,
+    1.615858368580409e+02,
+    -1.556989798598866e+02,
+    6.680131188771972e+01,
+    -1.328068155288572e+01
+  };
+  static constexpr double c[] = {
+    -7.784894002430293e-03,
+    -3.223964580411365e-01,
+    -2.400758277161838e+00,
+    -2.549732539343734e+00,
+    4.374664141464968e+00,
+    2.938163982698783e+00
+  };
+  static constexpr double d[] = {
+    7.784695709041462e-03,
+    3.224671290700398e-01,
+    2.445134137142996e+00,
+    3.754408661907416e+00
+  };
+
+  // Protect against invalid inputs; caller should clamp too.
+  p = std::min(std::max(p, 1e-300), 1.0 - 1e-16);
+
+  // Define break-points.
+  constexpr double plow  = 0.02425;
+  constexpr double phigh = 1.0 - plow;
+
+  double q, r;
+  if (p < plow) {
+    // Rational approximation for lower region.
+    q = std::sqrt(-2.0 * std::log(p));
+    return (((((c[0]*q + c[1])*q + c[2])*q + c[3])*q + c[4])*q + c[5]) /
+      ((((d[0]*q + d[1])*q + d[2])*q + d[3])*q + 1.0);
+  } else if (p > phigh) {
+    // Rational approximation for upper region.
+    q = std::sqrt(-2.0 * std::log(1.0 - p));
+    return -(((((c[0]*q + c[1])*q + c[2])*q + c[3])*q + c[4])*q + c[5]) /
+      ((((d[0]*q + d[1])*q + d[2])*q + d[3])*q + 1.0);
+  } else {
+    // Rational approximation for central region.
+    q = p - 0.5;
+    r = q * q;
+    return (((((a[0]*r + a[1])*r + a[2])*r + a[3])*r + a[4])*r + a[5]) * q /
+      (((((b[0]*r + b[1])*r + b[2])*r + b[3])*r + b[4])*r + 1.0);
+  }
+}
+
+
 std::vector<size_t> seqcpp(size_t start, size_t end) {
   if (start > end) throw std::invalid_argument(
       "start must be less than or equal to end for the sequence function.");
@@ -207,8 +296,7 @@ std::vector<unsigned char> convertLogicalVector(const Rcpp::LogicalVector& vec) 
 std::vector<size_t> which(const std::vector<unsigned char>& vec) {
   std::vector<size_t> indices;
   indices.reserve(vec.size());
-  size_t n = vec.size();
-  for (size_t i = 0; i < n; ++i) {
+  for (size_t i = 0; i < vec.size(); ++i) {
     if (vec[i] != 0 && vec[i] != 255) indices.push_back(i);
   }
   return indices;
@@ -247,6 +335,33 @@ FlatMatrix expand_stratified(
   }
   return out;
 }
+
+void expand_stratified_to_slice(
+    const std::vector<double>& v,
+    FlatArray& out,
+    size_t slice_index,
+    size_t nstrata,
+    size_t nintv,
+    const char* name) {
+
+  double* dst = out.slice_ptr(slice_index);
+  if (v.size() == 1) {
+    for (size_t i = 0; i < nintv * nstrata; ++i) {
+      dst[i] = v[0];
+    }
+  } else if (v.size() == nintv) {
+    const double* src = v.data();
+    for (size_t s = 0; s < nstrata; ++s) {
+      std::memcpy(dst + s * nintv, src, nintv * sizeof(double));
+    }
+  } else if (v.size() == nstrata * nintv) {
+    const double* src = v.data();
+    std::memcpy(dst, src, nintv * nstrata * sizeof(double));
+  } else {
+    throw std::invalid_argument(std::string("Invalid length for ") + name);
+  }
+}
+
 
 size_t findInterval1(const double x,
                      const std::vector<double>& v,
@@ -1489,14 +1604,14 @@ ListCpp bygroup(const DataFrameCpp& data,
   size_t n = data.nrows();
   size_t p = variables.size();
   ListCpp result;
-  std::vector<int> nlevels(p);
+  std::vector<size_t> nlevels(p);
 
   // IntMatrix for indices (n rows, p cols), column-major storage
   IntMatrix indices(n, p);
 
   // Flattened lookup buffers and per-variable metadata
   struct VarLookupInfo {
-    int type; // 0=int, 1=double, 2=bool, 3=string
+    int type; // 0=int, 1=double, 2=bool, 3=string, 4=size_t
     size_t offset;
   };
   std::vector<VarLookupInfo> var_info(p);
@@ -1505,6 +1620,7 @@ ListCpp bygroup(const DataFrameCpp& data,
   std::vector<double> dbl_flat;
   std::vector<unsigned char> bool_flat;
   std::vector<std::string> str_flat;
+  std::vector<size_t> size_t_flat;
 
   ListCpp lookups_per_variable; // will contain a std::vector for each variable
 
@@ -1563,6 +1679,18 @@ ListCpp bygroup(const DataFrameCpp& data,
 
       intmatrix_set_column(indices, i, idx);
       lookups_per_variable.push_back(std::move(w), var);
+    } else if (data.size_t_cols.count(var)) {
+      const auto& col = data.size_t_cols.at(var);
+      auto w = unique_sorted(col);
+      nlevels[i] = w.size();
+      auto idx = matchcpp(col, w);
+
+      size_t off = size_t_flat.size();
+      size_t_flat.insert(size_t_flat.end(), w.begin(), w.end());
+      var_info[i] = VarLookupInfo{4, off};
+
+      intmatrix_set_column(indices, i, idx);
+      lookups_per_variable.push_back(std::move(w), var);
     } else {
       throw std::invalid_argument("Unsupported variable type in bygroup: " + var);
     }
@@ -1570,7 +1698,7 @@ ListCpp bygroup(const DataFrameCpp& data,
 
   // compute combined index
   std::vector<int> combined_index(n, 0);
-  int orep = 1;
+  size_t orep = 1;
   for (size_t i = 0; i < p; ++i) orep *= nlevels[i];
   size_t lookup_nrows = orep;
 
@@ -1620,9 +1748,18 @@ ListCpp bygroup(const DataFrameCpp& data,
         }
       }
       lookup_df.push_back(std::move(col), var);
-    } else { // string
+    } else if (info.type == 3) { // string
       const std::string* base = str_flat.data() + info.offset;
       std::vector<std::string> col(lookup_nrows);
+      size_t idxw = 0;
+      for (size_t t = 0; t < times; ++t) {
+        for (size_t level = 0; level < nlevels_i; ++level)
+          for (size_t r = 0; r < repeat_each; ++r) col[idxw++] = base[level];
+      }
+      lookup_df.push_back(std::move(col), var);
+    } else { // size_t
+      const size_t* base = size_t_flat.data() + info.offset;
+      std::vector<size_t> col(lookup_nrows);
       size_t idxw = 0;
       for (size_t t = 0; t < times; ++t) {
         for (size_t level = 0; level < nlevels_i; ++level)
@@ -1642,82 +1779,6 @@ ListCpp bygroup(const DataFrameCpp& data,
 
 
 // --------------------------- Linear algebra helpers (FlatMatrix-backed) ----
-// cholesky2: in-place working on FlatMatrix (n x n), returns rank * nonneg
-int cholesky2(FlatMatrix& matrix, size_t n, double toler) {
-  double* base = matrix.data_ptr();
-  double eps = 0.0;
-  for (size_t i = 0; i < n; ++i) {
-    double val = matrix(i, i);
-    if (val > eps) eps = val;
-  }
-  if (eps == 0.0) eps = toler; else eps *= toler;
-  int nonneg = 1;
-  int rank = 0;
-
-  for (size_t i = 0; i < n; ++i) {
-    double* col_i = base + i * n;
-    double pivot = col_i[i];
-    if (std::isinf(pivot) || pivot < eps) {
-      col_i[i] = 0.0;
-      if (pivot < -8.0 * eps) nonneg = -1;
-    } else {
-      ++rank;
-      for (size_t j = i + 1; j < n; ++j) {
-        double* col_j = base + j * n;
-        double temp = col_i[j] / pivot;
-        col_i[j] = temp;
-        col_j[j] -= temp * temp * pivot;
-        for (size_t k = j + 1; k < n; ++k) {
-          col_j[k] -= temp * col_i[k];
-        }
-      }
-    }
-  }
-  return rank * nonneg;
-}
-
-
-// chsolve2 assumes matrix holds the representation produced by cholesky2
-void chsolve2(FlatMatrix& matrix, size_t n, double* y) {
-  // Forward substitution L * z = y
-  double* base = matrix.data_ptr();
-  for (size_t j = 0; j < n-1; ++j) {
-    double yj = y[j];
-    if (yj == 0.0) continue;
-    double* col_j = base + j * n;
-    for (size_t i = j + 1; i < n; ++i) {
-      y[i] -= yj * col_j[i];
-    }
-  }
-  // Now y holds z; solve L^T * x = z
-  if (n == 0) return;
-  for (int i = n; i-- > 0; ) {
-    double* col_i = base + i * n;
-    double diag = col_i[i];
-    if (diag == 0.0) {
-      y[i] = 0.0;
-    } else {
-      double temp = y[i] / diag;
-      for (size_t j = i + 1; j < n; ++j) temp -= y[j] * col_i[j];
-      y[i] = temp;
-    }
-  }
-}
-
-
-// invsympd: returns the inverse of a symmetric positive definite matrix
-FlatMatrix invsympd(const FlatMatrix& matrix, size_t n, double toler) {
-  FlatMatrix v = matrix; // copy
-  cholesky2(v, n, toler);
-  FlatMatrix iv(n, n);
-  for (size_t i = 0; i < n; ++i) {
-    iv(i,i) = 1.0;
-    double* ycol = iv.data_ptr() + i * n;
-    chsolve2(v, n, ycol);
-  }
-  return iv;
-}
-
 
 std::vector<double> mat_vec_mult(const FlatMatrix& A, const std::vector<double>& x) {
   size_t m = A.nrow;
@@ -1801,6 +1862,27 @@ IntMatrix transpose(const IntMatrix& M) {
   return out;
 }
 
+// Transpose an SztMatrix (std::size_t)
+SztMatrix transpose(const SztMatrix& M) {
+  if (M.nrow == 0 || M.ncol == 0) return SztMatrix();
+
+  const size_t src_nrow = M.nrow;
+  const size_t src_ncol = M.ncol;
+  SztMatrix out(src_ncol, src_nrow); // swapped dims
+
+  const size_t* src = M.data_ptr();
+  size_t* dst = out.data_ptr();
+
+  for (size_t c = 0; c < src_ncol; ++c) {
+    const size_t* src_col = src + c * src_nrow;
+    for (size_t r = 0; r < src_nrow; ++r) {
+      dst[r * src_ncol + c] = src_col[r];
+    }
+  }
+
+  return out;
+}
+
 // Transpose a BoolMatrix (unsigned char)
 BoolMatrix transpose(const BoolMatrix& M) {
   if (M.nrow == 0 || M.ncol == 0) return BoolMatrix();
@@ -1838,6 +1920,103 @@ double quadsym(const std::vector<double>& u, const FlatMatrix& v) {
     sum += 2.0 * uptr[j] * s; // account for symmetric pair (i,j) and (j,i)
   }
   return sum;
+}
+
+// cholesky2: in-place working on FlatMatrix (n x n), returns rank * nonneg
+int cholesky2(FlatMatrix& matrix, size_t n, double toler) {
+  double* base = matrix.data_ptr();
+  double eps = 0.0;
+  for (size_t i = 0; i < n; ++i) {
+    double val = matrix(i, i);
+    if (val > eps) eps = val;
+  }
+  if (eps == 0.0) eps = toler; else eps *= toler;
+  int nonneg = 1;
+  int rank = 0;
+
+  for (size_t i = 0; i < n; ++i) {
+    double* col_i = base + i * n;
+    double pivot = col_i[i];
+    if (std::isinf(pivot) || pivot < eps) {
+      col_i[i] = 0.0;
+      if (pivot < -8.0 * eps) nonneg = -1;
+    } else {
+      ++rank;
+      for (size_t j = i + 1; j < n; ++j) {
+        double* col_j = base + j * n;
+        double temp = col_i[j] / pivot;
+        col_i[j] = temp;
+        col_j[j] -= temp * temp * pivot;
+        for (size_t k = j + 1; k < n; ++k) {
+          col_j[k] -= temp * col_i[k];
+        }
+      }
+    }
+  }
+  return rank * nonneg;
+}
+
+
+// chsolve2 assumes matrix holds the representation produced by cholesky2
+void chsolve2(FlatMatrix& matrix, size_t n, double* y) {
+  // Forward substitution L * z = y
+  double* base = matrix.data_ptr();
+  for (size_t j = 0; j < n-1; ++j) {
+    double yj = y[j];
+    if (yj == 0.0) continue;
+    double* col_j = base + j * n;
+    for (size_t i = j + 1; i < n; ++i) {
+      y[i] -= yj * col_j[i];
+    }
+  }
+  // Now y holds z; solve L^T * x = z
+  if (n == 0) return;
+  for (int i = n; i-- > 0; ) {
+    double* col_i = base + i * n;
+    double diag = col_i[i];
+    if (diag == 0.0) {
+      y[i] = 0.0;
+    } else {
+      double temp = y[i] / diag;
+      for (size_t j = i + 1; j < n; ++j) temp -= y[j] * col_i[j];
+      y[i] = temp;
+    }
+  }
+}
+
+
+// invsympd: returns the inverse of a symmetric positive definite matrix
+FlatMatrix invsympd(const FlatMatrix& matrix, size_t n, double toler) {
+  FlatMatrix v = matrix; // copy
+  cholesky2(v, n, toler);
+  FlatMatrix iv(n, n);
+  for (size_t i = 0; i < n; ++i) {
+    iv(i,i) = 1.0;
+    double* ycol = iv.data_ptr() + i * n;
+    chsolve2(v, n, ycol);
+  }
+  return iv;
+}
+
+
+// invchol assumes matrix holds the representation produced by cholesky2
+FlatMatrix invchol(FlatMatrix& matrix, size_t n) {
+  // Forward substitution L * z = y
+  double* base = matrix.data_ptr();
+  FlatMatrix iv(n, n);
+  for (size_t k = 0; k < n; ++k) {
+    iv(k,k) = 1.0;
+    double* y = iv.data_ptr() + k * n;
+    for (size_t j = 0; j < n-1; ++j) {
+      double yj = y[j];
+      if (yj == 0.0) continue;
+      double* col_j = base + j * n;
+      for (size_t i = j + 1; i < n; ++i) {
+        y[i] -= yj * col_j[i];
+      }
+    }
+  }
+  return iv;
 }
 
 

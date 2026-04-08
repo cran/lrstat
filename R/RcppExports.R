@@ -3418,6 +3418,10 @@ binary_tte_simRcpp <- function(kMax1 = 1L, kMax2 = 1L, riskDiffH0 = 0, hazardRat
     .Call(`_lrstat_binary_tte_simRcpp`, kMax1, kMax2, riskDiffH0, hazardRatioH0, allocation1, allocation2, accrualTime, accrualIntensity, piecewiseSurvivalTime, stratumFraction, globalOddsRatio, pi1, pi2, lambda1, lambda2, gamma1, gamma2, delta1, delta2, upper1, upper2, n, plannedTime, plannedEvents, maxNumberOfIterations, maxNumberOfRawDatasetsPerStage, seed)
 }
 
+lrsim_tsssd_Rcpp <- function(M = 2L, K = 1L, criticalValues = NA_real_, hazardRatioH0s = 1L, allocations = 1L, accrualTime = 0L, accrualIntensity = NA_real_, piecewiseSurvivalTime = 0L, stratumFraction = 1L, lambdas = NULL, gammas = NULL, n = NA_integer_, followupTime = NA_real_, fixedFollowup = FALSE, rho1 = 0, rho2 = 0, plannedEvents = NA_integer_, plannedTime = NA_real_, maxNumberOfIterations = 1000L, maxNumberOfRawDatasetsPerStage = 0L, seed = 0L) {
+    .Call(`_lrstat_lrsim_tsssd_Rcpp`, M, K, criticalValues, hazardRatioH0s, allocations, accrualTime, accrualIntensity, piecewiseSurvivalTime, stratumFraction, lambdas, gammas, n, followupTime, fixedFollowup, rho1, rho2, plannedEvents, plannedTime, maxNumberOfIterations, maxNumberOfRawDatasetsPerStage, seed)
+}
+
 #' @title Kaplan-Meier Survival Probability Based on Pooled Sample
 #' @description Obtains the limit of Kaplan-Meier estimate of the survival
 #' probabilities based on the pooled sample.
@@ -4904,6 +4908,14 @@ fmodmixcpp <- function(p, family, serial, parallel, gamma, test = "hommel", exha
 
 ftrunccpp <- function(p, test, gamma) {
     .Call(`_lrstat_ftrunccpp`, p, test, gamma)
+}
+
+pmvnormRcpp <- function(lower, upper, mean, sigma, fast = TRUE, n0 = 1024L, n_max = 16384L, R = 8L, abseps = 1e-4, releps = 0.0, seed = 0L, parallel = TRUE) {
+    .Call(`_lrstat_pmvnormRcpp`, lower, upper, mean, sigma, fast, n0, n_max, R, abseps, releps, seed, parallel)
+}
+
+qmvnormRcpp <- function(p, mean, sigma, fast = TRUE, n0 = 1024L, n_max = 16384L, R = 8L, abseps = 1e-4, releps = 0.0, seed = 0L, parallel = TRUE) {
+    .Call(`_lrstat_qmvnormRcpp`, p, mean, sigma, fast, n0, n_max, R, abseps, releps, seed, parallel)
 }
 
 #' @title Negative Binomial Rate Ratio
@@ -7809,6 +7821,260 @@ assess_phregRcpp <- function(p, beta, vbeta, data, stratum, time, time2, event, 
 
 zph_phregRcpp <- function(p, beta, vbeta, resmart, data, stratum, time, time2, event, covariates, weight, offset, ties, transform) {
     .Call(`_lrstat_zph_phregRcpp`, p, beta, vbeta, resmart, data, stratum, time, time2, event, covariates, weight, offset, ties, transform)
+}
+
+#' @title Exit Probabilities for Two-Stage Seamless Sequential Design (TSSSD)
+#' @description Computes the exit (rejection) probabilities for a two-stage
+#' selection and testing design. In Phase 2, multiple active arms are
+#' compared against a common control arm. The best-performing arm is
+#' selected to proceed to Phase 3, where it is tested against the common
+#' control over multiple looks.
+#'
+#' @param M Number of active treatment arms in Phase 2 (\eqn{M \ge 2}).
+#' @param r Randomization ratio of each active arm to the common control
+#'   in Phase 2.
+#' @param theta A vector of length \eqn{M} representing the true treatment
+#'   effects for each active arm versus the common control.
+#' @param corr_known Logical. If \code{TRUE}, the correlation between Wald
+#'   statistics in Phase 2 is derived from the randomization ratio \eqn{r}
+#'   as \eqn{r / (r + 1)}. If \code{FALSE}, a conservative correlation of
+#'   0 is used.
+#' @param K Number of sequential looks in Phase 3.
+#' @param b A vector of critical values (length \eqn{K+1}). The first element
+#'   is for Phase 2; the remaining \eqn{K} elements are for the looks in
+#'   Phase 3.
+#' @param I A vector of information levels (length \eqn{K+1}) for any active
+#'   arm versus the common control. The first element is for Phase 2;
+#'   the remaining \eqn{K} elements are for the looks in Phase 3.
+#'
+#' @details
+#' The function assumes a multivariate normal distribution for the Wald
+#' statistics. The "best" arm is defined as the active arm with the largest
+#' score statistic at the end of Phase 2.
+#'
+#' \strong{Decision Rules:}
+#' * \strong{Phase 2}: The global null hypothesis is rejected if the Wald
+#'   statistic for the best arm, \eqn{Z(I_0)}, satisfies \eqn{Z(I_0) \ge b_0}.
+#'
+#' * \strong{Phase 3}: If the trial continues, the hypothesis is rejected at
+#'   look \eqn{k} if \eqn{Z(I_k) \ge b_k} and all previous
+#'   looks (including Phase 2) failed to reject.
+#'
+#' \strong{Design Assumptions:}
+#'
+#' * All active arms share the same information level in Phase 2.
+#'
+#' * Exactly one active arm is selected at the end of Phase 2 based on the
+#'   largest observed statistic.
+#'
+#' @return A list containing:
+#'
+#' * \code{exitProb}: A vector of length \eqn{K + 1}. The first element is the
+#' probability of rejection in Phase 2; the remaining elements are the
+#' probabilities of rejection at each look in Phase 3.
+#'
+#' * \code{exitProbByArm}: A \eqn{(K+1) \times M} matrix. The \eqn{(k, m)}-th
+#' entry represents the probability that the global null is rejected at
+#' look \eqn{k} given that arm \eqn{m} was selected as the best arm.
+#'
+#' * \code{selectAsBest}: A vector of length \eqn{M} containing the probability
+#' that each active arm is selected to move on to Phase 3.
+#'
+#' @author Kaifeng Lu, \email{kaifenglu@@gmail.com}
+#'
+#' @examples
+#'
+#' # Setup: 2 active arms vs control in phase 2; 1 selected arm vs control
+#' # in phase 3. Phase 3 has 2 sequential looks.
+#'
+#' # Information levels: equal spacing over 3 looks based on max 110 patients
+#' # per arm, SD = 1.0
+#' I <- c(110 / (2 * 1.0^2) * seq(1, 3)/3)
+#'
+#' # O'Brien-Fleming critical values
+#' b <- c(3.776606, 2.670463, 2.180424)
+#'
+#' # Type I error under the global null hypothesis
+#' p0 <- exitprob_tsssd(M = 2, theta = c(0, 0), K = 2, b = b, I = I)
+#' cumsum(p0$exitProb)
+#'
+#' # Power under alternative: Treatment effects of 0.3 and 0.5
+#' p1 <- exitprob_tsssd(M = 2, theta = c(0.3, 0.5), K = 2, b = b, I = I)
+#' cumsum(p1$exitProb)
+#'
+#' @export
+exitprob_tsssd <- function(M = NA_integer_, r = 1, theta = NA_real_, corr_known = TRUE, K = NA_integer_, b = NA_real_, I = NA_real_) {
+    .Call(`_lrstat_exitprob_tsssd`, M, r, theta, corr_known, K, b, I)
+}
+
+#' @title Efficacy Boundaries for Two-Stage Seamless Sequential Design (TSSSD)
+#' @description Calculates the efficacy stopping boundaries for a two-stage
+#' seamless sequential design, accounting for the selection of the best arm
+#' at the end of Phase 2 and sequential testing in Phase 3.
+#'
+#' @param M Number of active treatment arms in Phase 2 (\eqn{M \ge 2}).
+#' @param r Randomization ratio of each active arm to the common control
+#'   in Phase 2.
+#' @param corr_known Logical. If \code{TRUE}, the correlation between Wald
+#'   statistics in Phase 2 is derived from the randomization ratio \eqn{r}
+#'   as \eqn{r / (r + 1)}. If \code{FALSE}, a conservative correlation of
+#'   0 is assumed.
+#' @param k The index of the current look in Phase 3.
+#' @param informationRates A numeric vector of information rates up to the
+#'   current look. Values must be strictly increasing and \eqn{\le 1}.
+#' @inheritParams param_alpha
+#' @inheritParams param_typeAlphaSpending
+#' @inheritParams param_parameterAlphaSpending
+#' @inheritParams param_userAlphaSpending
+#' @param spendingTime A numeric vector of length \eqn{k+1} specifying the
+#'   error spending time at each analysis. Values must be strictly increasing
+#'   and \eqn{\le 1}. If omitted, defaults to \code{informationRates}.
+#' @inheritParams param_efficacyStopping
+#'
+#' @details
+#' The function determines critical values by solving for the boundary that
+#' satisfies the alpha-spending requirement, given the selection of the
+#' "best" arm at the end of Phase 2.
+#'
+#' If \code{typeAlphaSpending} is specified as \code{"OF"} (O'Brien-Fleming),
+#' \code{"P"} (Pocock), or \code{"WT"} (Wang-Tsiatis), the boundaries are
+#' calculated assuming the looks are equally spaced in terms of information.
+#'
+#' @return A numeric vector of length \eqn{k + 1} containing the critical
+#' values (on the standard normal Z-scale) for each analysis up to the
+#' current look.
+#'
+#' @author Kaifeng Lu, \email{kaifenglu@@gmail.com}
+#'
+#' @examples
+#'
+#' # Determine O'Brien-Fleming boundaries for a TSSSD with
+#' # 2 active arms in Phase 2 and 2 looks in Phase 3 (3 looks total).
+#' getBound_tsssd(M = 2, k = 2, informationRates = seq(1, 3)/3,
+#'               alpha = 0.025, typeAlphaSpending = "OF")
+#'
+#' @export
+getBound_tsssd <- function(M = NA_integer_, r = 1, corr_known = TRUE, k = NA_integer_, informationRates = NA_real_, alpha = 0.025, typeAlphaSpending = "sfOF", parameterAlphaSpending = NA_real_, userAlphaSpending = NA_real_, spendingTime = NA_real_, efficacyStopping = NA_integer_) {
+    .Call(`_lrstat_getBound_tsssd`, M, r, corr_known, k, informationRates, alpha, typeAlphaSpending, parameterAlphaSpending, userAlphaSpending, spendingTime, efficacyStopping)
+}
+
+#' @title Power and Sample Size for Two-Stage Seamless Sequential Design (TSSSD)
+#' @description Computes either the maximum information and stopping
+#' boundaries for a generic two-stage seamless sequential design, or
+#' the achieved power when the maximum information and stopping boundaries
+#' are provided.
+#'
+#' @param beta Type II error rate. Provide either \code{beta} or \code{IMax};
+#'   the other should be missing.
+#' @param IMax Maximum information for any active arm versus the common
+#'   control. Provide either \code{IMax} or \code{beta}; the other should
+#'   be missing.
+#' @param theta A vector of length \eqn{M} representing the true treatment
+#'   effects for each active arm versus the common control. The global null
+#'   is \eqn{\theta_i = 0} for all \eqn{i}, and alternatives are one-sided:
+#'   \eqn{\theta_i > 0} for at least one \eqn{i = 1, \ldots, M}.
+#' @param M Number of active treatment arms in Phase 2.
+#' @param r Randomization ratio of each active arm to the common control
+#'   in Phase 2.
+#' @param corr_known Logical. If \code{TRUE}, the correlation between Wald
+#'   statistics in Phase 2 is derived from the randomization ratio \code{r}
+#'   as \eqn{r / (r + 1)}. If \code{FALSE}, a conservative correlation of
+#'   0 is used.
+#' @param K Number of sequential looks in Phase 3.
+#' @param informationRates A numeric vector of information rates fixed
+#'   before the trial. If unspecified, defaults to \eqn{(1:(K+1)) / (K+1)}.
+#' @inheritParams param_efficacyStopping
+#' @inheritParams param_criticalValues
+#' @inheritParams param_alpha
+#' @inheritParams param_typeAlphaSpending
+#' @inheritParams param_parameterAlphaSpending
+#' @inheritParams param_userAlphaSpending
+#' @param spendingTime A numeric vector of length \eqn{K+1} specifying the
+#'   error spending time at each analysis. Values must be strictly increasing
+#'   and ends at 1. If omitted, defaults to \code{informationRates}.
+#' @param varianceRatio Ratio of the variance under \eqn{H_0} to the
+#'   variance under \eqn{H_1}.
+#'
+#' @return An S3 object of class \code{tsssd} with these components:
+#'
+#' * \code{overallResults}: A data frame containing:
+#'     - \code{overallReject}: Overall probability of rejecting the null
+#'       hypothesis.
+#'     - \code{alpha}: Overall significance level.
+#'     - \code{M}: Number of active arms in phase 2.
+#'     - \code{r}: Randomization ratio per active arm versus control in phase 2.
+#'     - \code{corr_known}: Whether the phase-2 correlation was assumed known.
+#'     - \code{K}: Number of stages in phase 3.
+#'     - \code{information}: Maximum information for any active arm versus control.
+#'
+#' * \code{byStageResults}: A data frame containing:
+#'     - \code{informationRates}: Information rates at each analysis.
+#'     - \code{efficacyBounds}: Efficacy boundaries on the Z-scale.
+#'     - \code{rejectPerStage}: Probability of efficacy stopping at each stage.
+#'     - \code{cumulativeRejection}: Cumulative probability of efficacy stopping.
+#'     - \code{cumulativeAlphaSpent}: Cumulative alpha spent.
+#'     - \code{efficacyTheta}: Efficacy boundaries on the parameter scale.
+#'     - \code{efficacyP}: Efficacy boundaries on the p-value scale.
+#'     - \code{information}: Cumulative information for any active arm versus
+#'       control at each analysis.
+#'     - \code{efficacyStopping}: Indicator of whether efficacy stopping
+#'       is permitted.
+#'
+#' * \code{byArmResults}: A data frame containing:
+#'     - \code{theta}: Parameter values for the active arms.
+#'     - \code{selectAsBest}: Probability an arm is selected as best in at
+#'       the end of phase 2.
+#'     - \code{powerByArm}: Probability of rejecting the null for each arm
+#'       by trial end.
+#'     - \code{condPowerByArm}: Conditional power for each arm given it was
+#'       selected as best at the end of phase 2.
+#'
+#' * \code{settings}: A list of input settings:
+#'     - \code{typeAlphaSpending}: Type of alpha spending function.
+#'     - \code{parameterAlphaSpending}: Parameter value for the chosen
+#'       alpha spending function.
+#'     - \code{userAlphaSpending}: User-specified alpha spending values.
+#'     - \code{spendingTime}: Error-spending times at each analysis.
+#'     - \code{varianceRatio}: Ratio of variance under \eqn{H_0} to variance
+#'       under \eqn{H_1}.
+#'
+#' @details If \code{corr_known} is \code{FALSE}, critical boundaries are
+#' computed assuming independence among the phase-2 Wald statistics
+#' (a conservative assumption). Power calculations, however, use the
+#' correlation implied by the randomization ratio \eqn{r}.
+#'
+#' @author Kaifeng Lu, \email{kaifenglu@@gmail.com}
+#'
+#' @references
+#' Ping Gao, Yingqiu Li.
+#' Adaptive two-stage seamless sequential design for clinical trials.
+#' Journal of Biopharmaceutical Statistics, 2025, 35(4), 565-587.
+#'
+#' @examples
+#'
+#' # Example 1: obtain the maximum information given power
+#' (design1 <- getDesign_tsssd(
+#'   beta = 0.1, theta = c(0.3, 0.5), M = 2, r = 1.0,
+#'   K = 2, informationRates = seq(1, 3)/3,
+#'   alpha = 0.025, typeAlphaSpending = "OF"))
+#'
+#' # Example 2: obtain power given the maximum information
+#' (design2 <- getDesign_tsssd(
+#'   IMax = 110/(2*1^2), theta = c(0.3, 0.5), M = 2, r = 1.0,
+#'   K = 2, informationRates = seq(1, 3)/3,
+#'   alpha = 0.025, typeAlphaSpending = "OF"))
+#'
+#' @export
+getDesign_tsssd <- function(beta = NA_real_, IMax = NA_real_, theta = NA_real_, M = NA_integer_, r = 1, corr_known = TRUE, K = 1L, informationRates = NA_real_, efficacyStopping = NA_integer_, criticalValues = NA_real_, alpha = 0.025, typeAlphaSpending = "sfOF", parameterAlphaSpending = NA_real_, userAlphaSpending = NA_real_, spendingTime = NA_real_, varianceRatio = 1) {
+    .Call(`_lrstat_getDesign_tsssd`, beta, IMax, theta, M, r, corr_known, K, informationRates, efficacyStopping, criticalValues, alpha, typeAlphaSpending, parameterAlphaSpending, userAlphaSpending, spendingTime, varianceRatio)
+}
+
+pnorm_fast <- function(x) {
+    .Call(`_lrstat_pnorm_fast`, x)
+}
+
+qnorm_acklam <- function(p) {
+    .Call(`_lrstat_qnorm_acklam`, p)
 }
 
 dtpwexpcpp <- function(q, piecewiseSurvivalTime, lambda, lowerBound, logd) {

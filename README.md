@@ -1,4 +1,3 @@
-
 # lrstat
 
 <!-- badges: start -->
@@ -38,8 +37,7 @@ lrpower(kMax = 2, informationRates = c(0.8, 1),
         gamma2 = -log(1-0.05)/12, 
         accrualDuration = 22,
         followupTime = 18, fixedFollowup = FALSE, 
-        rho1 = 0, rho2 = 1,
-        numSubintervals = 2000)
+        rho1 = 0, rho2 = 1)
 
 ```
 
