@@ -48,7 +48,7 @@ for stopping for efficacy.}
 
 \item{futilityBounds}{Lower boundaries on the z-test statistic scale
 for stopping for futility at stages \code{1, ..., kMax-1}. Defaults to
-\code{rep(-6, kMax-1)} if left unspecified. The futility bounds are
+\code{rep(-8, kMax-1)} if left unspecified. The futility bounds are
 non-binding for the calculation of critical values.}
 
 \item{hazardRatioH0}{Hazard ratio under the null hypothesis for the active
@@ -225,7 +225,7 @@ trials based on weighted log-rank test.
 \examples{
 # Example 1: analyses based on number of events
 
-sim1 = lrsim(
+sim1 <- lrsim(
   kMax = 2, informationRates = c(0.5, 1),
   criticalValues = c(2.797, 1.977),
   accrualIntensity = 11,
@@ -249,7 +249,7 @@ head(sim1$rawdata)
 
 # Example 2: analyses based on calendar time have similar power
 
-sim2 = lrsim(
+sim2 <- lrsim(
   kMax = 2, informationRates = c(0.5, 1),
   criticalValues = c(2.797, 1.977),
   accrualIntensity = 11,

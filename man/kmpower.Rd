@@ -9,12 +9,14 @@ kmpower(
   informationRates = NA_real_,
   efficacyStopping = NA_integer_,
   futilityStopping = NA_integer_,
-  criticalValues = NA_real_,
+  criticalValues = NULL,
   alpha = 0.025,
   typeAlphaSpending = "sfOF",
   parameterAlphaSpending = NA_real_,
   userAlphaSpending = NA_real_,
-  futilityBounds = NA_real_,
+  futilityBounds = NULL,
+  futilityCP = NULL,
+  futilitySurvDiff = NULL,
   typeBetaSpending = "none",
   parameterBetaSpending = NA_real_,
   milestone = NA_real_,
@@ -73,14 +75,22 @@ spent up to each stage.}
 
 \item{futilityBounds}{Lower boundaries on the z-test statistic scale
 for stopping for futility at stages \code{1, ..., kMax-1}. Defaults to
-\code{rep(-6, kMax-1)} if left unspecified. The futility bounds are
+\code{rep(-8, kMax-1)} if left unspecified. The futility bounds are
 non-binding for the calculation of critical values.}
 
+\item{futilityCP}{A vector of length \code{kMax - 1} for the futility
+bounds on the conditional power scale.}
+
+\item{futilitySurvDiff}{A vector of length \code{kMax - 1} for the
+futility bounds on the milestone survival difference scale.}
+
 \item{typeBetaSpending}{The type of beta spending. One of the following:
-"sfOF" for O'Brien-Fleming type spending function, "sfP" for Pocock
-type spending function, "sfKD" for Kim & DeMets spending function,
-"sfHSD" for Hwang, Shi & DeCani spending function, and "none" for no
-early futility stopping. Defaults to "none".}
+\code{"sfOF"} for O'Brien-Fleming type spending function,
+\code{"sfP"} for Pocock type spending function,
+\code{"sfKD"} for Kim & DeMets spending function,
+\code{"sfHSD"} for Hwang, Shi & DeCani spending function, and
+\code{"none"} for no early futility stopping.
+Defaults to \code{"none"}.}
 
 \item{parameterBetaSpending}{The parameter value for the beta spending.
 Corresponds to \eqn{\rho} for \code{"sfKD"}, and

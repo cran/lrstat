@@ -7,8 +7,6 @@
 #' @param mean  The mean vector. If \code{NULL} (default), a zero vector of
 #'   appropriate length is used.
 #' @param sigma The covariance (or correlation) matrix of the distribution.
-#' @param fast Logical; if \code{TRUE}, uses a fast approximation of the
-#'   univariate normal CDF and quantile functions.
 #' @param n0 Initial number of samples per replication for the Monte Carlo
 #'   integration.
 #' @param n_max Maximum number of samples allowed per replication.
@@ -38,9 +36,6 @@
 #' * Sequential Conditioning: Mimics the standardization and transformation
 #'   approach used in \code{mvtnorm::lpmvnorm}, reducing the \eqn{J}-dimensional
 #'   integral to a \eqn{(J-1)}-dimensional problem over a hypercube.
-#'
-#' * Initial Pivoting: Reorders the integration variables to minimize the
-#'   variance of the integrand.
 #'
 #' * Adaptive Sampling: The number of samples per replication increases
 #'   dynamically until the estimated error falls below \code{abseps} or
@@ -86,15 +81,18 @@
 #' pmvnormr(lower, upper, mean, sigma, seed = 314159)
 #'
 #' @export
-pmvnormr <- function(lower, upper, mean = NULL, sigma, fast = TRUE,
+pmvnormr <- function(lower = NULL, upper = NULL, mean = NULL, sigma,
                      n0 = 1024, n_max = 16384, R = 8, abseps = 1e-4,
                      releps = 0.0, seed = 0, parallel = TRUE, nthreads = 0) {
   if (!is.matrix(sigma) && length(sigma) == 1)
-    sigma = matrix(sigma, nrow = 1, ncol = 1)
+    sigma <- matrix(sigma, nrow = 1, ncol = 1)
   if (is.null(dim(sigma)) || length(dim(sigma)) != 2L)
     stop("sigma must be a matrix")
   if (nrow(sigma) != ncol(sigma)) stop("sigma must be square")
-  if (is.null(mean)) mean <- rep(0, nrow(sigma))
+  K <- nrow(sigma)
+  if (is.null(mean)) mean <- rep(0, K)
+  if (is.null(lower)) lower <- rep(-Inf, K)
+  if (is.null(upper)) upper <- rep(Inf, K)
 
   # Respect user-requested number of threads (best effort)
   if (nthreads > 0) {
@@ -103,7 +101,7 @@ pmvnormr <- function(lower, upper, mean = NULL, sigma, fast = TRUE,
   }
 
   out <- pmvnormRcpp(lower = lower, upper = upper, mean = mean, sigma = sigma,
-                     fast = fast, n0 = n0, n_max = n_max, R = R, abseps = abseps,
+                     n0 = n0, n_max = n_max, R = R, abseps = abseps,
                      releps = releps, seed = seed, parallel = parallel)
   prob <- out$prob
   attr(prob, "method") <- out$method
@@ -122,8 +120,6 @@ pmvnormr <- function(lower, upper, mean = NULL, sigma, fast = TRUE,
 #' @param mean  The mean vector. If \code{NULL} (default), a zero vector of
 #'   appropriate length is used.
 #' @param sigma The covariance (or correlation) matrix of the distribution.
-#' @param fast Logical; if \code{TRUE}, uses a fast approximation of the
-#'   univariate normal CDF and quantile functions.
 #' @param n0 Initial number of samples per replication for the Monte Carlo
 #'   integration.
 #' @param n_max Maximum number of samples allowed per replication.
@@ -155,11 +151,11 @@ pmvnormr <- function(lower, upper, mean = NULL, sigma, fast = TRUE,
 #' qmvnormr(0.5, mean = mean, sigma = sigma)
 #'
 #' @export
-qmvnormr <- function(p, mean = NULL, sigma, fast = TRUE,
+qmvnormr <- function(p, mean = NULL, sigma,
                      n0 = 1024, n_max = 16384, R = 8, abseps = 1e-4,
                      releps = 0.0, seed = 0, parallel = TRUE, nthreads = 0) {
   if (!is.matrix(sigma) && length(sigma) == 1)
-    sigma = matrix(sigma, nrow = 1, ncol = 1)
+    sigma <- matrix(sigma, nrow = 1, ncol = 1)
   if (is.null(dim(sigma)) || length(dim(sigma)) != 2L)
     stop("sigma must be a matrix")
   if (nrow(sigma) != ncol(sigma)) stop("sigma must be square")
@@ -172,6 +168,6 @@ qmvnormr <- function(p, mean = NULL, sigma, fast = TRUE,
   }
 
   qmvnormRcpp(p = p, mean = mean, sigma = sigma,
-              fast = fast, n0 = n0, n_max = n_max, R = R, abseps = abseps,
+              n0 = n0, n_max = n_max, R = R, abseps = abseps,
               releps = releps, seed = seed, parallel = parallel)
 }

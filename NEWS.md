@@ -1,3 +1,39 @@
+# lrstat 0.3.2
+
+* removed the pivoting step for pmvnormr and qmvnormr to take advantage of independent increment structure of score process
+* removed the fast parameter for pmvnormr and qmvnormr so that the default is to use fast approximation
+* updated the point estimate for getRCI
+* renamed tsssd to seamless in the function names for two-stage seamless sequential design for treatment/dose selection
+* updated the critical values when typeAlphaSpending = "none" in getDesign_seamless
+* added integratedTrial to adaptDesign
+* updated the backward image confidence interval method to account for the case when astar > conditional_power
+* updated point estimate for repeated confidence interval
+* added functions for multi-arm multi-stage (MAMS) design and anlysis, including exitprob_mams, getBound_mams, getDesign_mams, adaptDesign_mams, getCI_mams, getADCI_mams
+* ensured that if typeAlphaSpending is "OF", "P", "WT", or "none", then informationRates, efficacyStopping, and spendingTime must be of full length kMax, and informationRates and spendingTime must end with 1 for getBound, getBound_seamless, and getBound_mams
+* ensured that if typeAlphaSpending is "OF", "P", "WT", or "none", then informationRates, efficacyStopping, and spendingTime must be of full length kMax, and informationRates and spendingTime must end with 1 for getCI, getRCI
+* ensured that if typeAlphaSpendingNew is "OF", "P", "WT", or "none", then informationRatesNew, efficacyStoppingNew, and spendingTimeNew must be of full length kNew, and informationRatesNew and spendingTimeNew must end with 1 for getADCI, getADRCI
+* moved up the position of parameter MullerSchafer in getADCI, getADRCI
+* added getCP_seamless for conditional power calculation for two-stage seamless sequential design for treatment/dose selection
+* added getCP_mams for conditional power calculation for multi-arm multi-stage design
+* added adaptDesign_seamless for power and sample size calculation of adaptive two-stage seamless sequential design for treatment/dose selection
+* added getCI_seamless for confidence interval calculation for two-stage seamless sequential design for treatment/dose selection
+* added getADCI_seamless for confidence interval calculation using the backward image method for adaptive two-stage seamless sequential design for treatment/dose selection
+* moved the f_pvalue function from confidence_interval.cpp to generic_design.cpp
+* updated infoRatesNew when informationRatesNew is not missing in adaptDesign_seamless_cpp and adaptDesign_mams_cpp
+* added default value of 1 for parameter r of adaptDesign_seamless
+* updated pmvnormmccpp to use s and T instead of Ivec
+* added byLevelBounds in the output of getDesign_mams
+* updated the condition for cpu0 calculation in adaptDesign_mams_cpp
+* updated the description for adaptDesign_mams output
+* updated the default value of r and rNew to 1 in adaptDesign_mams and getADCI_mams
+* updated stage‑1 covariance used for bound calculation in getBound_seamless to account for corr_known when using alpha‑spending functions
+* used memoization to avoid recalculating p0 and p1 in the lambda h for preject_by_arm (exitprob_seamless)
+* added stopStage to output data sets and added bestArm and reject to sumdata2 output data set for lrsim_seamless
+* used NULL as the default value for lambdas and gammas for lrsim_seamless
+* added lrsim_mams for simulation of multi-arm multi-stage design
+* added futilityBounds, futilityCP, futilityTheta, futilityBoundsInt, futilityCPInt, futilityThetaInt to adaptDesign, adaptDesign_seamless, and adaptDesign_mams
+* removed typeBetaSpending and parameterBetaSpending from adaptDesign, adaptDesign_seamless, and adaptDesign_mams
+
 # lrstat 0.3.1
 
 * calculated eventsPerStage, dropoutPerStage, subjectsPerStage, and analysisTimePerstage in the lrsim output based on trials having the stage (i.e., did not stop before the stage).

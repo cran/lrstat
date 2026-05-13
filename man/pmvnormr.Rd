@@ -5,11 +5,10 @@
 \title{Multivariate Normal Probabilities over a Hyperrectangle}
 \usage{
 pmvnormr(
-  lower,
-  upper,
+  lower = NULL,
+  upper = NULL,
   mean = NULL,
   sigma,
-  fast = TRUE,
   n0 = 1024,
   n_max = 16384,
   R = 8,
@@ -29,9 +28,6 @@ pmvnormr(
 appropriate length is used.}
 
 \item{sigma}{The covariance (or correlation) matrix of the distribution.}
-
-\item{fast}{Logical; if \code{TRUE}, uses a fast approximation of the
-univariate normal CDF and quantile functions.}
 
 \item{n0}{Initial number of samples per replication for the Monte Carlo
 integration.}
@@ -82,8 +78,6 @@ To improve efficiency and accuracy, the QMC approach incorporates:
 \item Sequential Conditioning: Mimics the standardization and transformation
 approach used in \code{mvtnorm::lpmvnorm}, reducing the \eqn{J}-dimensional
 integral to a \eqn{(J-1)}-dimensional problem over a hypercube.
-\item Initial Pivoting: Reorders the integration variables to minimize the
-variance of the integrand.
 \item Adaptive Sampling: The number of samples per replication increases
 dynamically until the estimated error falls below \code{abseps} or
 \code{releps}, or until \code{n_max} is reached.

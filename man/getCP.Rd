@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{getCP}
 \alias{getCP}
-\title{Conditional Power Allowing for Varying Parameter Values}
+\title{Conditional Power for Generic Group Sequential Design}
 \usage{
 getCP(
   INew = NA_real_,
@@ -14,22 +14,25 @@ getCP(
   informationRates = NA_real_,
   efficacyStopping = NA_integer_,
   futilityStopping = NA_integer_,
-  criticalValues = NA_real_,
+  criticalValues = NULL,
   alpha = 0.025,
   typeAlphaSpending = "sfOF",
   parameterAlphaSpending = NA_real_,
   userAlphaSpending = NA_real_,
-  futilityBounds = NA_real_,
-  typeBetaSpending = "none",
-  parameterBetaSpending = NA_real_,
+  futilityBounds = NULL,
+  futilityCP = NULL,
+  futilityTheta = NULL,
   spendingTime = NA_real_,
-  MullerSchafer = 0L,
+  MullerSchafer = FALSE,
   kNew = NA_integer_,
   informationRatesNew = NA_real_,
   efficacyStoppingNew = NA_integer_,
   futilityStoppingNew = NA_integer_,
   typeAlphaSpendingNew = "sfOF",
   parameterAlphaSpendingNew = NA_real_,
+  futilityBoundsInt = NULL,
+  futilityCPInt = NULL,
+  futilityThetaInt = NULL,
   typeBetaSpendingNew = "none",
   parameterBetaSpendingNew = NA_real_,
   spendingTimeNew = NA_real_,
@@ -70,40 +73,33 @@ Defaults to 0.025.}
 
 \item{typeAlphaSpending}{The type of alpha spending for the primary
 trial. One of the following:
-"OF" for O'Brien-Fleming boundaries,
-"P" for Pocock boundaries,
-"WT" for Wang & Tsiatis boundaries,
-"sfOF" for O'Brien-Fleming type spending function,
-"sfP" for Pocock type spending function,
-"sfKD" for Kim & DeMets spending function,
-"sfHSD" for Hwang, Shi & DeCani spending function,
-"user" for user defined spending, and
-"none" for no early efficacy stopping.
-Defaults to "sfOF".}
+\code{"OF"} for O'Brien-Fleming boundaries,
+\code{"P"} for Pocock boundaries,
+\code{"WT"} for Wang & Tsiatis boundaries,
+\code{"sfOF"} for O'Brien-Fleming type spending function,
+\code{"sfP"} for Pocock type spending function,
+\code{"sfKD"} for Kim & DeMets spending function,
+\code{"sfHSD"} for Hwang, Shi & DeCani spending function,
+\code{"user"} for user defined spending, and
+\code{"none"} for no early efficacy stopping.
+Defaults to \code{"sfOF"}.}
 
 \item{parameterAlphaSpending}{The parameter value of alpha spending
-for the primary trial. Corresponds to Delta for "WT", rho for "sfKD",
-and gamma for "sfHSD".}
+for the primary trial. Corresponds to \eqn{\Delta} for \code{"WT"},
+\eqn{\rho} for \code{"sfKD"}, and \eqn{\gamma} for \code{"sfHSD"}.}
 
 \item{userAlphaSpending}{The user defined alpha spending for the primary
 trial. Cumulative alpha spent up to each stage.}
 
 \item{futilityBounds}{The lower boundaries on the z-test statistic scale
 for futility stopping for the primary trial. Defaults to
-\code{rep(-6, kMax-1)} if left unspecified.}
+\code{rep(-8, kMax-1)} if left unspecified.}
 
-\item{typeBetaSpending}{The type of beta spending for the primary trial.
-One of the following:
-"sfOF" for O'Brien-Fleming type spending function,
-"sfP" for Pocock type spending function,
-"sfKD" for Kim & DeMets spending function,
-"sfHSD" for Hwang, Shi & DeCani spending function, and
-"none" for no early futility stopping.
-Defaults to "none".}
+\item{futilityCP}{The conditional power-based futility bounds for the
+primary trial.}
 
-\item{parameterBetaSpending}{The parameter value of beta spending
-for the primary trial. Corresponds to rho for "sfKD",
-and gamma for "sfHSD".}
+\item{futilityTheta}{The parameter value-based futility bounds for the
+primary trial.}
 
 \item{spendingTime}{The error spending time of the primary trial.
 Defaults to missing, in which case, it is the same as
@@ -126,32 +122,41 @@ if left unspecified.}
 
 \item{typeAlphaSpendingNew}{The type of alpha spending for the secondary
 trial. One of the following:
-"OF" for O'Brien-Fleming boundaries,
-"P" for Pocock boundaries,
-"WT" for Wang & Tsiatis boundaries,
-"sfOF" for O'Brien-Fleming type spending function,
-"sfP" for Pocock type spending function,
-"sfKD" for Kim & DeMets spending function,
-"sfHSD" for Hwang, Shi & DeCani spending function, and
-"none" for no early efficacy stopping.
-Defaults to "sfOF".}
+\code{"OF"} for O'Brien-Fleming boundaries,
+\code{"P"} for Pocock boundaries,
+\code{"WT"} for Wang & Tsiatis boundaries,
+\code{"sfOF"} for O'Brien-Fleming type spending function,
+\code{"sfP"} for Pocock type spending function,
+\code{"sfKD"} for Kim & DeMets spending function,
+\code{"sfHSD"} for Hwang, Shi & DeCani spending function, and
+\code{"none"} for no early efficacy stopping.
+Defaults to \code{"sfOF"}.}
 
 \item{parameterAlphaSpendingNew}{The parameter value of alpha spending
-for the secondary trial. Corresponds to Delta for "WT", rho for "sfKD",
-and gamma for "sfHSD".}
+for the secondary trial. Corresponds to \eqn{\Delta} for \code{"WT"},
+\eqn{\rho} for \code{"sfKD"}, and \eqn{\gamma} for \code{"sfHSD"}.}
+
+\item{futilityBoundsInt}{The futility boundaries on the z statistic
+scale for new stages of the integrated trial.}
+
+\item{futilityCPInt}{The conditional power-based futility bounds for
+new stages of the integrated trial.}
+
+\item{futilityThetaInt}{The parameter value-based futility bounds for the
+new stages of the integrated trial.}
 
 \item{typeBetaSpendingNew}{The type of beta spending for the secondary
 trial. One of the following:
-"sfOF" for O'Brien-Fleming type spending function,
-"sfP" for Pocock type spending function,
-"sfKD" for Kim & DeMets spending function,
-"sfHSD" for Hwang, Shi & DeCani spending function, and
-"none" for no early futility stopping.
-Defaults to "none".}
+\code{"sfOF"} for O'Brien-Fleming type spending function,
+\code{"sfP"} for Pocock type spending function,
+\code{"sfKD"} for Kim & DeMets spending function,
+\code{"sfHSD"} for Hwang, Shi & DeCani spending function, and
+\code{"none"} for no early futility stopping.
+Defaults to \code{"none"}.}
 
 \item{parameterBetaSpendingNew}{The parameter value of beta spending
-for the secondary trial. Corresponds to rho for "sfKD",
-and gamma for "sfHSD".}
+for the secondary trial. Corresponds to \eqn{\rho} for \code{"sfKD"},
+and \eqn{\gamma} for \code{"sfHSD"}.}
 
 \item{spendingTimeNew}{The error spending time of the secondary trial.
 Defaults to missing, in which case, it is the same as
@@ -161,8 +166,9 @@ Defaults to missing, in which case, it is the same as
 under H1.}
 }
 \value{
-The conditional power given the interim results, parameter
-values, and data-dependent design changes.
+A vector of two conditional powers given the interim results and
+parameter values, one without design change and the other with
+data-dependent design changes.
 }
 \description{
 Obtains the conditional power for specified incremental
@@ -178,27 +184,27 @@ number and spacing of interim looks.
 # respectively. The observed hazard ratio at the second interim
 # look is 0.81.
 
-trialsdt = as.Date("2020-03-04")                       # trial start date
-iadt = c(as.Date("2022-02-01"), as.Date("2022-11-01")) # interim dates
-mo1 = as.numeric(iadt - trialsdt + 1)/30.4375          # interim months
+trialsdt <- as.Date("2020-03-04")                       # trial start date
+iadt <- c(as.Date("2022-02-01"), as.Date("2022-11-01")) # interim dates
+mo1 <- as.numeric(iadt - trialsdt + 1)/30.4375          # interim months
 
 # Assume a piecewise Poisson enrollment process with a 8-month ramp-up
 # and 521 patients were enrolled after 17.94 months
-N = 521                   # total number of patients
-Ta = 17.94                # enrollment duration
-Ta1 = 8                   # assumed end of enrollment ramp-up
-enrate = N / (Ta - Ta1/2) # enrollment rate after ramp-up
+N <- 521                   # total number of patients
+Ta <- 17.94                # enrollment duration
+Ta1 <- 8                   # assumed end of enrollment ramp-up
+enrate <- N / (Ta - Ta1/2) # enrollment rate after ramp-up
 
 # Assume a median survival of 16.7 months for the control group, a
 # 5-month delay in treatment effect, and a hazard ratio of 0.7 after
 # the delay
-lam1 = log(2)/16.7  # control group hazard of exponential distribution
-t1 = 5              # months of delay in treatment effect
-hr = 0.7            # hazard ratio after delay
-lam2 = hr*lam1      # treatment group hazard after delay
+lam1 <- log(2)/16.7  # control group hazard of exponential distribution
+t1 <- 5              # months of delay in treatment effect
+hr <- 0.7            # hazard ratio after delay
+lam2 <- hr*lam1      # treatment group hazard after delay
 
 # Assume an annual dropout rate of 5\%
-gam = -log(1-0.05)/12  # hazard for dropout
+gam <- -log(1-0.05)/12  # hazard for dropout
 
 # The original target number of events was 298 and the new target is 335
 mo2 <- caltime(
@@ -229,11 +235,11 @@ mo2 <- caltime(
   predictTarget = 3))
 
 
-hr2 = 0.81                    # observed hazard ratio at interim 2
-z2 = (-log(hr2))*sqrt(266/4)  # corresponding z-test statistic value
+hr2 <- 0.81                    # observed hazard ratio at interim 2
+z2 <- (-log(hr2))*sqrt(266/4)  # corresponding z-test statistic value
 
 # expected mean of -log(HR) at the original looks and the new final look
-theta = -log(lr1$HR[c(1,2,3,4)])
+theta <- -log(lr1$HR[c(1,2,3,4)])
 
 # conditional power with sample size increase
 getCP(INew = (335 - 266)/4,
@@ -250,7 +256,7 @@ A practical guide with examples.
 Stat Med. 2011;30:3267–3284.
 }
 \seealso{
-\code{\link{getDesign}}
+\code{\link{adaptDesign}}
 }
 \author{
 Kaifeng Lu, \email{kaifenglu@gmail.com}

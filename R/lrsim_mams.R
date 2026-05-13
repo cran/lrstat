@@ -1,25 +1,33 @@
-#' @title Log-Rank Test Simulation for Multiple Active Arms vs. Common Control
-#' @description Simulate multi-arm group-sequential trials using a weighted
+#' @title Log-Rank Test Simulation for Multi-Arm Multi-Stage Design
+#' @description Simulate a multi-arm multi-stage design using a weighted
 #' log-rank test. Analyses can be triggered either by the cumulative number
 #' of events (combined for an active arm and the common control) or by
 #' pre-specified calendar times.
 #'
-#' @param M Number of active treatment arms in Phase 2.
-#' @param K Number of sequential looks in Phase 3.
-#' @param criticalValues Numeric vector of length \eqn{K + 1} giving the
-#'   critical value for the Wald statistic at each look (Look 1 through
-#'   Look \eqn{K + 1}). Decision rule:
+#' @param M Number of active treatment arms.
+#' @param kMax Number of sequential looks.
+#' @param criticalValues The matrix of by-level upper boundaries on the
+#'   max z-test statistic scale for efficacy stopping.
+#'   The first column is for level \eqn{M}, the second column is for
+#'   level \eqn{M - 1}, and so on, with the last column for level 1.
+#'   Decision rule:
 #'   - At Look 1, compute the Wald statistic for each active arm versus the
 #'     common control. If the maximum of these statistics exceeds the Look 1
-#'     critical value, stop for efficacy.
-#'   - If the Look 1 stopping rule is not met, select the active arm with the
-#'     largest Wald statistic as the "best" arm and continue with that arm
-#'     only versus control at subsequent looks.
-#'   - For each look \eqn{j = 2,\ldots,K+1}, compare the selected arm to
-#'     control; if its Wald statistic exceeds the Look \eqn{j} critical
-#'     value, stop for efficacy; otherwise continue.
-#'   - If no critical value is exceeded by Look \eqn{K + 1}, the procedure
+#'     critical value, stop for efficacy and check whether
+#'     there is any other active arm which can be rejected using
+#'     a relaxed boundary under the closed testing principle.
+#'   - If the Look 1 stopping rule is not met, continue to the next look;
+#'     if the maximum of Wald statistics at this look exceeds the
+#'     corresponding level \eqn{M} critical value, stop for efficacy;
+#'     otherwise continue.
+#'   - If no critical value is exceeded by Look \code{kMax}, the procedure
 #'     ends without rejection.
+#' @param futilityBounds Numeric vector of length \code{kMax - 1} giving the
+#'   futility boundaries on the max-Z scale for the first \code{kMax - 1}
+#'   analyses. At an interim look, the study stops for futility if all active
+#'   treatment arms cross the futility boundary. At the final look, the study
+#'   is counted as stopping for futility if none of the active treatment arms
+#'   can be rejected. If omitted, no interim futility stopping is applied.
 #' @param hazardRatioH0s Numeric vector of length \eqn{M}. Hazard ratios
 #'   under \eqn{H_0} for each active arm versus the common control. Defaults
 #'   to 1 for superiority tests.
@@ -58,28 +66,33 @@
 #' @param nthreads Number of threads for parallel simulation.
 #'   Use 0 to accept the default RcppParallel behavior.
 #'
-#' @return An S3 object of class \code{"lrsim_tsssd"} with these components:
+#' @return An S3 object of class \code{"lrsim_seamless"} with these components:
 #'
 #' * \code{overview}: A list summarizing trial-level results and settings:
-#'     - \code{selectAsBest}: Probability of selecting each active arm as
-#'       the best arm at the end of phase 2.
-#'     - \code{rejectPerStage}: Probability of rejecting the null for each
-#'       active arm at each stage.
-#'     - \code{cumulativeRejection}: Cumulative probability of rejection by stage.
-#'     - \code{numberOfEvents}: Cumulative event counts by stage, including
-#'       events from all arms in stage 1 and events from the selected arm
-#'       and control in later stages.
-#'     - \code{numberOfDropouts}: Cumulative dropouts by stage.
-#'     - \code{numberOfSubjects}: Cumulative enrollments by stage.
-#'     - \code{analysisTime}: Average calendar time for each stage among
-#'       replications that reached that stage.
 #'     - \code{overallReject}: Overall probability of rejecting the null
 #'       by trial end.
+#'     - \code{overallFutility}: Overall probability of stopping for futility
+#'       by trial end.
+#'     - \code{rejectPerStage}: Probability of rejecting the null for each
+#'       active arm at each stage.
+#'     - \code{futilityPerStage}: Probability of futility stopping for each arm
+#'       at each stage.
+#'     - \code{cumulativeRejection}: Cumulative probability of rejection
+#'       for each active arm by stage.
+#'     - \code{cumulativeFutility}: Cumulative probability of futility
+#'       stopping for each active arm by stage.
+#'     - \code{numberOfEvents}: Cumulative event counts by stage and arm.
+#'     - \code{numberOfDropouts}: Cumulative dropouts by stage and arm.
+#'     - \code{numberOfSubjects}: Cumulative enrollments by stage and arm.
+#'     - \code{analysisTime}: Average calendar time for each stage by arm
+#'       among replications that reached that stage.
 #'     - \code{expectedNumberOfEvents}: Expected cumulative events at trial end.
 #'     - \code{expectedNumberOfDropouts}: Expected cumulative dropouts at trial end.
 #'     - \code{expectedNumberOfSubjects}: Expected cumulative enrollments
 #'       at trial end.
 #'     - \code{expectedStudyDuration}: Expected study duration.
+#'     - \code{criticalValues}: The input matrix of by-level critical boundaries.
+#'     - \code{futilityBounds}: The input vector of futility boundaries.
 #'     - \code{hazardRatioH0s}: The input hazard ratios under \eqn{H_0}.
 #'     - \code{useEvents}: Logical indicating whether analyses were event-driven.
 #'     - \code{numberOfIterations}: Number of simulation iterations performed.
@@ -91,7 +104,8 @@
 #'
 #' * \code{sumdata1}: Data frame summarizing each iteration, stage, and
 #'   treatment group:
-#'     - \code{iterationNumber}, \code{eventsNotAchieved}, \code{stageNumber},
+#'     - \code{iterationNumber}, \code{eventsNotAchieved},
+#'       \code{stopStage}, \code{stageNumber},
 #'       \code{analysisTime}, \code{treatmentGroup}, \code{accruals},
 #'       \code{events}, \code{dropouts}.
 #'     - For each stage the final row summarizes the overall study
@@ -99,51 +113,56 @@
 #'
 #' * \code{summdata2}: Data frame summarizing log-rank statistics by iteration,
 #'   stage, and active arm:
-#'     - \code{iterationNumber}, \code{stageNumber}, \code{analysisTime},
-#'       \code{activeArm}, \code{totalAccruals}, \code{totalEvents},
-#'       \code{totalDropouts}, \code{uscore}, \code{vscore},
-#'       \code{logRankStatistic}.
+#'     - \code{iterationNumber}, \code{stopStage}, \code{stageNumber},
+#'       \code{analysisTime}, \code{activeArm},
+#'       \code{totalAccruals}, \code{totalEvents}, \code{totalDropouts},
+#'       \code{uscore}, \code{vscore}, \code{logRankStatistic},
+#'       \code{reject}, \code{futility}.
 #'     - For each active arm, total accruals, events, and dropouts refer to
 #'       the combined counts for that arm and the common control at that stage.
 #'
 #' * \code{rawdata} (present when \code{maxNumberOfRawDatasetsPerStage} > 0):
 #'   Subject-level data for selected replications with variables:
-#'     - \code{iterationNumber}, \code{stageNumber}, \code{analysisTime},
-#'       \code{subjectId}, \code{arrivalTime}, \code{stratum},
-#'       \code{treatmentGroup}, \code{survivalTime}, \code{dropoutTime},
-#'       \code{timeUnderObservation}, \code{event}, \code{dropoutEvent}.
+#'     - \code{iterationNumber}, \code{stopStage}, \code{stageNumber},
+#'       \code{analysisTime}, \code{subjectId}, \code{arrivalTime},
+#'       \code{stratum}, \code{treatmentGroup},
+#'       \code{survivalTime}, \code{dropoutTime}, \code{timeUnderObservation},
+#'       \code{event}, \code{dropoutEvent}.
 #'
 #' @author Kaifeng Lu, \email{kaifenglu@@gmail.com}
 #'
 #' @examples
-#' (sim1 = lrsim_tsssd(
+#' (sim1 <- lrsim_mams(
 #'   M = 2,
-#'   K = 2,
-#'   criticalValues = c(3.852050, 2.723811, 2.223982),
+#'   kMax = 3,
+#'   criticalValues = matrix(c(3.880, 2.747, 2.275,
+#'                             3.710, 2.511, 1.993), 3, 2),
+#'   futilityBounds = c(0.074, 1.207),
 #'   accrualTime = c(0, 8),
 #'   accrualIntensity = c(10, 28),
 #'   piecewiseSurvivalTime = 0,
-#'   lambdas = list(log(2)/12*0.5, log(2)/12*0.7, log(2)/12),
+#'   lambdas = list(log(2)/12*0.5, log(2)/12*0.75, log(2)/12),
 #'   n = 700,
-#'   plannedEvents = c(40, 80, 120),
-#'   maxNumberOfIterations = 1000,
+#'   plannedEvents = c(36, 72, 108),
+#'   maxNumberOfIterations = 10000,
 #'   maxNumberOfRawDatasetsPerStage = 1,
 #'   seed = 314159,
 #'   nthreads = 0))
 #'
 #' @export
-lrsim_tsssd <- function(
+lrsim_mams <- function(
     M = 2,
-    K = 1,
-    criticalValues = NA,
+    kMax = 1,
+    criticalValues = NULL,
+    futilityBounds = NULL,
     hazardRatioH0s = 1,
     allocations = 1,
     accrualTime = 0,
     accrualIntensity = NA,
     piecewiseSurvivalTime = 0,
     stratumFraction = 1,
-    lambdas = list(NA, NA, NA),
-    gammas = list(0, 0, 0),
+    lambdas = NULL,
+    gammas = NULL,
     n = NA,
     followupTime = NA,
     fixedFollowup = FALSE,
@@ -162,8 +181,8 @@ lrsim_tsssd <- function(
     RcppParallel::setThreadOptions(min(nthreads, n_physical_cores))
   }
 
-  lrsim_tsssd_Rcpp(
-    M, K, criticalValues, hazardRatioH0s,
+  lrsim_mams_Rcpp(
+    M, kMax, criticalValues, futilityBounds, hazardRatioH0s,
     allocations, accrualTime, accrualIntensity,
     piecewiseSurvivalTime, stratumFraction, lambdas, gammas,
     n, followupTime, fixedFollowup, rho1, rho2,

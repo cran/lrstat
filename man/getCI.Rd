@@ -35,20 +35,21 @@ for efficacy stopping up to look \code{L}.}
 
 \item{alpha}{The significance level. Defaults to 0.025.}
 
-\item{typeAlphaSpending}{The type of alpha spending.
+\item{typeAlphaSpending}{The type of alpha spending for the trial.
 One of the following:
-"OF" for O'Brien-Fleming boundaries,
-"P" for Pocock boundaries,
-"WT" for Wang & Tsiatis boundaries,
-"sfOF" for O'Brien-Fleming type spending function,
-"sfP" for Pocock type spending function,
-"sfKD" for Kim & DeMets spending function,
-"sfHSD" for Hwang, Shi & DeCani spending function, and
-"none" for no early efficacy stopping.
-Defaults to "sfOF".}
+\code{"OF"} for O'Brien-Fleming boundaries,
+\code{"P"} for Pocock boundaries,
+\code{"WT"} for Wang & Tsiatis boundaries,
+\code{"sfOF"} for O'Brien-Fleming type spending function,
+\code{"sfP"} for Pocock type spending function,
+\code{"sfKD"} for Kim & DeMets spending function,
+\code{"sfHSD"} for Hwang, Shi & DeCani spending function, and
+\code{"none"} for no early efficacy stopping.
+Defaults to \code{"sfOF"}.}
 
-\item{parameterAlphaSpending}{The parameter value of alpha spending.
-Corresponds to Delta for "WT", rho for "sfKD", and gamma for "sfHSD".}
+\item{parameterAlphaSpending}{The parameter value for the alpha spending.
+Corresponds to \eqn{\Delta} for \code{"WT"}, \eqn{\rho} for \code{"sfKD"},
+and \eqn{\gamma} for \code{"sfHSD"}.}
 
 \item{spendingTime}{The error spending time up to look \code{L}.
 Defaults to missing, in which case, it is the same as
@@ -68,22 +69,28 @@ A data frame with the following components:
 Obtains the p-value, median unbiased point estimate, and
 confidence interval after the end of a group sequential trial.
 }
+\details{
+If \code{typeAlphaSpending} is \code{"OF"}, \code{"P"}, \code{"WT"}, or
+\code{"none"}, then \code{informationRates}, \code{efficacyStopping},
+and \code{spendingTime} must be of full length \code{kMax}, and
+\code{informationRates} and \code{spendingTime} must end with 1.
+}
 \examples{
 
 # group sequential design with 90\% power to detect delta = 6
-delta = 6
-sigma = 17
-n = 282
-(des1 = getDesign(IMax = n/(4*sigma^2), theta = delta, kMax = 3,
-                  alpha = 0.05, typeAlphaSpending = "sfHSD",
-                  parameterAlphaSpending = -4))
+delta <- 6
+sigma <- 17
+n <- 282
+(des1 <- getDesign(IMax = n/(4*sigma^2), theta = delta, kMax = 3,
+                   alpha = 0.05, typeAlphaSpending = "sfHSD",
+                   parameterAlphaSpending = -4))
 
 # crossed the boundary at the second look
-L = 2
-n1 = n*2/3
-delta1 = 7
-sigma1 = 20
-zL = delta1/sqrt(4/n1*sigma1^2)
+L <- 2
+n1 <- n*2/3
+delta1 <- 7
+sigma1 <- 20
+zL <- delta1/sqrt(4/n1*sigma1^2)
 
 # confidence interval
 getCI(L = L, zL = zL, IMax = n/(4*sigma1^2),

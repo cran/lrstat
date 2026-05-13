@@ -250,7 +250,7 @@ NULL
 #' Parameter Description: futilityBounds
 #' @param futilityBounds Lower boundaries on the z-test statistic scale
 #'   for stopping for futility at stages \code{1, ..., kMax-1}. Defaults to
-#'   \code{rep(-6, kMax-1)} if left unspecified. The futility bounds are
+#'   \code{rep(-8, kMax-1)} if left unspecified. The futility bounds are
 #'   non-binding for the calculation of critical values.
 #' @name param_futilityBounds
 #' @keywords internal
@@ -281,14 +281,6 @@ NULL
 #' @param userBetaSpending The user defined beta spending. Cumulative beta
 #'   spent up to each stage.
 #' @name param_userBetaSpending
-#' @keywords internal
-NULL
-
-#' Parameter Description: estimateHazardRatio
-#' @param estimateHazardRatio Whether to estimate the hazard ratio from
-#'   weighted Cox regression model and report the stopping boundaries on
-#'   the hazard ratio scale.
-#' @name param_estimateHazardRatio
 #' @keywords internal
 NULL
 
