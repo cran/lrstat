@@ -1,7 +1,7 @@
 library(shiny)
 library(shinyMatrix)
 library(shinyFeedback)
-library(shinyjs)
+library(shinyjs, warn.conflicts = FALSE)
 library(dplyr)
 library(tidyr)
 library(prompter)

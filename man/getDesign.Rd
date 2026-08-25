@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{getDesign}
 \alias{getDesign}
-\title{Power and Sample Size for a Generic Group Sequential Design}
+\title{Power and Sample Size for Generic Group Sequential Design}
 \usage{
 getDesign(
   beta = NA_real_,

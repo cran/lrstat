@@ -4,17 +4,22 @@
 \alias{fadjpbon}
 \title{Adjusted p-Values for Bonferroni-Based Graphical Approaches}
 \usage{
-fadjpbon(w, G, p)
+fadjpbon(p, wgtmat = NULL)
 }
 \arguments{
-\item{w}{The vector of initial weights for elementary hypotheses.}
-
-\item{G}{The initial transition matrix.}
-
 \item{p}{The raw p-values for elementary hypotheses.}
+
+\item{wgtmat}{A list containing the weight matrix and the indicator matrix
+for intersection hypotheses. If \code{NULL}, equal weights are assigned
+within each intersection hypothesis.}
 }
 \value{
-A matrix of adjusted p-values.
+A list with the following components:
+\itemize{
+\item \code{inthyp}: The indicator matrix for the intersection hypotheses.
+\item \code{pinter}: The local p-values for the intersection hypotheses.
+\item \code{padj}: The adjusted p-values for the elementary hypotheses.
+}
 }
 \description{
 Obtains the adjusted p-values for graphical approaches
@@ -25,9 +30,10 @@ using weighted Bonferroni tests.
 pvalues <- matrix(c(0.01,0.005,0.015,0.022, 0.02,0.015,0.010,0.023),
                   nrow=2, ncol=4, byrow=TRUE)
 w <- c(0.5,0.5,0,0)
-g <- matrix(c(0,0,1,0,0,0,0,1,0,1,0,0,1,0,0,0),
+G <- matrix(c(0,0,1,0,0,0,0,1,0,1,0,0,1,0,0,0),
             nrow=4, ncol=4, byrow=TRUE)
-fadjpbon(w, g, pvalues)
+wgtmat <- fwgtmat(w,G)
+fadjpbon(pvalues, wgtmat)
 
 }
 \references{

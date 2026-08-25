@@ -16,7 +16,12 @@ ftrunc(p, test = "hommel", gamma = 1)
 for the regular Holm, Hochberg, or Hommel procedure.}
 }
 \value{
-A matrix of adjusted p-values.
+A list with the following components:
+\itemize{
+\item \code{inthyp}: The indicator matrix for the intersection hypotheses.
+\item \code{pinter}: The local p-values for the intersection hypotheses.
+\item \code{padj}: The adjusted p-values for the elementary hypotheses.
+}
 }
 \description{
 Obtains the adjusted p-values for possibly truncated

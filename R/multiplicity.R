@@ -1,12 +1,41 @@
+#' @title Indicator Matrix for All Intersection Hypotheses
+#' @description Obtains the indicator matrix for all intersection hypotheses
+#' formed from a given number of elementary hypotheses, matching the row
+#' order used by \code{fwgtmat} and \code{fDefaultWgtmat}.
+#'
+#' @param m The number of elementary hypotheses.
+#'
+#' @return The \eqn{(2^m-1) \times m} indicator matrix for the intersection
+#'   hypotheses, with row 1 the global intersection (all hypotheses active)
+#'   and the last row the singleton \code{{m}}.
+#'
+#' @author Kaifeng Lu, \email{kaifenglu@@gmail.com}
+#'
+#' @examples
+#'
+#' finthyp(3)
+#'
+#' @export
+finthyp <- function(m) {
+  ntests <- 2^m - 1
+  numbers <- ntests:1
+  sapply(seq_len(m), function(j) bitwAnd(bitwShiftR(numbers, m - j), 1L))
+}
+
+
 #' @title Adjusted p-Values for Bonferroni-Based Graphical Approaches
 #' @description Obtains the adjusted p-values for graphical approaches
 #' using weighted Bonferroni tests.
 #'
-#' @param w The vector of initial weights for elementary hypotheses.
-#' @param G The initial transition matrix.
 #' @param p The raw p-values for elementary hypotheses.
+#' @param wgtmat A list containing the weight matrix and the indicator matrix
+#'   for intersection hypotheses. If \code{NULL}, equal weights are assigned
+#'   within each intersection hypothesis.
 #'
-#' @return A matrix of adjusted p-values.
+#' @return A list with the following components:
+#' * \code{inthyp}: The indicator matrix for the intersection hypotheses.
+#' * \code{pinter}: The local p-values for the intersection hypotheses.
+#' * \code{padj}: The adjusted p-values for the elementary hypotheses.
 #'
 #' @references
 #' Frank Bretz, Willi Maurer, Werner Brannath and Martin Posch. A
@@ -20,132 +49,27 @@
 #' pvalues <- matrix(c(0.01,0.005,0.015,0.022, 0.02,0.015,0.010,0.023),
 #'                   nrow=2, ncol=4, byrow=TRUE)
 #' w <- c(0.5,0.5,0,0)
-#' g <- matrix(c(0,0,1,0,0,0,0,1,0,1,0,0,1,0,0,0),
+#' G <- matrix(c(0,0,1,0,0,0,0,1,0,1,0,0,1,0,0,0),
 #'             nrow=4, ncol=4, byrow=TRUE)
-#' fadjpbon(w, g, pvalues)
+#' wgtmat <- fwgtmat(w,G)
+#' fadjpbon(pvalues, wgtmat)
 #'
 #' @export
-fadjpbon <- function(w, G, p) {
-  m <- length(w)
+fadjpbon <- function(p, wgtmat = NULL) {
+  m <- if (is.matrix(p)) ncol(p) else length(p)
 
   if (!is.matrix(p)) {
     p <- matrix(p, ncol=m)
   }
 
-  x <- fadjpboncpp(w = w, G = G, p = p)
-  if (nrow(x) == 1) {
-    x <- as.vector(x)
-  }
-  x
-}
-
-
-#' @title Adjusted p-Values for Dunnett-Based Graphical Approaches
-#' @description Obtains the adjusted p-values for graphical approaches
-#' using weighted Dunnett tests.
-#'
-#' @param wgtmat The weight matrix for intersection hypotheses.
-#' @param p The raw p-values for elementary hypotheses.
-#' @param family The matrix of family indicators for elementary hypotheses.
-#' @param corr The correlation matrix that should be used for the parametric
-#'   test. Can contain NAs for unknown correlations between families.
-#'
-#' @return A matrix of adjusted p-values.
-#'
-#' @references
-#' Frank Bretz, Martin Posch, Ekkehard Glimm, Florian Klinglmueller,
-#' Willi Maurer, and Kornelius Rohmeyer. Graphical approach for multiple
-#' comparison procedures using weighted Bonferroni, Simes, or
-#' parameter tests. Biometrical Journal. 2011; 53:894-913.
-#'
-#' @author Kaifeng Lu, \email{kaifenglu@@gmail.com}
-#'
-#' @examples
-#'
-#' pvalues <- matrix(c(0.01,0.005,0.015,0.022, 0.02,0.015,0.010,0.023),
-#'                   nrow=2, ncol=4, byrow=TRUE)
-#' w <- c(0.5,0.5,0,0)
-#' g <- matrix(c(0,0,1,0,0,0,0,1,0,1,0,0,1,0,0,0),
-#'             nrow=4, ncol=4, byrow=TRUE)
-#' wgtmat <- fwgtmat(w,g)
-#'
-#' family <- matrix(c(1,1,0,0,0,0,1,1), nrow=2, ncol=4, byrow=TRUE)
-#' corr <- matrix(c(1,0.5,NA,NA, 0.5,1,NA,NA,
-#'                 NA,NA,1,0.5, NA,NA,0.5,1),
-#'               nrow = 4, byrow = TRUE)
-#' fadjpdun(wgtmat, pvalues, family, corr)
-#'
-#' @export
-fadjpdun <- function(wgtmat, p, family = NULL, corr = NULL) {
-  ntests <- nrow(wgtmat)
-  m <- ncol(wgtmat)
-
-  if (!is.matrix(p)) {
-    p <- matrix(p, ncol=m)
+  if (is.null(wgtmat)) {
+    wgtmat <- fDefaultWgtmat(m)
   }
 
-  r <- nrow(p)
-
-  if (is.null(family)) {
-    family <- matrix(1, 1, m)
-  } else if (!is.matrix(family)) {
-    family <- matrix(family, ncol = m)
-  }
-
-  if (is.null(corr)) {
-    corr <- 0.5*diag(m) + 0.5
-  }
-
-  pinter <- matrix(0, r, ntests)
-  incid <- matrix(0, ntests, m)
-  for (i in 1:ntests) {
-    number <- ntests - i + 1
-    cc <- floor(number/2^(m - (1:m))) %% 2
-    w <- wgtmat[i,]
-
-    J <- which(cc == 1)
-    J1 <- intersect(J, which(w > 0))
-    l <- nrow(family)
-
-    if (length(J1) > 1) {
-      if (r > 1) {
-        q <- apply(p[,J1]/w[J1], 1, min)
-      } else {
-        q <- min(p[,J1]/w[J1])
-      }
-    } else {
-      q <- p[,J1]/w[J1]
-    }
-
-    for (k in 1:r) {
-      aval <- 0
-      for (h in 1:l) {
-        I_h <- which(family[h,] == 1)
-        J_h <- intersect(J1, I_h)
-        if (length(J_h) > 0) {
-          sigma <- corr[J_h, J_h]
-          upper <- qnorm(1 - w[J_h]*q[k])
-          v <- pmvnormr(upper = upper, sigma = sigma)
-          aval <- aval + (1 - v)
-        }
-      }
-      pinter[k,i] <- aval
-    }
-
-    incid[i,] <- cc
-  }
-
-
-  x <- matrix(0, r, m)
-  for (j in 1:m) {
-    ind <- matrix(rep(incid[,j], each=r), nrow=r)
-    x[,j] <- apply(pinter*ind, 1, max)
-  }
-  x[x > 1] <- 1
-  x
-
-  if (nrow(x) == 1) {
-    x <- as.vector(x)
+  x <- fadjpbonRcpp(p = p, wgtmat = wgtmat)
+  if (nrow(x$padj) == 1) {
+    x$padj <- as.vector(x$padj)
+    x$pinter <- as.vector(x$pinter)
   }
   x
 }
@@ -155,11 +79,17 @@ fadjpdun <- function(wgtmat, p, family = NULL, corr = NULL) {
 #' @description Obtains the adjusted p-values for graphical approaches
 #' using weighted Simes tests.
 #'
-#' @param wgtmat The weight matrix for intersection hypotheses.
 #' @param p The raw p-values for elementary hypotheses.
+#' @param wgtmat A list containing the weight matrix and the indicator matrix
+#'   for intersection hypotheses. If \code{NULL}, equal weights are assigned
+#'   within each intersection hypothesis.
 #' @param family The matrix of family indicators for elementary hypotheses.
+#'   Defaults to one family containing all elementary hypotheses.
 #'
-#' @return A matrix of adjusted p-values.
+#' @return A list with the following components:
+#' * \code{inthyp}: The indicator matrix for the intersection hypotheses.
+#' * \code{pinter}: The local p-values for the intersection hypotheses.
+#' * \code{padj}: The adjusted p-values for the elementary hypotheses.
 #'
 #' @references
 #' Frank Bretz, Martin Posch, Ekkehard Glimm, Florian Klinglmueller,
@@ -177,19 +107,23 @@ fadjpdun <- function(wgtmat, p, family = NULL, corr = NULL) {
 #' pvalues <- matrix(c(0.01,0.005,0.015,0.022, 0.02,0.015,0.010,0.023),
 #'                   nrow=2, ncol=4, byrow=TRUE)
 #' w <- c(0.5,0.5,0,0)
-#' g <- matrix(c(0,0,1,0,0,0,0,1,0,1,0,0,1,0,0,0),
+#' G <- matrix(c(0,0,1,0,0,0,0,1,0,1,0,0,1,0,0,0),
 #'             nrow=4, ncol=4, byrow=TRUE)
-#' wgtmat <- fwgtmat(w,g)
+#' wgtmat <- fwgtmat(w,G)
 #'
 #' family <- matrix(c(1,1,0,0,0,0,1,1), nrow=2, ncol=4, byrow=TRUE)
-#' fadjpsim(wgtmat, pvalues, family)
+#' fadjpsim(pvalues, wgtmat, family)
 #'
 #' @export
-fadjpsim <- function(wgtmat, p, family = NULL) {
-  m <- ncol(wgtmat)
+fadjpsim <- function(p, wgtmat = NULL, family = NULL) {
+  m <- if (is.matrix(p)) ncol(p) else length(p)
 
   if (!is.matrix(p)) {
     p <- matrix(p, ncol=m)
+  }
+
+  if (is.null(wgtmat)) {
+    wgtmat <- fDefaultWgtmat(m)
   }
 
   if (is.null(family)) {
@@ -198,9 +132,98 @@ fadjpsim <- function(wgtmat, p, family = NULL) {
     family <- matrix(family, ncol = m)
   }
 
-  x <- fadjpsimcpp(wgtmat = wgtmat, p = p, family = family)
-  if (nrow(x) == 1) {
-    x <- as.vector(x)
+  x <- fadjpsimRcpp(p = p, wgtmat = wgtmat, family = family)
+  if (nrow(x$padj) == 1) {
+    x$padj <- as.vector(x$padj)
+    x$pinter <- as.vector(x$pinter)
+  }
+  x
+}
+
+
+#' @title Adjusted p-Values for Dunnett-Based Graphical Approaches
+#' @description Obtains the adjusted p-values for graphical approaches
+#' using weighted Dunnett tests.
+#'
+#' @param p The raw p-values for elementary hypotheses.
+#' @param wgtmat A list containing the weight matrix and the indicator matrix
+#'   for intersection hypotheses. If \code{NULL}, equal weights are assigned
+#'   within each intersection hypothesis.
+#' @param family The matrix of family indicators for elementary hypotheses.
+#'   Defaults to one family containing all elementary hypotheses.
+#' @param corr The correlation matrix that should be used for the parametric
+#'   test. Can contain NAs for unknown correlations between families. By
+#'   default, within-family correlations are 0.5 and between-family
+#'   correlations are missing.
+#' @param nthreads The number of threads to use in simulations (0 means
+#'   the default RcppParallel behavior).
+#'
+#' @return A list with the following components:
+#' * \code{inthyp}: The indicator matrix for the intersection hypotheses.
+#' * \code{pinter}: The local p-values for the intersection hypotheses.
+#' * \code{padj}: The adjusted p-values for the elementary hypotheses.
+#'
+#' @references
+#' Frank Bretz, Martin Posch, Ekkehard Glimm, Florian Klinglmueller,
+#' Willi Maurer, and Kornelius Rohmeyer. Graphical approach for multiple
+#' comparison procedures using weighted Bonferroni, Simes, or
+#' parameter tests. Biometrical Journal. 2011; 53:894-913.
+#'
+#' @author Kaifeng Lu, \email{kaifenglu@@gmail.com}
+#'
+#' @examples
+#'
+#' pvalues <- matrix(c(0.01,0.005,0.015,0.022, 0.02,0.015,0.010,0.023),
+#'                   nrow=2, ncol=4, byrow=TRUE)
+#' w <- c(0.5,0.5,0,0)
+#' G <- matrix(c(0,0,1,0,0,0,0,1,0,1,0,0,1,0,0,0),
+#'             nrow=4, ncol=4, byrow=TRUE)
+#' wgtmat <- fwgtmat(w,G)
+#'
+#' family <- matrix(c(1,1,0,0,0,0,1,1), nrow=2, ncol=4, byrow=TRUE)
+#' corr <- matrix(c(1,0.5,NA,NA, 0.5,1,NA,NA,
+#'                 NA,NA,1,0.5, NA,NA,0.5,1),
+#'               nrow = 4, byrow = TRUE)
+#' fadjpdun(pvalues, wgtmat, family, corr, nthreads = 1)
+#'
+#' @export
+fadjpdun <- function(p, wgtmat = NULL, family = NULL, corr = NULL,
+                      nthreads = 0) {
+  m <- if (is.matrix(p)) ncol(p) else length(p)
+
+  if (!is.matrix(p)) {
+    p <- matrix(p, ncol=m)
+  }
+
+  if (is.null(wgtmat)) {
+    wgtmat <- fDefaultWgtmat(m)
+  }
+
+  if (is.null(family)) {
+    family <- matrix(1, 1, m)
+  } else if (!is.matrix(family)) {
+    family <- matrix(family, ncol = m)
+  }
+
+  if (is.null(corr)) {
+    corr <- matrix(NA_real_, m, m)
+    diag(corr) <- 1
+    for (h in seq_len(nrow(family))) {
+      idx <- which(family[h, ] != 0)
+      corr[idx, idx] <- 0.5
+    }
+    diag(corr) <- 1
+  }
+
+  if (nthreads > 0) {
+    n_physical_cores <- parallel::detectCores(logical = FALSE)
+    RcppParallel::setThreadOptions(min(nthreads, n_physical_cores))
+  }
+
+  x <- fadjpdunRcpp(p = p, wgtmat = wgtmat, family = family, corr = corr)
+  if (nrow(x$padj) == 1) {
+    x$padj <- as.vector(x$padj)
+    x$pinter <- as.vector(x$pinter)
   }
   x
 }
@@ -285,7 +308,7 @@ repeatedPValue <- function(kMax,
     RcppParallel::setThreadOptions(min(nthreads, n_physical_cores))
   }
 
-  repp1 <- repeatedPValuecpp(
+  repp1 <- repeatedPValueRcpp(
     kMax = kMax, typeAlphaSpending = typeAlphaSpending,
     parameterAlphaSpending = parameterAlphaSpending,
     maxInformation = maxInformation, p = p1,
@@ -327,16 +350,31 @@ repeatedPValue <- function(kMax,
 #'   hypothesis. Defaults to a vector of 1s if not provided.
 #' @param incidenceMatrix The \code{kMax x m} incidence matrix indicating
 #'   whether the specific hypothesis will be tested at the given look.
+#'   Here \eqn{m} is the number of hypotheses.
 #'   If not provided, defaults to testing each hypothesis at all study looks.
 #' @param k1 The number of study looks at the interim analysis.
-#' @param p The matrix of raw p-values for each hypothesis by study look.
-#' @param information The matrix of observed information for each hypothesis
-#'   by study look.
-#' @param spendingTime The spending time for alpha spending by study look.
+#' @param p The \eqn{B k_1 \times m} matrix of raw p-values for each hypothesis
+#'   by study look. Here \eqn{B} is the number of replications for simulations.
+#'   In other words, the number of rows must be a multiple of \code{k1}.
+#' @param information The \eqn{B k_1 \times m} matrix of observed information
+#'   for each hypothesis by study look.
+#' @param spendingTime The \eqn{B k_1 \times m} matrix of spending time for
+#'   alpha spending by study look. Each element must be between 0 and 1,
+#'   and the spending time must be increasing by study look for each hypothesis.
 #'   If not provided, it is the same as \code{informationRates} calculated
 #'   from \code{information} and \code{maxInformation}.
+#' @param lookback Whether to allow retesting at earlier looks. It defaults to
+#'   \code{TRUE}.
 #' @param nthreads The number of threads to use in simulations (0 means
 #'   the default RcppParallel behavior).
+#'
+#' @details
+#' When \code{lookback = TRUE}, the procedure allows the user to retest an
+#' unrejected hypothesis at earlier looks if its weight increased after
+#' rejection of other hypotheses.
+#' The procedure will return the first look at which the
+#' specific hypothesis is rejected. If the hypothesis is not rejected at
+#' any look, it will return 0.
 #'
 #' @return A vector to indicate the first look the specific hypothesis is
 #'   rejected (0 if the hypothesis is not rejected).
@@ -378,6 +416,7 @@ fseqbon <- function(w, G, alpha = 0.025, kMax,
                     incidenceMatrix = NULL,
                     k1, p, information,
                     spendingTime = NULL,
+                    lookback = TRUE,
                     nthreads = 0) {
   m <- length(w)
 
@@ -407,14 +446,14 @@ fseqbon <- function(w, G, alpha = 0.025, kMax,
     RcppParallel::setThreadOptions(min(nthreads, n_physical_cores))
   }
 
-  reject1 <- fseqboncpp(
+  reject1 <- fseqbonRcpp(
     w = w, G = G, alpha = alpha, kMax = kMax,
     typeAlphaSpending = typeAlphaSpending,
     parameterAlphaSpending = parameterAlphaSpending,
     maxInformation = maxInformation,
     incidenceMatrix = incidenceMatrix,
     k1 = k1, p = p, information = information,
-    spendingTime = spendingTime)
+    spendingTime = spendingTime, lookback = lookback)
 
   if (nrow(reject1) == 1) { # convert the result to a vector
     reject <- as.vector(reject1)
@@ -477,7 +516,7 @@ fstp2seq <- function(p, gamma, test="hochberg", retest=TRUE) {
     stop("test must be either Holm or Hochberg")
   }
 
-  x <- fstp2seqcpp(p = p, gamma = gamma, test = test, retest = retest)
+  x <- fstp2seqRcpp(p = p, gamma = gamma, test = test, retest = retest)
   if (nrow(x) == 1) {
     x <- as.vector(x)
   }
@@ -500,7 +539,10 @@ fstp2seq <- function(p, gamma, test="hochberg", retest=TRUE) {
 #' @param exhaust Whether to use alpha-exhausting component testing procedure
 #'   for the last family with active hypotheses. It defaults to \code{TRUE}.
 #'
-#' @return A matrix of adjusted p-values.
+#' @return A list with the following components:
+#' * \code{inthyp}: The indicator matrix for the intersection hypotheses.
+#' * \code{pinter}: The local p-values for the intersection hypotheses.
+#' * \code{padj}: The adjusted p-values for the elementary hypotheses.
 #'
 #' @references
 #' Alex Dmitrienko and Ajit C Tamhane. Mixtures of multiple testing
@@ -598,12 +640,13 @@ fstdmix <- function(p, family = NULL, serial, parallel = NULL,
     stop("test must be either Holm, Hochberg, or Hommel")
   }
 
-  x <- fstdmixcpp(p = p, family = family, serial = serial,
-                  parallel = parallel, gamma = gamma, test = test,
-                  exhaust = exhaust)
+  x <- fstdmixRcpp(p = p, family = family, serial = serial,
+                   parallel = parallel, gamma = gamma, test = test,
+                   exhaust = exhaust)
 
-  if (nrow(x) == 1) {
-    x <- as.vector(x)
+  if (nrow(x$padj) == 1) {
+    x$padj <- as.vector(x$padj)
+    x$pinter <- as.vector(x$pinter)
   }
   x
 }
@@ -625,7 +668,10 @@ fstdmix <- function(p, family = NULL, serial, parallel = NULL,
 #' @param exhaust Whether to use alpha-exhausting component testing procedure
 #'   for the last family with active hypotheses. It defaults to \code{TRUE}.
 #'
-#' @return A matrix of adjusted p-values.
+#' @return A list with the following components:
+#' * \code{inthyp}: The indicator matrix for the intersection hypotheses.
+#' * \code{pinter}: The local p-values for the intersection hypotheses.
+#' * \code{padj}: The adjusted p-values for the elementary hypotheses.
 #'
 #' @references
 #' Alex Dmitrienko, George Kordzakhia, and Thomas Brechenmacher.
@@ -728,12 +774,13 @@ fmodmix <- function(p, family = NULL, serial, parallel = NULL,
     stop("test must be either Holm, Hochberg, or Hommel")
   }
 
-  x <- fmodmixcpp(p = p, family = family, serial = serial,
-                  parallel = parallel, gamma = gamma, test = test,
-                  exhaust = exhaust)
+  x <- fmodmixRcpp(p = p, family = family, serial = serial,
+                   parallel = parallel, gamma = gamma, test = test,
+                   exhaust = exhaust)
 
-  if (nrow(x) == 1) {
-    x <- as.vector(x)
+  if (nrow(x$padj) == 1) {
+    x$padj <- as.vector(x$padj)
+    x$pinter <- as.vector(x$pinter)
   }
   x
 }
@@ -749,7 +796,10 @@ fmodmix <- function(p, family = NULL, serial, parallel = NULL,
 #' @param gamma The value of the truncation parameter. Defaults to 1
 #'   for the regular Holm, Hochberg, or Hommel procedure.
 #'
-#' @return A matrix of adjusted p-values.
+#' @return A list with the following components:
+#' * \code{inthyp}: The indicator matrix for the intersection hypotheses.
+#' * \code{pinter}: The local p-values for the intersection hypotheses.
+#' * \code{padj}: The adjusted p-values for the elementary hypotheses.
 #'
 #' @references
 #' Alex Dmitrienko, Ajit C. Tamhane, and Brian L. Wiens.
@@ -778,9 +828,10 @@ ftrunc <- function(p, test = "hommel", gamma = 1) {
     p <- matrix(p, nrow=1)
   }
 
-  x <- ftrunccpp(p = p, test = test, gamma = gamma)
-  if (nrow(x) == 1) {
-    x <- as.vector(x)
+  x <- ftruncRcpp(p = p, test = test, gamma = gamma)
+  if (nrow(x$padj) == 1) {
+    x$padj <- as.vector(x$padj)
+    x$pinter <- as.vector(x$pinter)
   }
   x
 }

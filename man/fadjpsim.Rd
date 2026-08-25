@@ -4,17 +4,25 @@
 \alias{fadjpsim}
 \title{Adjusted p-Values for Simes-Based Graphical Approaches}
 \usage{
-fadjpsim(wgtmat, p, family = NULL)
+fadjpsim(p, wgtmat = NULL, family = NULL)
 }
 \arguments{
-\item{wgtmat}{The weight matrix for intersection hypotheses.}
-
 \item{p}{The raw p-values for elementary hypotheses.}
 
-\item{family}{The matrix of family indicators for elementary hypotheses.}
+\item{wgtmat}{A list containing the weight matrix and the indicator matrix
+for intersection hypotheses. If \code{NULL}, equal weights are assigned
+within each intersection hypothesis.}
+
+\item{family}{The matrix of family indicators for elementary hypotheses.
+Defaults to one family containing all elementary hypotheses.}
 }
 \value{
-A matrix of adjusted p-values.
+A list with the following components:
+\itemize{
+\item \code{inthyp}: The indicator matrix for the intersection hypotheses.
+\item \code{pinter}: The local p-values for the intersection hypotheses.
+\item \code{padj}: The adjusted p-values for the elementary hypotheses.
+}
 }
 \description{
 Obtains the adjusted p-values for graphical approaches
@@ -25,12 +33,12 @@ using weighted Simes tests.
 pvalues <- matrix(c(0.01,0.005,0.015,0.022, 0.02,0.015,0.010,0.023),
                   nrow=2, ncol=4, byrow=TRUE)
 w <- c(0.5,0.5,0,0)
-g <- matrix(c(0,0,1,0,0,0,0,1,0,1,0,0,1,0,0,0),
+G <- matrix(c(0,0,1,0,0,0,0,1,0,1,0,0,1,0,0,0),
             nrow=4, ncol=4, byrow=TRUE)
-wgtmat <- fwgtmat(w,g)
+wgtmat <- fwgtmat(w,G)
 
 family <- matrix(c(1,1,0,0,0,0,1,1), nrow=2, ncol=4, byrow=TRUE)
-fadjpsim(wgtmat, pvalues, family)
+fadjpsim(pvalues, wgtmat, family)
 
 }
 \references{

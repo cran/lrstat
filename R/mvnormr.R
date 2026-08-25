@@ -46,6 +46,10 @@
 #' setting \code{parallel = TRUE}, which distributes the replications across
 #' multiple CPU threads via \code{nthreads}.
 #'
+#' Positive semidefinite \code{sigma} matrices (including singular cases) are
+#' supported in the general covariance branch via minimal diagonal
+#' stabilization during factorization.
+#'
 #' @return The estimated probability with the following attributes:
 #'
 #' * \code{method}: \code{"exact"} for analytic methods or \code{"qmc"} for
@@ -78,12 +82,13 @@
 #'                   0.3, 0.4, 1, 0.5, 0.3,
 #'                   0.2, 0.3, 0.5, 1, 0.4,
 #'                   0.1, 0.2, 0.3, 0.4, 1), nrow = n)
-#' pmvnormr(lower, upper, mean, sigma, seed = 314159)
+#' pmvnormr(lower, upper, mean, sigma, seed = 314159, nthreads = 1)
 #'
 #' @export
 pmvnormr <- function(lower = NULL, upper = NULL, mean = NULL, sigma,
                      n0 = 1024, n_max = 16384, R = 8, abseps = 1e-4,
-                     releps = 0.0, seed = 0, parallel = TRUE, nthreads = 0) {
+                     releps = 0.0, seed = 314159,
+                     parallel = TRUE, nthreads = 0) {
   if (!is.matrix(sigma) && length(sigma) == 1)
     sigma <- matrix(sigma, nrow = 1, ncol = 1)
   if (is.null(dim(sigma)) || length(dim(sigma)) != 2L)
@@ -138,6 +143,10 @@ pmvnormr <- function(lower = NULL, upper = NULL, mean = NULL, sigma,
 #' the multivariate normal cumulative distribution function equals the
 #' target probability \eqn{p}.
 #'
+#' Positive semidefinite \code{sigma} matrices (including singular cases) are
+#' supported in the general covariance branch via minimal diagonal
+#' stabilization during factorization.
+#'
 #' @return A numeric value representing the calculated equicoordinate quantile.
 #'
 #' @author Kaifeng Lu, \email{kaifenglu@@gmail.com}
@@ -148,12 +157,13 @@ pmvnormr <- function(lower = NULL, upper = NULL, mean = NULL, sigma,
 #' mean <- rep(0, n)
 #' sigma <- matrix(0.5, n, n)
 #' diag(sigma) <- 1
-#' qmvnormr(0.5, mean = mean, sigma = sigma)
+#' qmvnormr(0.5, mean = mean, sigma = sigma, nthreads = 1)
 #'
 #' @export
 qmvnormr <- function(p, mean = NULL, sigma,
                      n0 = 1024, n_max = 16384, R = 8, abseps = 1e-4,
-                     releps = 0.0, seed = 0, parallel = TRUE, nthreads = 0) {
+                     releps = 0.0, seed = 314159,
+                     parallel = TRUE, nthreads = 0) {
   if (!is.matrix(sigma) && length(sigma) == 1)
     sigma <- matrix(sigma, nrow = 1, ncol = 1)
   if (is.null(dim(sigma)) || length(dim(sigma)) != 2L)

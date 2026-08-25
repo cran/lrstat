@@ -13,7 +13,7 @@ qmvnormr(
   R = 8,
   abseps = 1e-04,
   releps = 0,
-  seed = 0,
+  seed = 314159,
   parallel = TRUE,
   nthreads = 0
 )
@@ -58,6 +58,10 @@ This function finds the value \eqn{q} using a root-finding algorithm
 applied to the \code{pmvnormr} function. It solves for the value where
 the multivariate normal cumulative distribution function equals the
 target probability \eqn{p}.
+
+Positive semidefinite \code{sigma} matrices (including singular cases) are
+supported in the general covariance branch via minimal diagonal
+stabilization during factorization.
 }
 \examples{
 
@@ -65,7 +69,7 @@ n <- 5
 mean <- rep(0, n)
 sigma <- matrix(0.5, n, n)
 diag(sigma) <- 1
-qmvnormr(0.5, mean = mean, sigma = sigma)
+qmvnormr(0.5, mean = mean, sigma = sigma, nthreads = 1)
 
 }
 \author{

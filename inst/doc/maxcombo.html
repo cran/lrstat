@@ -471,15 +471,15 @@ weights.</p>
 <span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a>  <span class="dv">1</span> <span class="sc">-</span> <span class="fu">pmvnormr</span>(<span class="at">upper=</span><span class="fu">c</span>(u1, u2, u2), <span class="at">sigma=</span>sigma) <span class="sc">-</span> alpha</span>
 <span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a>}</span>
 <span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a>(<span class="at">u2 =</span> <span class="fu">uniroot</span>(f, <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">3</span>), u1, sigma, alpha)<span class="sc">$</span>root)</span>
-<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a><span class="co">#&gt; [1] 2.137001</span></span></code></pre></div>
+<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a><span class="co">#&gt; [1] 2.135613</span></span></code></pre></div>
 <p>The power can be estimated by plugging in the mean under the
 alternative hypothesis.</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="dv">1</span> <span class="sc">-</span> <span class="fu">pmvnormr</span>(<span class="at">upper=</span><span class="fu">c</span>(u1, u2, u2), <span class="at">mean=</span>mu, <span class="at">sigma=</span>sigma)</span>
-<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a><span class="co">#&gt; [1] 0.7242952</span></span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a><span class="co">#&gt; [1] 0.7248225</span></span>
 <span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a><span class="co">#&gt; attr(,&quot;method&quot;)</span></span>
 <span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a><span class="co">#&gt; [1] &quot;qmc&quot;</span></span>
 <span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a><span class="co">#&gt; attr(,&quot;error&quot;)</span></span>
-<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a><span class="co">#&gt; [1] 9.264247e-05</span></span>
+<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a><span class="co">#&gt; [1] 9.753385e-05</span></span>
 <span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a><span class="co">#&gt; attr(,&quot;nsamples&quot;)</span></span>
 <span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a><span class="co">#&gt; [1] 32768</span></span></code></pre></div>
 <p>For the simulation study, we use very large critical values for the
@@ -516,7 +516,7 @@ produce identical simulated data.</p>
 <span id="cb6-26"><a href="#cb6-26" tabindex="-1"></a>w2max <span class="ot">=</span> <span class="fu">subset</span>(w2max, sim1<span class="sc">$</span>sumdata<span class="sc">$</span>stageNumber<span class="sc">==</span><span class="dv">2</span>)</span>
 <span id="cb6-27"><a href="#cb6-27" tabindex="-1"></a></span>
 <span id="cb6-28"><a href="#cb6-28" tabindex="-1"></a><span class="fu">mean</span>((w1max <span class="sc">&gt;</span> u1) <span class="sc">|</span> (w2max <span class="sc">&gt;</span> u2))</span>
-<span id="cb6-29"><a href="#cb6-29" tabindex="-1"></a><span class="co">#&gt; [1] 0.7255</span></span></code></pre></div>
+<span id="cb6-29"><a href="#cb6-29" tabindex="-1"></a><span class="co">#&gt; [1] 0.7259</span></span></code></pre></div>
 <p>The analytic method yielded a power of about 72%, while the
 simulation method yielded a power of about 73%, both are close to that
 reported by <span class="citation">Prior (2020)</span>.</p>

@@ -6,14 +6,19 @@
 #'
 #' @param M Number of active treatment arms in Phase 2.
 #' @param K Number of sequential looks in Phase 3.
+#' @param rankp0 Integer rank in phase 2 used to select the active arm.
+#'   \code{rankp0 = 1} selects the most efficacious arm by log-rank
+#'   statistic, \code{rankp0 = 2} selects the second most efficacious arm,
+#'   and so on.
 #' @param criticalValues Numeric vector of length \eqn{K + 1} giving the
 #'   critical value for the Wald statistic at each look (Look 1 through
 #'   Look \eqn{K + 1}). Decision rule:
-#'   - At Look 1, compute the Wald statistic for each active arm versus the
-#'     common control. If the maximum of these statistics exceeds the Look 1
-#'     critical value, stop for efficacy.
+#'   - At Look 1, compute the Wald statistic (which equals the negative of
+#'     the logrank statistic) for each active arm versus the common control.
+#'     If the \code{rankp0}-th largest test statistic
+#'     exceeds the Look 1 critical value, stop for efficacy.
 #'   - If the Look 1 stopping rule is not met, select the active arm with the
-#'     largest Wald statistic as the "best" arm and continue with that arm
+#'     \code{rankp0}-th largest Wald statistic and continue with that arm
 #'     only versus control at subsequent looks.
 #'   - For each look \eqn{j = 2,\ldots,K+1}, compare the selected arm to
 #'     control; if its Wald statistic exceeds the Look \eqn{j} critical
@@ -23,7 +28,7 @@
 #' @param futilityBounds Numeric vector of length \eqn{K} giving the futility
 #'   boundaries for Phase 2 and the first \eqn{K-1} looks in Phase 3.
 #'   The study stops for futility:
-#'   - in Phase 2 if all active treatment arms cross the phase-2 futility
+#'   - in Phase 2 if the selected treatment arm crosses the phase-2 futility
 #'     boundary;
 #'   - in Phase 3 if the selected arm crosses the futility boundary at an
 #'     interim look;
@@ -34,17 +39,22 @@
 #' @param allocations Integer or integer vector of length \eqn{M + 1}.
 #'   Number of subjects per arm within a randomization block. A single value
 #'   implies equal allocation; defaults to 1.
+#'   The first \eqn{M} elements refer to the active arms
+#'   and the last element refers to the common control.
 #' @inheritParams param_accrualTime
 #' @inheritParams param_accrualIntensity
 #' @inheritParams param_piecewiseSurvivalTime
 #' @inheritParams param_stratumFraction
-#' @param lambdas List of length \eqn{M} (one element per arm). Each element
+#' @param lambdas List of length \eqn{M + 1} (one element per arm). Each element
 #'   is a scalar or a numeric vector of event hazard rates for the
 #'   corresponding arm, given by analysis interval and stratum as required
-#'   by the simulation.
-#' @param gammas List of length \eqn{M} (one element per arm). Each element
+#'   by the simulation. The first \eqn{M} elements refer to the active arms
+#'   and the last element refers to the common control.
+#' @param gammas List of length \eqn{M + 1} (one element per arm). Each element
 #'   is a scalar or a numeric vector of dropout hazard rates for the
 #'   corresponding arm, by analysis interval and stratum.
+#'   The first \eqn{M} elements refer to the active arms
+#'   and the last element refers to the common control.
 #' @param n Planned total sample size across all active arms and control.
 #' @inheritParams param_followupTime
 #' @inheritParams param_fixedFollowup
@@ -69,8 +79,12 @@
 #' @return An S3 object of class \code{"lrsim_seamless"} with these components:
 #'
 #' * \code{overview}: A list summarizing trial-level results and settings:
-#'     - \code{selectAsBest}: Probability of selecting each active arm as
-#'       the best arm at the end of phase 2.
+#'     - \code{selectionProb}: Probability of selecting each active arm at
+#'       the prespecified rank at the end of phase 2.
+#'     - \code{selectToStage2}: Probability of selecting each active arm
+#'       to enter stage 2.
+#'     - \code{selectAnyToStage2}: Probability of selecting any active arm
+#'       to enter stage 2.
 #'     - \code{rejectPerStage}: Probability of rejecting the null for each
 #'       active arm at each stage.
 #'     - \code{futilityPerStage}: Probability of futility stopping for each
@@ -100,10 +114,12 @@
 #'     - \code{useEvents}: Logical indicating whether analyses were event-driven.
 #'     - \code{numberOfIterations}: Number of simulation iterations performed.
 #'     - \code{n}: Planned total sample size.
+#'     - \code{allocations}: The input allocation ratios.
 #'     - \code{fixedFollowup}: Logical indicating whether fixed follow-up was used.
 #'     - \code{rho1}, \code{rho2}: Fleming–Harrington weighting parameters used.
 #'     - \code{M}: Number of active arms in Phase 2.
 #'     - \code{K}: Number of sequential looks in Phase 3.
+#'     - \code{rankp0}: Prespecified rank used for phase-2 arm selection.
 #'
 #' * \code{sumdata1}: Data frame summarizing each iteration, stage, and
 #'   treatment group:
@@ -116,7 +132,7 @@
 #'
 #' * \code{summdata2}: Data frame summarizing log-rank statistics by iteration,
 #'   stage, and active arm:
-#'     - \code{iterationNumber}, \code{bestArm}, \code{stopStage},
+#'     - \code{iterationNumber}, \code{selectedArm}, \code{stopStage},
 #'       \code{stageNumber}, \code{analysisTime}, \code{activeArm},
 #'       \code{totalAccruals}, \code{totalEvents}, \code{totalDropouts},
 #'       \code{uscore}, \code{vscore}, \code{logRankStatistic},
@@ -149,12 +165,13 @@
 #'   maxNumberOfIterations = 10000,
 #'   maxNumberOfRawDatasetsPerStage = 1,
 #'   seed = 314159,
-#'   nthreads = 0))
+#'   nthreads = 1))
 #'
 #' @export
 lrsim_seamless <- function(
     M = 2,
     K = 1,
+    rankp0 = 1,
     criticalValues = NA,
     futilityBounds = NULL,
     hazardRatioH0s = 1,
@@ -184,7 +201,7 @@ lrsim_seamless <- function(
   }
 
   lrsim_seamless_Rcpp(
-    M, K, criticalValues, futilityBounds, hazardRatioH0s,
+    M, K, rankp0, criticalValues, futilityBounds, hazardRatioH0s,
     allocations, accrualTime, accrualIntensity,
     piecewiseSurvivalTime, stratumFraction, lambdas, gammas,
     n, followupTime, fixedFollowup, rho1, rho2,

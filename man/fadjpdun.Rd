@@ -4,20 +4,33 @@
 \alias{fadjpdun}
 \title{Adjusted p-Values for Dunnett-Based Graphical Approaches}
 \usage{
-fadjpdun(wgtmat, p, family = NULL, corr = NULL)
+fadjpdun(p, wgtmat = NULL, family = NULL, corr = NULL, nthreads = 0)
 }
 \arguments{
-\item{wgtmat}{The weight matrix for intersection hypotheses.}
-
 \item{p}{The raw p-values for elementary hypotheses.}
 
-\item{family}{The matrix of family indicators for elementary hypotheses.}
+\item{wgtmat}{A list containing the weight matrix and the indicator matrix
+for intersection hypotheses. If \code{NULL}, equal weights are assigned
+within each intersection hypothesis.}
+
+\item{family}{The matrix of family indicators for elementary hypotheses.
+Defaults to one family containing all elementary hypotheses.}
 
 \item{corr}{The correlation matrix that should be used for the parametric
-test. Can contain NAs for unknown correlations between families.}
+test. Can contain NAs for unknown correlations between families. By
+default, within-family correlations are 0.5 and between-family
+correlations are missing.}
+
+\item{nthreads}{The number of threads to use in simulations (0 means
+the default RcppParallel behavior).}
 }
 \value{
-A matrix of adjusted p-values.
+A list with the following components:
+\itemize{
+\item \code{inthyp}: The indicator matrix for the intersection hypotheses.
+\item \code{pinter}: The local p-values for the intersection hypotheses.
+\item \code{padj}: The adjusted p-values for the elementary hypotheses.
+}
 }
 \description{
 Obtains the adjusted p-values for graphical approaches
@@ -28,15 +41,15 @@ using weighted Dunnett tests.
 pvalues <- matrix(c(0.01,0.005,0.015,0.022, 0.02,0.015,0.010,0.023),
                   nrow=2, ncol=4, byrow=TRUE)
 w <- c(0.5,0.5,0,0)
-g <- matrix(c(0,0,1,0,0,0,0,1,0,1,0,0,1,0,0,0),
+G <- matrix(c(0,0,1,0,0,0,0,1,0,1,0,0,1,0,0,0),
             nrow=4, ncol=4, byrow=TRUE)
-wgtmat <- fwgtmat(w,g)
+wgtmat <- fwgtmat(w,G)
 
 family <- matrix(c(1,1,0,0,0,0,1,1), nrow=2, ncol=4, byrow=TRUE)
 corr <- matrix(c(1,0.5,NA,NA, 0.5,1,NA,NA,
                 NA,NA,1,0.5, NA,NA,0.5,1),
               nrow = 4, byrow = TRUE)
-fadjpdun(wgtmat, pvalues, family, corr)
+fadjpdun(pvalues, wgtmat, family, corr, nthreads = 1)
 
 }
 \references{

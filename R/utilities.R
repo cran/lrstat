@@ -224,3 +224,44 @@ rtpwexp <- function(n, piecewiseSurvivalTime = 0, lambda = 0.0578,
              lowertail = TRUE, logp = FALSE)
 }
 
+
+#' @title Distribution Function of the Standard Bivariate Normal
+#' @description Computes the cumulative distribution function (CDF) of
+#' the standard bivariate normal distribution with specified lower and
+#' upper integration limits and correlation coefficient.
+#'
+#' @param lower A numeric vector of length 2 specifying the lower limits
+#'   of integration.
+#' @param upper A numeric vector of length 2 specifying the upper limits
+#'   of integration.
+#' @param rho A numeric value specifying the correlation coefficient of
+#'   the standard bivariate normal distribution.
+#'
+#' @details This function evaluates the probability
+#' \eqn{P(\code{lower[1]} < X < \code{upper[1]},
+#' \code{lower[2]} < Y < \code{upper[2]})} where
+#' \eqn{(X, Y)} follows a standard bivariate normal
+#' distribution with correlation \code{corr}.
+#'
+#' @return A numeric value representing the probability that a standard
+#' bivariate normal vector falls within the specified rectangular region.
+#'
+#' @examples
+#' pbvnorm(c(-1, -1), c(1, 1), 0.5)
+#'
+#' @author Kaifeng Lu, \email{kaifenglu@@gmail.com}
+#'
+#' @export
+pbvnorm <- function(lower = NULL, upper = NULL, rho = 0) {
+  if (is.null(lower)) lower <- rep(-Inf, 2)
+  if (is.null(upper)) upper <- rep(Inf, 2)
+  if (length(lower) != 1 && length(lower) != 2) {
+    stop("lower must be a numeric vector of length 1 or 2")
+  }
+  if (length(upper) != 1 && length(upper) != 2) {
+    stop("upper must be a numeric vector of length 1 or 2")
+  }
+  pbvnormcpp(lower, upper, rho);
+}
+
+

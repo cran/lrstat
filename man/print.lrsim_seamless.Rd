@@ -2,7 +2,7 @@
 % Please edit documentation in R/prints.R
 \name{print.lrsim_seamless}
 \alias{print.lrsim_seamless}
-\title{Print Simulation Results for Phase 2/3 Seamless Design}
+\title{Print Simulation Results for Phase 2/3 Seamless Design for Logrank Test}
 \usage{
 \method{print}{lrsim_seamless}(x, ...)
 }
@@ -15,7 +15,7 @@
 A tabular printout of the summary statistics from simulation runs.
 }
 \description{
-Prints the summary statistics from simulation.
+Prints the summary statistics from simulation for logrank test.
 }
 \author{
 Kaifeng Lu, \email{kaifenglu@gmail.com}

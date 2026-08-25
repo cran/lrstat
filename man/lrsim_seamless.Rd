@@ -7,6 +7,7 @@
 lrsim_seamless(
   M = 2,
   K = 1,
+  rankp0 = 1,
   criticalValues = NA,
   futilityBounds = NULL,
   hazardRatioH0s = 1,
@@ -35,15 +36,21 @@ lrsim_seamless(
 
 \item{K}{Number of sequential looks in Phase 3.}
 
+\item{rankp0}{Integer rank in phase 2 used to select the active arm.
+\code{rankp0 = 1} selects the most efficacious arm by log-rank
+statistic, \code{rankp0 = 2} selects the second most efficacious arm,
+and so on.}
+
 \item{criticalValues}{Numeric vector of length \eqn{K + 1} giving the
 critical value for the Wald statistic at each look (Look 1 through
 Look \eqn{K + 1}). Decision rule:
 \itemize{
-\item At Look 1, compute the Wald statistic for each active arm versus the
-common control. If the maximum of these statistics exceeds the Look 1
-critical value, stop for efficacy.
+\item At Look 1, compute the Wald statistic (which equals the negative of
+the logrank statistic) for each active arm versus the common control.
+If the \code{rankp0}-th largest test statistic
+exceeds the Look 1 critical value, stop for efficacy.
 \item If the Look 1 stopping rule is not met, select the active arm with the
-largest Wald statistic as the "best" arm and continue with that arm
+\code{rankp0}-th largest Wald statistic and continue with that arm
 only versus control at subsequent looks.
 \item For each look \eqn{j = 2,\ldots,K+1}, compare the selected arm to
 control; if its Wald statistic exceeds the Look \eqn{j} critical
@@ -56,7 +63,7 @@ ends without rejection.
 boundaries for Phase 2 and the first \eqn{K-1} looks in Phase 3.
 The study stops for futility:
 \itemize{
-\item in Phase 2 if all active treatment arms cross the phase-2 futility
+\item in Phase 2 if the selected treatment arm crosses the phase-2 futility
 boundary;
 \item in Phase 3 if the selected arm crosses the futility boundary at an
 interim look;
@@ -69,7 +76,9 @@ to 1 for superiority tests.}
 
 \item{allocations}{Integer or integer vector of length \eqn{M + 1}.
 Number of subjects per arm within a randomization block. A single value
-implies equal allocation; defaults to 1.}
+implies equal allocation; defaults to 1.
+The first \eqn{M} elements refer to the active arms
+and the last element refers to the common control.}
 
 \item{accrualTime}{A vector that specifies the starting time of
 piecewise Poisson enrollment time intervals. Must start with 0, e.g.,
@@ -88,14 +97,17 @@ Defaults to 0 for exponential distribution.}
 \item{stratumFraction}{A vector of stratum fractions that sum to 1.
 Defaults to 1 for no stratification.}
 
-\item{lambdas}{List of length \eqn{M} (one element per arm). Each element
+\item{lambdas}{List of length \eqn{M + 1} (one element per arm). Each element
 is a scalar or a numeric vector of event hazard rates for the
 corresponding arm, given by analysis interval and stratum as required
-by the simulation.}
+by the simulation. The first \eqn{M} elements refer to the active arms
+and the last element refers to the common control.}
 
-\item{gammas}{List of length \eqn{M} (one element per arm). Each element
+\item{gammas}{List of length \eqn{M + 1} (one element per arm). Each element
 is a scalar or a numeric vector of dropout hazard rates for the
-corresponding arm, by analysis interval and stratum.}
+corresponding arm, by analysis interval and stratum.
+The first \eqn{M} elements refer to the active arms
+and the last element refers to the common control.}
 
 \item{n}{Planned total sample size across all active arms and control.}
 
@@ -136,8 +148,12 @@ An S3 object of class \code{"lrsim_seamless"} with these components:
 \itemize{
 \item \code{overview}: A list summarizing trial-level results and settings:
 \itemize{
-\item \code{selectAsBest}: Probability of selecting each active arm as
-the best arm at the end of phase 2.
+\item \code{selectionProb}: Probability of selecting each active arm at
+the prespecified rank at the end of phase 2.
+\item \code{selectToStage2}: Probability of selecting each active arm
+to enter stage 2.
+\item \code{selectAnyToStage2}: Probability of selecting any active arm
+to enter stage 2.
 \item \code{rejectPerStage}: Probability of rejecting the null for each
 active arm at each stage.
 \item \code{futilityPerStage}: Probability of futility stopping for each
@@ -167,10 +183,12 @@ at trial end.
 \item \code{useEvents}: Logical indicating whether analyses were event-driven.
 \item \code{numberOfIterations}: Number of simulation iterations performed.
 \item \code{n}: Planned total sample size.
+\item \code{allocations}: The input allocation ratios.
 \item \code{fixedFollowup}: Logical indicating whether fixed follow-up was used.
 \item \code{rho1}, \code{rho2}: Fleming–Harrington weighting parameters used.
 \item \code{M}: Number of active arms in Phase 2.
 \item \code{K}: Number of sequential looks in Phase 3.
+\item \code{rankp0}: Prespecified rank used for phase-2 arm selection.
 }
 \item \code{sumdata1}: Data frame summarizing each iteration, stage, and
 treatment group:
@@ -185,7 +203,7 @@ treatment group:
 \item \code{summdata2}: Data frame summarizing log-rank statistics by iteration,
 stage, and active arm:
 \itemize{
-\item \code{iterationNumber}, \code{bestArm}, \code{stopStage},
+\item \code{iterationNumber}, \code{selectedArm}, \code{stopStage},
 \code{stageNumber}, \code{analysisTime}, \code{activeArm},
 \code{totalAccruals}, \code{totalEvents}, \code{totalDropouts},
 \code{uscore}, \code{vscore}, \code{logRankStatistic},
@@ -225,7 +243,7 @@ pre-specified calendar times.
   maxNumberOfIterations = 10000,
   maxNumberOfRawDatasetsPerStage = 1,
   seed = 314159,
-  nthreads = 0))
+  nthreads = 1))
 
 }
 \author{

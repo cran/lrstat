@@ -18,6 +18,7 @@ fseqbon(
   p,
   information,
   spendingTime = NULL,
+  lookback = TRUE,
   nthreads = 0
 )
 }
@@ -49,18 +50,26 @@ hypothesis. Defaults to a vector of 1s if not provided.}
 
 \item{incidenceMatrix}{The \code{kMax x m} incidence matrix indicating
 whether the specific hypothesis will be tested at the given look.
+Here \eqn{m} is the number of hypotheses.
 If not provided, defaults to testing each hypothesis at all study looks.}
 
 \item{k1}{The number of study looks at the interim analysis.}
 
-\item{p}{The matrix of raw p-values for each hypothesis by study look.}
+\item{p}{The \eqn{B k_1 \times m} matrix of raw p-values for each hypothesis
+by study look. Here \eqn{B} is the number of replications for simulations.
+In other words, the number of rows must be a multiple of \code{k1}.}
 
-\item{information}{The matrix of observed information for each hypothesis
-by study look.}
+\item{information}{The \eqn{B k_1 \times m} matrix of observed information
+for each hypothesis by study look.}
 
-\item{spendingTime}{The spending time for alpha spending by study look.
+\item{spendingTime}{The \eqn{B k_1 \times m} matrix of spending time for
+alpha spending by study look. Each element must be between 0 and 1,
+and the spending time must be increasing by study look for each hypothesis.
 If not provided, it is the same as \code{informationRates} calculated
 from \code{information} and \code{maxInformation}.}
+
+\item{lookback}{Whether to allow retesting at earlier looks. It defaults to
+\code{TRUE}.}
 
 \item{nthreads}{The number of threads to use in simulations (0 means
 the default RcppParallel behavior).}
@@ -72,6 +81,14 @@ rejected (0 if the hypothesis is not rejected).
 \description{
 Obtains the test results for group sequential trials using
 graphical approaches based on weighted Bonferroni tests.
+}
+\details{
+When \code{lookback = TRUE}, the procedure allows the user to retest an
+unrejected hypothesis at earlier looks if its weight increased after
+rejection of other hypotheses.
+The procedure will return the first look at which the
+specific hypothesis is rejected. If the hypothesis is not rejected at
+any look, it will return 0.
 }
 \examples{
 
