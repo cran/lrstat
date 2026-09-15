@@ -1,3 +1,65 @@
+# lrstat 0.3.4
+
+* removed the `rankp0` argument and output from the seamless design functions
+  and simulators, which now always select the most promising treatment at the
+  end of phase 2
+* added bm_rank and pe_rank methods to lrsim_bmTrtSel for rank-based Dunnett
+  adjustment for dose selection in stage 1 in seamless phase 2/3 designs
+* added `getNFromNeventsAndFollowup` and its C++ backend in `lrstat.cpp` for
+  accrual duration calculations under target-event and follow-up constraints
+* corrected the minimum weighted p-value ratio initialization in
+  `fadjpduncpp` (used by `fadjpdun`) from `1.0` to positive infinity so that
+  ratios exceeding 1 are properly accounted for when computing intersection
+  p-values
+* added the `simulate` parameter to the `lrschoenfeld` function, and
+  added a half-count correction for extreme simulated powers
+* added the Bonferroni p-value combination method `ctbonferroni` to
+  `lrsim_bmTrtSel`
+* added the familywise error rate `fwer` to the output of `lrsim_bmTrtSel`
+* added disjunctive and conjunctive power to each `byMethod` result from
+  `lrsim_bmTrtSel` and to the `run_scenario` output data frame
+* added event-driven phase III analyses to `lrsim_bmTrtSel` through the
+  `totalNumberOfEvents` target, while retaining `studyDurationPhase3` for
+  fixed-duration analyses
+* changed long-term time-to-event endpoint generation in `lrsim_bmTrtSel`
+  from response-status-stratified hazards to a copula-based approach, with
+  the latent biomarker response variable correlated directly with the TTE
+  endpoint
+* optimized the CE variants in `lrsim_bmTrtSel` by precalculating the
+  sample size based nominal time stage boundaries once before data generation
+* optimized selection-boundary calculations by making use of no efficacy
+  stopping in stage 1.
+* optimized `exitprob_seamless` under equal treatment effects by evaluating
+  the phase-2 selected-arm probabilities once and using arm symmetry for the
+  remaining arms
+* renamed the `fPCStagewise` input parameters `stg1_inthyp_nr` and
+  `stg2_elemhyp` to `stg1_inthyp_nr_idx` and `stg2_elemhyp_idx`, respectively,
+  to make their index semantics explicit and align them with the output names
+  and related adaptive-testing interfaces
+* standardized `lrsim_bmTrtSel` testing method identifiers to lowercase,
+  including inputs, returned `methods` and `byMethod` names, and
+  `sumdataTTE` rejection indicator columns
+* added `sumdataBIN` and `sumdataTTE` summary datasets to `lrsim_bmTrtSel`,
+  including `zBiomarker` in `sumdataBIN` and all individual and pooled
+  stage 1 log-rank Z statistics in `sumdataTTE` to allow derivation of
+  rejection decisions for all methods, along with optional subject-level
+  `rawdataBIN` and `rawdataTTE` datasets controlled by `maxNumberOfRawDatasets`
+* added `rmvnorm` and related multivariate-normal sampling helpers for drawing
+  correlated random vectors from a covariance matrix via Cholesky-based
+  generation and seeded overloads
+* added `pordmvnormr` to compute lower- and upper-tail probabilities for order
+  statistics of multivariate normal random variables, with analytic shortcuts
+  for nonnegative compound-symmetry covariance structures and
+  inclusion-exclusion over reduced-dimensional orthant probabilities for
+  general covariance matrices
+* removed `mvtnorm` from `Suggests`
+* changed the default value of `corrEfficacyToxicity` in
+  `lrsim_bmTrtSel_cpp()` from `0.5` to `0`
+* corrected a `collapse` argument typo in `print.nbpower`
+* consolidated alpha- and beta-spending function formatting across print
+  methods through the shared `.format_spending()` helper, preserving the
+  existing printed output
+
 # lrstat 0.3.3
 
 * standardized C++ pointer/reference declaration style across src with a

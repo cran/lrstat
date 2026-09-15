@@ -1,3 +1,32 @@
+# Helper function to format spending strings
+# Reduces code duplication across multiple print methods
+.format_spending <- function(type, param, user_vec, label) {
+  type <- tolower(type)
+
+  if (type == "of") {
+    label_name <- "O'Brien-Fleming"
+  } else if (type == "p") {
+    label_name <- "Pocock"
+  } else if (type == "wt") {
+    label_name <- paste0("Wang-Tsiatis(Delta = ", param, ")")
+  } else if (type == "sfof") {
+    label_name <- "Lan-DeMets O'Brien-Fleming"
+  } else if (type == "sfp") {
+    label_name <- "Lan-DeMets Pocock"
+  } else if (type == "sfkd") {
+    label_name <- paste0("KD(rho = ", param, ")")
+  } else if (type == "sfhsd") {
+    label_name <- paste0("HSD(gamma = ", param, ")")
+  } else if (type == "user") {
+    label_name <- paste0("User defined(",
+                         paste(user_vec, collapse = ","), ")")
+  } else {
+    label_name <- "None"
+  }
+
+  paste0(label, " spending: ", label_name)
+}
+
 #' @title Print Group Sequential Design
 #' @description Prints the stopping boundaries and information inflation
 #' factor for group sequential design.
@@ -52,49 +81,14 @@ print.design <- function(x, ...) {
 
     bsf <- tolower(x$settings$typeBetaSpending)
     bsfpar <- round(x$settings$parameterBetaSpending, 3)
-    bsfuser <- round(x$settings$userBetaSpending, 4)
-
-    if (asf == "of") {
-      str6 <- paste0("Alpha spending: O'Brien-Fleming")
-    } else if (asf == "p") {
-      str6 <- paste0("Alpha spending: Pocock")
-    } else if (asf == "wt") {
-      str6 <- paste0("Alpha spending: Wang-Tsiatis(Delta = ", asfpar, ")")
-    } else if (asf == "sfof") {
-      str6 <- paste0("Alpha spending: Lan-DeMets O'Brien-Fleming")
-    } else if (asf == "sfp") {
-      str6 <- paste0("Alpha spending: Lan-DeMets Pocock")
-    } else if (asf == "sfkd") {
-      str6 <- paste0("Alpha spending: KD(rho = ", asfpar, ")")
-    } else if (asf == "sfhsd") {
-      str6 <- paste0("Alpha spending: HSD(gamma = ", asfpar, ")")
-    } else if (asf == "user") {
-      str6 <- paste0("Alpha spending: User defined(",
-                     paste(asfuser, collapse = ","), ")")
+    bsfuser <- if (!is.null(x$settings$userBetaSpending)) {
+      round(x$settings$userBetaSpending, 4)
     } else {
-      str6 <- "Alpha spending: None"
+      ""
     }
 
-    if (bsf == "of") {
-      str7 <- paste0("beta spending: O'Brien-Fleming")
-    } else if (bsf == "p") {
-      str7 <- paste0("beta spending: Pocock")
-    } else if (bsf == "wt") {
-      str7 <- paste0("beta spending: Wang-Tsiatis(Delta = ", bsfpar, ")")
-    } else if (bsf == "sfof") {
-      str7 <- paste0("beta spending: Lan-DeMets O'Brien-Fleming")
-    } else if (bsf == "sfp") {
-      str7 <- paste0("beta spending: Lan-DeMets Pocock")
-    } else if (bsf == "sfkd") {
-      str7 <- paste0("beta spending: KD(rho = ", bsfpar, ")")
-    } else if (bsf == "sfhsd") {
-      str7 <- paste0("beta spending: HSD(gamma = ", bsfpar, ")")
-    } else if (bsf == "user") {
-      str7 <- paste0("beta spending: User defined(",
-                     paste(bsfuser, collapse = ","), ")")
-    } else {
-      str7 <- "beta spending: None"
-    }
+    str6 <- .format_spending(asf, asfpar, asfuser, "Alpha")
+    str7 <- .format_spending(bsf, bsfpar, bsfuser, "beta")
 
     if (!any(is.na(x$settings$spendingTime)) &&
         !all(x$settings$spendingTime == s$informationRates)) {
@@ -248,26 +242,7 @@ print.designEquiv <- function(x, ...) {
     asfpar <- round(x$settings$parameterAlphaSpending, 3)
     asfuser <- round(x$settings$userAlphaSpending, 4)
 
-    if (asf == "of") {
-      str6 <- paste0("Alpha spending: O'Brien-Fleming")
-    } else if (asf == "p") {
-      str6 <- paste0("Alpha spending: Pocock")
-    } else if (asf == "wt") {
-      str6 <- paste0("Alpha spending: Wang-Tsiatis(Delta = ", asfpar, ")")
-    } else if (asf == "sfof") {
-      str6 <- paste0("Alpha spending: Lan-DeMets O'Brien-Fleming")
-    } else if (asf == "sfp") {
-      str6 <- paste0("Alpha spending: Lan-DeMets Pocock")
-    } else if (asf == "sfkd") {
-      str6 <- paste0("Alpha spending: KD(rho = ", asfpar, ")")
-    } else if (asf == "sfhsd") {
-      str6 <- paste0("Alpha spending: HSD(gamma = ", asfpar, ")")
-    } else if (asf == "user") {
-      str6 <- paste0("Alpha spending: User defined(",
-                     paste(asfuser, collapse = ","), ")")
-    } else {
-      str6 <- "Alpha spending: None"
-    }
+    str6 <- .format_spending(asf, asfpar, asfuser, "Alpha")
 
     if (!any(is.na(x$settings$spendingTime)) &&
         !all(x$settings$spendingTime == s$informationRates)) {
@@ -597,49 +572,14 @@ print.lrpower <- function(x, ...) {
 
     bsf <- tolower(x$settings$typeBetaSpending)
     bsfpar <- round(x$settings$parameterBetaSpending, 3)
-
-    if (asf == "of") {
-      str10 <- paste0("Alpha spending: O'Brien-Fleming")
-    } else if (asf == "p") {
-      str10 <- paste0("Alpha spending: Pocock")
-    } else if (asf == "wt") {
-      str10 <- paste0("Alpha spending: Wang-Tsiatis(Delta = ", asfpar, ")")
-    } else if (asf == "sfof") {
-      str10 <- paste0("Alpha spending: Lan-DeMets O'Brien-Fleming")
-    } else if (asf == "sfp") {
-      str10 <- paste0("Alpha spending: Lan-DeMets Pocock")
-    } else if (asf == "sfkd") {
-      str10 <- paste0("Alpha spending: KD(rho = ", asfpar, ")")
-    } else if (asf == "sfhsd") {
-      str10 <- paste0("Alpha spending: HSD(gamma = ", asfpar, ")")
-    } else if (asf == "user") {
-      str10 <- paste0("Alpha spending: User defined(",
-                      paste(asfuser, collapse = ","), ")")
+    bsfuser <- if (!is.null(x$settings$userBetaSpending)) {
+      round(x$settings$userBetaSpending, 4)
     } else {
-      str10 <- "Alpha spending: None"
+      ""
     }
 
-    if (bsf == "of") {
-      str11 <- paste0("beta spending: O'Brien-Fleming")
-    } else if (bsf == "p") {
-      str11 <- paste0("beta spending: Pocock")
-    } else if (bsf == "wt") {
-      str11 <- paste0("beta spending: Wang-Tsiatis(Delta = ", bsfpar, ")")
-    } else if (bsf == "sfof") {
-      str11 <- paste0("beta spending: Lan-DeMets O'Brien-Fleming")
-    } else if (bsf == "sfp") {
-      str11 <- paste0("beta spending: Lan-DeMets Pocock")
-    } else if (bsf == "sfkd") {
-      str11 <- paste0("beta spending: KD(rho = ", bsfpar, ")")
-    } else if (bsf == "sfhsd") {
-      str11 <- paste0("beta spending: HSD(gamma = ", bsfpar, ")")
-    } else if (bsf == "user") {
-      bsfuser <- round(x$settings$userBetaSpending, 4)
-      str11 <- paste0("beta spending: User defined(",
-                      paste(bsfuser, collapse = ","), ")")
-    } else {
-      str11 <- "beta spending: None"
-    }
+    str10 <- .format_spending(asf, asfpar, asfuser, "Alpha")
+    str11 <- .format_spending(bsf, bsfpar, bsfuser, "beta")
 
     if (!any(is.na(x$settings$spendingTime)) &&
         !all(x$settings$spendingTime == s$informationRates)) {
@@ -904,7 +844,7 @@ print.nbpower <- function(x, ...) {
                        collapse = " "), ", ",
                  "dispersion for control: ",
                  paste(round(x$settings$kappa2, 3),
-                       collase = " "))
+                       collapse = " "))
 
   str5 <- paste0("Overall power: ",
                  round(a$overallReject, 4), ", ",
@@ -980,47 +920,14 @@ print.nbpower <- function(x, ...) {
 
     bsf <- tolower(x$settings$typeBetaSpending)
     bsfpar <- round(x$settings$parameterBetaSpending, 3)
-
-    if (asf == "of") {
-      str14 <- paste0("Alpha spending: O'Brien-Fleming")
-    } else if (asf == "p") {
-      str14 <- paste0("Alpha spending: Pocock")
-    } else if (asf == "wt") {
-      str14 <- paste0("Alpha spending: Wang-Tsiatis(Delta = ", asfpar, ")")
-    } else if (asf == "sfof") {
-      str14 <- paste0("Alpha spending: Lan-DeMets O'Brien-Fleming")
-    } else if (asf == "sfp") {
-      str14 <- paste0("Alpha spending: Lan-DeMets Pocock")
-    } else if (asf == "sfkd") {
-      str14 <- paste0("Alpha spending: KD(rho = ", asfpar, ")")
-    } else if (asf == "sfhsd") {
-      str14 <- paste0("Alpha spending: HSD(gamma = ", asfpar, ")")
-    } else if (asf == "user") {
-      str14 <- paste0("Alpha spending: User defined(",
-                      paste(asfuser, collapse = ","), ")")
+    bsfuser <- if (!is.null(x$settings$userBetaSpending)) {
+      round(x$settings$userBetaSpending, 4)
     } else {
-      str14 <- "Alpha spending: None"
+      ""
     }
 
-    if (bsf == "of") {
-      str15 <- paste0("beta spending: O'Brien-Fleming")
-    } else if (bsf == "p") {
-      str15 <- paste0("beta spending: Pocock")
-    } else if (bsf == "wt") {
-      str15 <- paste0("beta spending: Wang-Tsiatis(Delta = ", bsfpar, ")")
-    } else if (bsf == "sfof") {
-      str15 <- paste0("beta spending: Lan-DeMets O'Brien-Fleming")
-    } else if (bsf == "sfp") {
-      str15 <- paste0("beta spending: Lan-DeMets Pocock")
-    } else if (bsf == "sfkd") {
-      str15 <- paste0("beta spending: KD(rho = ", bsfpar, ")")
-    } else if (bsf == "sfhsd") {
-      str15 <- paste0("beta spending: HSD(gamma = ", bsfpar, ")")
-    } else if (bsf == "user") {
-      str15 <- paste0("beta spending: User defined")
-    } else {
-      str15 <- "beta spending: None"
-    }
+    str14 <- .format_spending(asf, asfpar, asfuser, "Alpha")
+    str15 <- .format_spending(bsf, bsfpar, bsfuser, "beta")
 
     if (!any(is.na(x$settings$spendingTime)) &&
         !all(x$settings$spendingTime == s$informationRates)) {
@@ -1279,26 +1186,7 @@ print.nbpowerequiv <- function(x, ...) {
     asfpar <- round(x$settings$parameterAlphaSpending, 3)
     asfuser <- round(x$settings$userAlphaSpending, 4)
 
-    if (asf == "of") {
-      str13 <- paste0("Alpha spending: O'Brien-Fleming")
-    } else if (asf == "p") {
-      str13 <- paste0("Alpha spending: Pocock")
-    } else if (asf == "wt") {
-      str13 <- paste0("Alpha spending: Wang-Tsiatis(Delta = ", asfpar, ")")
-    } else if (asf == "sfof") {
-      str13 <- paste0("Alpha spending: Lan-DeMets O'Brien-Fleming")
-    } else if (asf == "sfp") {
-      str13 <- paste0("Alpha spending: Lan-DeMets Pocock")
-    } else if (asf == "sfkd") {
-      str13 <- paste0("Alpha spending: KD(rho = ", asfpar, ")")
-    } else if (asf == "sfhsd") {
-      str13 <- paste0("Alpha spending: HSD(gamma = ", asfpar, ")")
-    } else if (asf == "user") {
-      str13 <- paste0("Alpha spending: User defined(",
-                      paste(asfuser, collapse = ","), ")")
-    } else {
-      str13 <- "Alpha spending: None"
-    }
+    str13 <- .format_spending(asf, asfpar, asfuser, "Alpha")
 
     if (!any(is.na(x$settings$spendingTime)) &&
         !all(x$settings$spendingTime == s$informationRates)) {
@@ -1535,47 +1423,14 @@ print.nbpower1s <- function(x, ...) {
 
     bsf <- tolower(x$settings$typeBetaSpending)
     bsfpar <- round(x$settings$parameterBetaSpending, 3)
-
-    if (asf == "of") {
-      str12 <- paste0("Alpha spending: O'Brien-Fleming")
-    } else if (asf == "p") {
-      str12 <- paste0("Alpha spending: Pocock")
-    } else if (asf == "wt") {
-      str12 <- paste0("Alpha spending: Wang-Tsiatis(Delta = ", asfpar, ")")
-    } else if (asf == "sfof") {
-      str12 <- paste0("Alpha spending: Lan-DeMets O'Brien-Fleming")
-    } else if (asf == "sfp") {
-      str12 <- paste0("Alpha spending: Lan-DeMets Pocock")
-    } else if (asf == "sfkd") {
-      str12 <- paste0("Alpha spending: KD(rho = ", asfpar, ")")
-    } else if (asf == "sfhsd") {
-      str12 <- paste0("Alpha spending: HSD(gamma = ", asfpar, ")")
-    } else if (asf == "user") {
-      str12 <- paste0("Alpha spending: User defined(",
-                      paste(asfuser, collapse = ","), ")")
+    bsfuser <- if (!is.null(x$settings$userBetaSpending)) {
+      round(x$settings$userBetaSpending, 4)
     } else {
-      str12 <- "Alpha spending: None"
+      ""
     }
 
-    if (bsf == "of") {
-      str13 <- paste0("beta spending: O'Brien-Fleming")
-    } else if (bsf == "p") {
-      str13 <- paste0("beta spending: Pocock")
-    } else if (bsf == "wt") {
-      str13 <- paste0("beta spending: Wang-Tsiatis(Delta = ", bsfpar, ")")
-    } else if (bsf == "sfof") {
-      str13 <- paste0("beta spending: Lan-DeMets O'Brien-Fleming")
-    } else if (bsf == "sfp") {
-      str13 <- paste0("beta spending: Lan-DeMets Pocock")
-    } else if (bsf == "sfkd") {
-      str13 <- paste0("beta spending: KD(rho = ", bsfpar, ")")
-    } else if (bsf == "sfhsd") {
-      str13 <- paste0("beta spending: HSD(gamma = ", bsfpar, ")")
-    } else if (bsf == "user") {
-      str13 <- paste0("beta spending: User defined")
-    } else {
-      str13 <- "beta spending: None"
-    }
+    str12 <- .format_spending(asf, asfpar, asfuser, "Alpha")
+    str13 <- .format_spending(bsf, bsfpar, bsfuser, "beta")
 
     if (!any(is.na(x$settings$spendingTime)) &&
         !all(x$settings$spendingTime == s$informationRates)) {
@@ -1782,49 +1637,14 @@ print.kmpower <- function(x, ...) {
 
     bsf <- tolower(x$settings$typeBetaSpending)
     bsfpar <- round(x$settings$parameterBetaSpending, 3)
-
-    if (asf == "of") {
-      str11 <- paste0("Alpha spending: O'Brien-Fleming")
-    } else if (asf == "p") {
-      str11 <- paste0("Alpha spending: Pocock")
-    } else if (asf == "wt") {
-      str11 <- paste0("Alpha spending: Wang-Tsiatis(Delta = ", asfpar, ")")
-    } else if (asf == "sfof") {
-      str11 <- paste0("Alpha spending: Lan-DeMets O'Brien-Fleming")
-    } else if (asf == "sfp") {
-      str11 <- paste0("Alpha spending: Lan-DeMets Pocock")
-    } else if (asf == "sfkd") {
-      str11 <- paste0("Alpha spending: KD(rho = ", asfpar, ")")
-    } else if (asf == "sfhsd") {
-      str11 <- paste0("Alpha spending: HSD(gamma = ", asfpar, ")")
-    } else if (asf == "user") {
-      str11 <- paste0("Alpha spending: User defined(",
-                      paste(asfuser, collapse = ","), ")")
+    bsfuser <- if (!is.null(x$settings$userBetaSpending)) {
+      round(x$settings$userBetaSpending, 4)
     } else {
-      str11 <- "Alpha spending: None"
+      ""
     }
 
-    if (bsf == "of") {
-      str12 <- paste0("beta spending: O'Brien-Fleming")
-    } else if (bsf == "p") {
-      str12 <- paste0("beta spending: Pocock")
-    } else if (bsf == "wt") {
-      str12 <- paste0("beta spending: Wang-Tsiatis(Delta = ", bsfpar, ")")
-    } else if (bsf == "sfof") {
-      str12 <- paste0("beta spending: Lan-DeMets O'Brien-Fleming")
-    } else if (bsf == "sfp") {
-      str12 <- paste0("beta spending: Lan-DeMets Pocock")
-    } else if (bsf == "sfkd") {
-      str12 <- paste0("beta spending: KD(rho = ", bsfpar, ")")
-    } else if (bsf == "sfhsd") {
-      str12 <- paste0("beta spending: HSD(gamma = ", bsfpar, ")")
-    } else if (bsf == "user") {
-      bsfuser <- round(x$settings$userBetaSpending, 4)
-      str12 <- paste0("beta spending: User defined(",
-                      paste(bsfuser, collapse = ","), ")")
-    } else {
-      str12 <- "beta spending: None"
-    }
+    str11 <- .format_spending(asf, asfpar, asfuser, "Alpha")
+    str12 <- .format_spending(bsf, bsfpar, bsfuser, "beta")
 
     if (!any(is.na(x$settings$spendingTime)) &&
         !all(x$settings$spendingTime == s$informationRates)) {
@@ -2033,47 +1853,14 @@ print.rmpower <- function(x, ...) {
 
     bsf <- tolower(x$settings$typeBetaSpending)
     bsfpar <- round(x$settings$parameterBetaSpending, 3)
-
-    if (asf == "of") {
-      str11 <- paste0("Alpha spending: O'Brien-Fleming")
-    } else if (asf == "p") {
-      str11 <- paste0("Alpha spending: Pocock")
-    } else if (asf == "wt") {
-      str11 <- paste0("Alpha spending: Wang-Tsiatis(Delta = ", asfpar, ")")
-    } else if (asf == "sfof") {
-      str11 <- paste0("Alpha spending: Lan-DeMets O'Brien-Fleming")
-    } else if (asf == "sfp") {
-      str11 <- paste0("Alpha spending: Lan-DeMets Pocock")
-    } else if (asf == "sfkd") {
-      str11 <- paste0("Alpha spending: KD(rho = ", asfpar, ")")
-    } else if (asf == "sfhsd") {
-      str11 <- paste0("Alpha spending: HSD(gamma = ", asfpar, ")")
-    } else if (asf == "user") {
-      str11 <- paste0("Alpha spending: User defined(",
-                      paste(asfuser, collapse = ","), ")")
+    bsfuser <- if (!is.null(x$settings$userBetaSpending)) {
+      round(x$settings$userBetaSpending, 4)
     } else {
-      str11 <- "Alpha spending: None"
+      ""
     }
 
-    if (bsf == "of") {
-      str12 <- paste0("beta spending: O'Brien-Fleming")
-    } else if (bsf == "p") {
-      str12 <- paste0("beta spending: Pocock")
-    } else if (bsf == "wt") {
-      str12 <- paste0("beta spending: Wang-Tsiatis(Delta = ", bsfpar, ")")
-    } else if (bsf == "sfof") {
-      str12 <- paste0("beta spending: Lan-DeMets O'Brien-Fleming")
-    } else if (bsf == "sfp") {
-      str12 <- paste0("beta spending: Lan-DeMets Pocock")
-    } else if (bsf == "sfkd") {
-      str12 <- paste0("beta spending: KD(rho = ", bsfpar, ")")
-    } else if (bsf == "sfhsd") {
-      str12 <- paste0("beta spending: HSD(gamma = ", bsfpar, ")")
-    } else if (bsf == "user") {
-      str12 <- paste0("beta spending: User defined")
-    } else {
-      str12 <- "beta spending: None"
-    }
+    str11 <- .format_spending(asf, asfpar, asfuser, "Alpha")
+    str12 <- .format_spending(bsf, bsfpar, bsfuser, "beta")
 
     if (!any(is.na(x$settings$spendingTime)) &&
         !all(x$settings$spendingTime == s$informationRates)) {
@@ -2283,26 +2070,7 @@ print.kmpowerequiv <- function(x, ...) {
     asfpar <- round(x$settings$parameterAlphaSpending, 3)
     asfuser <- round(x$settings$userAlphaSpending, 4)
 
-    if (asf == "of") {
-      str11 <- paste0("Alpha spending: O'Brien-Fleming")
-    } else if (asf == "p") {
-      str11 <- paste0("Alpha spending: Pocock")
-    } else if (asf == "wt") {
-      str11 <- paste0("Alpha spending: Wang-Tsiatis(Delta = ", asfpar, ")")
-    } else if (asf == "sfof") {
-      str11 <- paste0("Alpha spending: Lan-DeMets O'Brien-Fleming")
-    } else if (asf == "sfp") {
-      str11 <- paste0("Alpha spending: Lan-DeMets Pocock")
-    } else if (asf == "sfkd") {
-      str11 <- paste0("Alpha spending: KD(rho = ", asfpar, ")")
-    } else if (asf == "sfhsd") {
-      str11 <- paste0("Alpha spending: HSD(gamma = ", asfpar, ")")
-    } else if (asf == "user") {
-      str11 <- paste0("Alpha spending: User defined(",
-                      paste(asfuser, collapse = ","), ")")
-    } else {
-      str11 <- "Alpha spending: None"
-    }
+    str11 <- .format_spending(asf, asfpar, asfuser, "Alpha")
 
     if (!any(is.na(x$settings$spendingTime)) &&
         !all(x$settings$spendingTime == s$informationRates)) {
@@ -2490,26 +2258,7 @@ print.rmpowerequiv <- function(x, ...) {
     asfpar <- round(x$settings$parameterAlphaSpending, 3)
     asfuser <- round(x$settings$userAlphaSpending, 4)
 
-    if (asf == "of") {
-      str11 <- paste0("Alpha spending: O'Brien-Fleming")
-    } else if (asf == "p") {
-      str11 <- paste0("Alpha spending: Pocock")
-    } else if (asf == "wt") {
-      str11 <- paste0("Alpha spending: Wang-Tsiatis(Delta = ", asfpar, ")")
-    } else if (asf == "sfof") {
-      str11 <- paste0("Alpha spending: Lan-DeMets O'Brien-Fleming")
-    } else if (asf == "sfp") {
-      str11 <- paste0("Alpha spending: Lan-DeMets Pocock")
-    } else if (asf == "sfkd") {
-      str11 <- paste0("Alpha spending: KD(rho = ", asfpar, ")")
-    } else if (asf == "sfhsd") {
-      str11 <- paste0("Alpha spending: HSD(gamma = ", asfpar, ")")
-    } else if (asf == "user") {
-      str11 <- paste0("Alpha spending: User defined(",
-                      paste(asfuser, collapse = ","), ")")
-    } else {
-      str11 <- "Alpha spending: None"
-    }
+    str11 <- .format_spending(asf, asfpar, asfuser, "Alpha")
 
     if (!any(is.na(x$settings$spendingTime)) &&
         !all(x$settings$spendingTime == s$informationRates)) {
@@ -2699,26 +2448,7 @@ print.lrpowerequiv <- function(x, ...) {
     asfpar <- round(x$settings$parameterAlphaSpending, 3)
     asfuser <- round(x$settings$userAlphaSpending, 4)
 
-    if (asf == "of") {
-      str11 <- paste0("Alpha spending: O'Brien-Fleming")
-    } else if (asf == "p") {
-      str11 <- paste0("Alpha spending: Pocock")
-    } else if (asf == "wt") {
-      str11 <- paste0("Alpha spending: Wang-Tsiatis(Delta = ", asfpar, ")")
-    } else if (asf == "sfof") {
-      str11 <- paste0("Alpha spending: Lan-DeMets O'Brien-Fleming")
-    } else if (asf == "sfp") {
-      str11 <- paste0("Alpha spending: Lan-DeMets Pocock")
-    } else if (asf == "sfkd") {
-      str11 <- paste0("Alpha spending: KD(rho = ", asfpar, ")")
-    } else if (asf == "sfhsd") {
-      str11 <- paste0("Alpha spending: HSD(gamma = ", asfpar, ")")
-    } else if (asf == "user") {
-      str11 <- paste0("Alpha spending: User defined(",
-                      paste(asfuser, collapse = ","), ")")
-    } else {
-      str11 <- "Alpha spending: None"
-    }
+    str11 <- .format_spending(asf, asfpar, asfuser, "Alpha")
 
     if (!any(is.na(x$settings$spendingTime)) &&
         !all(x$settings$spendingTime == s$informationRates)) {
@@ -2909,48 +2639,13 @@ print.kmpower1s <- function(x, ...) {
     bsf <- tolower(x$settings$typeBetaSpending)
     bsfpar <- round(x$settings$parameterBetaSpending, 3)
 
-    if (asf == "of") {
-      str10 <- paste0("Alpha spending: O'Brien-Fleming")
-    } else if (asf == "p") {
-      str10 <- paste0("Alpha spending: Pocock")
-    } else if (asf == "wt") {
-      str10 <- paste0("Alpha spending: Wang-Tsiatis(Delta = ", asfpar, ")")
-    } else if (asf == "sfof") {
-      str10 <- paste0("Alpha spending: Lan-DeMets O'Brien-Fleming")
-    } else if (asf == "sfp") {
-      str10 <- paste0("Alpha spending: Lan-DeMets Pocock")
-    } else if (asf == "sfkd") {
-      str10 <- paste0("Alpha spending: KD(rho = ", asfpar, ")")
-    } else if (asf == "sfhsd") {
-      str10 <- paste0("Alpha spending: HSD(gamma = ", asfpar, ")")
-    } else if (asf == "user") {
-      str10 <- paste0("Alpha spending: User defined(",
-                      paste(asfuser, collapse = ","), ")")
+    bsfuser <- if (!is.null(x$settings$userBetaSpending)) {
+      round(x$settings$userBetaSpending, 4)
     } else {
-      str10 <- "Alpha spending: None"
+      ""
     }
-
-    if (bsf == "of") {
-      str11 <- paste0("beta spending: O'Brien-Fleming")
-    } else if (bsf == "p") {
-      str11 <- paste0("beta spending: Pocock")
-    } else if (bsf == "wt") {
-      str11 <- paste0("beta spending: Wang-Tsiatis(Delta = ", bsfpar, ")")
-    } else if (bsf == "sfof") {
-      str11 <- paste0("beta spending: Lan-DeMets O'Brien-Fleming")
-    } else if (bsf == "sfp") {
-      str11 <- paste0("beta spending: Lan-DeMets Pocock")
-    } else if (bsf == "sfkd") {
-      str11 <- paste0("beta spending: KD(rho = ", bsfpar, ")")
-    } else if (bsf == "sfhsd") {
-      str11 <- paste0("beta spending: HSD(gamma = ", bsfpar, ")")
-    } else if (bsf == "user") {
-      bsfuser <- round(x$settings$userBetaSpending, 4)
-      str11 <- paste0("beta spending: User defined(",
-                      paste(bsfuser, collapse = ","), ")")
-    } else {
-      str11 <- "beta spending: None"
-    }
+    str10 <- .format_spending(asf, asfpar, asfuser, "Alpha")
+    str11 <- .format_spending(bsf, bsfpar, bsfuser, "beta")
 
     if (!any(is.na(x$settings$spendingTime)) &&
         !all(x$settings$spendingTime == s$informationRates)) {
@@ -3160,46 +2855,14 @@ print.rmpower1s <- function(x, ...) {
     bsf <- tolower(x$settings$typeBetaSpending)
     bsfpar <- round(x$settings$parameterBetaSpending, 3)
 
-    if (asf == "of") {
-      str10 <- paste0("Alpha spending: O'Brien-Fleming")
-    } else if (asf == "p") {
-      str10 <- paste0("Alpha spending: Pocock")
-    } else if (asf == "wt") {
-      str10 <- paste0("Alpha spending: Wang-Tsiatis(Delta = ", asfpar, ")")
-    } else if (asf == "sfof") {
-      str10 <- paste0("Alpha spending: Lan-DeMets O'Brien-Fleming")
-    } else if (asf == "sfp") {
-      str10 <- paste0("Alpha spending: Lan-DeMets Pocock")
-    } else if (asf == "sfkd") {
-      str10 <- paste0("Alpha spending: KD(rho = ", asfpar, ")")
-    } else if (asf == "sfhsd") {
-      str10 <- paste0("Alpha spending: HSD(gamma = ", asfpar, ")")
-    } else if (asf == "user") {
-      str10 <- paste0("Alpha spending: User defined(",
-                      paste(asfuser, collapse = ","), ")")
+    bsfuser <- if (!is.null(x$settings$userBetaSpending)) {
+      round(x$settings$userBetaSpending, 4)
     } else {
-      str10 <- "Alpha spending: None"
+      ""
     }
 
-    if (bsf == "of") {
-      str11 <- paste0("beta spending: O'Brien-Fleming")
-    } else if (bsf == "p") {
-      str11 <- paste0("beta spending: Pocock")
-    } else if (bsf == "wt") {
-      str11 <- paste0("beta spending: Wang-Tsiatis(Delta = ", bsfpar, ")")
-    } else if (bsf == "sfof") {
-      str11 <- paste0("beta spending: Lan-DeMets O'Brien-Fleming")
-    } else if (bsf == "sfp") {
-      str11 <- paste0("beta spending: Lan-DeMets Pocock")
-    } else if (bsf == "sfkd") {
-      str11 <- paste0("beta spending: KD(rho = ", bsfpar, ")")
-    } else if (bsf == "sfhsd") {
-      str11 <- paste0("beta spending: HSD(gamma = ", bsfpar, ")")
-    } else if (bsf == "user") {
-      str11 <- paste0("beta spending: User defined")
-    } else {
-      str11 <- "beta spending: None"
-    }
+    str10 <- .format_spending(asf, asfpar, asfuser, "Alpha")
+    str11 <- .format_spending(bsf, bsfpar, bsfuser, "beta")
 
     if (!any(is.na(x$settings$spendingTime)) &&
         !all(x$settings$spendingTime == s$informationRates)) {
@@ -3676,7 +3339,7 @@ print.seamless <- function(x, ...) {
 
   str3 <- paste0("Number of active arms in phase 2: ", a$M)
 
-  str4 <- paste0("Selected phase-2 rank carried forward: ", a$rankp0)
+  str4 <- "Most promising phase-2 arm carried forward"
 
   str5 <- paste0("Randomization ratio of each active vs. control: ", a$r)
 
@@ -3707,49 +3370,14 @@ print.seamless <- function(x, ...) {
 
   bsf <- tolower(x$settings$typeBetaSpending)
   bsfpar <- round(x$settings$parameterBetaSpending, 3)
-  bsfuser <- round(x$settings$userBetaSpending, 4)
-
-  if (asf == "of") {
-    str12 <- paste0("Alpha spending: O'Brien-Fleming")
-  } else if (asf == "p") {
-    str12 <- paste0("Alpha spending: Pocock")
-  } else if (asf == "wt") {
-    str12 <- paste0("Alpha spending: Wang-Tsiatis(Delta = ", asfpar, ")")
-  } else if (asf == "sfof") {
-    str12 <- paste0("Alpha spending: Lan-DeMets O'Brien-Fleming")
-  } else if (asf == "sfp") {
-    str12 <- paste0("Alpha spending: Lan-DeMets Pocock")
-  } else if (asf == "sfkd") {
-    str12 <- paste0("Alpha spending: KD(rho = ", asfpar, ")")
-  } else if (asf == "sfhsd") {
-    str12 <- paste0("Alpha spending: HSD(gamma = ", asfpar, ")")
-  } else if (asf == "user") {
-    str12 <- paste0("Alpha spending: User defined(",
-                   paste(asfuser, collapse = ","), ")")
+  bsfuser <- if (!is.null(x$settings$userBetaSpending)) {
+    round(x$settings$userBetaSpending, 4)
   } else {
-    str12 <- "Alpha spending: None"
+    ""
   }
 
-  if (bsf == "of") {
-    str13 <- paste0("beta spending: O'Brien-Fleming")
-  } else if (bsf == "p") {
-    str13 <- paste0("beta spending: Pocock")
-  } else if (bsf == "wt") {
-    str13 <- paste0("beta spending: Wang-Tsiatis(Delta = ", bsfpar, ")")
-  } else if (bsf == "sfof") {
-    str13 <- paste0("beta spending: Lan-DeMets O'Brien-Fleming")
-  } else if (bsf == "sfp") {
-    str13 <- paste0("beta spending: Lan-DeMets Pocock")
-  } else if (bsf == "sfkd") {
-    str13 <- paste0("beta spending: KD(rho = ", bsfpar, ")")
-  } else if (bsf == "sfhsd") {
-    str13 <- paste0("beta spending: HSD(gamma = ", bsfpar, ")")
-  } else if (bsf == "user") {
-    str13 <- paste0("beta spending: User defined(",
-                    paste(bsfuser, collapse = ","), ")")
-  } else {
-    str13 <- "beta spending: None"
-  }
+  str12 <- .format_spending(asf, asfpar, asfuser, "Alpha")
+  str13 <- .format_spending(bsf, bsfpar, bsfuser, "beta")
 
   if (!any(is.na(x$settings$spendingTime)) &&
       !all(x$settings$spendingTime == s$informationRates)) {
@@ -3837,7 +3465,7 @@ print.seamless <- function(x, ...) {
 
   df3 <- t(t)
   rownames(df3) <- c("Treatment effect (theta)",
-                     paste0("Selected at phase-2 rank ", a$rankp0),
+                     "Selected as most promising phase-2 arm",
                      "Power",
                      "Conditional power")
   colnames(df3) <- paste("Arm", seq_len(ncol(df3)), sep=" ")
@@ -3877,7 +3505,7 @@ print.adaptDesign_seamless <- function(x, ...) {
 
   str3 <- paste0("Number of active arms in phase 2: ", des1$M)
 
-  str4 <- paste0("Selected phase-2 rank carried forward: ", des1$rankp0)
+  str4 <- "Most promising phase-2 arm carried forward"
 
   str5 <- paste0("Randomization ratio of each active vs. control: ", des1$r)
 
@@ -3890,11 +3518,13 @@ print.adaptDesign_seamless <- function(x, ...) {
                  round(des1$maxInformation, 2))
 
   str9 <- paste0("Interim adaptation look in Phase 3: ", des1$L, ", ",
-                 "z-statistic value: ", paste(round(des1$zL, 3), collapse = ", "))
+                 "z-statistic value: ",
+                 paste(round(des1$zL, 3), collapse = ", "))
 
   str10 <- paste0("theta: ", round(des1$theta, 3))
 
-  str11 <- paste0("Conditional type I error: ", round(des1$conditionalAlpha, 4),
+  str11 <- paste0("Conditional type I error: ",
+                  round(des1$conditionalAlpha, 4),
                   ", conditional power: ", round(des1$conditionalPower, 3))
 
   str12 <- paste0("Muller & Schafer method for secondary trial: ",
@@ -4013,13 +3643,14 @@ print.adaptDesign_seamless <- function(x, ...) {
 
   str2 <- "Adaptive Phase 2/3 seamless design"
 
-  str3 <- paste0("Selected phase-2 rank carried forward: ", des3$rankp0)
+  str3 <- "Most promising phase-2 arm carried forward"
   str4 <- paste0("Total number of looks in Phase 3: ", des3$kMax - 1)
   str5 <- paste0("Maximum information for pairwise comparion: ",
                  round(des3$maxInformation, 2))
 
   str6 <- paste0("Interim adaptation look in Phase 3: ", des3$L, ", ",
-                 "z-statistic value: ", paste(round(des3$zL, 3), collapse = ", "))
+                 "z-statistic value: ",
+                 paste(round(des3$zL, 3), collapse = ", "))
 
   df3a <- data.frame(x = rep("", 7))
   colnames(df3a) <- NULL
@@ -4063,8 +3694,10 @@ print.adaptDesign_seamless <- function(x, ...) {
 }
 
 
-#' @title Print Simulation Results for Phase 2/3 Seamless Design for Risk Difference
-#' @description Prints the summary statistics from simulation for risk difference.
+#' @title Print Simulation Results for Phase 2/3 Seamless Design for Risk
+#' Difference
+#' @description Prints the summary statistics from simulation for risk
+#' difference.
 #'
 #' @param x The rdsim_seamless object to print.
 #' @param ... Ensures that all arguments starting from "..." are named.
@@ -4095,7 +3728,7 @@ print.rdsim_seamless <- function(x, ...) {
 
   str4 <- paste0("Number of looks in phase 3: ", a$K)
 
-  str5 <- paste0("Selected rank in phase 2: ", a$rankp0)
+  str5 <- "Most promising phase-2 arm selected"
 
   str6 <- paste0("Expected # events: ",
                  round(a$expectedNumberOfEvents, 1))
@@ -4123,7 +3756,7 @@ print.rdsim_seamless <- function(x, ...) {
   colnames(df1b) <- paste("Stage", seq_len(ncol(df1b)), sep = " ")
 
   df2a <- t(data.frame(selectionProb = a$selectionProb))
-  rownames(df2a) <- "Selected at prespecified rank in phase 2"
+  rownames(df2a) <- "Selected as most promising in phase 2"
   colnames(df2a) <- paste("Arm", seq_len(ncol(df2a)), sep = " ")
 
   df2a2 <- t(data.frame(selectToStage2 = a$selectToStage2))
@@ -4186,7 +3819,8 @@ print.rdsim_seamless <- function(x, ...) {
 }
 
 
-#' @title Print Simulation Results for Phase 2/3 Seamless Design for Logrank Test
+#' @title Print Simulation Results for Phase 2/3 Seamless Design for Logrank
+#' Test
 #' @description Prints the summary statistics from simulation for logrank test.
 #'
 #' @param x The lrsim_seamless object to print.
@@ -4223,7 +3857,7 @@ print.lrsim_seamless <- function(x, ...) {
 
   str4 <- paste0("Number of looks in phase 3: ", a$K)
 
-  str5 <- paste0("Selected rank in phase 2: ", a$rankp0)
+  str5 <- "Most promising phase-2 arm selected"
 
   str6 <- paste0("Expected # events: ",
                  round(a$expectedNumberOfEvents, 1))
@@ -4256,7 +3890,7 @@ print.lrsim_seamless <- function(x, ...) {
   colnames(df1b) <- paste("Stage", seq_len(ncol(df1b)), sep=" ")
 
   df2a <- t(data.frame(selectionProb = a$selectionProb))
-  rownames(df2a) <- "Selected at prespecified rank in phase 2"
+  rownames(df2a) <- "Selected as most promising in phase 2"
   colnames(df2a) <- paste("Arm", seq_len(ncol(df2a)), sep=" ")
 
   df2a2 <- t(data.frame(selectToStage2 = a$selectToStage2))
@@ -4320,6 +3954,19 @@ print.lrsim_seamless <- function(x, ...) {
   invisible(x)
 }
 
+lrsim_bmTrtSel_method_labels <- function() {
+  c(ctbonferroni = "CT-Bonferroni", ctdunnett = "CT-Dunnett",
+    ctsimes = "CT-Simes",
+    ctpooled = "CT-Pooled", cer = "CER",
+    tsssd.k = "TSSSD-K", tsssd.uk = "TSSSD-UK",
+    tsssd.k.rank = "TSSSD-K-Rank",
+    tsssd.uk.rank = "TSSSD-UK-Rank",
+    tsssd.k.ce = "TSSSD-K-CE", tsssd.uk.ce = "TSSSD-UK-CE",
+    tsssd.k.rank.ce = "TSSSD-K-Rank-CE",
+    tsssd.uk.rank.ce = "TSSSD-UK-Rank-CE",
+    bm.rank = "BM-Rank", pe.rank = "PE-Rank",
+    naive = "Naive", ph3only = "Ph3Only")
+}
 
 #' @title Print Simulation Results for Phase 2/3 Seamless Design with
 #'   Biomarker-Based Treatment Selection
@@ -4344,17 +3991,7 @@ print.lrsim_bmTrtSel <- function(x, ...) {
   ngrid <- length(n2)
 
   methods <- x$methods
-  known <- c(ctdunnett = "CT-Dunnett", ctsimes = "CT-Simes",
-             ctpooled = "CT-Pooled", cer = "CER",
-             TSSSD.k = "TSSSD-K", TSSSD.uk = "TSSSD-UK",
-             TSSSD.k.rank = "TSSSD-K-Rank",
-             TSSSD.uk.rank = "TSSSD-UK-Rank",
-             TSSSD.k.ce = "TSSSD-K-CE",
-             TSSSD.uk.ce = "TSSSD-UK-CE",
-             TSSSD.k.rank.ce = "TSSSD-K-Rank-CE",
-             TSSSD.uk.rank.ce = "TSSSD-UK-Rank-CE",
-             naive = "Naive", ph3only = "Ph3Only")
-  labels <- unname(known[methods])
+  labels <- unname(lrsim_bmTrtSel_method_labels()[methods])
 
   str1 <- "Phase 2/3 seamless design with biomarker-based treatment selection"
 
@@ -4370,11 +4007,18 @@ print.lrsim_bmTrtSel <- function(x, ...) {
   str6 <- paste0("Sample size per arm in phase 3: ",
                  n2[1], " to ", n2[ngrid])
 
-  str7 <- paste0("Number of simulations: ", x$numberOfIterations)
+  if (is.na(x$totalNumberOfEvents)) {
+    str7 <- paste0("Phase 3 study duration: ", x$studyDurationPhase3)
+  } else {
+    str7 <- paste0("Target number of events at phase 3 analysis: ",
+                   x$totalNumberOfEvents)
+  }
 
-  df1 <- data.frame(x = rep("", 8))
+  str8 <- paste0("Number of simulations: ", x$numberOfIterations)
+
+  df1 <- data.frame(x = rep("", 9))
   colnames(df1) <- NULL
-  rownames(df1) <- c(str1, str2, str3, str4, str5, str6, str7, "")
+  rownames(df1) <- c(str1, str2, str3, str4, str5, str6, str7, str8, "")
 
   df2 <- t(data.frame(selectionProb = x$selectionProb))
   rownames(df2) <- "Selected at the end of phase 2"
@@ -4407,17 +4051,33 @@ print.lrsim_bmTrtSel <- function(x, ...) {
   colnames(df5) <- labels
   df5[] <- lapply(df5, formatC, format = "f", digits = 4)
 
+  # method comparison: disjunctive and conjunctive power
+  disjunctive_mat <- do.call(cbind, lapply(methods, function(m)
+    x$byMethod[[m]]$disjunctive.power))
+  conjunctive_mat <- do.call(cbind, lapply(methods, function(m)
+    x$byMethod[[m]]$conjunctive.power))
+  if (is.null(dim(disjunctive_mat))) {
+    disjunctive_mat <- matrix(disjunctive_mat, nrow = ngrid)
+    conjunctive_mat <- matrix(conjunctive_mat, nrow = ngrid)
+  }
+  df6 <- as.data.frame(disjunctive_mat)
+  df7 <- as.data.frame(conjunctive_mat)
+  rownames(df6) <- rownames(df7) <- paste("n2 =", n2)
+  colnames(df6) <- colnames(df7) <- labels
+  df6[] <- lapply(df6, formatC, format = "f", digits = 4)
+  df7[] <- lapply(df7, formatC, format = "f", digits = 4)
+
   # method comparison: rejection for each dose given that it was selected
-  df6 <- do.call(rbind, lapply(seq_along(methods), function(j) {
+  df8 <- do.call(rbind, lapply(seq_along(methods), function(j) {
     p <- x$byMethod[[methods[j]]]$prob.rej.each
     data.frame(method = rep(labels[j], ngrid), n2 = n2,
                matrix(p, nrow = ngrid, dimnames = list(NULL,
                  paste("Dose", seq_len(M), sep = " "))),
                check.names = FALSE)
   }))
-  j <- seq(3, ncol(df6))
-  df6[j] <- lapply(df6[j], formatC, format = "f", digits = 4)
-  colnames(df6)[1:2] <- c("Method", "n2")
+  j <- seq(3, ncol(df8))
+  df8[j] <- lapply(df8[j], formatC, format = "f", digits = 4)
+  colnames(df8)[1:2] <- c("Method", "n2")
 
   print(df1, ..., na.print = "", quote = FALSE)
   cat("Average number of events in the selected dose and the control arm\n")
@@ -4428,8 +4088,12 @@ print.lrsim_bmTrtSel <- function(x, ...) {
   print(df4, ..., na.print = "", quote = FALSE)
   cat("\nProbability of rejecting any dose\n")
   print(df5, ..., na.print = "", quote = FALSE)
+  cat("\nDisjunctive power\n")
+  print(df6, ..., na.print = "", quote = FALSE)
+  cat("\nConjunctive power\n")
+  print(df7, ..., na.print = "", quote = FALSE)
   cat("\nProbability of rejecting each dose given that it was selected\n")
-  print(df6, ..., na.print = "", quote = FALSE, row.names = FALSE)
+  print(df8, ..., na.print = "", quote = FALSE, row.names = FALSE)
   if ("naive" %in% methods) {
     cat("\nNaive does not control the familywise error rate because it reuses",
         "the stage 1 data used for selection;",
@@ -4486,19 +4150,25 @@ print.lrsim_mcpmod <- function(x, ...) {
   labels <- c(paste("Active", seq_len(M)), "Control")
   df2 <- data.frame(
     treatmentGroup = labels,
-    accruals = as.numeric(tapply(s1$accruals[keep], s1$treatmentGroup[keep], mean)),
-    events = as.numeric(tapply(s1$events[keep], s1$treatmentGroup[keep], mean)),
-    dropouts = as.numeric(tapply(s1$dropouts[keep], s1$treatmentGroup[keep], mean))
+    accruals = as.numeric(tapply(s1$accruals[keep],
+                                 s1$treatmentGroup[keep], mean)),
+    events = as.numeric(tapply(s1$events[keep],
+                               s1$treatmentGroup[keep], mean)),
+    dropouts = as.numeric(tapply(s1$dropouts[keep],
+                                 s1$treatmentGroup[keep], mean))
   )
   df2[2:4] <- lapply(df2[2:4], formatC, format = "f", digits = 1)
   colnames(df2) <- c("Treatment", "Expected # subjects", "Expected # events",
                      "Expected # dropouts")
 
-  ev_not_achieved <- mean(as.numeric(s1$eventsNotAchieved[s1$treatmentGroup == (M + 2)]))
+  ev_not_achieved <- mean(as.numeric(
+    s1$eventsNotAchieved[s1$treatmentGroup == (M + 2)]))
   opt_model <- vapply(x$sumdata2, function(row) row$optimalModel, numeric(1))
   df3 <- data.frame(
-    metric = c("Event target not achieved", paste("Selected model", seq_len(T))),
-    probability = c(ev_not_achieved, tabulate(opt_model, nbins = T) / length(opt_model))
+    metric = c("Event target not achieved",
+               paste("Selected model", seq_len(T))),
+    probability = c(ev_not_achieved,
+                    tabulate(opt_model, nbins = T) / length(opt_model))
   )
   df3[2] <- lapply(df3[2], formatC, format = "f", digits = 4)
   colnames(df3) <- c("Metric", "Probability")
@@ -4579,49 +4249,14 @@ print.multiarm <- function(x, ...) {
 
     bsf <- tolower(x$settings$typeBetaSpending)
     bsfpar <- round(x$settings$parameterBetaSpending, 3)
-    bsfuser <- round(x$settings$userBetaSpending, 4)
-
-    if (asf == "of") {
-      str11 <- paste0("Alpha spending: O'Brien-Fleming")
-    } else if (asf == "p") {
-      str11 <- paste0("Alpha spending: Pocock")
-    } else if (asf == "wt") {
-      str11 <- paste0("Alpha spending: Wang-Tsiatis(Delta = ", asfpar, ")")
-    } else if (asf == "sfof") {
-      str11 <- paste0("Alpha spending: Lan-DeMets O'Brien-Fleming")
-    } else if (asf == "sfp") {
-      str11 <- paste0("Alpha spending: Lan-DeMets Pocock")
-    } else if (asf == "sfkd") {
-      str11 <- paste0("Alpha spending: KD(rho = ", asfpar, ")")
-    } else if (asf == "sfhsd") {
-      str11 <- paste0("Alpha spending: HSD(gamma = ", asfpar, ")")
-    } else if (asf == "user") {
-      str11 <- paste0("Alpha spending: User defined(",
-                     paste(asfuser, collapse = ","), ")")
+    bsfuser <- if (!is.null(x$settings$userBetaSpending)) {
+      round(x$settings$userBetaSpending, 4)
     } else {
-      str11 <- "Alpha spending: None"
+      ""
     }
 
-    if (bsf == "of") {
-      str12 <- paste0("beta spending: O'Brien-Fleming")
-    } else if (bsf == "p") {
-      str12 <- paste0("beta spending: Pocock")
-    } else if (bsf == "wt") {
-      str12 <- paste0("beta spending: Wang-Tsiatis(Delta = ", bsfpar, ")")
-    } else if (bsf == "sfof") {
-      str12 <- paste0("beta spending: Lan-DeMets O'Brien-Fleming")
-    } else if (bsf == "sfp") {
-      str12 <- paste0("beta spending: Lan-DeMets Pocock")
-    } else if (bsf == "sfkd") {
-      str12 <- paste0("beta spending: KD(rho = ", bsfpar, ")")
-    } else if (bsf == "sfhsd") {
-      str12 <- paste0("beta spending: HSD(gamma = ", bsfpar, ")")
-    } else if (bsf == "user") {
-      str12 <- paste0("beta spending: User defined(",
-                      paste(bsfuser, collapse = ","), ")")
-    } else {
-      str12 <- "beta spending: None"
-    }
+    str11 <- .format_spending(asf, asfpar, asfuser, "Alpha")
+    str12 <- .format_spending(bsf, bsfpar, bsfuser, "beta")
 
     if (!any(is.na(x$settings$spendingTime)) &&
         !all(x$settings$spendingTime == s$informationRates)) {
@@ -4764,9 +4399,11 @@ print.adaptDesign_multiarm <- function(x, ...) {
                  round(des1$maxInformation, 2))
   str7 <- paste0("Number of looks: ", des1$kMax)
   str8 <- paste0("Interim adaptation look: ", des1$L, ", ",
-                 "z-statistic value: ", paste(round(des1$zL, 3), collapse = ", "))
+                 "z-statistic value: ",
+                 paste(round(des1$zL, 3), collapse = ", "))
   str9 <- paste0("theta: ", paste(round(des1$theta, 3), collapse = ", "))
-  str10 <- paste0("Conditional type I error: ", round(des1$conditionalAlpha, 4),
+  str10 <- paste0("Conditional type I error: ",
+                  round(des1$conditionalAlpha, 4),
                   ", conditional power: ", round(des1$conditionalPower, 3))
   str11 <- paste0("Muller & Schafer method for secondary trial: ",
                   des1$MullerSchafer)
@@ -4810,7 +4447,8 @@ print.adaptDesign_multiarm <- function(x, ...) {
   str1 <- "Secondary trial:"
   str2 <- "Multi-arm multi-stage design"
   str3 <- paste0("Number of selected active arms: ", des2$M, ", ",
-                 "selected active arms: ", paste(des2$selected, collapse = ", "))
+                 "selected active arms: ",
+                 paste(des2$selected, collapse = ", "))
   str4 <- paste0("Randomization ratio of each active vs. control: ", des2$r)
   str5 <- paste0("Maximum information: ", round(des2$maxInformation, 2))
   str6 <- paste0("Overall power: ",
@@ -4857,10 +4495,12 @@ print.adaptDesign_multiarm <- function(x, ...) {
   str2 <- paste0("Adaptive multi-arm multi-stage design")
   str3 <- paste0("Number of active arms before adaptation: ", des3$M)
   str4 <- paste0("Number of selected active arms: ", des3$MNew, ", ",
-                 "selected active arms: ", paste(des3$selected, collapse = ", "))
+                 "selected active arms: ",
+                 paste(des3$selected, collapse = ", "))
   str5 <- paste0("Total number of looks: ", des3$kMax)
   str6 <- paste0("Interim adaptation look: ", des3$L, ", ",
-                 "z-statistic value: ", paste(round(des3$zL, 3), collapse = ", "))
+                 "z-statistic value: ",
+                 paste(round(des3$zL, 3), collapse = ", "))
 
   df3a <- data.frame(x = rep("", 7))
   colnames(df3a) <- NULL
@@ -4918,7 +4558,8 @@ print.adaptDesign_multiarm <- function(x, ...) {
 }
 
 
-#' @title Print Simulation Results for Multi-Arm Multi-Stage Design for Logrank Test
+#' @title Print Simulation Results for Multi-Arm Multi-Stage Design for Logrank
+#' Test
 #' @description Prints the summary statistics from simulation for logrank test.
 #'
 #' @param x The lrsim_multiarm object to print.
@@ -5052,7 +4693,8 @@ print.lrsim_multiarm <- function(x, ...) {
   invisible(x)
 }
 
-#' @title Print Simulation Results for Multi-Arm Multi-Stage Design for Risk Difference
+#' @title Print Simulation Results for Multi-Arm Multi-Stage Design for Risk
+#' Difference
 #' @description Prints the summary statistics from risk-difference simulation.
 #'
 #' @param x The rdsim_multiarm object to print.

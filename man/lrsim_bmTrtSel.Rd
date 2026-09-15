@@ -3,7 +3,7 @@
 \name{lrsim_bmTrtSel}
 \alias{lrsim_bmTrtSel}
 \title{Simulation of a seamless phase II/III design with treatment
-selection based on a short-term endpoint}
+selection based on a short-term endpoint and toxicities}
 \usage{
 lrsim_bmTrtSel(
   phase2SampleSizePerArm = NA_integer_,
@@ -13,21 +13,24 @@ lrsim_bmTrtSel(
   responseProbTreatments = NA_real_,
   toxicityProbTreatments = NA_real_,
   corrEfficacyToxicity = 0,
+  corrEfficacyTTE = 0,
   hazardRateControl = NA_real_,
-  hazardRateTreatments = matrix(),
+  hazardRatioTreatments = NA_real_,
+  totalNumberOfEvents = NA_integer_,
   studyDurationPhase3 = NA_real_,
   toxicityWeight = NA_real_,
   toxicityUpperLimit = NA_real_,
   efficacyThreshold = 0,
   safetyThreshold = 0,
   useUniformPrior = TRUE,
-  methods = c("ctdunnett", "ctsimes", "ctpooled", "cer", "TSSSD.k", "TSSSD.uk",
-    "TSSSD.k.rank", "TSSSD.uk.rank", "TSSSD.k.ce", "TSSSD.uk.ce", "TSSSD.k.rank.ce",
-    "TSSSD.uk.rank.ce", "naive", "ph3only"),
+  methods = c("ctbonferroni", "ctdunnett", "ctsimes", "ctpooled", "cer", "tsssd.k",
+    "tsssd.uk", "tsssd.k.rank", "tsssd.uk.rank", "tsssd.k.ce", "tsssd.uk.ce",
+    "tsssd.k.rank.ce", "tsssd.uk.rank.ce", "bm.rank", "pe.rank", "naive", "ph3only"),
   accrualRatePhase2 = NA_real_,
   accrualRatePhase3 = NA_real_,
   followupTimePhase2 = 0,
   maxNumberOfIterations = 1000,
+  maxNumberOfRawDatasets = 0,
   seed = 0,
   nthreads = 0
 )
@@ -54,22 +57,34 @@ investigation. Its length determines \code{M}.}
 \item{toxicityProbTreatments}{A vector of length \code{M} giving the
 probability of toxicity for each dose under investigation.}
 
-\item{corrEfficacyToxicity}{The correlation between the bivariate latent
-normal variables used to generate the binary efficacy and toxicity
-endpoints. This is the correlation on the latent scale, not the
-correlation of the observed binary endpoints. Use 0 for independent
-endpoints.}
+\item{corrEfficacyToxicity}{The correlation between the latent normal
+variable for the toxicity endpoint and \eqn{z_B}, where \eqn{z_B} is the
+latent normal variable that determines the short-term biomarker endpoint.
+Use 0 for independent biomarker and toxicity endpoints.}
 
-\item{hazardRateControl}{A vector of length 2 giving the hazard rate of the
-long-term endpoint in the control arm for short-term nonresponders and
-responders, respectively.}
+\item{corrEfficacyTTE}{The correlation between the latent normal variable for
+the long-term time-to-event endpoint and \eqn{z_B}. Use 0 for an
+independent biomarker and long-term endpoint.}
 
-\item{hazardRateTreatments}{An \code{M} by 2 matrix giving the hazard rate
-of the long-term endpoint for each dose, with the first column for
-short-term nonresponders and the second column for responders.}
+\item{hazardRateControl}{The overall hazard rate for the long-term
+endpoint in the control arm. It must be positive.}
+
+\item{hazardRatioTreatments}{A vector of length \code{M} giving the hazard
+ratio for each treatment relative to the control arm. The hazard rate in
+treatment arm \code{k} is
+\code{hazardRateControl * hazardRatioTreatments[k]}; values below 1
+indicate effective treatments.}
+
+\item{totalNumberOfEvents}{The target total number of long-term endpoint
+events in the selected dose and control arms, including subjects enrolled
+in phases II and III. It must be a positive integer no greater than the
+combined sample size of those two arms at
+\code{phase3SampleSizePerArmMin}. When provided, the final analysis is
+event-driven and \code{studyDurationPhase3} is ignored.}
 
 \item{studyDurationPhase3}{The duration of phase III, measured from the
-first phase III enrollment to the final analysis.}
+opening of phase III enrollment to the final analysis. It must be provided
+when \code{totalNumberOfEvents} is missing.}
 
 \item{toxicityWeight}{The weight placed on the posterior mean toxicity rate
 in the benefit-risk tradeoff used for dose selection. Use 0 to select on
@@ -92,11 +107,13 @@ default) or the Jeffreys Beta(0.5,0.5) prior for the beta-binomial
 posterior used in dose selection.}
 
 \item{methods}{A character vector naming the testing procedures to evaluate
-for the confirmatory analysis. Any subset of \code{"ctdunnett"},
-\code{"ctsimes"}, \code{"ctpooled"}, \code{"cer"}, \code{"TSSSD.k"},
-\code{"TSSSD.uk"}, \code{"TSSSD.k.rank"}, \code{"TSSSD.uk.rank"},
-\code{"TSSSD.k.ce"}, \code{"TSSSD.uk.ce"},
-\code{"TSSSD.k.rank.ce"}, \code{"TSSSD.uk.rank.ce"},
+for the confirmatory analysis. Any subset of \code{"ctbonferroni"},
+\code{"ctdunnett"}, \code{"ctsimes"}, \code{"ctpooled"}, \code{"cer"},
+\code{"tsssd.k"},
+\code{"tsssd.uk"}, \code{"tsssd.k.rank"}, \code{"tsssd.uk.rank"},
+\code{"tsssd.k.ce"}, \code{"tsssd.uk.ce"},
+\code{"tsssd.k.rank.ce"}, \code{"tsssd.uk.rank.ce"},
+\code{"bm.rank"}, \code{"pe.rank"},
 \code{"naive"}, and \code{"ph3only"}. Restricting the set skips the
 corresponding computation entirely, which matters because the methods
 differ by orders of magnitude in cost.}
@@ -113,6 +130,10 @@ enrollment.}
 
 \item{maxNumberOfIterations}{The number of simulated trials.}
 
+\item{maxNumberOfRawDatasets}{The number of initial simulation iterations
+for which to retain subject-level raw data. Set to 0, the default, to skip
+raw-data retention.}
+
 \item{seed}{The seed for the random number generator.}
 
 \item{nthreads}{The number of threads to use. The default, 0, leaves the
@@ -124,8 +145,9 @@ A list of operating characteristics. Let \code{ngrid} denote
 number of stage 2 sample sizes examined, and let \code{M} denote the
 number of doses. The list contains
 \itemize{
-\item \code{n1}, \code{n2}, \code{numberOfIterations}, \code{trueOBD}: The
-design inputs echoed back, with \code{n2} the vector of stage 2 sample
+\item \code{n1}, \code{n2}, \code{totalNumberOfEvents},
+\code{studyDurationPhase3}, \code{numberOfIterations}, \code{trueOBD}:
+The design inputs echoed back, with \code{n2} the vector of stage 2 sample
 sizes examined.
 \item \code{selectionProb}: A vector of length \code{M} giving the probability
 that each dose is selected at the end of phase II.
@@ -147,20 +169,36 @@ probability of rejecting the null hypothesis for each dose conditional
 on that dose being selected.
 \item \code{prob.rej.any}: A vector of length \code{ngrid} giving the
 probability of rejecting any null hypothesis.
+\item \code{disjunctive.power}: A vector of length \code{ngrid} giving the
+probability of rejecting at least one true non-null hypothesis. It is
+missing when all treatment hazard ratios equal 1.
+\item \code{conjunctive.power}: A vector of length \code{ngrid} giving the
+probability of rejecting all true non-null hypotheses. It is missing
+when all treatment hazard ratios equal 1.
+\item \code{fwer}: A vector of length \code{ngrid} giving the probability
+of rejecting any true null hypothesis.
 }
 
 The method names are
-\code{ctdunnett}, \code{ctsimes}, and \code{ctpooled} for the closed
-testing procedure with the inverse normal combination of stage 1 and
-stage 2 p-values, using the Dunnett, Simes, and pooled log-rank local
-tests respectively; \code{cer} for the conditional error rate method;
-\code{TSSSD.k} and \code{TSSSD.uk} for the original two-stage seamless
-design boundaries with known and unknown correlation; \code{TSSSD.k.rank}
-and \code{TSSSD.uk.rank} for rank-adjusted versions of those boundaries;
-\code{TSSSD.k.ce}, \code{TSSSD.uk.ce}, \code{TSSSD.k.rank.ce}, and
-\code{TSSSD.uk.rank.ce} for conditional-error updates that start from
-nominal boundaries based on \code{n1/(n1+n2)} and then update boundaries
-using the observed stage 1 z-statistic and observed information fraction;
+\code{ctbonferroni}, \code{ctdunnett}, \code{ctsimes}, and
+\code{ctpooled} for the closed testing procedure with the inverse normal
+combination of stage 1 and stage 2 p-values, using the Bonferroni,
+Dunnett, Simes, and pooled log-rank local tests respectively; \code{cer}
+for the conditional error rate method;
+\code{tsssd.k} and \code{tsssd.uk} for the original two-stage seamless
+design boundaries with known and unknown correlation; \code{tsssd.k.rank}
+and \code{tsssd.uk.rank} for rank-based boundaries based on the effective
+number of less efficacious doses; and \code{tsssd.k.ce},
+\code{tsssd.uk.ce}, \code{tsssd.k.rank.ce}, and \code{tsssd.uk.rank.ce}
+for conditional-error updates of the original and rank-based boundaries.
+These updates start from nominal boundaries based
+on \code{n1/(n1+n2)} and then use the observed stage 1 z-statistic and
+observed information fraction;
+\code{bm.rank} for the Biomarker rank-based Dunnett adjustment for unknown
+biomarker-efficacy correlation in Wang et al. formula (3) for stage 1,
+along with the p-value combination test at the end of stage 2;
+\code{pe.rank} for the primary endpoint rank-based Dunnett adjustment for
+stage 1, along with the p-value combination test at the end of stage 2;
 \code{naive} for the
 unadjusted log-rank test on the combined stage 1 and stage 2 data; and
 \code{ph3only} for the unadjusted log-rank test on the stage 2 data only.
@@ -169,37 +207,65 @@ data independent of the selection and still controls the familywise error
 rate, at the cost of discarding the stage 1 information. \code{naive}
 reuses the selection data and is anticonservative; it is reported for
 reference.
+\item \code{sumdataBIN}: One row per iteration and phase II arm, containing
+\code{iterationNumber}, \code{treatmentGroup}, \code{responses},
+\code{toxicities}, \code{zBiomarker}, and \code{selected}. Treatment
+group 0 is control; its toxicity count and biomarker Z statistic are
+missing. These rows reproduce the dose-selection operating
+characteristics.
+\item \code{sumdataTTE}: One row per iteration and phase III sample size,
+containing \code{iterationNumber}, \code{selectedDose},
+\code{phase3SampleSize}, stage 1, stage 2, and total event counts,
+stage 1, stage 2, and cumulative log-rank Z statistics for the selected
+dose, as well as stage 1 log-rank Z statistics for all individual and
+pooled dose groups (e.g., \code{stage1LogRankZ1}, \code{stage1LogRankZ2},
+\code{stage1LogRankZ12}). It also has one \code{reject.<method>}
+indicator column for every requested method. These rows reproduce
+\code{ave.event} and the operating characteristics in \code{byMethod}.
+\item \code{rawdataBIN} (present when \code{maxNumberOfRawDatasets} is
+positive): Subject-level phase II binary data with \code{iterationNumber},
+\code{subjectId}, \code{treatmentGroup} (0 for control and 1 through
+\code{M} for doses), \code{response}, and \code{toxicity}. Toxicity is
+missing for the control arm because it is not simulated or used for dose
+selection.
+\item \code{rawdataTTE} (present when \code{maxNumberOfRawDatasets} is
+positive): Subject-level time-to-event data with \code{iterationNumber},
+\code{subjectId}, \code{phase}, \code{treatmentGroup},
+\code{response}, \code{arrivalTime}, \code{survivalTime},
+\code{timeUnderObservation}, and \code{event}. Phase 2 includes all
+arms; phase 3 includes only the control arm and the selected dose.
 }
 }
 \description{
 Simulates a two-stage seamless phase II/III trial in which
 several doses are compared with a common control. At the end of phase II
 a single dose is carried forward based on the posterior benefit-risk
-tradeoff of a binary short-term efficacy endpoint and a binary toxicity
+tradeoff of a binary short-term biomarker endpoint and a binary toxicity
 endpoint. The confirmatory phase III analysis is performed on a
-time-to-event long-term endpoint whose hazard depends on the short-term
-response status, and the type I error rate is protected by a closed
+time-to-event long-term endpoint linked to the biomarker through the
+copula correlation, and the type I error rate is protected by a closed
 testing procedure combined across the two stages.
 }
 \details{
-For each subject on a treatment arm, a bivariate latent normal vector
-\eqn{(z_T, z_E)} with mean zero, unit variances, and correlation
-\code{corrEfficacyToxicity} is drawn. The binary toxicity and efficacy
-endpoints are obtained as \eqn{Y_T = I\{z_T \le \Phi^{-1}(p_T(d))\}} and
-\eqn{Y_E = I\{z_E \le \Phi^{-1}(p_E(d))\}}, so that the marginal
-probabilities are \eqn{p_T(d)} and \eqn{p_E(d)} while the two endpoints are
-correlated. The long-term endpoint is exponential with a rate determined by
-the realized short-term response status.
-
-Dose selection uses a beta-binomial model with independent priors, either
-uniform Beta(1,1) or Jeffreys Beta(0.5,0.5) depending on
-\code{useUniformPrior}. A dose enters the acceptable set when
-the posterior probability that its
-response rate exceeds that of the control is above \code{efficacyThreshold}
-and the posterior probability that its toxicity rate is below
-\code{toxicityUpperLimit} is above \code{safetyThreshold}. Among the
-acceptable doses, the one maximizing the posterior mean benefit-risk
-tradeoff is selected. When both thresholds are 0, all doses are acceptable.
+Data generation uses a copula-based approach. For each subject, a base
+random variable \eqn{z_B \sim N(0,1)} drives the short-term biomarker
+endpoint, \code{shortv}. Toxicity is generated from
+\eqn{z_S = \rho_{tox}z_B + \sqrt{1-\rho_{tox}^2}z_{S,indep}} and the
+toxicity indicator \code{toxv} is obtained by thresholding \eqn{z_S} at
+the specified toxicity probability. The long-term endpoint is generated
+from \eqn{z_E = \rho_{eff}z_B + \sqrt{1-\rho_{eff}^2}z_{E,indep}} as
+\eqn{v = -\log(\Phi(z_E))/\lambda}, where \eqn{\lambda =
+hazardRateControl} in the control arm and
+\eqn{\lambda = hazardRateControl \times hazardRatioTreatments[k]}
+in treatment arm \eqn{k}. Dose selection uses a beta-binomial model with
+independent priors, either uniform Beta(1,1) or Jeffreys Beta(0.5,0.5)
+depending on \code{useUniformPrior}. A dose enters the acceptable set when
+the posterior probability that its response rate exceeds that of the
+control is above \code{efficacyThreshold} and the posterior probability
+that its toxicity rate is below \code{toxicityUpperLimit} is above
+\code{safetyThreshold}. Among the acceptable doses, the one maximizing the
+posterior mean benefit-risk tradeoff is selected. When both thresholds are
+0, all doses are acceptable.
 
 Phase III enrollment opens \code{followupTimePhase2} after the last phase
 II enrollment across all arms, and the final analysis occurs
@@ -208,15 +274,14 @@ occurred by then are censored at the analysis time.
 }
 \examples{
 
-# hazard rates in the nonresponse and response groups of the control arm
-the0 <- c(log(2)/12, log(2)/24)
+# Overall control-arm hazard rate for the long-term endpoint
+hazardRateControl <- log(2) / 15.5
 
 # response rates of the two doses under investigation
 pe <- c(0.6, 0.5)
 
-# hazard ratio versus control within each response group
-hr <- rbind(c(0.75, 0.75), c(0.75, 0.75))
-the1 <- t(sapply(1:2, function(k) hr[k,]*the0))
+# Hazard ratio versus control for each treatment
+hazardRatioTreatments <- c(0.65, 0.70)
 
 sim <- lrsim_bmTrtSel(
   phase2SampleSizePerArm = 50,
@@ -226,14 +291,15 @@ sim <- lrsim_bmTrtSel(
   responseProbTreatments = pe,
   toxicityProbTreatments = c(0, 0),
   corrEfficacyToxicity = 0,
-  hazardRateControl = the0,
-  hazardRateTreatments = the1,
+  corrEfficacyTTE = 0.43,
+  hazardRateControl = hazardRateControl,
+  hazardRatioTreatments = hazardRatioTreatments,
   studyDurationPhase3 = 42.1,
   toxicityWeight = 0,
   toxicityUpperLimit = 1,
   efficacyThreshold = 0,
   safetyThreshold = 0,
-  methods = c("ctdunnett", "ctsimes", "ctpooled",
+  methods = c("ctbonferroni", "ctdunnett", "ctsimes", "ctpooled",
               "cer", "naive", "ph3only"),
   accrualRatePhase2 = 3,
   accrualRatePhase3 = 6,
